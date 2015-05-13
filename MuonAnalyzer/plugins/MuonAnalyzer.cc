@@ -54,7 +54,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   edm::Handle<reco::MuonCollection > muonColl;
   ev.getByLabel(muonSrc_, muonColl);
   
-  
+  int muIdx = 0;
   for (reco::MuonCollection::const_iterator muon=muonColl->begin(), muonCollEnd=muonColl->end();
        muon!=muonCollEnd; ++muon)
     {
@@ -66,7 +66,18 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
       h_pt->Fill(muon->pt());
       h_eta->Fill(muon->eta());
       h_phi->Fill(muon->phi());
-
+      if (muIdx < 1) {
+	muon1_pt  = muon->pt();
+	muon1_eta = muon->eta();
+	muon1_phi = muon->phi();
+	muon1_charge = muon->charge();
+      }
+      else if (muIdx < 1) {
+	muon2_pt  = muon->pt();
+	muon2_eta = muon->eta();
+	muon2_phi = muon->phi();
+	muon2_charge = muon->charge();
+      }
       if (muon->combinedMuon().isNonnull()) {
 	reco::TrackRef ref = muon->combinedMuon();
 	std::cout << "combinedMuon number of hits: " << ref->numberOfValidHits() << std::endl;
@@ -90,13 +101,28 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	  std::cout << "  inner pt [GeV]: "     << ref->innerMomentum().Rho();
 	std::cout << std::endl;
       }
+      ++muIdx;
     }
+  cosmicTree->Fill();
 }
 
 
 // ------------ method called once each job just before starting event loop  ------------
 void MuonAnalyzer::beginJob()
 {
+  edm::Service< TFileService > fs;
+  
+  cosmicTree = fs->make<TTree>( "MuonTree", "TTree variables" );
+  cosmicTree->Branch("muon1_pt",     &muon1_pt,     "muon1_pt/D"    );
+  cosmicTree->Branch("muon1_eta",    &muon1_eta,    "muon1_eta/D"   );
+  cosmicTree->Branch("muon1_phi",    &muon1_phi,    "muon1_phi/D"   );
+  cosmicTree->Branch("muon1_charge", &muon1_charge, "muon1_charge/I");
+
+  cosmicTree->Branch("muon2_pt",     &muon2_pt,     "muon2_pt/D"    );
+  cosmicTree->Branch("muon2_eta",    &muon2_eta,    "muon2_eta/D"   );
+  cosmicTree->Branch("muon2_phi",    &muon2_phi,    "muon2_phi/D"   );
+  cosmicTree->Branch("muon2_charge", &muon2_charge, "muon2_charge/I");
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

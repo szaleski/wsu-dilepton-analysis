@@ -62,6 +62,9 @@ private:
   TH1F * h_pt, * h_eta, * h_phi;
   TH2F * h2_pt1_vs_pt2, * h2_eta1_vs_eta2, * h2_phi1_vs_phi2;
 
+  int muon1_charge, muon2_charge;
+  double muon1_pt, muon1_eta, muon1_phi;
+  double muon2_pt, muon2_eta, muon2_phi;
 };
 
 #endif
