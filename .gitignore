@@ -1,0 +1,6 @@
+*.root
+*~
+*.log
+*.out
+__init__.py
+*.pyc
