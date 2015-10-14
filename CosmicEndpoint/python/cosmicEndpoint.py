@@ -1,3 +1,4 @@
+import root as r
 
 class cosmicEndpoint() :
     """
@@ -16,18 +17,48 @@ class cosmicEndpoint() :
     
     """
     
-    def __init__(self, binning, selection, minPt) :
-
+    def __init__(self, infile, outfile, binning, selection, minPt) :
+        self.infile    = infile
+        self.outfile   = outfile
         self.binning   = binning
         self.selection = selection
         self.minPt     = minPt
         
+        self.minushisto = {}
+        self.plushisto  = {}
+        self.lowerhisto = {}
+        self.upperhisto = {}
+
+        for bin in range(length(self.binning)-1):
+            self.minushisto["pt%dto%d"%(self.binning[bin],self.binning[bin+1])] = r.TH1D("minuspt%dto%d"%(self.binning[bin],self.binning[bin+1]),
+                                                                                    "q/p_{T}",
+                                                                                    self.nBins,
+                                                                                    0., 1./self.minPt)
+            
+            self.plushisto["pt%dto%d"%(self.binning[bin],self.binning[bin+1])] = r.TH1D("pluspt%dto%d"%(self.binning[bin],self.binning[bin+1]),
+                                                                                   "q/p_{T}",
+                                                                                   self.nBins,
+                                                                                   0., 1./self.minPt)
+            
+            self.lowerhisto["pt%dto%d"%(self.binning[bin],self.binning[bin+1])] = r.TH1D("lowerpt%dto%d"%(self.binning[bin],self.binning[bin+1]),
+                                                                                    "q/p_{T}",
+                                                                                    self.nBins,
+                                                                                    0., 1./self.minPt)
+            
+            self.upperhisto["pt%dto%d"%(self.binning[bin],self.binning[bin+1])] = r.TH1D("upperpt%dto%d"%(self.binning[bin],self.binning[bin+1]),
+                                                                                    "q/p_{T}",
+                                                                                    self.nBins,
+                                                                                    0., 1./self.minPt)
+            
+            self.tree = infile.Get(treename)
         return
     
-    def makeHistograms(binning, selection) :
+    def makeHistograms(tree, binning, selection) :
         """Create the upper/lower positive/negative histograms with the specified binning
         and using the provided selection"""
         
+        for event in tree:
+            
         return
 
     def runMinimization() :
