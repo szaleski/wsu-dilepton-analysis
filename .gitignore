@@ -1,6 +1,12 @@
+*
 *.root
 *~
 *.log
 *.out
+!*.py
+!*.cc
+!*.C
+!*.h
+!*.xml
 __init__.py
 *.pyc
