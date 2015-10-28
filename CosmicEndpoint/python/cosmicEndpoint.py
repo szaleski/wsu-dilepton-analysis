@@ -58,9 +58,18 @@ class cosmicEndpoint() :
         and using the provided selection"""
         
         for event in tree:
+            upperbin = findBin(event.upper_P3.pt())
+            lowerbin = findBin(event.lower_P3.pt())
+            if event.upper_charge > 0:
+                self.upperhisto[upperbin]
             
         return
 
+    def findBin(pt):
+        binning = self.binning
+        if pt > binning[-1]:
+            
+        return bin
     def runMinimization() :
         return
 

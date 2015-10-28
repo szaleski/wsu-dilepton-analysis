@@ -1,0 +1,12 @@
+<use name="boost"/>
+<library name="HistogramMaker" file="HistogramMaker.cc">
+  <use name="root"/>
+  <flags CXXFLAGS="-O0 -g3 -fno-inline"/>
+  <flags CFLAGS="-O0 -g3 -fno-inline"/>
+</library>
+<bin name="runEndpoint" file="runEndpoint.cc">
+  <use name="HistogramMaker"/>
+  <use name="root"/>
+  <flags CXXFLAGS="-O0 -g3 -fno-inline"/>
+  <flags CFLAGS="-O0 -g3 -fno-inline"/>
+</bin>
