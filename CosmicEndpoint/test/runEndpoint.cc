@@ -12,6 +12,8 @@
 #include <TGraphErrors.h>
 #include <TGraph.h>
 
+#include "HistogramMaker.h"
+
 namespace wsu {
   namespace dileptons {
     
@@ -171,12 +173,19 @@ namespace po = boost::program_options;
 int main(int argc, char **argv)
 {
   // parse the command line options
+  std::string inputFiles;
+  std::string outputFile;
+  std::string configFile;
+  int debug;
   try {
     po::options_description desc("Allowed options");
 
     desc.add_options()
       ("help,h", "produce help message")
-      ("debug,d", po::value<int>(), "set debug level");
+      ("debug,d",  po::value<int>(&debug)->default_value(0), "set debug level, default is 0")
+      ("inputs,i", po::value<std::string>(&inputFiles), "input file list, a text file with the paths of the input files")
+      ("output,o", po::value<std::string>(&outputFile), "output file name")
+      ("config,c", po::value<std::string>(&configFile), "config file name");
 
     po::variables_map vm;        
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -208,8 +217,9 @@ int main(int argc, char **argv)
   }
   
   //main body
-  std::cout << "running endpoint study" << std::endl;
-
+  std::cout << "parsed command line options, running endpoint study" << std::endl;
+  
+  wsu::dileptons::cosmics::HistogramMaker myHistograms(inputFiles, outputFile, configFile, debug);
   
   return 0;
 }

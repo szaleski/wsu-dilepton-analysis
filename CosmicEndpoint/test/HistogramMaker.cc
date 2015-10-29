@@ -31,7 +31,8 @@ namespace wsu {
       
       HistogramMaker::HistogramMaker(std::string const& fileList,
 				     std::string const& outFileName,
-				     std::string const& confParmsFile)
+				     std::string const& confParmsFile,
+				     int debug)
       {
 	parseConfiguration(confParmsFile);
 	
@@ -231,6 +232,9 @@ namespace wsu {
 	  } else if (key.find("MuonLeg") != std::string::npos) {
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.MuonLeg = value;
+	  } else if (key.find("PathPrefix") != std::string::npos) {
+	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+	    confParams.PathPrefix = value;
 	  }
 	  
 	}
@@ -255,7 +259,8 @@ namespace wsu {
 	  if (line.find(".root") == std::string::npos)
 	    continue; // found line without .root file name, skip
 	  std::stringstream filepath;
-	  filepath << "root://cms-xrd-global.cern.ch//" << line; // need to strip off the newline?
+
+	  filepath << confParams.PathPrefix << line; // need to strip off the newline?
 	  treeChain->Add(TString(filepath.str()));
 	}// end while loop over lines in file
 	return;
@@ -312,7 +317,6 @@ namespace wsu {
 	TTreeReaderValue<math::XYZVector>         lowTrackVec(*treeReader,"lowerMuon_trackVec");
   
 	int j = 0;
-	//bool debug = false;
 	while (treeReader->Next()){
 	  if(*upTrackChi2 > -1000) { //ensure values are from an actual event
 	    int combLow[2] = {1,2};

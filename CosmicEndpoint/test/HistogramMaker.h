@@ -41,6 +41,7 @@ namespace wsu {
       } HighPtMuonCuts;
       
       typedef struct ConfigurationParameters {
+	std::string PathPrefix;
 	int NBiasBins;
 	double MaxKBias;
 	double MinPtCut;
@@ -50,7 +51,8 @@ namespace wsu {
 	HighPtMuonCuts MuCuts;
 	
 	ConfigurationParameters() {
-	  NBiasBins   = 109;
+	  PathPrefix  = "root://cms-xrd-global.cern.ch//"; // different xrootd redirectors, or local file
+	  NBiasBins   = 100;
 	  MaxKBias    = 0.05;
 	  MinPtCut    = 100.;
 	  Arbitration = "positive"; // plus(positive)/minus(negative) as reference
@@ -64,7 +66,8 @@ namespace wsu {
       public: 
 	HistogramMaker(std::string const& fileList,
 		       std::string const& outFileName,
-		       std::string const& confParmsFile);
+		       std::string const& confParmsFile,
+		       int debug=0);
 	~HistogramMaker();
 	
 	void parseConfiguration(std::string const& confFileName);

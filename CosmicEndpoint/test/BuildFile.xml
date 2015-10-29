@@ -1,8 +1,6 @@
-<use name="boost"/>
 <library name="HistogramMaker" file="HistogramMaker.cc">
-  <!--use   name="libconfig"/>
-  <use   name="libconfig++"/-->
   <use   name="boost"/>
+  <use   name="boost_program_options"/>
   <use   name="root"/>
   <use   name="rootmath"/>
   <use   name="rootgraphics"/>
@@ -10,11 +8,11 @@
   <flags CXXFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
   <flags CFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
 </library>
+
 <bin name="runEndpoint" file="runEndpoint.cc">
   <lib   name="HistogramMaker"/>
-  <!--use   name="libconfig"/>
-  <use   name="libconfig++"/-->
   <use   name="boost"/>
+  <use   name="boost_program_options"/>
   <use   name="root"/>
   <use   name="rootmath"/>
   <use   name="rootgraphics"/>
