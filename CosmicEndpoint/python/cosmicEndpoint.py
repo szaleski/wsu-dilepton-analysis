@@ -69,7 +69,8 @@ class cosmicEndpoint() :
         binning = self.binning
         if pt > binning[-1]:
             
-        return bin
+            return bin
+
     def runMinimization() :
         return
 
