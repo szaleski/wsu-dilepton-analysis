@@ -223,10 +223,20 @@ if (ref->outerPosition().Y() > 0){
 	upperMuon_trackPt =ref->pt();
 	upperMuon_trackVec = ref->momentum();
        	upperMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
-	std::cout << muon->numberOfMatchedStations(arbType) << std::endl;
-	std::cout << arbType;
-	std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
- }
+
+	double relError = upperMuon_ptError/upperMuon_trackPt;
+	std::cout << "\nMuon pT Error/pT is: " << relError << std::endl;
+	std::cout << "\nMuon pT Error is: " << ref->ptError() << std:: endl;
+	std::cout << "\nMuon pT is: " << ref->pt() << std::endl;
+	std::cout << "\nNumber of Pixel hits are: " << ref->hitPattern().numberOfValidPixelHits() << std::endl;
+	std::cout << "\nNumber of Valid Tracker Hits are : " << ref->hitPattern().numberOfValidTrackerHits() << std::endl;
+
+	std::cout << "\nNumber of matched muon stations is: " << muon->numberOfMatchedStations(arbType) << std::endl;
+	//	std::cout << arbType;
+	std::cout << "\nNumber of Valid Muon Hits are: " << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
+ 
+
+}
 
       else if (ref->outerPosition().Y() < 0){
 	//	lowerMuon =&(*muon);
