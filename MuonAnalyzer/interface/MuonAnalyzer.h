@@ -17,6 +17,8 @@
 #include <DataFormats/Candidate/interface/Candidate.h>
 #include <DataFormats/MuonReco/interface/MuonCocktails.h>
 #include <DataFormats/MuonReco/interface/MuonFwd.h>
+#include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/MuonReco/src/Muon.cc"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
 
@@ -53,7 +55,7 @@ private:
   virtual void beginJob() override;
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
-void TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon);
+  void TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType);
   reco::TrackRef GetTrackType(int algoType,reco::MuonCollection::const_iterator muon);
   int algoType_;
   int debug_;
@@ -85,6 +87,8 @@ void TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon);
 
   int event, run, lumi;
 
+ reco::Muon::ArbitrationType type;
+ 
   int muon1_charge, muon2_charge;
   double muon1_pt, muon1_eta, muon1_phi, muon1_theta;
   double muon2_pt, muon2_eta, muon2_phi, muon2_theta;
@@ -101,7 +105,7 @@ void TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon);
   int lowerMuon_trackerLayersWithMeasurement;
 
 
-  //TLorentzVector upperMuon_P4;
+  //TLorentzVector upperMuon_P4; 
   reco::Candidate::LorentzVector upperMuon_P4;
   math::XYZVector upperMuon_trackVec;
   double upperMuon_chi2, upperMuon_dz, upperMuon_dxy, upperMuon_pT;

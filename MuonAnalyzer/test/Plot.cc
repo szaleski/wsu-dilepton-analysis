@@ -82,17 +82,17 @@
 
   return;
 
-}
+  }
 
-void FillHist(TH1F *hist1, ){
+  void FillHist(TH1F *hist1, ){
 
   //  hist1->Fill
  
 
   return;
-}
+  }
 
-void plot2D(TH2F *hist1, std::string const& xAxis, std::string const& yAxis, std::string const& plotName){
+  void plot2D(TH2F *hist1, std::string const& xAxis, std::string const& yAxis, std::string const& plotName){
   TCanvas *e = new TCanvas("e", "Canvas", 1000, 1000);
   e->cd();
   TPad *pad3 = new TPad("comp", "comp", 0.0, 0.0, 1.0, 1.0);
@@ -113,11 +113,62 @@ void plot2D(TH2F *hist1, std::string const& xAxis, std::string const& yAxis, std
 
   return;
 
-}
+  }
 */
 
 void Plot(std::string const& file1)
 {
+int trackVal_ = 5;
+  TFile *g;
+  TChain *myChain;
+
+  if (trackVal_== 1) {
+    myChain = new TChain(TString("analysisTrackerMuons/MuonTree"));
+    g = new TFile("CosmicHistogramsTrackerOnly.root","RECREATE"); 
+  }  
+  else if (trackVal_== 2) {
+    myChain = new TChain(TString("analysisTPFMSMuons/MuonTree"));
+    g = new TFile("CosmicHistogramsTPFMS.root","RECREATE"); 
+  }  
+  else if (trackVal_== 3) {
+        myChain = new TChain(TString("analysisDYTMuons/MuonTree"));
+    g = new TFile("CosmicHistogramsDYTT.root","RECREATE"); 
+  } 
+  else if (trackVal_== 4) {
+    myChain = new TChain(TString("analysisPickyMuons/MuonTree"));
+    g = new TFile("CosmicHistogramsPicky.root","RECREATE"); 
+  } 
+  else if (trackVal_== 5) {
+    myChain = new TChain(TString("analysisTunePMuons/MuonTree"));
+    g = new TFile("CosmicHistogramsTuneP.root","RECREATE"); 
+  } 
+  else{
+    std::cout << "\n\nINVALID TRACK SPECIFIED! Choose a value between [1, 5]";
+    return;
+    //TTreeReader trackReader("analysisTrackerMuons/MuonTree", f);
+    //TTreeReader tpfmsReader("analysisTPFMSMuons/MuonTree", f);
+    //TTreeReader dytReader("analysisDYTMuons/MuonTree", f);
+    //TTreeReader pickyReader("analysisPickyMuons/MuonTree", f);
+    //TTreeReader tunePReader("analysisTunePMuons/MuonTree", f);
+  }  
+  
+    std::string name;
+    std::ifstream file(file1);
+    while(std::getline(file,name)){
+      std::stringstream newString;
+      newString << "root://xrootd.unl.edu//" << name;
+
+      //Use the following line with line above commented out for running on local files.
+      //newString << name;
+      std::cout << newString.str() << std::endl << std::endl;
+      myChain->Add(TString(newString.str()));
+    }
+    //  myChain->Add(TString());
+    //   newString << "root://xrootd.unl.edu//" << name;
+ 
+  TTree *myTree = myChain;
+  TTreeReader trackReader(myTree);
+  std::cout << "Successfully opened file 1! \n\n";
 
  
 
@@ -146,73 +197,73 @@ void Plot(std::string const& file1)
   TH1F *h_looseMuUpperPlusNdof = new TH1F("looseMuUpperPlusNdof","looseMuUpperPlusNdof", 100, 0, 50);
   TH1F *h_looseMuLowerMinusNdof = new TH1F("looseMuLowerMinusNdof","looseMuLowerMinusNdof", 100, 0, 50);
   TH1F *h_looseMuLowerPlusNdof = new TH1F("looseMuLowerPlusNdof","looseMuLowerPlusNdof", 100, 0, 50);
-TH1F *h_looseMuMinusCharge = new TH1F("looseMuMinusCharge","looseMuMinusCharge", 10, -2, 2);
+  TH1F *h_looseMuMinusCharge = new TH1F("looseMuMinusCharge","looseMuMinusCharge", 10, -2, 2);
   TH1F *h_looseMuUpperMinusCharge = new TH1F("looseMuUpperMinusCharge","looseMuUpperMinusCharge", 10, -2, 2);
   TH1F *h_looseMuPlusCharge = new TH1F("looseMuPlusCharge","looseMuPlusCharge", 10, -2, 2);
   TH1F *h_looseMuUpperPlusCharge = new TH1F("looseMuUpperPlusCharge","looseMuUpperPlusCharge", 10, -2, 2);
   TH1F *h_looseMuLowerMinusCharge = new TH1F("looseMuLowerMinusCharge","looseMuLowerMinusCharge", 10, -2, 2);
   TH1F *h_looseMuLowerPlusCharge = new TH1F("looseMuLowerPlusCharge","looseMuLowerPlusCharge", 10, -2, 2);
-TH1F *h_looseMuMinusCurve = new TH1F("looseMuMinusCurve","looseMuMinusCurve", 100, -1, 1);
+  TH1F *h_looseMuMinusCurve = new TH1F("looseMuMinusCurve","looseMuMinusCurve", 100, -1, 1);
   TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve", 100, -1, 1);
   TH1F *h_looseMuPlusCurve = new TH1F("looseMuPlusCurve","looseMuPlusCurve", 100, -1, 1);
   TH1F *h_looseMuUpperPlusCurve = new TH1F("looseMuUpperPlusCurve","looseMuUpperPlusCurve", 100, -1, 1);
   TH1F *h_looseMuLowerMinusCurve = new TH1F("looseMuLowerMinusCurve","looseMuLowerMinusCurve", 100, -1, 1);
   TH1F *h_looseMuLowerPlusCurve = new TH1F("looseMuLowerPlusCurve","looseMuLowerPlusCurve", 100, -1, 1);
-TH1F *h_looseMuMinusDxy = new TH1F("looseMuMinusDxy","looseMuMinusDxy", 100, -150, 150);
+  TH1F *h_looseMuMinusDxy = new TH1F("looseMuMinusDxy","looseMuMinusDxy", 100, -150, 150);
   TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -150, 1500);
   TH1F *h_looseMuPlusDxy = new TH1F("looseMuPlusDxy","looseMuPlusDxy", 100, -300, 300);
   TH1F *h_looseMuUpperPlusDxy = new TH1F("looseMuUpperPlusDxy","looseMuUpperPlusDxy", 100, -300, 300);
   TH1F *h_looseMuLowerMinusDxy = new TH1F("looseMuLowerMinusDxy","looseMuLowerMinusDxy", 100, -300, 300);
   TH1F *h_looseMuLowerPlusDxy = new TH1F("looseMuLowerPlusDxy","looseMuLowerPlusDxy", 100, -300, 300);
-TH1F *h_looseMuMinusDz = new TH1F("looseMuMinusDz","looseMuMinusDz", 100, -500, 500);
+  TH1F *h_looseMuMinusDz = new TH1F("looseMuMinusDz","looseMuMinusDz", 100, -500, 500);
   TH1F *h_looseMuUpperMinusDz = new TH1F("looseMuUpperMinusDz","looseMuUpperMinusDz", 100, -500, 500);
   TH1F *h_looseMuPlusDz = new TH1F("looseMuPlusDz","looseMuPlusDz", 100, -500, 500);
   TH1F *h_looseMuUpperPlusDz = new TH1F("looseMuUpperPlusDz","looseMuUpperPlusDz", 100, -500, 500);
   TH1F *h_looseMuLowerMinusDz = new TH1F("looseMuLowerMinusDz","looseMuLowerMinusDz", 100, -500, 500);
   TH1F *h_looseMuLowerPlusDz = new TH1F("looseMuLowerPlusDz","looseMuLowerPlusDz", 100, -500, 500);
-TH1F *h_looseMuMinusPixelHits = new TH1F("looseMuMinusPixelHits","looseMuMinusPixelHits", 20, 0, 20);
+  TH1F *h_looseMuMinusPixelHits = new TH1F("looseMuMinusPixelHits","looseMuMinusPixelHits", 20, 0, 20);
   TH1F *h_looseMuUpperMinusPixelHits = new TH1F("looseMuUpperMinusPixelHits","looseMuUpperMinusPixelHits", 20, 0, 20);
   TH1F *h_looseMuPlusPixelHits = new TH1F("looseMuPlusPixelHits","looseMuPlusPixelHits", 20, 0, 20);
   TH1F *h_looseMuUpperPlusPixelHits = new TH1F("looseMuUpperPlusPixelHits","looseMuUpperPlusPixelHits", 20, 0, 20);
   TH1F *h_looseMuLowerMinusPixelHits = new TH1F("looseMuLowerMinusPixelHits","looseMuLowerMinusPixelHits", 20, 0, 20);
   TH1F *h_looseMuLowerPlusPixelHits = new TH1F("looseMuLowerPlusPixelHits","looseMuLowerPlusPixelHits", 20, 0, 20);
-TH1F *h_looseMuMinusTrackerHits = new TH1F("looseMuMinusTrackerHits","looseMuMinusTrackerHits", 30, 0, 30);
+  TH1F *h_looseMuMinusTrackerHits = new TH1F("looseMuMinusTrackerHits","looseMuMinusTrackerHits", 30, 0, 30);
   TH1F *h_looseMuUpperMinusTrackerHits = new TH1F("looseMuUpperMinusTrackerHits","looseMuUpperMinusTrackerHits", 30, 0, 30);
   TH1F *h_looseMuPlusTrackerHits = new TH1F("looseMuPlusTrackerHits","looseMuPlusTrackerHits", 30, 0, 30);
   TH1F *h_looseMuUpperPlusTrackerHits = new TH1F("looseMuUpperPlusTrackerHits","looseMuUpperPlusTrackerHits", 30, 0, 30);
   TH1F *h_looseMuLowerMinusTrackerHits = new TH1F("looseMuLowerMinusTrackerHits","looseMuLowerMinusTrackerHits", 30, 0, 30);
   TH1F *h_looseMuLowerPlusTrackerHits = new TH1F("looseMuLowerPlusTrackerHits","looseMuLowerPlusTrackerHits", 30, 0, 30);
-TH1F *h_looseMuMinusMuonStationHits = new TH1F("looseMuMinusMuonStationHits","looseMuMinusMuonStationHits", 10, 0, 10);
+  TH1F *h_looseMuMinusMuonStationHits = new TH1F("looseMuMinusMuonStationHits","looseMuMinusMuonStationHits", 10, 0, 10);
   TH1F *h_looseMuUpperMinusMuonStationHits = new TH1F("looseMuUpperMinusMuonStationHits","looseMuUpperMinusMuonStationHits", 10, 0, 10);
   TH1F *h_looseMuPlusMuonStationHits = new TH1F("looseMuPlusMuonStationHits","looseMuPlusMuonStationHits", 10, 0, 10);
   TH1F *h_looseMuUpperPlusMuonStationHits = new TH1F("looseMuUpperPlusMuonStationHits","looseMuUpperPlusMuonStationHits", 10, 0, 10);
   TH1F *h_looseMuLowerMinusMuonStationHits = new TH1F("looseMuLowerMinusMuonStationHits","looseMuLowerMinusMuonStationHits", 10, 0, 10);
   TH1F *h_looseMuLowerPlusMuonStationHits = new TH1F("looseMuLowerPlusMuonStationHits","looseMuLowerPlusMuonStationHits", 10, 0, 10);
-TH1F *h_looseMuMinusValidHits = new TH1F("looseMuMinusValidHits","looseMuMinusValidHits", 40, 0, 40);
+  TH1F *h_looseMuMinusValidHits = new TH1F("looseMuMinusValidHits","looseMuMinusValidHits", 40, 0, 40);
   TH1F *h_looseMuUpperMinusValidHits = new TH1F("looseMuUpperMinusValidHits","looseMuUpperMinusValidHits", 40, 0, 40);
   TH1F *h_looseMuPlusValidHits = new TH1F("looseMuPlusValidHits","looseMuPlusValidHits", 40, 0, 40);
   TH1F *h_looseMuUpperPlusValidHits = new TH1F("looseMuUpperPlusValidHits","looseMuUpperPlusValidHits", 40, 0, 40);
   TH1F *h_looseMuLowerMinusValidHits = new TH1F("looseMuLowerMinusValidHits","looseMuLowerMinusValidHits", 40, 0, 40);
   TH1F *h_looseMuLowerPlusValidHits = new TH1F("looseMuLowerPlusValidHits","looseMuLowerPlusValidHits", 40, 0, 40);
-TH1F *h_looseMuMinusMatchedMuonStations = new TH1F("looseMuMinusMatchedMuonStations","looseMuMinusMatchedMuonStations", 10, 0, 10);
+  TH1F *h_looseMuMinusMatchedMuonStations = new TH1F("looseMuMinusMatchedMuonStations","looseMuMinusMatchedMuonStations", 10, 0, 10);
   TH1F *h_looseMuUpperMinusMatchedMuonStations = new TH1F("looseMuUpperMinusMatchedMuonStations","looseMuUpperMinusMatchedMuonStations", 10, 0, 10);
   TH1F *h_looseMuPlusMatchedMuonStations = new TH1F("looseMuPlusMatchedMuonStations","looseMuPlusMatchedMuonStations", 10, 0, 10);
   TH1F *h_looseMuUpperPlusMatchedMuonStations = new TH1F("looseMuUpperPlusMatchedMuonStations","looseMuUpperPlusMatchedMuonStations", 10, 0, 10);
   TH1F *h_looseMuLowerMinusMatchedMuonStations = new TH1F("looseMuLowerMinusMatchedMuonStations","looseMuLowerMinusMatchedMuonStations", 10, 0, 10);
   TH1F *h_looseMuLowerPlusMatchedMuonStations = new TH1F("looseMuLowerPlusMatchedMuonStations","looseMuLowerPlusMatchedMuonStations", 10, 0, 10);
-TH1F *h_looseMuMinusPtError = new TH1F("looseMuMinusPtError","looseMuMinusPtError", 100, 0, 600);
+  TH1F *h_looseMuMinusPtError = new TH1F("looseMuMinusPtError","looseMuMinusPtError", 100, 0, 600);
   TH1F *h_looseMuUpperMinusPtError = new TH1F("looseMuUpperMinusPtError","looseMuUpperMinusPtError", 100, 0, 600);
   TH1F *h_looseMuPlusPtError = new TH1F("looseMuPlusPtError","looseMuPlusPtError", 100, 0, 600);
   TH1F *h_looseMuUpperPlusPtError = new TH1F("looseMuUpperPlusPtError","looseMuUpperPlusPtError", 100, 0, 600);
   TH1F *h_looseMuLowerMinusPtError = new TH1F("looseMuLowerMinusPtError","looseMuLowerMinusPtError", 100, 0, 600);
   TH1F *h_looseMuLowerPlusPtError = new TH1F("looseMuLowerPlusPtError","looseMuLowerPlusPtError", 100, 0, 600);
-TH1F *h_looseMuMinusDxyError = new TH1F("looseMuMinusDxyError","looseMuMinusDxyError", 100, 0, 200);
+  TH1F *h_looseMuMinusDxyError = new TH1F("looseMuMinusDxyError","looseMuMinusDxyError", 100, 0, 200);
   TH1F *h_looseMuUpperMinusDxyError = new TH1F("looseMuUpperMinusDxyError","looseMuUpperMinusDxyError", 100, 0, 200);
   TH1F *h_looseMuPlusDxyError = new TH1F("looseMuPlusDxyError","looseMuPlusDxyError", 100, 0, 200);
   TH1F *h_looseMuUpperPlusDxyError = new TH1F("looseMuUpperPlusDxyError","looseMuUpperPlusDxyError", 100, 0, 200);
   TH1F *h_looseMuLowerMinusDxyError = new TH1F("looseMuLowerMinusDxyError","looseMuLowerMinusDxyError", 100, 0, 200);
   TH1F *h_looseMuLowerPlusDxyError = new TH1F("looseMuLowerPlusDxyError","looseMuLowerPlusDxyError", 100, 0, 200);
-TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzError", 100, 0, 200);
+  TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzError", 100, 0, 200);
   TH1F *h_looseMuUpperMinusDzError = new TH1F("looseMuUpperMinusDzError","looseMuUpperMinusDzError", 100, 0, 200);
   TH1F *h_looseMuPlusDzError = new TH1F("looseMuPlusDzError","looseMuPlusDzError", 100, 0, 200);
   TH1F *h_looseMuUpperPlusDzError = new TH1F("looseMuUpperPlusDzError","looseMuUpperPlusDzError", 100, 0, 200);
@@ -224,13 +275,13 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
   TH1F *h_looseMuUpperPlusPt = new TH1F("looseMuUpperPlusPt","looseMuUpperPlusPt", 400, 0, 2000);
   TH1F *h_looseMuLowerMinusPt = new TH1F("looseMuLowerMinusPt","looseMuLowerMinusPt", 400, 0, 2000);
   TH1F *h_looseMuLowerPlusPt = new TH1F("looseMuLowerPlusPt","looseMuLowerPlusPt", 400, 0, 2000);
- TH1F *h_looseMuMinusEta = new TH1F("looseMuMinusEta","looseMuMinusEta", 50, -5, 5);
+  TH1F *h_looseMuMinusEta = new TH1F("looseMuMinusEta","looseMuMinusEta", 50, -5, 5);
   TH1F *h_looseMuUpperMinusEta = new TH1F("looseMuUpperMinusEta","looseMuUpperMinusEta", 50, -5, 5);
   TH1F *h_looseMuPlusEta = new TH1F("looseMuPlusEta","looseMuPlusEta", 50, -5, 5);
   TH1F *h_looseMuUpperPlusEta = new TH1F("looseMuUpperPlusEta","looseMuUpperPlusEta", 50, -5, 5);
   TH1F *h_looseMuLowerMinusEta = new TH1F("looseMuLowerMinusEta","looseMuLowerMinusEta", 50, -5, 5);
   TH1F *h_looseMuLowerPlusEta = new TH1F("looseMuLowerPlusEta","looseMuLowerPlusEta", 50, -5, 5);
- TH1F *h_looseMuMinusPhi = new TH1F("looseMuMinusPhi","looseMuMinusPhi", 90, -4, 4);
+  TH1F *h_looseMuMinusPhi = new TH1F("looseMuMinusPhi","looseMuMinusPhi", 90, -4, 4);
   TH1F *h_looseMuUpperMinusPhi = new TH1F("looseMuUpperMinusPhi","looseMuUpperMinusPhi", 90, -4, 4);
   TH1F *h_looseMuPlusPhi = new TH1F("looseMuPlusPhi","looseMuPlusPhi", 90, -4, 4);
   TH1F *h_looseMuUpperPlusPhi = new TH1F("looseMuUpperPlusPhi","looseMuUpperPlusPhi", 90, -4, 4);
@@ -260,7 +311,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
   TH1F *h_looseMuUpperPlusTrackLayersWithMeasurement = new TH1F("looseMuUpperPlusTrackLayersWithMeasurement","looseMuUpperPlusTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_looseMuLowerMinusTrackLayersWithMeasurement = new TH1F("looseMuLowerMinusTrackLayersWithMeasurement","looseMuLowerMinusTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_looseMuLowerPlusTrackLayersWithMeasurement = new TH1F("looseMuLowerPlusTrackLayersWithMeasurement","looseMuLowerPlusTrackLayersWithMeasurement", 100, 0, 50);
- TH1F *h_looseMuMinusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuMinusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -269,7 +320,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
     h_looseMuMinusCurveMinusBias[i] = new TH1F(TString("looseMuMinusCurveMinusBias" + name.str()),TString("looseMuMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_looseMuUpperMinusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuUpperMinusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuUpperMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -278,7 +329,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
     h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),TString("looseMuUpperMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_looseMuLowerMinusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuLowerMinusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuLowerMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -287,7 +338,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
     h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),TString("looseMuLowerMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_looseMuPlusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuPlusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -296,7 +347,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
     h_looseMuPlusCurveMinusBias[i] = new TH1F(TString("looseMuPlusCurveMinusBias" + name.str()),TString("looseMuPlusCurveMinusBias" + name.str()), 50, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_looseMuUpperPlusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuUpperPlusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuUpperPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -305,7 +356,7 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
     h_looseMuUpperPlusCurveMinusBias[i] = new TH1F(TString("looseMuUpperPlusCurveMinusBias" + name.str()),TString("looseMuUpperPlusCurveMinusBias" + name.str()), 50, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_looseMuLowerPlusCurvePlusBias[nBiasBins];
+  TH1F *h_looseMuLowerPlusCurvePlusBias[nBiasBins];
   TH1F *h_looseMuLowerPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -328,73 +379,73 @@ TH1F *h_looseMuMinusDzError = new TH1F("looseMuMinusDzError","looseMuMinusDzErro
   TH1F *h_tightMuUpperPlusNdof = new TH1F("UpperAntiTightMuonNdof","UpperAntiTightMuonNdof", 100, 0, 50);
   TH1F *h_tightMuLowerMinusNdof = new TH1F("LowerTightMuonNdof","LowerTightMuonNdof", 100, 0, 50);
   TH1F *h_tightMuLowerPlusNdof = new TH1F("LowerAntiTightMuonNdof","LowerAntiTightMuonNdof", 100, 0, 50);
-TH1F *h_tightMuMinusCharge = new TH1F("TightMuonCharge","TightMuonCharge", 10, -2, 2);
+  TH1F *h_tightMuMinusCharge = new TH1F("TightMuonCharge","TightMuonCharge", 10, -2, 2);
   TH1F *h_tightMuUpperMinusCharge = new TH1F("UpperTightMuonCharge","UpperTightMuonCharge", 10, -2, 2);
   TH1F *h_tightMuPlusCharge = new TH1F("AntiTightMuonCharge","AntiTightMuonCharge", 10, -2, 2);
   TH1F *h_tightMuUpperPlusCharge = new TH1F("UpperAntiTightMuonCharge","UpperAntiTightMuonCharge", 10, -2, 2);
   TH1F *h_tightMuLowerMinusCharge = new TH1F("LowerTightMuonCharge","LowerTightMuonCharge", 10, -2, 2);
   TH1F *h_tightMuLowerPlusCharge = new TH1F("LowerAntiTightMuonCharge","LowerAntiTightMuonCharge", 10, -2, 2);
-TH1F *h_tightMuMinusCurve = new TH1F("TightMuonCurve","TightMuonCurve", 100, -1, 1);
+  TH1F *h_tightMuMinusCurve = new TH1F("TightMuonCurve","TightMuonCurve", 100, -1, 1);
   TH1F *h_tightMuUpperMinusCurve = new TH1F("UpperTightMuonCurve","UpperTightMuonCurve", 100, -1, 1);
   TH1F *h_tightMuPlusCurve = new TH1F("AntiTightMuonCurve","AntiTightMuonCurve", 100, -1, 1);
   TH1F *h_tightMuUpperPlusCurve = new TH1F("UpperAntiTightMuonCurve","UpperAntiTightMuonCurve", 100, -1, 1);
   TH1F *h_tightMuLowerMinusCurve = new TH1F("LowerTightMuonCurve","LowerTightMuonCurve", 100, -1, 1);
   TH1F *h_tightMuLowerPlusCurve = new TH1F("LowerAntiTightMuonCurve","LowerAntiTightMuonCurve", 100, -1, 1);
-TH1F *h_tightMuMinusDxy = new TH1F("TightMuonDxy","TightMuonDxy", 100, -300, 300);
+  TH1F *h_tightMuMinusDxy = new TH1F("TightMuonDxy","TightMuonDxy", 100, -300, 300);
   TH1F *h_tightMuUpperMinusDxy = new TH1F("UpperTightMuonDxy","UpperTightMuonDxy", 100, -300, 300);
   TH1F *h_tightMuPlusDxy = new TH1F("AntiTightMuonDxy","AntiTightMuonDxy", 100, -300, 300);
   TH1F *h_tightMuUpperPlusDxy = new TH1F("UpperAntiTightMuonDxy","UpperAntiTightMuonDxy", 100, -300, 300);
   TH1F *h_tightMuLowerMinusDxy = new TH1F("LowerTightMuonDxy","LowerTightMuonDxy", 100, -300, 300);
   TH1F *h_tightMuLowerPlusDxy = new TH1F("LowerAntiTightMuonDxy","LowerAntiTightMuonDxy", 100, -300, 300);
-TH1F *h_tightMuMinusDz = new TH1F("TightMuonDz","TightMuonDz", 100, -500, 500);
+  TH1F *h_tightMuMinusDz = new TH1F("TightMuonDz","TightMuonDz", 100, -500, 500);
   TH1F *h_tightMuUpperMinusDz = new TH1F("UpperTightMuonDz","UpperTightMuonDz", 100, -500, 500);
   TH1F *h_tightMuPlusDz = new TH1F("AntiTightMuonDz","AntiTightMuonDz", 100, -500, 500);
   TH1F *h_tightMuUpperPlusDz = new TH1F("UpperAntiTightMuonDz","UpperAntiTightMuonDz", 100, -500, 500);
   TH1F *h_tightMuLowerMinusDz = new TH1F("LowerTightMuonDz","LowerTightMuonDz", 100, -500, 500);
   TH1F *h_tightMuLowerPlusDz = new TH1F("LowerAntiTightMuonDz","LowerAntiTightMuonDz", 100, -500, 500);
-TH1F *h_tightMuMinusPixelHits = new TH1F("TightMuonPixelHits","TightMuonPixelHits", 20, 0, 20);
+  TH1F *h_tightMuMinusPixelHits = new TH1F("TightMuonPixelHits","TightMuonPixelHits", 20, 0, 20);
   TH1F *h_tightMuUpperMinusPixelHits = new TH1F("UpperTightMuonPixelHits","UpperTightMuonPixelHits", 20, 0, 20);
   TH1F *h_tightMuPlusPixelHits = new TH1F("AntiTightMuonPixelHits","AntiTightMuonPixelHits", 20, 0, 20);
   TH1F *h_tightMuUpperPlusPixelHits = new TH1F("UpperAntiTightMuonPixelHits","UpperAntiTightMuonPixelHits", 20, 0, 20);
   TH1F *h_tightMuLowerMinusPixelHits = new TH1F("LowerTightMuonPixelHits","LowerTightMuonPixelHits", 20, 0, 20);
   TH1F *h_tightMuLowerPlusPixelHits = new TH1F("LowerAntiTightMuonPixelHits","LowerAntiTightMuonPixelHits", 20, 0, 20);
-TH1F *h_tightMuMinusTrackerHits = new TH1F("TightMuonTrackerHits","TightMuonTrackerHits", 30, 0, 30);
+  TH1F *h_tightMuMinusTrackerHits = new TH1F("TightMuonTrackerHits","TightMuonTrackerHits", 30, 0, 30);
   TH1F *h_tightMuUpperMinusTrackerHits = new TH1F("UpperTightMuonTrackerHits","UpperTightMuonTrackerHits", 30, 0, 30);
   TH1F *h_tightMuPlusTrackerHits = new TH1F("AntiTightMuonTrackerHits","AntiTightMuonTrackerHits", 30, 0, 30);
   TH1F *h_tightMuUpperPlusTrackerHits = new TH1F("UpperAntiTightMuonTrackerHits","UpperAntiTightMuonTrackerHits", 30, 0, 30);
   TH1F *h_tightMuLowerMinusTrackerHits = new TH1F("LowerTightMuonTrackerHits","LowerTightMuonTrackerHits", 30, 0, 30);
   TH1F *h_tightMuLowerPlusTrackerHits = new TH1F("LowerAntiTightMuonTrackerHits","LowerAntiTightMuonTrackerHits", 30, 0, 30);
-TH1F *h_tightMuMinusMuonStationHits = new TH1F("TightMuonTightMuonStationHits","TightMuonTightMuonStationHits", 10, 0, 10);
+  TH1F *h_tightMuMinusMuonStationHits = new TH1F("TightMuonTightMuonStationHits","TightMuonTightMuonStationHits", 10, 0, 10);
   TH1F *h_tightMuUpperMinusMuonStationHits = new TH1F("UpperTightMuonTightMuonStationHits","UpperTightMuonTightMuonStationHits", 10, 0, 10);
   TH1F *h_tightMuPlusMuonStationHits = new TH1F("AntiTightMuonTightMuonStationHits","AntiTightMuonTightMuonStationHits", 10, 0, 10);
   TH1F *h_tightMuUpperPlusMuonStationHits = new TH1F("UpperAntiTightMuonTightMuonStationHits","UpperAntiTightMuonTightMuonStationHits", 10, 0, 10);
   TH1F *h_tightMuLowerMinusMuonStationHits = new TH1F("LowerTightMuonTightMuonStationHits","LowerTightMuonTightMuonStationHits", 10, 0, 10);
   TH1F *h_tightMuLowerPlusMuonStationHits = new TH1F("LowerAntiTightMuonTightMuonStationHits","LowerAntiTightMuonTightMuonStationHits", 10, 0, 10);
-TH1F *h_tightMuMinusValidHits = new TH1F("TightMuonValidHits","TightMuonValidHits", 40, 0, 40);
+  TH1F *h_tightMuMinusValidHits = new TH1F("TightMuonValidHits","TightMuonValidHits", 40, 0, 40);
   TH1F *h_tightMuUpperMinusValidHits = new TH1F("UpperTightMuonValidHits","UpperTightMuonValidHits", 40, 0, 40);
   TH1F *h_tightMuPlusValidHits = new TH1F("AntiTightMuonValidHits","AntiTightMuonValidHits", 40, 0, 40);
   TH1F *h_tightMuUpperPlusValidHits = new TH1F("UpperAntiTightMuonValidHits","UpperAntiTightMuonValidHits", 40, 0, 40);
   TH1F *h_tightMuLowerMinusValidHits = new TH1F("LowerTightMuonValidHits","LowerTightMuonValidHits", 40, 0, 40);
   TH1F *h_tightMuLowerPlusValidHits = new TH1F("LowerAntiTightMuonValidHits","LowerAntiTightMuonValidHits", 40, 0, 40);
-TH1F *h_tightMuMinusMatchedMuonStations = new TH1F("TightMuonMatchedTightMuonStations","TightMuonMatchedTightMuonStations", 10, 0, 10);
+  TH1F *h_tightMuMinusMatchedMuonStations = new TH1F("TightMuonMatchedTightMuonStations","TightMuonMatchedTightMuonStations", 10, 0, 10);
   TH1F *h_tightMuUpperMinusMatchedMuonStations = new TH1F("UpperTightMuonMatchedTightMuonStations","UpperTightMuonMatchedTightMuonStations", 10, 0, 10);
   TH1F *h_tightMuPlusMatchedMuonStations = new TH1F("AntiTightMuonMatchedTightMuonStations","AntiTightMuonMatchedTightMuonStations", 10, 0, 10);
   TH1F *h_tightMuUpperPlusMatchedMuonStations = new TH1F("UpperAntiTightMuonMatchedTightMuonStations","UpperAntiTightMuonMatchedTightMuonStations", 10, 0, 10);
   TH1F *h_tightMuLowerMinusMatchedMuonStations = new TH1F("LowerTightMuonMatchedTightMuonStations","LowerTightMuonMatchedTightMuonStations", 10, 0, 10);
   TH1F *h_tightMuLowerPlusMatchedMuonStations = new TH1F("LowerAntiTightMuonMatchedTightMuonStations","LowerAntiTightMuonMatchedTightMuonStations", 10, 0, 10);
-TH1F *h_tightMuMinusPtError = new TH1F("TightMuonPtError","TightMuonPtError", 100, 0, 600);
+  TH1F *h_tightMuMinusPtError = new TH1F("TightMuonPtError","TightMuonPtError", 100, 0, 600);
   TH1F *h_tightMuUpperMinusPtError = new TH1F("UpperTightMuonPtError","UpperTightMuonPtError", 100, 0, 600);
   TH1F *h_tightMuPlusPtError = new TH1F("AntiTightMuonPtError","AntiTightMuonPtError", 100, 0, 600);
   TH1F *h_tightMuUpperPlusPtError = new TH1F("UpperAntiTightMuonPtError","UpperAntiTightMuonPtError", 100, 0, 600);
   TH1F *h_tightMuLowerMinusPtError = new TH1F("LowerTightMuonPtError","LowerTightMuonPtError", 100, 0, 600);
   TH1F *h_tightMuLowerPlusPtError = new TH1F("LowerAntiTightMuonPtError","LowerAntiTightMuonPtError", 100, 0, 600);
-TH1F *h_tightMuMinusDxyError = new TH1F("TightMuonDxyError","TightMuonDxyError", 100, 0, 200);
+  TH1F *h_tightMuMinusDxyError = new TH1F("TightMuonDxyError","TightMuonDxyError", 100, 0, 200);
   TH1F *h_tightMuUpperMinusDxyError = new TH1F("UpperTightMuonDxyError","UpperTightMuonDxyError", 100, 0, 200);
   TH1F *h_tightMuPlusDxyError = new TH1F("AntiTightMuonDxyError","AntiTightMuonDxyError", 100, 0, 200);
   TH1F *h_tightMuUpperPlusDxyError = new TH1F("UpperAntiTightMuonDxyError","UpperAntiTightMuonDxyError", 100, 0, 200);
   TH1F *h_tightMuLowerMinusDxyError = new TH1F("LowerTightMuonDxyError","LowerTightMuonDxyError", 100, 0, 200);
   TH1F *h_tightMuLowerPlusDxyError = new TH1F("LowerAntiTightMuonDxyError","LowerAntiTightMuonDxyError", 100, 0, 200);
-TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 100, 0, 200);
+  TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 100, 0, 200);
   TH1F *h_tightMuUpperMinusDzError = new TH1F("UpperTightMuonDzError","UpperTightMuonDzError", 100, 0, 200);
   TH1F *h_tightMuPlusDzError = new TH1F("AntiTightMuonDzError","AntiTightMuonDzError", 100, 0, 200);
   TH1F *h_tightMuUpperPlusDzError = new TH1F("UpperAntiTightMuonDzError","UpperAntiTightMuonDzError", 100, 0, 200);
@@ -406,13 +457,13 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
   TH1F *h_tightMuUpperPlusPt = new TH1F("UpperAntiTightMuonPt","UpperAntiTightMuonPt", 400, 0, 2000);
   TH1F *h_tightMuLowerMinusPt = new TH1F("LowerTightMuonPt","LowerTightMuonPt", 400, 0, 2000);
   TH1F *h_tightMuLowerPlusPt = new TH1F("LowerAntiTightMuonPt","LowerAntiTightMuonPt", 400, 0, 2000);
- TH1F *h_tightMuMinusEta = new TH1F("TightMuonEta","TightMuonEta", 50, -5, 5);
+  TH1F *h_tightMuMinusEta = new TH1F("TightMuonEta","TightMuonEta", 50, -5, 5);
   TH1F *h_tightMuUpperMinusEta = new TH1F("UpperTightMuonEta","UpperTightMuonEta", 50, -5, 5);
   TH1F *h_tightMuPlusEta = new TH1F("AntiTightMuonEta","AntiTightMuonEta", 50, -5, 5);
   TH1F *h_tightMuUpperPlusEta = new TH1F("UpperAntiTightMuonEta","UpperAntiTightMuonEta", 50, -5, 5);
   TH1F *h_tightMuLowerMinusEta = new TH1F("LowerTightMuonEta","LowerTightMuonEta", 50, -5, 5);
   TH1F *h_tightMuLowerPlusEta = new TH1F("LowerAntiTightMuonEta","LowerAntiTightMuonEta", 50, -5, 5);
- TH1F *h_tightMuMinusPhi = new TH1F("TightMuonPhi","TightMuonPhi", 90, -4, 4);
+  TH1F *h_tightMuMinusPhi = new TH1F("TightMuonPhi","TightMuonPhi", 90, -4, 4);
   TH1F *h_tightMuUpperMinusPhi = new TH1F("UpperTightMuonPhi","UpperTightMuonPhi", 90, -4, 4);
   TH1F *h_tightMuPlusPhi = new TH1F("AntiTightMuonPhi","AntiTightMuonPhi", 90, -4, 4);
   TH1F *h_tightMuUpperPlusPhi = new TH1F("UpperAntiTightMuonPhi","UpperAntiTightMuonPhi", 90, -4, 4);
@@ -442,7 +493,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
   TH1F *h_tightMuUpperPlusTrackLayersWithMeasurement = new TH1F("UpperAntiTightMuonTrackLayersWithMeasurement","UpperAntiTightMuonTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_tightMuLowerMinusTrackLayersWithMeasurement = new TH1F("LowerTightMuonTrackLayersWithMeasurement","LowerTightMuonTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_tightMuLowerPlusTrackLayersWithMeasurement = new TH1F("LowerAntiTightMuonTrackLayersWithMeasurement","LowerAntiTightMuonTrackLayersWithMeasurement", 100, 0, 50);
- TH1F *h_tightMuMinusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuMinusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -451,7 +502,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
     h_tightMuMinusCurveMinusBias[i] = new TH1F(TString("tightMuMinusCurveMinusBias" + name.str()),TString("tightMuMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_tightMuUpperMinusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuUpperMinusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuUpperMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -460,7 +511,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
     h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),TString("tightMuUpperMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_tightMuLowerMinusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuLowerMinusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuLowerMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -469,7 +520,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
     h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),TString("tightMuLowerMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_tightMuPlusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuPlusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -478,7 +529,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
     h_tightMuPlusCurveMinusBias[i] = new TH1F(TString("tightMuPlusCurveMinusBias" + name.str()),TString("tightMuPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_tightMuUpperPlusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuUpperPlusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuUpperPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -487,7 +538,7 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
     h_tightMuUpperPlusCurveMinusBias[i] = new TH1F(TString("tightMuUpperPlusCurveMinusBias" + name.str()),TString("tightMuUpperPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_tightMuLowerPlusCurvePlusBias[nBiasBins];
+  TH1F *h_tightMuLowerPlusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuLowerPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -509,73 +560,73 @@ TH1F *h_tightMuMinusDzError = new TH1F("TightMuonDzError","TightMuonDzError", 10
   TH1F *h_muUpperPlusNdof = new TH1F("UpperAntiMuonNdof","UpperAntiMuonNdof", 100, 0, 50);
   TH1F *h_muLowerMinusNdof = new TH1F("LowerMuonNdof","LowerMuonNdof", 100, 0, 50);
   TH1F *h_muLowerPlusNdof = new TH1F("LowerAntiMuonNdof","LowerAntiMuonNdof", 100, 0, 50);
-TH1F *h_muMinusCharge = new TH1F("MuonCharge","MuonCharge", 10, -2, 2);
+  TH1F *h_muMinusCharge = new TH1F("MuonCharge","MuonCharge", 10, -2, 2);
   TH1F *h_muUpperMinusCharge = new TH1F("UpperMuonCharge","UpperMuonCharge", 10, -2, 2);
   TH1F *h_muPlusCharge = new TH1F("AntiMuonCharge","AntiMuonCharge", 10, -2, 2);
   TH1F *h_muUpperPlusCharge = new TH1F("UpperAntiMuonCharge","UpperAntiMuonCharge", 10, -2, 2);
   TH1F *h_muLowerMinusCharge = new TH1F("LowerMuonCharge","LowerMuonCharge", 10, -2, 2);
   TH1F *h_muLowerPlusCharge = new TH1F("LowerAntiMuonCharge","LowerAntiMuonCharge", 10, -2, 2);
-TH1F *h_muMinusCurve = new TH1F("MuonCurve","MuonCurve", 100, -1, 1);
+  TH1F *h_muMinusCurve = new TH1F("MuonCurve","MuonCurve", 100, -1, 1);
   TH1F *h_muUpperMinusCurve = new TH1F("UpperMuonCurve","UpperMuonCurve", 100, -1, 1);
   TH1F *h_muPlusCurve = new TH1F("AntiMuonCurve","AntiMuonCurve", 100, -1, 1);
   TH1F *h_muUpperPlusCurve = new TH1F("UpperAntiMuonCurve","UpperAntiMuonCurve", 100, -1, 1);
   TH1F *h_muLowerMinusCurve = new TH1F("LowerMuonCurve","LowerMuonCurve", 100, -1, 1);
   TH1F *h_muLowerPlusCurve = new TH1F("LowerAntiMuonCurve","LowerAntiMuonCurve", 100, -1, 1);
-TH1F *h_muMinusDxy = new TH1F("MuonDxy","MuonDxy", 100, -300, 300);
+  TH1F *h_muMinusDxy = new TH1F("MuonDxy","MuonDxy", 100, -300, 300);
   TH1F *h_muUpperMinusDxy = new TH1F("UpperMuonDxy","UpperMuonDxy", 100, -300, 300);
   TH1F *h_muPlusDxy = new TH1F("AntiMuonDxy","AntiMuonDxy", 100, -300, 300);
   TH1F *h_muUpperPlusDxy = new TH1F("UpperAntiMuonDxy","UpperAntiMuonDxy", 100, -300, 300);
   TH1F *h_muLowerMinusDxy = new TH1F("LowerMuonDxy","LowerMuonDxy", 100, -300, 300);
   TH1F *h_muLowerPlusDxy = new TH1F("LowerAntiMuonDxy","LowerAntiMuonDxy", 100, -300, 300);
-TH1F *h_muMinusDz = new TH1F("MuonDz","MuonDz", 100, -500, 500);
+  TH1F *h_muMinusDz = new TH1F("MuonDz","MuonDz", 100, -500, 500);
   TH1F *h_muUpperMinusDz = new TH1F("UpperMuonDz","UpperMuonDz", 100, -500, 500);
   TH1F *h_muPlusDz = new TH1F("AntiMuonDz","AntiMuonDz", 100, -500, 500);
   TH1F *h_muUpperPlusDz = new TH1F("UpperAntiMuonDz","UpperAntiMuonDz", 100, -500, 500);
   TH1F *h_muLowerMinusDz = new TH1F("LowerMuonDz","LowerMuonDz", 100, -500, 500);
   TH1F *h_muLowerPlusDz = new TH1F("LowerAntiMuonDz","LowerAntiMuonDz", 100, -500, 500);
-TH1F *h_muMinusPixelHits = new TH1F("MuonPixelHits","MuonPixelHits", 20, 0, 20);
+  TH1F *h_muMinusPixelHits = new TH1F("MuonPixelHits","MuonPixelHits", 20, 0, 20);
   TH1F *h_muUpperMinusPixelHits = new TH1F("UpperMuonPixelHits","UpperMuonPixelHits", 20, 0, 20);
   TH1F *h_muPlusPixelHits = new TH1F("AntiMuonPixelHits","AntiMuonPixelHits", 20, 0, 20);
   TH1F *h_muUpperPlusPixelHits = new TH1F("UpperAntiMuonPixelHits","UpperAntiMuonPixelHits", 20, 0, 20);
   TH1F *h_muLowerMinusPixelHits = new TH1F("LowerMuonPixelHits","LowerMuonPixelHits", 20, 0, 20);
   TH1F *h_muLowerPlusPixelHits = new TH1F("LowerAntiMuonPixelHits","LowerAntiMuonPixelHits", 20, 0, 20);
-TH1F *h_muMinusTrackerHits = new TH1F("MuonTrackerHits","MuonTrackerHits", 30, 0, 30);
+  TH1F *h_muMinusTrackerHits = new TH1F("MuonTrackerHits","MuonTrackerHits", 30, 0, 30);
   TH1F *h_muUpperMinusTrackerHits = new TH1F("UpperMuonTrackerHits","UpperMuonTrackerHits", 30, 0, 30);
   TH1F *h_muPlusTrackerHits = new TH1F("AntiMuonTrackerHits","AntiMuonTrackerHits", 30, 0, 30);
   TH1F *h_muUpperPlusTrackerHits = new TH1F("UpperAntiMuonTrackerHits","UpperAntiMuonTrackerHits", 30, 0, 30);
   TH1F *h_muLowerMinusTrackerHits = new TH1F("LowerMuonTrackerHits","LowerMuonTrackerHits", 30, 0, 30);
   TH1F *h_muLowerPlusTrackerHits = new TH1F("LowerAntiMuonTrackerHits","LowerAntiMuonTrackerHits", 30, 0, 30);
-TH1F *h_muMinusMuonStationHits = new TH1F("MuonMuonStationHits","MuonMuonStationHits", 10, 0, 10);
+  TH1F *h_muMinusMuonStationHits = new TH1F("MuonMuonStationHits","MuonMuonStationHits", 10, 0, 10);
   TH1F *h_muUpperMinusMuonStationHits = new TH1F("UpperMuonMuonStationHits","UpperMuonMuonStationHits", 10, 0, 10);
   TH1F *h_muPlusMuonStationHits = new TH1F("AntiMuonMuonStationHits","AntiMuonMuonStationHits", 10, 0, 10);
   TH1F *h_muUpperPlusMuonStationHits = new TH1F("UpperAntiMuonMuonStationHits","UpperAntiMuonMuonStationHits", 10, 0, 10);
   TH1F *h_muLowerMinusMuonStationHits = new TH1F("LowerMuonMuonStationHits","LowerMuonMuonStationHits", 10, 0, 10);
   TH1F *h_muLowerPlusMuonStationHits = new TH1F("LowerAntiMuonMuonStationHits","LowerAntiMuonMuonStationHits", 10, 0, 10);
-TH1F *h_muMinusValidHits = new TH1F("MuonValidHits","MuonValidHits", 40, 0, 40);
+  TH1F *h_muMinusValidHits = new TH1F("MuonValidHits","MuonValidHits", 40, 0, 40);
   TH1F *h_muUpperMinusValidHits = new TH1F("UpperMuonValidHits","UpperMuonValidHits", 40, 0, 40);
   TH1F *h_muPlusValidHits = new TH1F("AntiMuonValidHits","AntiMuonValidHits", 40, 0, 40);
   TH1F *h_muUpperPlusValidHits = new TH1F("UpperAntiMuonValidHits","UpperAntiMuonValidHits", 40, 0, 40);
   TH1F *h_muLowerMinusValidHits = new TH1F("LowerMuonValidHits","LowerMuonValidHits", 40, 0, 40);
   TH1F *h_muLowerPlusValidHits = new TH1F("LowerAntiMuonValidHits","LowerAntiMuonValidHits", 40, 0, 40);
-TH1F *h_muMinusMatchedMuonStations = new TH1F("MuonMatchedMuonStations","MuonMatchedMuonStations", 10, 0, 10);
+  TH1F *h_muMinusMatchedMuonStations = new TH1F("MuonMatchedMuonStations","MuonMatchedMuonStations", 10, 0, 10);
   TH1F *h_muUpperMinusMatchedMuonStations = new TH1F("UpperMuonMatchedMuonStations","UpperMuonMatchedMuonStations", 10, 0, 10);
   TH1F *h_muPlusMatchedMuonStations = new TH1F("AntiMuonMatchedMuonStations","AntiMuonMatchedMuonStations", 10, 0, 10);
   TH1F *h_muUpperPlusMatchedMuonStations = new TH1F("UpperAntiMuonMatchedMuonStations","UpperAntiMuonMatchedMuonStations", 10, 0, 10);
   TH1F *h_muLowerMinusMatchedMuonStations = new TH1F("LowerMuonMatchedMuonStations","LowerMuonMatchedMuonStations", 10, 0, 10);
   TH1F *h_muLowerPlusMatchedMuonStations = new TH1F("LowerAntiMuonMatchedMuonStations","LowerAntiMuonMatchedMuonStations", 10, 0, 10);
-TH1F *h_muMinusPtError = new TH1F("MuonPtError","MuonPtError", 100, 0, 600);
+  TH1F *h_muMinusPtError = new TH1F("MuonPtError","MuonPtError", 100, 0, 600);
   TH1F *h_muUpperMinusPtError = new TH1F("UpperMuonPtError","UpperMuonPtError", 100, 0, 600);
   TH1F *h_muPlusPtError = new TH1F("AntiMuonPtError","AntiMuonPtError", 100, 0, 600);
   TH1F *h_muUpperPlusPtError = new TH1F("UpperAntiMuonPtError","UpperAntiMuonPtError", 100, 0, 600);
   TH1F *h_muLowerMinusPtError = new TH1F("LowerMuonPtError","LowerMuonPtError", 100, 0, 600);
   TH1F *h_muLowerPlusPtError = new TH1F("LowerAntiMuonPtError","LowerAntiMuonPtError", 100, 0, 600);
-TH1F *h_muMinusDxyError = new TH1F("MuonDxyError","MuonDxyError", 100, 0, 200);
+  TH1F *h_muMinusDxyError = new TH1F("MuonDxyError","MuonDxyError", 100, 0, 200);
   TH1F *h_muUpperMinusDxyError = new TH1F("UpperMuonDxyError","UpperMuonDxyError", 100, 0, 200);
   TH1F *h_muPlusDxyError = new TH1F("AntiMuonDxyError","AntiMuonDxyError", 100, 0, 200);
   TH1F *h_muUpperPlusDxyError = new TH1F("UpperAntiMuonDxyError","UpperAntiMuonDxyError", 100, 0, 200);
   TH1F *h_muLowerMinusDxyError = new TH1F("LowerMuonDxyError","LowerMuonDxyError", 100, 0, 200);
   TH1F *h_muLowerPlusDxyError = new TH1F("LowerAntiMuonDxyError","LowerAntiMuonDxyError", 100, 0, 200);
-TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
+  TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TH1F *h_muUpperMinusDzError = new TH1F("UpperMuonDzError","UpperMuonDzError", 100, 0, 200);
   TH1F *h_muPlusDzError = new TH1F("AntiMuonDzError","AntiMuonDzError", 100, 0, 200);
   TH1F *h_muUpperPlusDzError = new TH1F("UpperAntiMuonDzError","UpperAntiMuonDzError", 100, 0, 200);
@@ -587,13 +638,13 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TH1F *h_muUpperPlusPt = new TH1F("UpperAntiMuonPt","UpperAntiMuonPt", 400, 0, 2000);
   TH1F *h_muLowerMinusPt = new TH1F("LowerMuonPt","LowerMuonPt", 400, 0, 2000);
   TH1F *h_muLowerPlusPt = new TH1F("LowerAntiMuonPt","LowerAntiMuonPt", 400, 0, 2000);
- TH1F *h_muMinusEta = new TH1F("MuonEta","MuonEta", 50, -5, 5);
+  TH1F *h_muMinusEta = new TH1F("MuonEta","MuonEta", 50, -5, 5);
   TH1F *h_muUpperMinusEta = new TH1F("UpperMuonEta","UpperMuonEta", 50, -5, 5);
   TH1F *h_muPlusEta = new TH1F("AntiMuonEta","AntiMuonEta", 50, -5, 5);
   TH1F *h_muUpperPlusEta = new TH1F("UpperAntiMuonEta","UpperAntiMuonEta", 50, -5, 5);
   TH1F *h_muLowerMinusEta = new TH1F("LowerMuonEta","LowerMuonEta", 50, -5, 5);
   TH1F *h_muLowerPlusEta = new TH1F("LowerAntiMuonEta","LowerAntiMuonEta", 50, -5, 5);
- TH1F *h_muMinusPhi = new TH1F("MuonPhi","MuonPhi", 90, -4, 4);
+  TH1F *h_muMinusPhi = new TH1F("MuonPhi","MuonPhi", 90, -4, 4);
   TH1F *h_muUpperMinusPhi = new TH1F("UpperMuonPhi","UpperMuonPhi", 90, -4, 4);
   TH1F *h_muPlusPhi = new TH1F("AntiMuonPhi","AntiMuonPhi", 90, -4, 4);
   TH1F *h_muUpperPlusPhi = new TH1F("UpperAntiMuonPhi","UpperAntiMuonPhi", 90, -4, 4);
@@ -623,7 +674,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TH1F *h_muUpperPlusTrackLayersWithMeasurement = new TH1F("UpperAntiMuonTrackLayersWithMeasurement","UpperAntiMuonTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_muLowerMinusTrackLayersWithMeasurement = new TH1F("LowerMuonTrackLayersWithMeasurement","LowerMuonTrackLayersWithMeasurement", 100, 0, 50);
   TH1F *h_muLowerPlusTrackLayersWithMeasurement = new TH1F("LowerAntiMuonTrackLayersWithMeasurement","LowerAntiMuonTrackLayersWithMeasurement", 100, 0, 50);
- TH1F *h_muMinusCurvePlusBias[nBiasBins];
+  TH1F *h_muMinusCurvePlusBias[nBiasBins];
   TH1F *h_muMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -632,7 +683,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
     h_muMinusCurveMinusBias[i] = new TH1F(TString("muMinusCurveMinusBias" + name.str()),TString("muMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_muUpperMinusCurvePlusBias[nBiasBins];
+  TH1F *h_muUpperMinusCurvePlusBias[nBiasBins];
   TH1F *h_muUpperMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -641,7 +692,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
     h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),TString("muUpperMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_muLowerMinusCurvePlusBias[nBiasBins];
+  TH1F *h_muLowerMinusCurvePlusBias[nBiasBins];
   TH1F *h_muLowerMinusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -650,7 +701,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
     h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),TString("muLowerMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_muPlusCurvePlusBias[nBiasBins];
+  TH1F *h_muPlusCurvePlusBias[nBiasBins];
   TH1F *h_muPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -659,7 +710,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
     h_muPlusCurveMinusBias[i] = new TH1F(TString("muPlusCurveMinusBias" + name.str()),TString("muPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_muUpperPlusCurvePlusBias[nBiasBins];
+  TH1F *h_muUpperPlusCurvePlusBias[nBiasBins];
   TH1F *h_muUpperPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -668,7 +719,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
     h_muUpperPlusCurveMinusBias[i] = new TH1F(TString("muUpperPlusCurveMinusBias" + name.str()),TString("muUpperPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
- TH1F *h_muLowerPlusCurvePlusBias[nBiasBins];
+  TH1F *h_muLowerPlusCurvePlusBias[nBiasBins];
   TH1F *h_muLowerPlusCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -705,7 +756,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TH1F *h_upperTrackEta = new TH1F("upperTrackEta","upperTrackEta", 50, -5, 5);
   TH1F *h_upperTrackPhi = new TH1F("upperTrackPhi","upperTrackPhi", 90, -4, 4);
   TH1F *h_upperTrackerLayersWithMeasurement = new TH1F("upperTrackerLayersWithMeasurement","upperTrackerLayersWithMeasurement", 100, 0, 50);
- TH1F *h_upperCurvePlusBias[nBiasBins];
+  TH1F *h_upperCurvePlusBias[nBiasBins];
   TH1F *h_upperCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -737,7 +788,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TH1F *h_lowerTrackEta = new TH1F("lowerTrackEta","lowerTrackEta", 50, -5, 5);
   TH1F *h_lowerTrackPhi = new TH1F("lowerTrackPhi","lowerTrackPhi", 90, -4, 4);
   TH1F *h_lowerTrackerLayersWithMeasurement = new TH1F("lowerTrackerLayersWithMeasurement","lowerTrackerLayersWithMeasurement", 100, 0, 50);
- TH1F *h_lowerCurvePlusBias[nBiasBins];
+  TH1F *h_lowerCurvePlusBias[nBiasBins];
   TH1F *h_lowerCurveMinusBias[nBiasBins];
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
@@ -751,59 +802,12 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 
  
   /*TFile *f = TFile::Open(TString(file1));
-  if (f == 0){
+    if (f == 0){
     std::cout << "Error: cannot open file 1 \n";
     return;
-  }
+    }
   */
-  int trackVal_ = 1;
-  TFile *g;
-  TChain *myChain;
-
-  if (trackVal_== 1) {
-    myChain = new TChain(TString("analysisTrackerMuons/MuonTree"));
-    g = new TFile("CosmicHistogramsTrackerOnly.root","RECREATE"); 
-    }  
-  else if (trackVal_== 2) {
-    myChain = new TChain(TString("analysisTPFMSMuons/MuonTree"));
-    g = new TFile("CosmicHistogramsTPFMS.root","RECREATE"); 
-    }  
-  else if (trackVal_== 3) {
-    myChain = new TChain(TString("analysisDYTMuons/MuonTree"));
-    g = new TFile("CosmicHistogramsDYTT.root","RECREATE"); 
-    } 
-  else if (trackVal_== 4) {
-    myChain = new TChain(TString("analysisPickyMuons/MuonTree"));
-    g = new TFile("CosmicHistogramsPicky.root","RECREATE"); 
-    } 
-  else if (trackVal_== 5) {
-    myChain = new TChain(TString("analysisTunePMuons/MuonTree"));
-    g = new TFile("CosmicHistogramsTuneP.root","RECREATE"); 
-    } 
- else{
-    std::cout << "\n\nINVALID TRACK SPECIFIED! Choose a value between [1, 5]";
-    return;
-  //TTreeReader trackReader("analysisTrackerMuons/MuonTree", f);
-  //TTreeReader tpfmsReader("analysisTPFMSMuons/MuonTree", f);
-  //TTreeReader dytReader("analysisDYTMuons/MuonTree", f);
-  //TTreeReader pickyReader("analysisPickyMuons/MuonTree", f);
-  //TTreeReader tunePReader("analysisTunePMuons/MuonTree", f);
-  }  
-  /*
-  std::string name;
-  std::ifstream file(file1);
-  while(std::getline(file,name)){
-    std::stringstream newString;
-    newString << "root://cms-xrd-global.cern.ch//" << name;
-    std::cout << newString.str() << std::endl << std::endl;
-    myChain->Add(TString(newString.str()));
-  }*/
-  myChain->Add(TString("CosmicMuonAnalysis_2015A.root"));
-
-  TTree *myTree = myChain;
-  TTreeReader trackReader(myTree);
-  std::cout << "Successfully opened file 1! \n\n";
-
+  
  
   
   std::cout << "\nCreating upper Muon TTreeReaderValues\n";
@@ -824,7 +828,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TTreeReaderValue<Double_t> upTrackerPtError(trackReader,   "upperMuon_ptError" );
   TTreeReaderValue<Int_t>    upTrackerLayersWithMeasurement(trackReader,"upperMuon_trackerLayersWithMeasurement");
   //TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackerTrack(trackReader,     "upperMuon_trackVec");
-  TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackerTrack(trackReader,     "upperMuon_trackVec");
+  //TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackerTrack(trackReader,     "upperMuon_trackVec");
 
 
   std::cout << "\nCreating lower Muon TTreeReaderValues\n";
@@ -844,7 +848,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
   TTreeReaderValue<Double_t> lowTrackerDzError(trackReader,              "lowerMuon_dzError"                     );
   TTreeReaderValue<Double_t> lowTrackerPtError(trackReader,              "lowerMuon_ptError"                     );
   TTreeReaderValue<Int_t>    lowTrackerLayersWithMeasurement(trackReader,"lowerMuon_trackerLayersWithMeasurement");
-  TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > lowTrackerTrack(trackReader,"lowerMuon_trackVec");
+  //TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > lowTrackerTrack(trackReader,"lowerMuon_trackVec");
 
   
   //note, the old way would only loop to the maximum number of events in the smallest file
@@ -868,15 +872,15 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
       h_upperPt->Fill((*upTrackerMuonP4).Pt());
       h_upperEta->Fill((*upTrackerMuonP4).Eta());
       h_upperPhi->Fill((*upTrackerMuonP4).Phi());
-      std::cout << "pt = " << upTrackerMuonP4->pt()
+      if((j % 100) == 0)  std::cout << "pt = " << upTrackerMuonP4->pt()
 		<< " - eta = "  << upTrackerMuonP4->eta()
 		<< " - phi = "  << upTrackerMuonP4->phi()
 		<< std::endl;
 
-      std::cout	<< "pt = " << sqrt(upTrackerTrack->Perp2())
-		<< " - eta = "  << upTrackerTrack->Eta()
-		<< " - phi = "  << upTrackerTrack->Phi()
-		<< std::endl;
+      //      std::cout	<< "pt = " << sqrt(upTrackerTrack->Perp2())
+      //	<< " - eta = "  << upTrackerTrack->Eta()
+      //	<< " - phi = "  << upTrackerTrack->Phi()
+      //	<< std::endl;
       h_upperCharge->Fill(*upTrackerCharge);
       h_upperCurve->Fill(upperCpT);
       h_upperDxy->Fill(*upTrackerDxy);
@@ -890,8 +894,8 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
       h_upperDxyError->Fill(*upTrackerDxyError);
       h_upperDzError->Fill(*upTrackerDzError);
       h_upperTrackPt->Fill(*upTrackerPt);
-      h_upperTrackEta->Fill((*upTrackerTrack).Eta());
-      h_upperTrackPhi->Fill((*upTrackerTrack).Phi());
+      //h_upperTrackEta->Fill((*upTrackerTrack).Eta());
+      //h_upperTrackPhi->Fill((*upTrackerTrack).Phi());
       h_upperTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
       if(*upTrackerCharge < 0){
 	h_muMinusChi2->Fill(*upTrackerChi2);
@@ -903,7 +907,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusChi2->Fill(*upTrackerChi2);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusNdof->Fill(*upTrackerNdof);
 	h_muUpperMinusNdof->Fill(*upTrackerNdof);
       }
@@ -913,7 +917,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusNdof->Fill(*upTrackerNdof);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusCharge->Fill(*upTrackerCharge);
 	h_muUpperMinusCharge->Fill(*upTrackerCharge);
       }
@@ -923,7 +927,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusCharge->Fill(*upTrackerCharge);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusCurve->Fill(upperCpT);
 	h_muUpperMinusCurve->Fill(upperCpT);
       }
@@ -934,7 +938,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	
       }
 
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusDxy->Fill(*upTrackerDxy);
 	h_muUpperMinusDxy->Fill(*upTrackerDxy);
       }
@@ -944,7 +948,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusDxy->Fill(*upTrackerDxy);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusDz->Fill(*upTrackerDz);
 	h_muUpperMinusDz->Fill(*upTrackerDz);
       }
@@ -986,7 +990,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusPhi->Fill((*upTrackerMuonP4).Phi());
 
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusPixelHits->Fill(*upTrackerPhits);
 	h_muUpperMinusPixelHits->Fill(*upTrackerPhits);
       }
@@ -997,7 +1001,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	
       }
       
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusTrackerHits->Fill(*upTrackerThits);
 	h_muUpperMinusTrackerHits->Fill(*upTrackerThits);
       }
@@ -1007,7 +1011,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusTrackerHits->Fill(*upTrackerThits);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusMuonStationHits->Fill(*upTrackerMhits);
 	h_muUpperMinusMuonStationHits->Fill(*upTrackerMhits);
       }
@@ -1017,7 +1021,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusValidHits->Fill(*upTrackerValidHits);
 	h_muUpperMinusValidHits->Fill(*upTrackerValidHits);
       }
@@ -1028,7 +1032,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	
       }
 
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	h_muUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
       }
@@ -1038,7 +1042,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusPtError->Fill(*upTrackerPtError);
 	h_muUpperMinusPtError->Fill(*upTrackerPtError);
       }
@@ -1048,7 +1052,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusPtError->Fill(*upTrackerPtError);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusDxyError->Fill(*upTrackerDxyError);
 	h_muUpperMinusDxyError->Fill(*upTrackerDxyError);
       }
@@ -1058,7 +1062,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusDxyError->Fill(*upTrackerDxyError);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusDzError->Fill(*upTrackerDzError);
 	h_muUpperMinusDzError->Fill(*upTrackerDzError);
       }
@@ -1068,7 +1072,7 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusDzError->Fill(*upTrackerDzError);
 	
       }
- if(*upTrackerCharge < 0){
+      if(*upTrackerCharge < 0){
 	h_muMinusTrackPt->Fill(*upTrackerPt);
 	h_muUpperMinusTrackPt->Fill(*upTrackerPt);
       }
@@ -1078,29 +1082,30 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusTrackPt->Fill(*upTrackerPt);
 	
       }
-   if(*upTrackerCharge < 0){
-	h_muMinusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_muUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
-      }
-      else if(*upTrackerCharge > 0){
+      /* if(*upTrackerCharge < 0){
+	 h_muMinusTrackEta->Fill((*upTrackerTrack).Eta());
+	 h_muUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
+	 }
+	 else if(*upTrackerCharge > 0){
 
-	h_muPlusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_muUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
+	 h_muPlusTrackEta->Fill((*upTrackerTrack).Eta());
+	 h_muUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
 
-      }
+	 }
 
 
-   if(*upTrackerCharge < 0){
-	h_muMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_muUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-      }
-      else if(*upTrackerCharge > 0){
+	 if(*upTrackerCharge < 0){
+	 h_muMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	 h_muUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	 }
+	 else if(*upTrackerCharge > 0){
 
-	h_muPlusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_muUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+	 h_muPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+	 h_muUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
 
-      }
- if(*upTrackerCharge < 0){
+	 }
+      */ 
+      if(*upTrackerCharge < 0){
 	h_muMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	h_muUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
       }
@@ -1110,318 +1115,319 @@ TH1F *h_muMinusDzError = new TH1F("MuonDzError","MuonDzError", 100, 0, 200);
 	h_muUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	
       }
-          for(int i = 0; i < nBiasBins; ++i){
+      for(int i = 0; i < nBiasBins; ++i){
 
 	h_upperCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
 	h_upperCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
 	if (debug)
 	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
-	  }
-
-	  if(*upTrackerCharge <  0){
-	  for(int i = 0; i < nBiasBins; ++i){
-
-	h_muMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_muUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	
-
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
-	  }
-
-	  }
-
-	  else if(*upTrackerCharge > 0){
-	  for(int i = 0; i < nBiasBins; ++i){
-
-	h_muPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_muUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	
-
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
-	  }
-
-	  }
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
-	
-
-if(*upTrackerCharge < 0){
-	h_looseMuMinusChi2->Fill(*upTrackerChi2);
-	h_looseMuUpperMinusChi2->Fill(*upTrackerChi2);
       }
+
+      if(*upTrackerCharge <  0){
+	for(int i = 0; i < nBiasBins; ++i){
+
+	  h_muMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	  h_muUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	
+
+	  if (debug)
+	    std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	}
+
+      }
+
       else if(*upTrackerCharge > 0){
-	
-	h_looseMuPlusChi2->Fill(*upTrackerChi2);
-	h_looseMuUpperPlusChi2->Fill(*upTrackerChi2);
-	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusNdof->Fill(*upTrackerNdof);
-	h_looseMuUpperMinusNdof->Fill(*upTrackerNdof);
-      }
-      else if(*upTrackerCharge > 0){
-	
-	h_looseMuPlusNdof->Fill(*upTrackerNdof);
-	h_looseMuUpperPlusNdof->Fill(*upTrackerNdof);
-	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusCharge->Fill(*upTrackerCharge);
-	h_looseMuUpperMinusCharge->Fill(*upTrackerCharge);
-      }
-      else if(*upTrackerCharge > 0){
-	
-	h_looseMuPlusCharge->Fill(*upTrackerCharge);
-	h_looseMuUpperPlusCharge->Fill(*upTrackerCharge);
-	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusCurve->Fill(upperCpT);
-	h_looseMuUpperMinusCurve->Fill(upperCpT);
-      }
-      else if(*upTrackerCharge > 0){
-	
-	h_looseMuPlusCurve->Fill(upperCpT);
-	h_looseMuUpperPlusCurve->Fill(upperCpT);
-	
-      }
+	for(int i = 0; i < nBiasBins; ++i){
 
- if(*upTrackerCharge < 0){
-	h_looseMuMinusDxy->Fill(*upTrackerDxy);
-	h_looseMuUpperMinusDxy->Fill(*upTrackerDxy);
-      }
-      else if(*upTrackerCharge > 0){
+	  h_muPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	  h_muUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
 	
-	h_looseMuPlusDxy->Fill(*upTrackerDxy);
-	h_looseMuUpperPlusDxy->Fill(*upTrackerDxy);
-	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusDz->Fill(*upTrackerDz);
-	h_looseMuUpperMinusDz->Fill(*upTrackerDz);
-      }
-      else if(*upTrackerCharge > 0){
-	
-	h_looseMuPlusDz->Fill(*upTrackerDz);
-	h_looseMuUpperPlusDz->Fill(*upTrackerDz);
-	
-      }
-     
 
-      if(*upTrackerCharge < 0){
-	h_looseMuMinusEta->Fill((*upTrackerMuonP4).Eta());
-	h_looseMuUpperMinusEta->Fill((*upTrackerMuonP4).Eta());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_looseMuPlusEta->Fill((*upTrackerMuonP4).Eta());
-	h_looseMuUpperPlusEta->Fill((*upTrackerMuonP4).Eta());
+	  if (debug)
+	    std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	}
 
       }
 
-      if(*upTrackerCharge < 0){
-	h_looseMuMinusPhi->Fill((*upTrackerMuonP4).Phi());
-	h_looseMuUpperMinusPhi->Fill((*upTrackerMuonP4).Phi());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_looseMuPlusPhi->Fill((*upTrackerMuonP4).Phi());
-	h_looseMuUpperPlusPhi->Fill((*upTrackerMuonP4).Phi());
-
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusPixelHits->Fill(*upTrackerPhits);
-	h_looseMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-      }
-      else if(*upTrackerCharge > 0){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
 	
-	h_looseMuPlusPixelHits->Fill(*upTrackerPhits);
-	h_looseMuUpperPlusPixelHits->Fill(*upTrackerPhits);
+
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusChi2->Fill(*upTrackerChi2);
+	  h_looseMuUpperMinusChi2->Fill(*upTrackerChi2);
+	}
+	else if(*upTrackerCharge > 0){
 	
-      }
+	  h_looseMuPlusChi2->Fill(*upTrackerChi2);
+	  h_looseMuUpperPlusChi2->Fill(*upTrackerChi2);
+	
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusNdof->Fill(*upTrackerNdof);
+	  h_looseMuUpperMinusNdof->Fill(*upTrackerNdof);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusNdof->Fill(*upTrackerNdof);
+	  h_looseMuUpperPlusNdof->Fill(*upTrackerNdof);
+	
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusCharge->Fill(*upTrackerCharge);
+	  h_looseMuUpperMinusCharge->Fill(*upTrackerCharge);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusCharge->Fill(*upTrackerCharge);
+	  h_looseMuUpperPlusCharge->Fill(*upTrackerCharge);
+	
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusCurve->Fill(upperCpT);
+	  h_looseMuUpperMinusCurve->Fill(upperCpT);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusCurve->Fill(upperCpT);
+	  h_looseMuUpperPlusCurve->Fill(upperCpT);
+	
+	}
+
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusDxy->Fill(*upTrackerDxy);
+	  h_looseMuUpperMinusDxy->Fill(*upTrackerDxy);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusDxy->Fill(*upTrackerDxy);
+	  h_looseMuUpperPlusDxy->Fill(*upTrackerDxy);
+	
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusDz->Fill(*upTrackerDz);
+	  h_looseMuUpperMinusDz->Fill(*upTrackerDz);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusDz->Fill(*upTrackerDz);
+	  h_looseMuUpperPlusDz->Fill(*upTrackerDz);
+	
+	}
+	/*  
+
+	    if(*upTrackerCharge < 0){
+	    h_looseMuMinusEta->Fill((*upTrackerMuonP4).Eta());
+	    h_looseMuUpperMinusEta->Fill((*upTrackerMuonP4).Eta());
+	    }
+	    else if(*upTrackerCharge > 0){
+
+	    h_looseMuPlusEta->Fill((*upTrackerMuonP4).Eta());
+	    h_looseMuUpperPlusEta->Fill((*upTrackerMuonP4).Eta());
+
+	    }
+
+	    if(*upTrackerCharge < 0){
+	    h_looseMuMinusPhi->Fill((*upTrackerMuonP4).Phi());
+	    h_looseMuUpperMinusPhi->Fill((*upTrackerMuonP4).Phi());
+	    }
+	    else if(*upTrackerCharge > 0){
+
+	    h_looseMuPlusPhi->Fill((*upTrackerMuonP4).Phi());
+	    h_looseMuUpperPlusPhi->Fill((*upTrackerMuonP4).Phi());
+
+	    }
+	*/ 
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusPixelHits->Fill(*upTrackerPhits);
+	  h_looseMuUpperMinusPixelHits->Fill(*upTrackerPhits);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_looseMuPlusPixelHits->Fill(*upTrackerPhits);
+	  h_looseMuUpperPlusPixelHits->Fill(*upTrackerPhits);
+	
+	}
       
- if(*upTrackerCharge < 0){
-	h_looseMuMinusTrackerHits->Fill(*upTrackerThits);
-	h_looseMuUpperMinusTrackerHits->Fill(*upTrackerThits);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusTrackerHits->Fill(*upTrackerThits);
+	  h_looseMuUpperMinusTrackerHits->Fill(*upTrackerThits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusTrackerHits->Fill(*upTrackerThits);
-	h_looseMuUpperPlusTrackerHits->Fill(*upTrackerThits);
+	  h_looseMuPlusTrackerHits->Fill(*upTrackerThits);
+	  h_looseMuUpperPlusTrackerHits->Fill(*upTrackerThits);
 	
-      }
+	}
  
- if(*upTrackerCharge < 0){
-	h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
-	h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
+	  h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusValidHits->Fill(*upTrackerValidHits);
-	h_looseMuUpperPlusValidHits->Fill(*upTrackerValidHits);
+	  h_looseMuPlusValidHits->Fill(*upTrackerValidHits);
+	  h_looseMuUpperPlusValidHits->Fill(*upTrackerValidHits);
 	
-      }
+	}
 
  
  
- if(*upTrackerCharge < 0){
-	h_looseMuMinusDxyError->Fill(*upTrackerDxyError);
-	h_looseMuUpperMinusDxyError->Fill(*upTrackerDxyError);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusDxyError->Fill(*upTrackerDxyError);
+	  h_looseMuUpperMinusDxyError->Fill(*upTrackerDxyError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusDxyError->Fill(*upTrackerDxyError);
-	h_looseMuUpperPlusDxyError->Fill(*upTrackerDxyError);
+	  h_looseMuPlusDxyError->Fill(*upTrackerDxyError);
+	  h_looseMuUpperPlusDxyError->Fill(*upTrackerDxyError);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusDzError->Fill(*upTrackerDzError);
-	h_looseMuUpperMinusDzError->Fill(*upTrackerDzError);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusDzError->Fill(*upTrackerDzError);
+	  h_looseMuUpperMinusDzError->Fill(*upTrackerDzError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusDzError->Fill(*upTrackerDzError);
-	h_looseMuUpperPlusDzError->Fill(*upTrackerDzError);
+	  h_looseMuPlusDzError->Fill(*upTrackerDzError);
+	  h_looseMuUpperPlusDzError->Fill(*upTrackerDzError);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusTrackPt->Fill(*upTrackerPt);
-	h_looseMuUpperMinusTrackPt->Fill(*upTrackerPt);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusTrackPt->Fill(*upTrackerPt);
+	  h_looseMuUpperMinusTrackPt->Fill(*upTrackerPt);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusTrackPt->Fill(*upTrackerPt);
-	h_looseMuUpperPlusTrackPt->Fill(*upTrackerPt);
+	  h_looseMuPlusTrackPt->Fill(*upTrackerPt);
+	  h_looseMuUpperPlusTrackPt->Fill(*upTrackerPt);
 	
-      }
-   if(*upTrackerCharge < 0){
-	h_looseMuMinusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_looseMuUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	/* if(*upTrackerCharge < 0){
+	   h_looseMuMinusTrackEta->Fill((*upTrackerTrack).Eta());
+	   h_looseMuUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
+	   }
+	   else if(*upTrackerCharge > 0){
 
-	h_looseMuPlusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_looseMuUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
+	   h_looseMuPlusTrackEta->Fill((*upTrackerTrack).Eta());
+	   h_looseMuUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
 
-      }
+	   }
 
 
-   if(*upTrackerCharge < 0){
-	h_looseMuMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_looseMuUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-      }
-      else if(*upTrackerCharge > 0){
+	   if(*upTrackerCharge < 0){
+	   h_looseMuMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	   h_looseMuUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	   }
+	   else if(*upTrackerCharge > 0){
 
-	h_looseMuPlusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_looseMuUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+	   h_looseMuPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+	   h_looseMuUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
 
-      }
- 
-    if(*upTrackerCharge <  0){
+	   }
+	*/
+	if(*upTrackerCharge <  0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_looseMuMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_looseMuUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
-	  else if(*upTrackerCharge > 0){
+	else if(*upTrackerCharge > 0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_looseMuPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_looseMuUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
- }
-
-	  if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
-
- if(*upTrackerCharge < 0){
-	h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
-	h_looseMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
+	}
       }
-      else if(*upTrackerCharge > 0){
+
+      if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
+
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
+	  h_looseMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusMuonStationHits->Fill(*upTrackerMhits);
-	h_looseMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
+	  h_looseMuPlusMuonStationHits->Fill(*upTrackerMhits);
+	  h_looseMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	
+	}
       }
-	  }
 
-	  if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
- if(*upTrackerCharge < 0){
-	h_looseMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	h_looseMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-      }
-      else if(*upTrackerCharge > 0){
+      if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_looseMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	h_looseMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_looseMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_looseMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	
-      }
-
-	  }
-
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerLayersWithMeasurement > 5) ){
-	  if(*upTrackerCharge < 0){
-	h_looseMuMinusPt->Fill((*upTrackerMuonP4).Pt());
-	h_looseMuUpperMinusPt->Fill((*upTrackerMuonP4).Pt());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_looseMuPlusPt->Fill((*upTrackerMuonP4).Pt());
-	h_looseMuUpperPlusPt->Fill((*upTrackerMuonP4).Pt());
+	}
 
       }
- if(*upTrackerCharge < 0){
-	h_looseMuMinusPtError->Fill(*upTrackerPtError);
-	h_looseMuUpperMinusPtError->Fill(*upTrackerPtError);
-      }
-      else if(*upTrackerCharge > 0){
+
+
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerLayersWithMeasurement > 5) ){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusPt->Fill((*upTrackerMuonP4).Pt());
+	  h_looseMuUpperMinusPt->Fill((*upTrackerMuonP4).Pt());
+	}
+	else if(*upTrackerCharge > 0){
+
+	  h_looseMuPlusPt->Fill((*upTrackerMuonP4).Pt());
+	  h_looseMuUpperPlusPt->Fill((*upTrackerMuonP4).Pt());
+
+	}
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusPtError->Fill(*upTrackerPtError);
+	  h_looseMuUpperMinusPtError->Fill(*upTrackerPtError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusPtError->Fill(*upTrackerPtError);
-	h_looseMuUpperPlusPtError->Fill(*upTrackerPtError);
+	  h_looseMuPlusPtError->Fill(*upTrackerPtError);
+	  h_looseMuUpperPlusPtError->Fill(*upTrackerPtError);
 	
+	}
+
+
+
       }
 
 
-
-  }
-
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3)){
-	  if(*upTrackerCharge < 0){
-	h_looseMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	h_looseMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-      }
-      else if(*upTrackerCharge > 0){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3)){
+	if(*upTrackerCharge < 0){
+	  h_looseMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	  h_looseMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_looseMuPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	h_looseMuUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	  h_looseMuPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	  h_looseMuUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	
+	}
       }
- }
 
 
 
@@ -1430,292 +1436,293 @@ if(*upTrackerCharge < 0){
 
 
 
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
 	
 
-if(*upTrackerCharge < 0){
-	h_tightMuMinusChi2->Fill(*upTrackerChi2);
-	h_tightMuUpperMinusChi2->Fill(*upTrackerChi2);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusChi2->Fill(*upTrackerChi2);
+	  h_tightMuUpperMinusChi2->Fill(*upTrackerChi2);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusChi2->Fill(*upTrackerChi2);
-	h_tightMuUpperPlusChi2->Fill(*upTrackerChi2);
+	  h_tightMuPlusChi2->Fill(*upTrackerChi2);
+	  h_tightMuUpperPlusChi2->Fill(*upTrackerChi2);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusNdof->Fill(*upTrackerNdof);
-	h_tightMuUpperMinusNdof->Fill(*upTrackerNdof);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusNdof->Fill(*upTrackerNdof);
+	  h_tightMuUpperMinusNdof->Fill(*upTrackerNdof);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusNdof->Fill(*upTrackerNdof);
-	h_tightMuUpperPlusNdof->Fill(*upTrackerNdof);
+	  h_tightMuPlusNdof->Fill(*upTrackerNdof);
+	  h_tightMuUpperPlusNdof->Fill(*upTrackerNdof);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusCharge->Fill(*upTrackerCharge);
-	h_tightMuUpperMinusCharge->Fill(*upTrackerCharge);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusCharge->Fill(*upTrackerCharge);
+	  h_tightMuUpperMinusCharge->Fill(*upTrackerCharge);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusCharge->Fill(*upTrackerCharge);
-	h_tightMuUpperPlusCharge->Fill(*upTrackerCharge);
+	  h_tightMuPlusCharge->Fill(*upTrackerCharge);
+	  h_tightMuUpperPlusCharge->Fill(*upTrackerCharge);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusCurve->Fill(upperCpT);
-	h_tightMuUpperMinusCurve->Fill(upperCpT);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusCurve->Fill(upperCpT);
+	  h_tightMuUpperMinusCurve->Fill(upperCpT);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusCurve->Fill(upperCpT);
-	h_tightMuUpperPlusCurve->Fill(upperCpT);
+	  h_tightMuPlusCurve->Fill(upperCpT);
+	  h_tightMuUpperPlusCurve->Fill(upperCpT);
 	
-      }
+	}
 
 
-      if(*upTrackerCharge < 0){
-	h_tightMuMinusEta->Fill((*upTrackerMuonP4).Eta());
-	h_tightMuUpperMinusEta->Fill((*upTrackerMuonP4).Eta());
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusEta->Fill((*upTrackerMuonP4).Eta());
+	  h_tightMuUpperMinusEta->Fill((*upTrackerMuonP4).Eta());
+	}
+	else if(*upTrackerCharge > 0){
 
-	h_tightMuPlusEta->Fill((*upTrackerMuonP4).Eta());
-	h_tightMuUpperPlusEta->Fill((*upTrackerMuonP4).Eta());
+	  h_tightMuPlusEta->Fill((*upTrackerMuonP4).Eta());
+	  h_tightMuUpperPlusEta->Fill((*upTrackerMuonP4).Eta());
 
-      }
+	}
 
-      if(*upTrackerCharge < 0){
-	h_tightMuMinusPhi->Fill((*upTrackerMuonP4).Phi());
-	h_tightMuUpperMinusPhi->Fill((*upTrackerMuonP4).Phi());
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusPhi->Fill((*upTrackerMuonP4).Phi());
+	  h_tightMuUpperMinusPhi->Fill((*upTrackerMuonP4).Phi());
+	}
+	else if(*upTrackerCharge > 0){
 
-	h_tightMuPlusPhi->Fill((*upTrackerMuonP4).Phi());
-	h_tightMuUpperPlusPhi->Fill((*upTrackerMuonP4).Phi());
+	  h_tightMuPlusPhi->Fill((*upTrackerMuonP4).Phi());
+	  h_tightMuUpperPlusPhi->Fill((*upTrackerMuonP4).Phi());
 
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusPixelHits->Fill(*upTrackerPhits);
-	h_tightMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusPixelHits->Fill(*upTrackerPhits);
+	  h_tightMuUpperMinusPixelHits->Fill(*upTrackerPhits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusPixelHits->Fill(*upTrackerPhits);
-	h_tightMuUpperPlusPixelHits->Fill(*upTrackerPhits);
+	  h_tightMuPlusPixelHits->Fill(*upTrackerPhits);
+	  h_tightMuUpperPlusPixelHits->Fill(*upTrackerPhits);
 	
-      }
+	}
       
- if(*upTrackerCharge < 0){
-	h_tightMuMinusTrackerHits->Fill(*upTrackerThits);
-	h_tightMuUpperMinusTrackerHits->Fill(*upTrackerThits);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusTrackerHits->Fill(*upTrackerThits);
+	  h_tightMuUpperMinusTrackerHits->Fill(*upTrackerThits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusTrackerHits->Fill(*upTrackerThits);
-	h_tightMuUpperPlusTrackerHits->Fill(*upTrackerThits);
+	  h_tightMuPlusTrackerHits->Fill(*upTrackerThits);
+	  h_tightMuUpperPlusTrackerHits->Fill(*upTrackerThits);
 	
-      }
+	}
  
- if(*upTrackerCharge < 0){
-	h_tightMuMinusValidHits->Fill(*upTrackerValidHits);
-	h_tightMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusValidHits->Fill(*upTrackerValidHits);
+	  h_tightMuUpperMinusValidHits->Fill(*upTrackerValidHits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusValidHits->Fill(*upTrackerValidHits);
-	h_tightMuUpperPlusValidHits->Fill(*upTrackerValidHits);
+	  h_tightMuPlusValidHits->Fill(*upTrackerValidHits);
+	  h_tightMuUpperPlusValidHits->Fill(*upTrackerValidHits);
 	
-      }
+	}
 
  
  
- if(*upTrackerCharge < 0){
-	h_tightMuMinusDxyError->Fill(*upTrackerDxyError);
-	h_tightMuUpperMinusDxyError->Fill(*upTrackerDxyError);
-      }
-      else if(*upTrackerCharge > 0){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusDxyError->Fill(*upTrackerDxyError);
+	  h_tightMuUpperMinusDxyError->Fill(*upTrackerDxyError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusDxyError->Fill(*upTrackerDxyError);
-	h_tightMuUpperPlusDxyError->Fill(*upTrackerDxyError);
+	  h_tightMuPlusDxyError->Fill(*upTrackerDxyError);
+	  h_tightMuUpperPlusDxyError->Fill(*upTrackerDxyError);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusDzError->Fill(*upTrackerDzError);
-	h_tightMuUpperMinusDzError->Fill(*upTrackerDzError);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusDzError->Fill(*upTrackerDzError);
+	  h_tightMuUpperMinusDzError->Fill(*upTrackerDzError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusDzError->Fill(*upTrackerDzError);
-	h_tightMuUpperPlusDzError->Fill(*upTrackerDzError);
+	  h_tightMuPlusDzError->Fill(*upTrackerDzError);
+	  h_tightMuUpperPlusDzError->Fill(*upTrackerDzError);
 	
-      }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusTrackPt->Fill(*upTrackerPt);
-	h_tightMuUpperMinusTrackPt->Fill(*upTrackerPt);
-      }
-      else if(*upTrackerCharge > 0){
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusTrackPt->Fill(*upTrackerPt);
+	  h_tightMuUpperMinusTrackPt->Fill(*upTrackerPt);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusTrackPt->Fill(*upTrackerPt);
-	h_tightMuUpperPlusTrackPt->Fill(*upTrackerPt);
+	  h_tightMuPlusTrackPt->Fill(*upTrackerPt);
+	  h_tightMuUpperPlusTrackPt->Fill(*upTrackerPt);
 	
-      }
-   if(*upTrackerCharge < 0){
-	h_tightMuMinusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_tightMuUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_tightMuPlusTrackEta->Fill((*upTrackerTrack).Eta());
-	h_tightMuUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
-
-      }
-
-
-   if(*upTrackerCharge < 0){
-	h_tightMuMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_tightMuUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_tightMuPlusTrackPhi->Fill((*upTrackerTrack).Phi());
-	h_tightMuUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
-
-      }
- 
-
-    if(*upTrackerCharge <  0){
-	  for(int i = 0; i < nBiasBins; ++i){
-
-	h_tightMuMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_tightMuUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	
-
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	}
+	/*
+	  if(*upTrackerCharge < 0){
+	  h_tightMuMinusTrackEta->Fill((*upTrackerTrack).Eta());
+	  h_tightMuUpperMinusTrackEta->Fill((*upTrackerTrack).Eta());
 	  }
-
-	  }
-
 	  else if(*upTrackerCharge > 0){
+
+	  h_tightMuPlusTrackEta->Fill((*upTrackerTrack).Eta());
+	  h_tightMuUpperPlusTrackEta->Fill((*upTrackerTrack).Eta());
+
+	  }
+
+
+	  if(*upTrackerCharge < 0){
+	  h_tightMuMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	  h_tightMuUpperMinusTrackPhi->Fill((*upTrackerTrack).Phi());
+	  }
+	  else if(*upTrackerCharge > 0){
+
+	  h_tightMuPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+	  h_tightMuUpperPlusTrackPhi->Fill((*upTrackerTrack).Phi());
+
+	  }
+ 
+	*/
+	if(*upTrackerCharge <  0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_tightMuPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_tightMuUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuUpperMinusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuUpperMinusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
+	}
+
+	else if(*upTrackerCharge > 0){
+	  for(int i = 0; i < nBiasBins; ++i){
+
+	    h_tightMuPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuUpperPlusCurvePlusBias[i]->Fill(upperCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuUpperPlusCurveMinusBias[i]->Fill(upperCpT - (i + 1)*(maxBias/nBiasBins));	
+	
+
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
-  if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
-
- if(*upTrackerCharge < 0){
-	h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
-	h_tightMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
       }
-      else if(*upTrackerCharge > 0){
+
+      if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
+
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
+	  h_tightMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusMuonStationHits->Fill(*upTrackerMhits);
-	h_tightMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
+	  h_tightMuPlusMuonStationHits->Fill(*upTrackerMhits);
+	  h_tightMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	
+	}
       }
-	  }
 
-	  if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
- if(*upTrackerCharge < 0){
-	h_tightMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	h_tightMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-      }
-      else if(*upTrackerCharge > 0){
+      if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_tightMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	h_tightMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_tightMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	  h_tightMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	
-      }
-
-	  }
-
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
-	  if(*upTrackerCharge < 0){
-	h_tightMuMinusPt->Fill((*upTrackerMuonP4).Pt());
-	h_tightMuUpperMinusPt->Fill((*upTrackerMuonP4).Pt());
-      }
-      else if(*upTrackerCharge > 0){
-
-	h_tightMuPlusPt->Fill((*upTrackerMuonP4).Pt());
-	h_tightMuUpperPlusPt->Fill((*upTrackerMuonP4).Pt());
+	}
 
       }
- if(*upTrackerCharge < 0){
-	h_tightMuMinusPtError->Fill(*upTrackerPtError);
-	h_tightMuUpperMinusPtError->Fill(*upTrackerPtError);
-      }
-      else if(*upTrackerCharge > 0){
+
+
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusPt->Fill((*upTrackerMuonP4).Pt());
+	  h_tightMuUpperMinusPt->Fill((*upTrackerMuonP4).Pt());
+	}
+	else if(*upTrackerCharge > 0){
+
+	  h_tightMuPlusPt->Fill((*upTrackerMuonP4).Pt());
+	  h_tightMuUpperPlusPt->Fill((*upTrackerMuonP4).Pt());
+
+	}
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusPtError->Fill(*upTrackerPtError);
+	  h_tightMuUpperMinusPtError->Fill(*upTrackerPtError);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusPtError->Fill(*upTrackerPtError);
-	h_tightMuUpperPlusPtError->Fill(*upTrackerPtError);
+	  h_tightMuPlusPtError->Fill(*upTrackerPtError);
+	  h_tightMuUpperPlusPtError->Fill(*upTrackerPtError);
 	
+	}
+
+
+
       }
 
 
-
-  }
-
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
-	  if(*upTrackerCharge < 0){
-	h_tightMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	h_tightMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	  h_tightMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_tightMuPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	  h_tightMuUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	
+	}
       }
-      else if(*upTrackerCharge > 0){
-	
-	h_tightMuPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	h_tightMuUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	
-      }
- }
 
 
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDz < 0.5)){
- if(*upTrackerCharge < 0){
-	h_tightMuMinusDxy->Fill(*upTrackerDxy);
-	h_tightMuUpperMinusDxy->Fill(*upTrackerDxy);
-      }
-      else if(*upTrackerCharge > 0){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDz < 0.5)){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusDxy->Fill(*upTrackerDxy);
+	  h_tightMuUpperMinusDxy->Fill(*upTrackerDxy);
+	}
+	else if(*upTrackerCharge > 0){
 	
-	h_tightMuPlusDxy->Fill(*upTrackerDxy);
-	h_tightMuUpperPlusDxy->Fill(*upTrackerDxy);
+	  h_tightMuPlusDxy->Fill(*upTrackerDxy);
+	  h_tightMuUpperPlusDxy->Fill(*upTrackerDxy);
 	
-      }
-	
-	  }
-
-
-	  if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2)){
- if(*upTrackerCharge < 0){
-	h_tightMuMinusDz->Fill(*upTrackerDz);
-	h_tightMuUpperMinusDz->Fill(*upTrackerDz);
-      }
-      else if(*upTrackerCharge > 0){
-	
-	h_tightMuPlusDz->Fill(*upTrackerDz);
-	h_tightMuUpperPlusDz->Fill(*upTrackerDz);
+	}
 	
       }
+
+
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2)){
+	if(*upTrackerCharge < 0){
+	  h_tightMuMinusDz->Fill(*upTrackerDz);
+	  h_tightMuUpperMinusDz->Fill(*upTrackerDz);
+	}
+	else if(*upTrackerCharge > 0){
+	
+	  h_tightMuPlusDz->Fill(*upTrackerDz);
+	  h_tightMuUpperPlusDz->Fill(*upTrackerDz);
+	
+	}
      
 	
-	  }
+      }
 
       double lowerCpT = *lowTrackerCharge / (*lowTrackerMuonP4).Pt();
       h_lowerChi2->Fill(*lowTrackerChi2);
@@ -1736,8 +1743,8 @@ if(*upTrackerCharge < 0){
       h_lowerDxyError->Fill(*lowTrackerDxyError);
       h_lowerDzError->Fill(*lowTrackerDzError);
       h_lowerTrackPt->Fill(*lowTrackerPt);
-      h_lowerTrackEta->Fill((*lowTrackerTrack).Eta());
-      h_lowerTrackPhi->Fill((*lowTrackerTrack).Phi());
+      // h_lowerTrackEta->Fill((*lowTrackerTrack).Eta());
+      //h_lowerTrackPhi->Fill((*lowTrackerTrack).Phi());
       h_lowerTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
       if(*lowTrackerCharge < 0){
@@ -1750,7 +1757,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusChi2->Fill(*lowTrackerChi2);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusNdof->Fill(*lowTrackerNdof);
 	h_muLowerMinusNdof->Fill(*lowTrackerNdof);
       }
@@ -1760,7 +1767,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusNdof->Fill(*lowTrackerNdof);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusCharge->Fill(*lowTrackerCharge);
 	h_muLowerMinusCharge->Fill(*lowTrackerCharge);
       }
@@ -1770,7 +1777,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusCharge->Fill(*lowTrackerCharge);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusCurve->Fill(lowerCpT);
 	h_muLowerMinusCurve->Fill(lowerCpT);
       }
@@ -1781,7 +1788,7 @@ if(*upTrackerCharge < 0){
 	
       }
 
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusDxy->Fill(*lowTrackerDxy);
 	h_muLowerMinusDxy->Fill(*lowTrackerDxy);
       }
@@ -1791,7 +1798,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusDxy->Fill(*lowTrackerDxy);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusDz->Fill(*lowTrackerDz);
 	h_muLowerMinusDz->Fill(*lowTrackerDz);
       }
@@ -1833,7 +1840,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusPhi->Fill((*lowTrackerMuonP4).Phi());
 
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusPixelHits->Fill(*lowTrackerPhits);
 	h_muLowerMinusPixelHits->Fill(*lowTrackerPhits);
       }
@@ -1844,7 +1851,7 @@ if(*upTrackerCharge < 0){
 	
       }
       
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusTrackerHits->Fill(*lowTrackerThits);
 	h_muLowerMinusTrackerHits->Fill(*lowTrackerThits);
       }
@@ -1854,7 +1861,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusMuonStationHits->Fill(*lowTrackerMhits);
 	h_muLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
       }
@@ -1864,7 +1871,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusValidHits->Fill(*lowTrackerValidHits);
 	h_muLowerMinusValidHits->Fill(*lowTrackerValidHits);
       }
@@ -1875,7 +1882,7 @@ if(*upTrackerCharge < 0){
 	
       }
 
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	h_muLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
       }
@@ -1885,7 +1892,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusPtError->Fill(*lowTrackerPtError);
 	h_muLowerMinusPtError->Fill(*lowTrackerPtError);
       }
@@ -1895,7 +1902,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusPtError->Fill(*lowTrackerPtError);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusDxyError->Fill(*lowTrackerDxyError);
 	h_muLowerMinusDxyError->Fill(*lowTrackerDxyError);
       }
@@ -1905,7 +1912,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusDxyError->Fill(*lowTrackerDxyError);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusDzError->Fill(*lowTrackerDzError);
 	h_muLowerMinusDzError->Fill(*lowTrackerDzError);
       }
@@ -1915,7 +1922,7 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusDzError->Fill(*lowTrackerDzError);
 	
       }
- if(*lowTrackerCharge < 0){
+      if(*lowTrackerCharge < 0){
 	h_muMinusTrackPt->Fill(*lowTrackerPt);
 	h_muLowerMinusTrackPt->Fill(*lowTrackerPt);
       }
@@ -1925,29 +1932,30 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusTrackPt->Fill(*lowTrackerPt);
 	
       }
-   if(*lowTrackerCharge < 0){
-	h_muMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_muLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-      }
-      else if(*lowTrackerCharge > 0){
+      /*   if(*lowTrackerCharge < 0){
+	   h_muMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	   h_muLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	   }
+	   else if(*lowTrackerCharge > 0){
 
-	h_muPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_muLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+	   h_muPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+	   h_muLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
 
-      }
+	   }
 
 
-   if(*lowTrackerCharge < 0){
-	h_muMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_muLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-      }
-      else if(*lowTrackerCharge > 0){
+	   if(*lowTrackerCharge < 0){
+	   h_muMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	   h_muLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	   }
+	   else if(*lowTrackerCharge > 0){
 
-	h_muPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_muLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	   h_muPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	   h_muLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
 
-      }
- if(*lowTrackerCharge < 0){
+	   }
+      */ 
+      if(*lowTrackerCharge < 0){
 	h_muMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	h_muLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
       }
@@ -1957,626 +1965,627 @@ if(*upTrackerCharge < 0){
 	h_muLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	
       }
-          for(int i = 0; i < nBiasBins; ++i){
+      for(int i = 0; i < nBiasBins; ++i){
 
 	h_lowerCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	h_lowerCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	if (debug)
 	  std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
-	  }
-
-
-	  if(*lowTrackerCharge <  0){
-	    for(int i = 0; i < nBiasBins; ++i){
-
-	h_muMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_muLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	
-
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
-	  }
-
-	  }
-
-	  else if(*lowTrackerCharge > 0){
-	  for(int i = 0; i < nBiasBins; ++i){
-
-	h_muPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_muLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_muLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	
-
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
-	  }
-
-	  }
-
-	
-if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
-
-      if(*lowTrackerCharge < 0){
-	h_looseMuMinusChi2->Fill(*lowTrackerChi2);
-	h_looseMuLowerMinusChi2->Fill(*lowTrackerChi2);
       }
+
+
+      if(*lowTrackerCharge <  0){
+	for(int i = 0; i < nBiasBins; ++i){
+
+	  h_muMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	  h_muLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	
+
+	  if (debug)
+	    std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	}
+
+      }
+
       else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusChi2->Fill(*lowTrackerChi2);
-	h_looseMuLowerPlusChi2->Fill(*lowTrackerChi2);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusNdof->Fill(*lowTrackerNdof);
-	h_looseMuLowerMinusNdof->Fill(*lowTrackerNdof);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusNdof->Fill(*lowTrackerNdof);
-	h_looseMuLowerPlusNdof->Fill(*lowTrackerNdof);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusCharge->Fill(*lowTrackerCharge);
-	h_looseMuLowerMinusCharge->Fill(*lowTrackerCharge);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusCharge->Fill(*lowTrackerCharge);
-	h_looseMuLowerPlusCharge->Fill(*lowTrackerCharge);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusCurve->Fill(lowerCpT);
-	h_looseMuLowerMinusCurve->Fill(lowerCpT);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusCurve->Fill(lowerCpT);
-	h_looseMuLowerPlusCurve->Fill(lowerCpT);
-	
-      }
+	for(int i = 0; i < nBiasBins; ++i){
 
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusDxy->Fill(*lowTrackerDxy);
-	h_looseMuLowerMinusDxy->Fill(*lowTrackerDxy);
-      }
-      else if(*lowTrackerCharge > 0){
+	  h_muPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	  h_muLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	  h_muLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	
-	h_looseMuPlusDxy->Fill(*lowTrackerDxy);
-	h_looseMuLowerPlusDxy->Fill(*lowTrackerDxy);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusDz->Fill(*lowTrackerDz);
-	h_looseMuLowerMinusDz->Fill(*lowTrackerDz);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusDz->Fill(*lowTrackerDz);
-	h_looseMuLowerPlusDz->Fill(*lowTrackerDz);
-	
-      }
 
-
-      if(*lowTrackerCharge < 0){
-	h_looseMuMinusEta->Fill((*lowTrackerMuonP4).Eta());
-	h_looseMuLowerMinusEta->Fill((*lowTrackerMuonP4).Eta());
-      }
-      else if(*lowTrackerCharge > 0){
-
-	h_looseMuPlusEta->Fill((*lowTrackerMuonP4).Eta());
-	h_looseMuLowerPlusEta->Fill((*lowTrackerMuonP4).Eta());
+	  if (debug)
+	    std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	}
 
       }
 
-      if(*lowTrackerCharge < 0){
-	h_looseMuMinusPhi->Fill((*lowTrackerMuonP4).Phi());
-	h_looseMuLowerMinusPhi->Fill((*lowTrackerMuonP4).Phi());
-      }
-      else if(*lowTrackerCharge > 0){
-
-	h_looseMuPlusPhi->Fill((*lowTrackerMuonP4).Phi());
-	h_looseMuLowerPlusPhi->Fill((*lowTrackerMuonP4).Phi());
-
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusPixelHits->Fill(*lowTrackerPhits);
-	h_looseMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-      }
-      else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusPixelHits->Fill(*lowTrackerPhits);
-	h_looseMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusChi2->Fill(*lowTrackerChi2);
+	  h_looseMuLowerMinusChi2->Fill(*lowTrackerChi2);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-      }
+	  h_looseMuPlusChi2->Fill(*lowTrackerChi2);
+	  h_looseMuLowerPlusChi2->Fill(*lowTrackerChi2);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusNdof->Fill(*lowTrackerNdof);
+	  h_looseMuLowerMinusNdof->Fill(*lowTrackerNdof);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusNdof->Fill(*lowTrackerNdof);
+	  h_looseMuLowerPlusNdof->Fill(*lowTrackerNdof);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusCharge->Fill(*lowTrackerCharge);
+	  h_looseMuLowerMinusCharge->Fill(*lowTrackerCharge);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusCharge->Fill(*lowTrackerCharge);
+	  h_looseMuLowerPlusCharge->Fill(*lowTrackerCharge);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusCurve->Fill(lowerCpT);
+	  h_looseMuLowerMinusCurve->Fill(lowerCpT);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusCurve->Fill(lowerCpT);
+	  h_looseMuLowerPlusCurve->Fill(lowerCpT);
+	
+	}
+
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusDxy->Fill(*lowTrackerDxy);
+	  h_looseMuLowerMinusDxy->Fill(*lowTrackerDxy);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusDxy->Fill(*lowTrackerDxy);
+	  h_looseMuLowerPlusDxy->Fill(*lowTrackerDxy);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusDz->Fill(*lowTrackerDz);
+	  h_looseMuLowerMinusDz->Fill(*lowTrackerDz);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusDz->Fill(*lowTrackerDz);
+	  h_looseMuLowerPlusDz->Fill(*lowTrackerDz);
+	
+	}
+
+
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusEta->Fill((*lowTrackerMuonP4).Eta());
+	  h_looseMuLowerMinusEta->Fill((*lowTrackerMuonP4).Eta());
+	}
+	else if(*lowTrackerCharge > 0){
+
+	  h_looseMuPlusEta->Fill((*lowTrackerMuonP4).Eta());
+	  h_looseMuLowerPlusEta->Fill((*lowTrackerMuonP4).Eta());
+
+	}
+
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusPhi->Fill((*lowTrackerMuonP4).Phi());
+	  h_looseMuLowerMinusPhi->Fill((*lowTrackerMuonP4).Phi());
+	}
+	else if(*lowTrackerCharge > 0){
+
+	  h_looseMuPlusPhi->Fill((*lowTrackerMuonP4).Phi());
+	  h_looseMuLowerPlusPhi->Fill((*lowTrackerMuonP4).Phi());
+
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusPixelHits->Fill(*lowTrackerPhits);
+	  h_looseMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusPixelHits->Fill(*lowTrackerPhits);
+	  h_looseMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
+	
+	}
       
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusTrackerHits->Fill(*lowTrackerThits);
-	h_looseMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusTrackerHits->Fill(*lowTrackerThits);
+	  h_looseMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusTrackerHits->Fill(*lowTrackerThits);
-	h_looseMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
+	  h_looseMuPlusTrackerHits->Fill(*lowTrackerThits);
+	  h_looseMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	
-      }
+	}
 
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusValidHits->Fill(*lowTrackerValidHits);
-	h_looseMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusValidHits->Fill(*lowTrackerValidHits);
+	  h_looseMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
-	h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+	  h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
+	  h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
 	
-      }
-
-
-
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusDxyError->Fill(*lowTrackerDxyError);
-	h_looseMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusDxyError->Fill(*lowTrackerDxyError);
-	h_looseMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusDzError->Fill(*lowTrackerDzError);
-	h_looseMuLowerMinusDzError->Fill(*lowTrackerDzError);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusDzError->Fill(*lowTrackerDzError);
-	h_looseMuLowerPlusDzError->Fill(*lowTrackerDzError);
-	
-      }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusTrackPt->Fill(*lowTrackerPt);
-	h_looseMuLowerMinusTrackPt->Fill(*lowTrackerPt);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_looseMuPlusTrackPt->Fill(*lowTrackerPt);
-	h_looseMuLowerPlusTrackPt->Fill(*lowTrackerPt);
-	
-      }
-   if(*lowTrackerCharge < 0){
-	h_looseMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_looseMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-      }
-      else if(*lowTrackerCharge > 0){
-
-	h_looseMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_looseMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-
-      }
+	}
 
 
-   if(*lowTrackerCharge < 0){
-	h_looseMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_looseMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-      }
-      else if(*lowTrackerCharge > 0){
 
-	h_looseMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_looseMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusDxyError->Fill(*lowTrackerDxyError);
+	  h_looseMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusDxyError->Fill(*lowTrackerDxyError);
+	  h_looseMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusDzError->Fill(*lowTrackerDzError);
+	  h_looseMuLowerMinusDzError->Fill(*lowTrackerDzError);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusDzError->Fill(*lowTrackerDzError);
+	  h_looseMuLowerPlusDzError->Fill(*lowTrackerDzError);
+	
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusTrackPt->Fill(*lowTrackerPt);
+	  h_looseMuLowerMinusTrackPt->Fill(*lowTrackerPt);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_looseMuPlusTrackPt->Fill(*lowTrackerPt);
+	  h_looseMuLowerPlusTrackPt->Fill(*lowTrackerPt);
+	
+	}
+	/*   if(*lowTrackerCharge < 0){
+	     h_looseMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     h_looseMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     }
+	     else if(*lowTrackerCharge > 0){
 
+	     h_looseMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     h_looseMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+
+	     }
+
+
+	     if(*lowTrackerCharge < 0){
+	     h_looseMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     h_looseMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     }
+	     else if(*lowTrackerCharge > 0){
+
+	     h_looseMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     h_looseMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     }
+	*/
  
- if(*lowTrackerCharge <  0){
+	if(*lowTrackerCharge <  0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_looseMuMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_looseMuLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
-	  else if(*lowTrackerCharge > 0){
+	else if(*lowTrackerCharge > 0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_looseMuPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_looseMuLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_looseMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_looseMuLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_looseMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
 
-     }
+      }
 
 	
 
-	  if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+      if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
 
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
-	h_looseMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_looseMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusMuonStationHits->Fill(*lowTrackerMhits);
-	h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_looseMuPlusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	
+	}
       }
-	  }
 
-	  if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	h_looseMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-      }
-      else if(*lowTrackerCharge > 0){
+      if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_looseMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	h_looseMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_looseMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_looseMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	
-      }
-
-	  }
-
-
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerLayersWithMeasurement > 5) ){
-	  if(*lowTrackerCharge < 0){
-	h_looseMuMinusPt->Fill((*lowTrackerMuonP4).Pt());
-	h_looseMuLowerMinusPt->Fill((*lowTrackerMuonP4).Pt());
-      }
-      else if(*lowTrackerCharge > 0){
-
-	h_looseMuPlusPt->Fill((*lowTrackerMuonP4).Pt());
-	h_looseMuLowerPlusPt->Fill((*lowTrackerMuonP4).Pt());
+	}
 
       }
- if(*lowTrackerCharge < 0){
-	h_looseMuMinusPtError->Fill(*lowTrackerPtError);
-	h_looseMuLowerMinusPtError->Fill(*lowTrackerPtError);
-      }
-      else if(*lowTrackerCharge > 0){
+
+
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerLayersWithMeasurement > 5) ){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusPt->Fill((*lowTrackerMuonP4).Pt());
+	  h_looseMuLowerMinusPt->Fill((*lowTrackerMuonP4).Pt());
+	}
+	else if(*lowTrackerCharge > 0){
+
+	  h_looseMuPlusPt->Fill((*lowTrackerMuonP4).Pt());
+	  h_looseMuLowerPlusPt->Fill((*lowTrackerMuonP4).Pt());
+
+	}
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusPtError->Fill(*lowTrackerPtError);
+	  h_looseMuLowerMinusPtError->Fill(*lowTrackerPtError);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusPtError->Fill(*lowTrackerPtError);
-	h_looseMuLowerPlusPtError->Fill(*lowTrackerPtError);
+	  h_looseMuPlusPtError->Fill(*lowTrackerPtError);
+	  h_looseMuLowerPlusPtError->Fill(*lowTrackerPtError);
 	
+	}
+
+
+
       }
 
 
-
-  }
-
-
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3)){
-	  if(*lowTrackerCharge < 0){
-	h_looseMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	h_looseMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-      }
-      else if(*lowTrackerCharge > 0){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3)){
+	if(*lowTrackerCharge < 0){
+	  h_looseMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	  h_looseMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_looseMuPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	h_looseMuLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	  h_looseMuPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	  h_looseMuLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	
+	}
       }
- }
 
 
- }
-
-
+    
 
 
 
 
 
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
+
+
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
 	
 
-if(*lowTrackerCharge < 0){
-	h_tightMuMinusChi2->Fill(*lowTrackerChi2);
-	h_tightMuLowerMinusChi2->Fill(*lowTrackerChi2);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusChi2->Fill(*lowTrackerChi2);
+	  h_tightMuLowerMinusChi2->Fill(*lowTrackerChi2);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusChi2->Fill(*lowTrackerChi2);
-	h_tightMuLowerPlusChi2->Fill(*lowTrackerChi2);
+	  h_tightMuPlusChi2->Fill(*lowTrackerChi2);
+	  h_tightMuLowerPlusChi2->Fill(*lowTrackerChi2);
 	
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusNdof->Fill(*lowTrackerNdof);
-	h_tightMuLowerMinusNdof->Fill(*lowTrackerNdof);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusNdof->Fill(*lowTrackerNdof);
+	  h_tightMuLowerMinusNdof->Fill(*lowTrackerNdof);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusNdof->Fill(*lowTrackerNdof);
-	h_tightMuLowerPlusNdof->Fill(*lowTrackerNdof);
+	  h_tightMuPlusNdof->Fill(*lowTrackerNdof);
+	  h_tightMuLowerPlusNdof->Fill(*lowTrackerNdof);
 	
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusCharge->Fill(*lowTrackerCharge);
-	h_tightMuLowerMinusCharge->Fill(*lowTrackerCharge);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusCharge->Fill(*lowTrackerCharge);
+	  h_tightMuLowerMinusCharge->Fill(*lowTrackerCharge);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusCharge->Fill(*lowTrackerCharge);
-	h_tightMuLowerPlusCharge->Fill(*lowTrackerCharge);
+	  h_tightMuPlusCharge->Fill(*lowTrackerCharge);
+	  h_tightMuLowerPlusCharge->Fill(*lowTrackerCharge);
 	
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusCurve->Fill(lowerCpT);
-	h_tightMuLowerMinusCurve->Fill(lowerCpT);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusCurve->Fill(lowerCpT);
+	  h_tightMuLowerMinusCurve->Fill(lowerCpT);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusCurve->Fill(lowerCpT);
-	h_tightMuLowerPlusCurve->Fill(lowerCpT);
+	  h_tightMuPlusCurve->Fill(lowerCpT);
+	  h_tightMuLowerPlusCurve->Fill(lowerCpT);
 	
-      }
+	}
 
 
-      if(*lowTrackerCharge < 0){
-	h_tightMuMinusEta->Fill((*lowTrackerMuonP4).Eta());
-	h_tightMuLowerMinusEta->Fill((*lowTrackerMuonP4).Eta());
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusEta->Fill((*lowTrackerMuonP4).Eta());
+	  h_tightMuLowerMinusEta->Fill((*lowTrackerMuonP4).Eta());
+	}
+	else if(*lowTrackerCharge > 0){
 
-	h_tightMuPlusEta->Fill((*lowTrackerMuonP4).Eta());
-	h_tightMuLowerPlusEta->Fill((*lowTrackerMuonP4).Eta());
+	  h_tightMuPlusEta->Fill((*lowTrackerMuonP4).Eta());
+	  h_tightMuLowerPlusEta->Fill((*lowTrackerMuonP4).Eta());
 
-      }
+	}
 
-      if(*lowTrackerCharge < 0){
-	h_tightMuMinusPhi->Fill((*lowTrackerMuonP4).Phi());
-	h_tightMuLowerMinusPhi->Fill((*lowTrackerMuonP4).Phi());
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusPhi->Fill((*lowTrackerMuonP4).Phi());
+	  h_tightMuLowerMinusPhi->Fill((*lowTrackerMuonP4).Phi());
+	}
+	else if(*lowTrackerCharge > 0){
 
-	h_tightMuPlusPhi->Fill((*lowTrackerMuonP4).Phi());
-	h_tightMuLowerPlusPhi->Fill((*lowTrackerMuonP4).Phi());
+	  h_tightMuPlusPhi->Fill((*lowTrackerMuonP4).Phi());
+	  h_tightMuLowerPlusPhi->Fill((*lowTrackerMuonP4).Phi());
 
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusPixelHits->Fill(*lowTrackerPhits);
-	h_tightMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusPixelHits->Fill(*lowTrackerPhits);
+	  h_tightMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusPixelHits->Fill(*lowTrackerPhits);
-	h_tightMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
+	  h_tightMuPlusPixelHits->Fill(*lowTrackerPhits);
+	  h_tightMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
 	
-      }
+	}
       
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusTrackerHits->Fill(*lowTrackerThits);
-	h_tightMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusTrackerHits->Fill(*lowTrackerThits);
+	  h_tightMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusTrackerHits->Fill(*lowTrackerThits);
-	h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
+	  h_tightMuPlusTrackerHits->Fill(*lowTrackerThits);
+	  h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	
-      }
+	}
  
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusValidHits->Fill(*lowTrackerValidHits);
-	h_tightMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusValidHits->Fill(*lowTrackerValidHits);
+	  h_tightMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
-	h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+	  h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
+	  h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
 	
-      }
+	}
 
  
  
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusDxyError->Fill(*lowTrackerDxyError);
-	h_tightMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
-      }
-      else if(*lowTrackerCharge > 0){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusDxyError->Fill(*lowTrackerDxyError);
+	  h_tightMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusDxyError->Fill(*lowTrackerDxyError);
-	h_tightMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
+	  h_tightMuPlusDxyError->Fill(*lowTrackerDxyError);
+	  h_tightMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
 	
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusDzError->Fill(*lowTrackerDzError);
-	h_tightMuLowerMinusDzError->Fill(*lowTrackerDzError);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusDzError->Fill(*lowTrackerDzError);
+	  h_tightMuLowerMinusDzError->Fill(*lowTrackerDzError);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusDzError->Fill(*lowTrackerDzError);
-	h_tightMuLowerPlusDzError->Fill(*lowTrackerDzError);
+	  h_tightMuPlusDzError->Fill(*lowTrackerDzError);
+	  h_tightMuLowerPlusDzError->Fill(*lowTrackerDzError);
 	
-      }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusTrackPt->Fill(*lowTrackerPt);
-	h_tightMuLowerMinusTrackPt->Fill(*lowTrackerPt);
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusTrackPt->Fill(*lowTrackerPt);
+	  h_tightMuLowerMinusTrackPt->Fill(*lowTrackerPt);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusTrackPt->Fill(*lowTrackerPt);
-	h_tightMuLowerPlusTrackPt->Fill(*lowTrackerPt);
+	  h_tightMuPlusTrackPt->Fill(*lowTrackerPt);
+	  h_tightMuLowerPlusTrackPt->Fill(*lowTrackerPt);
 	
-      }
-   if(*lowTrackerCharge < 0){
-	h_tightMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_tightMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-      }
-      else if(*lowTrackerCharge > 0){
+	}
+	/*   if(*lowTrackerCharge < 0){
+	     h_tightMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     h_tightMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     }
+	     else if(*lowTrackerCharge > 0){
 
-	h_tightMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	h_tightMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     h_tightMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
+	     h_tightMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
 
-      }
+	     }
 
 
-   if(*lowTrackerCharge < 0){
-	h_tightMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_tightMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-      }
-      else if(*lowTrackerCharge > 0){
+	     if(*lowTrackerCharge < 0){
+	     h_tightMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     h_tightMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     }
+	     else if(*lowTrackerCharge > 0){
 
-	h_tightMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	h_tightMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     h_tightMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	     h_tightMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
 
-      }
- 
+	     }
+	*/
 
-    if(*lowTrackerCharge <  0){
+	if(*lowTrackerCharge <  0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_tightMuMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_tightMuLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
-	  else if(*lowTrackerCharge > 0){
+	else if(*lowTrackerCharge > 0){
 	  for(int i = 0; i < nBiasBins; ++i){
 
-	h_tightMuPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
-	h_tightMuLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
-	h_tightMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
+	    h_tightMuLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
+	    h_tightMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	
 
-	if (debug)
-	  std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    if (debug)
+	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
 	  }
 
-	  }
+	}
 
 
 
-	  }
-
-  if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
-
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
-	h_tightMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
       }
-      else if(*lowTrackerCharge > 0){
+
+      if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
+
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_tightMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusMuonStationHits->Fill(*lowTrackerMhits);
-	h_tightMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_tightMuPlusMuonStationHits->Fill(*lowTrackerMhits);
+	  h_tightMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	
+	}
       }
-	  }
 
-	  if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	h_tightMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-      }
-      else if(*lowTrackerCharge > 0){
+      if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_tightMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	h_tightMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_tightMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	  h_tightMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	
-      }
-
-	  }
-
-
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
-	  if(*lowTrackerCharge < 0){
-	h_tightMuMinusPt->Fill((*lowTrackerMuonP4).Pt());
-	h_tightMuLowerMinusPt->Fill((*lowTrackerMuonP4).Pt());
-      }
-      else if(*lowTrackerCharge > 0){
-
-	h_tightMuPlusPt->Fill((*lowTrackerMuonP4).Pt());
-	h_tightMuLowerPlusPt->Fill((*lowTrackerMuonP4).Pt());
+	}
 
       }
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusPtError->Fill(*lowTrackerPtError);
-	h_tightMuLowerMinusPtError->Fill(*lowTrackerPtError);
-      }
-      else if(*lowTrackerCharge > 0){
+
+
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusPt->Fill((*lowTrackerMuonP4).Pt());
+	  h_tightMuLowerMinusPt->Fill((*lowTrackerMuonP4).Pt());
+	}
+	else if(*lowTrackerCharge > 0){
+
+	  h_tightMuPlusPt->Fill((*lowTrackerMuonP4).Pt());
+	  h_tightMuLowerPlusPt->Fill((*lowTrackerMuonP4).Pt());
+
+	}
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusPtError->Fill(*lowTrackerPtError);
+	  h_tightMuLowerMinusPtError->Fill(*lowTrackerPtError);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusPtError->Fill(*lowTrackerPtError);
-	h_tightMuLowerPlusPtError->Fill(*lowTrackerPtError);
+	  h_tightMuPlusPtError->Fill(*lowTrackerPtError);
+	  h_tightMuLowerPlusPtError->Fill(*lowTrackerPtError);
 	
+	}
+
+
+
       }
 
 
-
-  }
-
-
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
-	  if(*lowTrackerCharge < 0){
-	h_tightMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	h_tightMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	  h_tightMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_tightMuPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	  h_tightMuLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	
+	}
       }
-      else if(*lowTrackerCharge > 0){
-	
-	h_tightMuPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	h_tightMuLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	
-      }
- }
 
 
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDz < 0.5)){
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusDxy->Fill(*lowTrackerDxy);
-	h_tightMuLowerMinusDxy->Fill(*lowTrackerDxy);
-      }
-      else if(*lowTrackerCharge > 0){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDz < 0.5)){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusDxy->Fill(*lowTrackerDxy);
+	  h_tightMuLowerMinusDxy->Fill(*lowTrackerDxy);
+	}
+	else if(*lowTrackerCharge > 0){
 	
-	h_tightMuPlusDxy->Fill(*lowTrackerDxy);
-	h_tightMuLowerPlusDxy->Fill(*lowTrackerDxy);
+	  h_tightMuPlusDxy->Fill(*lowTrackerDxy);
+	  h_tightMuLowerPlusDxy->Fill(*lowTrackerDxy);
 	
-      }
-	
-	  }
-
-
-	  if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2)){
- if(*lowTrackerCharge < 0){
-	h_tightMuMinusDz->Fill(*lowTrackerDz);
-	h_tightMuLowerMinusDz->Fill(*lowTrackerDz);
-      }
-      else if(*lowTrackerCharge > 0){
-	
-	h_tightMuPlusDz->Fill(*lowTrackerDz);
-	h_tightMuLowerPlusDz->Fill(*lowTrackerDz);
+	}
 	
       }
+
+
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2)){
+	if(*lowTrackerCharge < 0){
+	  h_tightMuMinusDz->Fill(*lowTrackerDz);
+	  h_tightMuLowerMinusDz->Fill(*lowTrackerDz);
+	}
+	else if(*lowTrackerCharge > 0){
+	
+	  h_tightMuPlusDz->Fill(*lowTrackerDz);
+	  h_tightMuLowerPlusDz->Fill(*lowTrackerDz);
+	
+	}
      
 	
-	  }
+      }
 
       j++;
       if (debug)
 	std::cout << "\n\nMade it through " << j << " sets of fills\n";	
     }//Closing if fill
-    // } // end if tracker.Next
+    //  } // end if tracker.Next
   } // end while loop
   
 

@@ -63,7 +63,9 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   event = (ev.id()).event();  
   run = (ev.id()).run();
   lumi = ev.luminosityBlock();
- 
+  
+  type = reco::Muon::SegmentAndTrackArbitration;
+  
   if ( muonColl->size() != 2) return;
 
  
@@ -168,7 +170,7 @@ int muIdx = 0;
 
       if(debug_ > 1) std::cout << "\nFound Track Type. If NonNull Fill.\n";
 
-      if(ref.isNonnull()) TrackFill(ref, muon);
+      if(ref.isNonnull()) TrackFill(ref, muon, type);
       
       if(debug_ > 1) std::cout << "\nFilled Histograms!\n" ;
       
@@ -196,7 +198,7 @@ int muIdx = 0;
 }
 
 
-void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon){
+void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType){
 
   if(debug_ > 1)std::cout << "\nStarting to Fill Histograms!\n";
 
@@ -214,13 +216,17 @@ if (ref->outerPosition().Y() > 0){
 	upperMuon_trackerHits = ref->hitPattern().numberOfValidTrackerHits();
 	upperMuon_pixelHits = ref->hitPattern().numberOfValidPixelHits();
       	upperMuon_muonStationHits = ref->hitPattern().muonStationsWithValidHits();
+	upperMuon_numberOfMatchedStations = muon->numberOfMatchedStations(arbType /*ArbitrationType type = SegmentAndTrackArbitration*/);
 	upperMuon_ptError = ref->ptError();
 	upperMuon_dxyError = ref->dxyError();
 	upperMuon_dzError = ref->dzError();
 	upperMuon_trackPt =ref->pt();
 	upperMuon_trackVec = ref->momentum();
-	upperMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
-      }
+       	upperMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
+	std::cout << muon->numberOfMatchedStations(arbType) << std::endl;
+	std::cout << arbType;
+	std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
+ }
 
       else if (ref->outerPosition().Y() < 0){
 	//	lowerMuon =&(*muon);
@@ -235,13 +241,17 @@ if (ref->outerPosition().Y() > 0){
 	lowerMuon_trackerHits = ref->hitPattern().numberOfValidTrackerHits();
 	lowerMuon_pixelHits = ref->hitPattern().numberOfValidPixelHits();
 	lowerMuon_muonStationHits = ref->hitPattern().muonStationsWithValidHits();
+	lowerMuon_numberOfMatchedStations = muon->numberOfMatchedStations(arbType /*ArbitrationType type = SegmentAndTrackArbitration*/);
 	lowerMuon_ptError = ref->ptError();
 	lowerMuon_dxyError = ref->dxyError();
 	lowerMuon_dzError = ref->dzError();
 	lowerMuon_trackPt =ref->pt();
 	lowerMuon_trackVec = ref->momentum();
 	lowerMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
-      }
+	std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
+	
+
+}
 
  if(debug_ > 1) std::cout << "\nHistograms Filled!\n";
 }
