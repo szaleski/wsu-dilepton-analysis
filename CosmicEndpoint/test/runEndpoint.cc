@@ -221,5 +221,6 @@ int main(int argc, char **argv)
   
   wsu::dileptons::cosmics::HistogramMaker myHistograms(inputFiles, outputFile, configFile, debug);
   
+  std::cout << "finished running endpoint study" << std::endl;
   return 0;
 }

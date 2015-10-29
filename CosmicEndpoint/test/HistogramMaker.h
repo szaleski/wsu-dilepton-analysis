@@ -5,7 +5,8 @@
 //#include "DataFormats/Math/interface/LorentzVector.h"
 //#include "DataFormats/Math/interface/LorentzVectorFwd.h"
 #include <string>
-//#include <libconfig.h++>
+#include <memory> /**for smart pointers*/
+//#include <libconfig.h++> /**for some config parsing, not working on lxplus*/
 
 // forward declare ROOT things
 class TH1D;
@@ -79,25 +80,24 @@ namespace wsu {
 	double maxBias, minPt;
 	int nBiasBins, massBinSize;
 	
-	TTree*       tree;
-	TChain*      treeChain;
-	TTreeReader* treeReader;
-
-	TFile *outFile;
+	std::shared_ptr<TTree>       tree;
+	std::shared_ptr<TChain>      treeChain;
+	std::shared_ptr<TTreeReader> treeReader;
+	
+	std::shared_ptr<TFile>       outFile;
 	
 	// histograms
 	// [3] for upper, lower, and combined
 	// [2] for plus/minus
-	TH1D *h_Chi2[3][2],   *h_Ndof[3][2], *h_Chi2Ndof[3][2];
-	TH1D *h_Charge[3][2], *h_Curve[3][2];
-	TH1D *h_Dxy[3][2],    *h_Dz[3][2],      *h_DxyError[3][2], *h_DzError [3][2];
-	TH1D *h_Pt[3][2],     *h_TrackPt[3][2], *h_PtError[3][2],  *h_TrackEta[3][2], *h_TrackPhi[3][2];
+	std::shared_ptr<TH1D> h_Chi2[3][2],   h_Ndof[3][2], h_Chi2Ndof[3][2];
+	std::shared_ptr<TH1D> h_Charge[3][2], h_Curve[3][2];
+	std::shared_ptr<TH1D> h_Dxy[3][2],    h_Dz[3][2],      h_DxyError[3][2], h_DzError [3][2];
+	std::shared_ptr<TH1D> h_Pt[3][2],     h_TrackPt[3][2], h_PtError[3][2],  h_TrackEta[3][2], h_TrackPhi[3][2];
 
-	TH1D *h_TkHits[3][2], *h_PixelHits[3][2], *h_ValidHits[3][2];
-	TH1D *h_MuonStationHits[3][2], *h_MatchedMuonStations[3][2], *h_TkLayersWithMeasurement[3][2];
+	std::shared_ptr<TH1D> h_TkHits[3][2], h_PixelHits[3][2], h_ValidHits[3][2];
+	std::shared_ptr<TH1D> h_MuonStationHits[3][2], h_MatchedMuonStations[3][2], h_TkLayersWithMeasurement[3][2];
 	
-	TH1D *h_CurvePlusBias[3][2][500];
-	TH1D *h_CurveMinusBias[3][2][500];
+	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][500], h_CurveMinusBias[3][2][500]; // what to do when 500 is too many/few?
 	
 	//libconfig::config_t         *cfg;
 	//libconfig::config_setting_t *setting;
