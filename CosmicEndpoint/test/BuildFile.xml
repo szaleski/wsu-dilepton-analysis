@@ -1,12 +1,24 @@
 <use name="boost"/>
 <library name="HistogramMaker" file="HistogramMaker.cc">
-  <use name="root"/>
-  <flags CXXFLAGS="-O0 -g3 -fno-inline"/>
-  <flags CFLAGS="-O0 -g3 -fno-inline"/>
+  <!--use   name="libconfig"/>
+  <use   name="libconfig++"/-->
+  <use   name="boost"/>
+  <use   name="root"/>
+  <use   name="rootmath"/>
+  <use   name="rootgraphics"/>
+  <use   name="DataFormats/Math"/>
+  <flags CXXFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
+  <flags CFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
 </library>
 <bin name="runEndpoint" file="runEndpoint.cc">
-  <use name="HistogramMaker"/>
-  <use name="root"/>
-  <flags CXXFLAGS="-O0 -g3 -fno-inline"/>
-  <flags CFLAGS="-O0 -g3 -fno-inline"/>
+  <lib   name="HistogramMaker"/>
+  <!--use   name="libconfig"/>
+  <use   name="libconfig++"/-->
+  <use   name="boost"/>
+  <use   name="root"/>
+  <use   name="rootmath"/>
+  <use   name="rootgraphics"/>
+  <use   name="DataFormats/Math"/>
+  <flags CXXFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
+  <flags CFLAGS="-std=gnu++11 -O0 -g3 -fno-inline"/>
 </bin>
