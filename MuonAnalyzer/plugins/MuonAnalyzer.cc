@@ -1,4 +1,4 @@
-#include "WSUCosmicAnalysis/MuonAnalyzer/interface/MuonAnalyzer.h"
+#include "WSUDiLeptons/MuonAnalyzer/interface/MuonAnalyzer.h"
 // -*- C++ -*-
 //
 // Package:    CosmicStudies/MuonAnalyzer

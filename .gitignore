@@ -1,6 +1,7 @@
 *
-!*.cc
 !*.py
+!*.cc
+!*.C
 !*.h
-!*.txt
 !*.xml
+__init__.py
