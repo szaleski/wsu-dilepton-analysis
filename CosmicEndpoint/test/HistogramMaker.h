@@ -71,20 +71,22 @@ namespace wsu {
 		       int debug=0);
 	~HistogramMaker();
 	
+	int runLoop(int debug=0);
+	
+      private:
 	void parseConfiguration(std::string const& confFileName);
 	void parseFileList(     std::string const& inputFiles);
 	
-	void Plot(TTree* inputTree);
+	int Plot(TTree* inputTree);
 
-      private:
 	double maxBias, minPt;
 	int nBiasBins, massBinSize;
 	
-	std::shared_ptr<TTree>       tree;
-	std::shared_ptr<TChain>      treeChain;
-	std::shared_ptr<TTreeReader> treeReader;
+	std::shared_ptr<TTree>       m_tree;
+	std::shared_ptr<TChain>      m_treeChain;
+	std::shared_ptr<TTreeReader> m_treeReader;
 	
-	std::shared_ptr<TFile>       outFile;
+	std::shared_ptr<TFile>       m_outFile;
 	
 	// histograms
 	// [3] for upper, lower, and combined

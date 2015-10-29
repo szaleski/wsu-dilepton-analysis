@@ -34,13 +34,14 @@ namespace wsu {
 				     std::string const& confParmsFile,
 				     int debug)
       {
-	std::cout << "HistogramMaker constructed with:" << std::endl
-		  << "fileList = " << fileList << std::endl
-		  << "outFileName = " << outFileName << std::endl
+	std::cout << "HistogramMaker constructed with:"  << std::endl
+		  << "fileList = "      << fileList      << std::endl
+		  << "outFileName = "   << outFileName   << std::endl
 		  << "confParmsFile = " << confParmsFile << std::endl
-		  << "debug = " << debug << std::endl;
+		  << "debug = "         << debug         << std::endl;
 	
 	parseConfiguration(confParmsFile);
+	parseFileList(fileList);
 	
 	nBiasBins = confParams.NBiasBins;
 	maxBias   = confParams.MaxKBias;
@@ -49,7 +50,8 @@ namespace wsu {
 	std::string legs[3]   = {"up", "low", "comb"};
 	std::string charge[2] = {"muon", "antiMuon"};
 	
-	outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
+	m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
+
 	for (int leg = 0; leg < 3; ++leg) {
 	  for (int ch = 0; ch < 2; ++ch) {
 	    // TDirectory* myDirectory = new TDirecto
@@ -142,9 +144,9 @@ namespace wsu {
       HistogramMaker::~HistogramMaker()
       {
 	std::cout << "HistogramMaker destructor called" << std::endl;
-	outFile->Write();
-	outFile->Close();
-	std::cout << "Wrote and closed output file 0x" << std::hex << outFile.get() << std::dec << std::endl;
+	m_outFile->Write();
+	m_outFile->Close();
+	std::cout << "Wrote and closed output file 0x" << std::hex << m_outFile.get() << std::dec << std::endl;
 	/* use shared_ptr to avoid all this
 	for (int leg = 0; leg < 3; ++ leg) {
 	  for (int ch = 0; ch < 3; ++ ch) {
@@ -202,21 +204,27 @@ namespace wsu {
 	  }// end loop on different charge histograms
 	}// end loop on different muon leg histograms
 
-	delete outFile;
-	outFile = NULL;
+	delete m_outFile;
+	m_outFile = NULL;
 
-	delete treeReader;
-	treeReader = NULL;
+	delete m_treeReader;
+	m_treeReader = NULL;
 
-	delete tree;
-	tree = NULL;
+	delete m_tree;
+	m_tree = NULL;
 
-	delete treeChain;
-	treeChain = NULL;
+	delete m_treeChain;
+	m_treeChain = NULL;
 	*/
 	std::cout << "HistogramMaker destructor finished" << std::endl;
       } // end destructor
 
+
+      int HistogramMaker::runLoop(int debug)
+      {
+	return Plot(m_tree.get());
+      }
+      
       
       void HistogramMaker::parseConfiguration(std::string const& confFileName)
       {
@@ -263,7 +271,7 @@ namespace wsu {
 	return;
 	std::stringstream treeName;
 	treeName << "analysis" << confParams.TrackAlgo << "Muons/MuonTree";
-	treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
+	m_treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
       }
       
       void HistogramMaker::parseFileList(std::string const& fileList)
@@ -283,64 +291,64 @@ namespace wsu {
 	  std::stringstream filepath;
 
 	  filepath << confParams.PathPrefix << line; // need to strip off the newline?
-	  treeChain->Add(TString(filepath.str()));
+	  m_treeChain->Add(TString(filepath.str()));
 	}// end while loop over lines in file
-	tree = treeChain;
+	m_tree = m_treeChain;
 	return;
       }
       
 
-      void HistogramMaker::Plot(TTree* intree)
+      int HistogramMaker::Plot(TTree* intree)
       {
 	maxBias     = confParams.MaxKBias;
 	nBiasBins   = confParams.NBiasBins;
 
-	treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(tree.get()));
+	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
 
-	TTreeReaderValue<Double_t> upTrackPt(       *treeReader, "upperMuon_trackPt"          );
-	TTreeReaderValue<Double_t> upTrackDxy(      *treeReader, "upperMuon_dxy"              );
-	TTreeReaderValue<Double_t> upTrackDz(       *treeReader, "upperMuon_dz"               );
-	TTreeReaderValue<Int_t>    upTrackPhits(    *treeReader, "upperMuon_pixelHits"        );
-	TTreeReaderValue<Int_t>    upTrackCharge(   *treeReader, "upperMuon_charge"           );
-	TTreeReaderValue<Int_t>    upTrackThits(    *treeReader, "upperMuon_trackerHits"      );
-	TTreeReaderValue<Int_t>    upTrackMhits(    *treeReader, "upperMuon_muonStationHits"  );
-	TTreeReaderValue<Double_t> upTrackChi2(     *treeReader, "upperMuon_chi2"             );
-	TTreeReaderValue<Int_t>    upTrackNdof(     *treeReader, "upperMuon_ndof"             );
-	TTreeReaderValue<Int_t>    upTrackValidHits(*treeReader, "upperMuon_numberOfValidHits");
-	TTreeReaderValue<Double_t> upTrackDxyError( *treeReader, "upperMuon_dxyError"         );
-	TTreeReaderValue<Double_t> upTrackDzError(  *treeReader, "upperMuon_dzError"          );
-	TTreeReaderValue<Double_t> upTrackPtError(  *treeReader, "upperMuon_ptError"          );
-	TTreeReaderValue<Int_t>    upTrackMatchedMuonStations(  *treeReader,"upperMuon_numberOfMatchedStations");
-	TTreeReaderValue<Int_t>    upTrackTkLayersWithMeasurement(*treeReader,"upperMuon_trackerLayersWithMeasurement");
+	TTreeReaderValue<Double_t> upTrackPt(       *m_treeReader, "upperMuon_trackPt"          );
+	TTreeReaderValue<Double_t> upTrackDxy(      *m_treeReader, "upperMuon_dxy"              );
+	TTreeReaderValue<Double_t> upTrackDz(       *m_treeReader, "upperMuon_dz"               );
+	TTreeReaderValue<Int_t>    upTrackPhits(    *m_treeReader, "upperMuon_pixelHits"        );
+	TTreeReaderValue<Int_t>    upTrackCharge(   *m_treeReader, "upperMuon_charge"           );
+	TTreeReaderValue<Int_t>    upTrackThits(    *m_treeReader, "upperMuon_trackerHits"      );
+	TTreeReaderValue<Int_t>    upTrackMhits(    *m_treeReader, "upperMuon_muonStationHits"  );
+	TTreeReaderValue<Double_t> upTrackChi2(     *m_treeReader, "upperMuon_chi2"             );
+	TTreeReaderValue<Int_t>    upTrackNdof(     *m_treeReader, "upperMuon_ndof"             );
+	TTreeReaderValue<Int_t>    upTrackValidHits(*m_treeReader, "upperMuon_numberOfValidHits");
+	TTreeReaderValue<Double_t> upTrackDxyError( *m_treeReader, "upperMuon_dxyError"         );
+	TTreeReaderValue<Double_t> upTrackDzError(  *m_treeReader, "upperMuon_dzError"          );
+	TTreeReaderValue<Double_t> upTrackPtError(  *m_treeReader, "upperMuon_ptError"          );
+	TTreeReaderValue<Int_t>    upTrackMatchedMuonStations(  *m_treeReader,"upperMuon_numberOfMatchedStations");
+	TTreeReaderValue<Int_t>    upTrackTkLayersWithMeasurement(*m_treeReader,"upperMuon_trackerLayersWithMeasurement");
 
-	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > upTrackMuonP4(*treeReader,"upperMuon_P4");
-	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackTrack(*treeReader,"upperMuon_trackVec");
-	TTreeReaderValue<math::XYZTLorentzVector> upMuonP4(  *treeReader,"upperMuon_P4");
-	TTreeReaderValue<math::XYZVector>         upTrackVec(*treeReader,"upperMuon_trackVec");
+	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > upTrackMuonP4(*m_treeReader,"upperMuon_P4");
+	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackTrack(*m_treeReader,"upperMuon_trackVec");
+	TTreeReaderValue<math::XYZTLorentzVector> upMuonP4(  *m_treeReader,"upperMuon_P4");
+	TTreeReaderValue<math::XYZVector>         upTrackVec(*m_treeReader,"upperMuon_trackVec");
 
-	TTreeReaderValue<Double_t> lowTrackPt(       *treeReader, "lowerMuon_trackPt"          );
-	TTreeReaderValue<Double_t> lowTrackDxy(      *treeReader, "lowerMuon_dxy"              );
-	TTreeReaderValue<Double_t> lowTrackDz(       *treeReader, "lowerMuon_dz"               );
-	TTreeReaderValue<Int_t>    lowTrackPhits(    *treeReader, "lowerMuon_pixelHits"        );
-	TTreeReaderValue<Int_t>    lowTrackCharge(   *treeReader, "lowerMuon_charge"           );
-	TTreeReaderValue<Int_t>    lowTrackThits(    *treeReader, "lowerMuon_trackerHits"      );
-	TTreeReaderValue<Int_t>    lowTrackMhits(    *treeReader, "lowerMuon_muonStationHits"  );
-	TTreeReaderValue<Double_t> lowTrackChi2(     *treeReader, "lowerMuon_chi2"             );
-	TTreeReaderValue<Int_t>    lowTrackNdof(     *treeReader, "lowerMuon_ndof"             );
-	TTreeReaderValue<Int_t>    lowTrackValidHits(*treeReader, "lowerMuon_numberOfValidHits");
-	TTreeReaderValue<Double_t> lowTrackDxyError( *treeReader, "lowerMuon_dxyError"         );
-	TTreeReaderValue<Double_t> lowTrackDzError(  *treeReader, "lowerMuon_dzError"          );
-	TTreeReaderValue<Double_t> lowTrackPtError(  *treeReader, "lowerMuon_ptError"          );
-	TTreeReaderValue<Int_t>    lowTrackMatchedMuonStations(  *treeReader,"lowerMuon_numberOfMatchedStations"     );
-	TTreeReaderValue<Int_t>    lowTrackTkLayersWithMeasurement(*treeReader,"lowerMuon_trackerLayersWithMeasurement");
+	TTreeReaderValue<Double_t> lowTrackPt(       *m_treeReader, "lowerMuon_trackPt"          );
+	TTreeReaderValue<Double_t> lowTrackDxy(      *m_treeReader, "lowerMuon_dxy"              );
+	TTreeReaderValue<Double_t> lowTrackDz(       *m_treeReader, "lowerMuon_dz"               );
+	TTreeReaderValue<Int_t>    lowTrackPhits(    *m_treeReader, "lowerMuon_pixelHits"        );
+	TTreeReaderValue<Int_t>    lowTrackCharge(   *m_treeReader, "lowerMuon_charge"           );
+	TTreeReaderValue<Int_t>    lowTrackThits(    *m_treeReader, "lowerMuon_trackerHits"      );
+	TTreeReaderValue<Int_t>    lowTrackMhits(    *m_treeReader, "lowerMuon_muonStationHits"  );
+	TTreeReaderValue<Double_t> lowTrackChi2(     *m_treeReader, "lowerMuon_chi2"             );
+	TTreeReaderValue<Int_t>    lowTrackNdof(     *m_treeReader, "lowerMuon_ndof"             );
+	TTreeReaderValue<Int_t>    lowTrackValidHits(*m_treeReader, "lowerMuon_numberOfValidHits");
+	TTreeReaderValue<Double_t> lowTrackDxyError( *m_treeReader, "lowerMuon_dxyError"         );
+	TTreeReaderValue<Double_t> lowTrackDzError(  *m_treeReader, "lowerMuon_dzError"          );
+	TTreeReaderValue<Double_t> lowTrackPtError(  *m_treeReader, "lowerMuon_ptError"          );
+	TTreeReaderValue<Int_t>    lowTrackMatchedMuonStations(    *m_treeReader,"lowerMuon_numberOfMatchedStations"     );
+	TTreeReaderValue<Int_t>    lowTrackTkLayersWithMeasurement(*m_treeReader,"lowerMuon_trackerLayersWithMeasurement");
 	
-	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > lowTrackMuonP4(*treeReader,"lowerMuon_P4");
-	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > lowTrackTrackVec(*treeReader,"lowerMuon_trackVec");
-	TTreeReaderValue<math::XYZTLorentzVector> lowMuonP4(  *treeReader,"lowerMuon_P4");
-	TTreeReaderValue<math::XYZVector>         lowTrackVec(*treeReader,"lowerMuon_trackVec");
+	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > lowTrackMuonP4(*m_treeReader,"lowerMuon_P4");
+	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > lowTrackTrackVec(*m_treeReader,"lowerMuon_trackVec");
+	TTreeReaderValue<math::XYZTLorentzVector> lowMuonP4(  *m_treeReader,"lowerMuon_P4");
+	TTreeReaderValue<math::XYZVector>         lowTrackVec(*m_treeReader,"lowerMuon_trackVec");
   
 	int j = 0;
-	while (treeReader->Next()){
+	while (m_treeReader->Next()){
 	  if(*upTrackChi2 > -1000) { //ensure values are from an actual event
 	    int combLow[2] = {1,2};
 	    int combUp[2] = {0,2};
@@ -412,11 +420,8 @@ namespace wsu {
 	    }// closing if fill
 	  }// closing for loop over combining plots
 	} // end while loop
-  
-	//g->Write();
-	//g->Close();
 
-	return;
+	return j;
       }
 
     } // end namespace wsu::dileptons::cosmics
