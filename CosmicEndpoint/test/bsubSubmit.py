@@ -1,3 +1,5 @@
+#!/bin/env python
+
 from macrotools import *
 import sys,os
 
@@ -19,7 +21,7 @@ username = os.getenv("USER")
 userkey  = os.getenv("KRB5CCNAME")[17:17+5] #should be the form of FILE:/tmp/krb5cc_17329_lNizN17453
 print username, userkey
 proxyPath = "/afs/cern.ch/user/%s/%s/x509up_u%s"%(username[0],username,userkey)
-cmd = "cp /tmp/x509up_u%s  %s/"%(userkey,proxyPath)
+cmd = "cp /tmp/x509up_u%s  %s"%(userkey,proxyPath)
 print cmd
 os.system(cmd)
 bSubSplitJobs("craft15", "histograms", options.infiles, proxyPath, options.njobs)
