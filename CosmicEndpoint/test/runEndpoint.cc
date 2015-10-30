@@ -217,7 +217,12 @@ int main(int argc, char **argv)
   }
   
   //main body
-  std::cout << "parsed command line options, running endpoint study" << std::endl;
+  std::cout << "parsed command line options as:" << std::endl
+	    << "inputFiles = " << inputFiles     << std::endl
+	    << "outputFile = " << outputFile     << std::endl
+	    << "configFile = " << configFile     << std::endl
+	    << "debug = "      << debug          << std::endl
+	    << "running endpoint study"          << std::endl;
   
   wsu::dileptons::cosmics::HistogramMaker myHistograms(inputFiles, outputFile, configFile, debug);
   int nEvents = myHistograms.runLoop(0);

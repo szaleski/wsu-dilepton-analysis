@@ -50,6 +50,7 @@ namespace wsu {
 		  << "confParmsFile = " << confParmsFile << std::endl
 		  << "debug = "         << debug         << std::endl << std::flush;
 	
+	//m_debug = debug;
 	std::cout << "HistogramMaker constructed with:"    << std::endl
 		  << "m_inFileList = "   << m_inFileList   << std::endl
 		  << "m_outFileName = "  << m_outFileName  << std::endl
@@ -58,14 +59,14 @@ namespace wsu {
 	
 	std::cout << "Parsing config file " << confParmsFile << std::endl;
 	parseConfiguration(confParmsFile);
+	
 	std::cout << "Parsing input file list " << fileList << std::endl;
 	parseFileList(fileList);
 	
 	std::cout << "Setting local varaiables " << std::endl;
-
-	nBiasBins = m_confParams.NBiasBins;
-	maxBias   = m_confParams.MaxKBias;
-	minPt     = m_confParams.MinPtCut;
+	m_nBiasBins = m_confParams.NBiasBins;
+	m_maxBias   = m_confParams.MaxKBias;
+	m_minPt     = m_confParams.MinPtCut;
 
 	std::string legs[3]   = {"up", "low", "comb"};
 	std::string charge[2] = {"muon", "antiMuon"};
@@ -143,9 +144,9 @@ namespace wsu {
 	      h_MatchedMuonStations[leg][ch][ptb]    ->Sumw2();
 	      h_TkLayersWithMeasurement[leg][ch][ptb]->Sumw2();
 	    
-	      for (int i = 0; i < nBiasBins; ++i) {
+	      for (int i = 0; i < m_nBiasBins; ++i) {
 		std::stringstream name;
-		double biasValue = (maxBias/nBiasBins)*(i+1);
+		double biasValue = (m_maxBias/m_nBiasBins)*(i+1);
 		name << std::setw(3) << std::setfill('0') << i + 1;
 
 		// inject positive bias
@@ -314,8 +315,8 @@ namespace wsu {
 
       int HistogramMaker::Plot(TTree* intree)
       {
-	maxBias     = m_confParams.MaxKBias;
-	nBiasBins   = m_confParams.NBiasBins;
+	m_maxBias     = m_confParams.MaxKBias;
+	m_nBiasBins   = m_confParams.NBiasBins;
 
 	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
 
@@ -415,9 +416,9 @@ namespace wsu {
 	      h_MatchedMuonStations[combUp[fill]][    (charge<0)?0:1][13]->Fill(*upTrackMatchedMuonStations);
 	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][13]->Fill(*upTrackTkLayersWithMeasurement);
 	      
-	      for (int i = 0; i < nBiasBins; ++i) {
-		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][13][i]->Fill(upperCpT+(i+1)*(maxBias/nBiasBins));
-		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][13][i]->Fill(upperCpT-(i+1)*(maxBias/nBiasBins));
+	      for (int i = 0; i < m_nBiasBins; ++i) {
+		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][13][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][13][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
 	      
 	      charge = *lowTrackCharge;
@@ -447,9 +448,9 @@ namespace wsu {
 	      h_MatchedMuonStations[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackMatchedMuonStations);
 	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackTkLayersWithMeasurement);
 	      
-	      for (int i = 0; i < nBiasBins; ++i) {
-		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][13][i]->Fill(lowerCpT+(i+1)*(maxBias/nBiasBins));
-		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][13][i]->Fill(lowerCpT-(i+1)*(maxBias/nBiasBins));
+	      for (int i = 0; i < m_nBiasBins; ++i) {
+		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][13][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][13][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
 	      ++j;
 	    }// closing if fill

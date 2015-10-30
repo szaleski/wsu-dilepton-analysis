@@ -84,12 +84,12 @@ namespace wsu {
 
 	ConfigurationParameters m_confParams;
 	std::string m_inFileList, m_outFileName, m_confFileName;
-	bool m_debug;
+	int m_debug;
 
 	int Plot(TTree* inputTree);
 
-	double maxBias, minPt;
-	int nBiasBins, massBinSize;
+	double m_maxBias, m_minPt;
+	int m_nBiasBins;
 	
 	std::shared_ptr<TTree>       m_tree;
 	std::shared_ptr<TChain>      m_treeChain;
