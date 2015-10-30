@@ -49,8 +49,8 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 		#f.write("  gROOT->ProcessLine(\" .L %s/Plot.so\");\n"%(os.getcwd()))
 		f.write("  gROOT->ProcessLine(\" .L %Plot.so\");\n")
 		for tk in range(5):
-			f.write("  Plot(\"%s\",\"%s\",%d);\n"%(samplesListsDir + "/splitLists/" + splitListFile,
-							     outputFile, tk+1))
+			f.write("  Plot(\"%s\",\"%s_%d_\",%d);\n"%(samplesListsDir + "/splitLists/" + splitListFile,
+							     outputFile, i, tk+1))
 		f.write("}\n")
 		pyCommand = "root -x -b -q %s"%(rootScriptName)
 		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i, proxyPath)
