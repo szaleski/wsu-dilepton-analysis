@@ -78,9 +78,13 @@ namespace wsu {
 	int runLoop(int debug=0);
 	
       private:
+
 	void parseConfiguration(std::string const& confFileName);
 	void parseFileList(     std::string const& inputFiles);
-	
+
+	std::string m_inFileList, m_outFileName, m_confFileName;
+	bool m_debug;
+
 	int Plot(TTree* inputTree);
 
 	double maxBias, minPt;

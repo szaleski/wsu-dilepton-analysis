@@ -37,7 +37,11 @@ namespace wsu {
       HistogramMaker::HistogramMaker(std::string const& fileList,
 				     std::string const& outFileName,
 				     std::string const& confParmsFile,
-				     int debug)
+				     int debug) :
+	m_inFileList(fileList),
+	m_outFileName(outFileName),
+	m_confFileName(confParmsFile),
+	m_debug(debug)
       {
 	std::cout << "HistogramMaker constructed with:"  << std::endl
 		  << "fileList = "      << fileList      << std::endl
@@ -45,9 +49,19 @@ namespace wsu {
 		  << "confParmsFile = " << confParmsFile << std::endl
 		  << "debug = "         << debug         << std::endl << std::flush;
 	
+	std::cout << "HistogramMaker constructed with:"   << std::endl
+		  << "fileList = "      << m_inFileList   << std::endl
+		  << "outFileName = "   << m_outFileName  << std::endl
+		  << "confParmsFile = " << m_confFileName << std::endl
+		  << "debug = "         << m_debug        << std::endl << std::flush;
+	
+	std::cout << "Parsing config file " << confParmsFile << std::endl;
 	parseConfiguration(confParmsFile);
+	std::cout << "Parsing input file list " << fileList << std::endl;
 	parseFileList(fileList);
 	
+	std::cout << "Setting local varaiables " << std::endl;
+
 	nBiasBins = confParams.NBiasBins;
 	maxBias   = confParams.MaxKBias;
 	minPt     = confParams.MinPtCut;
@@ -139,7 +153,7 @@ namespace wsu {
 		name.clear();
 		name << biasValue;
 		TString histtitle("#frac{q}{p_{T}}+#Delta#kappa("+name.str()+")");
-		if (debug > 3)
+		if (m_debug > 3)
 		  std::cout << "creating histogram " << histname << " " << histtitle << std::endl << std::flush;
 		h_CurvePlusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500, -0.05, 0.05));
 		h_CurvePlusBias[leg][ch][ptb][i]->Sumw2();
@@ -153,7 +167,7 @@ namespace wsu {
 		name.clear();
 		name << biasValue;
 		TString histtitle2 = TString("#frac{q}{p_{T}}-#Delta#kappa("+name.str()+")");
-		if (debug > 3)
+		if (m_debug > 3)
 		  std::cout << "trying to create problematic histogram " << histname2 << " " << histtitle2 << std::endl << std::flush;
 		h_CurveMinusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2, 2*500, -0.05, 0.05));
 		h_CurveMinusBias[leg][ch][ptb][i]->Sumw2();
@@ -192,6 +206,9 @@ namespace wsu {
 	  return; // maybe should exit(1) here?
 	}
  
+	std::cout << "Configuration file " << confFileName 
+		  << " opened successfully, parsing"
+		  << std::endl << std::flush;
 	std::string key;
 	while (std::getline(infile,key,'=')) {
 	  //std::cout << "key " << key << std::endl << std::flush;
@@ -204,28 +221,35 @@ namespace wsu {
 	  std::istringstream valstream(value);
 
 	  if (key.find("NBiasBins") != std::string::npos) {
-	    //std::cout << "using NBiasBins " << valstream.str() << std::endl << std::flush;;
+	    if (m_debug > 2)
+	      std::cout << "using NBiasBins " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.NBiasBins;
 	  } else if (key.find("MaxKBias") != std::string::npos) {
-	    //std::cout << "using MaxKBias " << valstream.str() << std::endl << std::flush;;
+	    if (m_debug > 2)
+	      std::cout << "using MaxKBias " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.MaxKBias;
 	  } else if (key.find("MinPtCut") != std::string::npos) {
-	    //std::cout << "using MinPtCut " << valstream.str() << std::endl << std::flush;;
+	    if (m_debug > 2)
+	      std::cout << "using MinPtCut " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.MinPtCut;
 	  } else if (key.find("Arbitration") != std::string::npos) {
-	    //std::cout << "using Arbitration " << value << std::endl << std::flush;
+	    if (m_debug > 2)
+	      std::cout << "using Arbitration " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.Arbitration = value;
 	  } else if (key.find("TrackAlgo") != std::string::npos) {
 	    //std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-	    //std::cout << "using TrackAlgo " << value << std::endl << std::flush;
+	    if (m_debug > 2)
+	      std::cout << "using TrackAlgo " << value << std::endl << std::flush;
 	    confParams.TrackAlgo = value;
 	  } else if (key.find("MuonLeg") != std::string::npos) {
-	    //std::cout << "using MuonLeg " << value << std::endl << std::flush;
+	    if (m_debug > 2)
+	      std::cout << "using MuonLeg " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.MuonLeg = value;
 	  } else if (key.find("PathPrefix") != std::string::npos) {
-	    //std::cout << "using PathPrefix " << value << std::endl << std::flush;
+	    if (m_debug > 2)
+	      std::cout << "using PathPrefix " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.PathPrefix = value;
 	  }
@@ -235,6 +259,7 @@ namespace wsu {
 	treeName << "analysis" << confParams.TrackAlgo << "Muons/MuonTree";
 	std::cout << "looking for TTree " << treeName.str() << std::endl << std::flush;
 	m_treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
+	std::cout << "done with parseConfiguration " << std::endl << std::flush;
 	return;
       } // end parseConfiguration(std::string)
       
@@ -252,13 +277,36 @@ namespace wsu {
 	    continue; // found comment, skip processing, only at very beginning of line
 	  if (line.find(".root") == std::string::npos)
 	    continue; // found line without .root file name, skip
-
+	  
 	  std::stringstream filepath;
 	  filepath << confParams.PathPrefix << line; // need to strip off the newline?
 	  std::cout << filepath.str() << std::endl << std::flush;
 	  m_treeChain->Add(TString(filepath.str()));
 	}// end while loop over lines in file
+	
 	m_tree = m_treeChain;
+
+	if (m_debug > 5) {
+	  std::cout << "m_treeChain has the following files:" << std::endl;
+	  auto chainIter = m_tree->GetListOfLeaves()->MakeIterator();
+	  do {
+	    TChain* chainItem = (TChain*)chainIter->Next();
+	    std::cout << chainItem->GetName() << " "
+		      << chainItem->GetTitle() << " "
+		      << chainItem->ClassName() << " "
+		      << std::endl;
+	  } while (chainIter->Next());
+	  
+	  std::cout << "m_tree has the following leaves:"      << std::endl;
+	  auto treeIter = m_tree->GetListOfLeaves()->MakeIterator();
+	  do {
+	    TTree* treeItem = (TTree*)treeIter->Next();
+	    std::cout << treeItem->GetName() << " "
+		      << treeItem->GetTitle() << " "
+		      << treeItem->ClassName() << " "
+		      << std::endl;
+	  } while (treeIter->Next());
+	}
 	return;
       } // end parseFileList(std::string)
       
@@ -269,6 +317,28 @@ namespace wsu {
 	nBiasBins   = confParams.NBiasBins;
 
 	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
+
+	if (m_debug > 5) {
+	  std::cout << "intree has the following leaves:" << std::endl;
+	  auto treeIter = intree->GetListOfLeaves()->MakeIterator();
+	  do {
+	    TTree* treeItem = (TTree*)treeIter->Next();
+	    std::cout << treeItem->GetName() << " "
+		      << treeItem->GetTitle() << " "
+		      << treeItem->ClassName() << " "
+		      << std::endl;
+	  } while (treeIter->Next());
+	  
+	  std::cout << "m_treeReader has the following leaves:" << std::endl;
+	  treeIter = m_treeReader->GetTree()->GetListOfLeaves()->MakeIterator();
+	  do {
+	    TTree* treeItem = (TTree*)treeIter->Next();
+	    std::cout << treeItem->GetName() << " "
+		      << treeItem->GetTitle() << " "
+		      << treeItem->ClassName() << " "
+		      << std::endl;
+	  } while (treeIter->Next());
+	}
 
 	TTreeReaderValue<Double_t> upTrackPt(       *m_treeReader, "upperMuon_trackPt"          );
 	TTreeReaderValue<Double_t> upTrackDxy(      *m_treeReader, "upperMuon_dxy"              );
@@ -283,7 +353,7 @@ namespace wsu {
 	TTreeReaderValue<Double_t> upTrackDxyError( *m_treeReader, "upperMuon_dxyError"         );
 	TTreeReaderValue<Double_t> upTrackDzError(  *m_treeReader, "upperMuon_dzError"          );
 	TTreeReaderValue<Double_t> upTrackPtError(  *m_treeReader, "upperMuon_ptError"          );
-	TTreeReaderValue<Int_t>    upTrackMatchedMuonStations(  *m_treeReader,"upperMuon_numberOfMatchedStations");
+	TTreeReaderValue<Int_t>    upTrackMatchedMuonStations(    *m_treeReader,"upperMuon_numberOfMatchedStations"     );
 	TTreeReaderValue<Int_t>    upTrackTkLayersWithMeasurement(*m_treeReader,"upperMuon_trackerLayersWithMeasurement");
 
 	TTreeReaderValue<math::XYZTLorentzVector> upMuonP4(  *m_treeReader,"upperMuon_P4");
