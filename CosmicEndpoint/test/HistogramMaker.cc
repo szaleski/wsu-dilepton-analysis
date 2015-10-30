@@ -44,18 +44,12 @@ namespace wsu {
 	m_confFileName(confParmsFile),
 	m_debug(debug)
       {
-	std::cout << "HistogramMaker constructed with:"  << std::endl
-		  << "fileList = "      << fileList      << std::endl
-		  << "outFileName = "   << outFileName   << std::endl
-		  << "confParmsFile = " << confParmsFile << std::endl
-		  << "debug = "         << debug         << std::endl << std::flush;
-	
-	//m_debug = debug;
-	std::cout << "HistogramMaker constructed with:"    << std::endl
-		  << "m_inFileList = "   << m_inFileList   << std::endl
-		  << "m_outFileName = "  << m_outFileName  << std::endl
-		  << "m_confFileName = " << m_confFileName << std::endl
-		  << "m_debug = "        << m_debug        << std::endl << std::flush;
+	if (m_debug > 2)
+	  std::cout << "HistogramMaker constructed with:"    << std::endl
+		    << "m_inFileList = "   << m_inFileList   << std::endl
+		    << "m_outFileName = "  << m_outFileName  << std::endl
+		    << "m_confFileName = " << m_confFileName << std::endl
+		    << "m_debug = "        << m_debug        << std::endl << std::flush;
 	
 	std::cout << "Parsing config file " << confParmsFile << std::endl;
 	parseConfiguration(confParmsFile);
@@ -64,9 +58,6 @@ namespace wsu {
 	parseFileList(fileList);
 	
 	std::cout << "Setting local varaiables " << std::endl;
-	m_nBiasBins = m_confParams.NBiasBins;
-	m_maxBias   = m_confParams.MaxKBias;
-	m_minPt     = m_confParams.MinPtCut;
 
 	std::string legs[3]   = {"up", "low", "comb"};
 	std::string charge[2] = {"muon", "antiMuon"};
@@ -211,16 +202,42 @@ namespace wsu {
 	std::cout << "Configuration file " << confFileName 
 		  << " opened successfully, parsing"
 		  << std::endl << std::flush;
-	std::string key;
-	while (std::getline(infile,key,'=')) {
-	  //std::cout << "key " << key << std::endl << std::flush;
-	  if (key.find("#") == 0 || key.find("!") == 0)
-	    continue; // found comment, skip processing
+
+	std::string line;
+	while (std::getline(infile,line)) {
+	  if (m_debug > 7)
+	    std::cout << "line " << line << std::endl << std::flush;
+
+	  if (line.find("#") == 0 || line.find("!") == 0)
+	    continue; // found comment character at the front, skip processing
 	  
 	  // looking for NBiasBins, MaxKBias, MinPtCut, Arbitration, TrackAlgo, MuonLeg, MuCuts
-	  std::string value;
-	  std::getline(infile,value);
+	  std::istringstream nocomments(line);
+	  std::string none;
+	  std::getline(nocomments,none,'#');
+	  nocomments.str("");
+	  nocomments.clear();
+	  nocomments.str(none);
+	  std::string goodline;
+	  std::getline(nocomments,goodline,'!');
+	  
+	  nocomments.str("");
+	  nocomments.clear();
+	  nocomments.str(goodline);
+	  std::string key, value;
+	  std::getline(nocomments,key,'=');
+	  std::getline(nocomments,value);
+	  std::size_t valstart = value.find_first_not_of(" ");
+	  if (valstart != std::string::npos)
+	    value = value.substr(valstart);
+
 	  std::istringstream valstream(value);
+	  
+	  if (m_debug > 5)
+	    std::cout << "key "   << key   << std::endl
+		      << "value " << value << std::endl
+		      << std::flush;
+	  
 
 	  if (key.find("NBiasBins") != std::string::npos) {
 	    if (m_debug > 2)
@@ -256,11 +273,17 @@ namespace wsu {
 	    m_confParams.PathPrefix = value;
 	  }
 	}
+	
+	//set the member variables as taken from the config
+	m_nBiasBins = m_confParams.NBiasBins;
+	m_maxBias   = m_confParams.MaxKBias;
+	m_minPt     = m_confParams.MinPtCut;
 
 	std::stringstream treeName;
 	treeName << "analysis" << m_confParams.TrackAlgo << "Muons/MuonTree";
 	std::cout << "looking for TTree " << treeName.str() << std::endl << std::flush;
 	m_treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
+
 	std::cout << "done with parseConfiguration " << std::endl << std::flush;
 	return;
       } // end parseConfiguration(std::string)
@@ -315,9 +338,6 @@ namespace wsu {
 
       int HistogramMaker::Plot(TTree* intree)
       {
-	m_maxBias     = m_confParams.MaxKBias;
-	m_nBiasBins   = m_confParams.NBiasBins;
-
 	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
 
 	if (m_debug > 5) {
@@ -385,7 +405,7 @@ namespace wsu {
 	int j = 0;
 	std::cout << "looping over entries in the TTree" << std::endl << std::flush;
 	while (m_treeReader->Next()){
-	  if(*upTrackChi2 > -1000) { //ensure values are from an actual event
+	  if (*upTrackChi2 > -1000) { //ensure values are from an actual event
 	    int combLow[2] = {1,2};
 	    int combUp[2] = {0,2};
 	    for (int fill = 0; fill < 2; ++fill) {
