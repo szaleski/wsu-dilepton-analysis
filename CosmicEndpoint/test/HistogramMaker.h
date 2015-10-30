@@ -11,6 +11,9 @@
 // forward declare ROOT things
 class TH1D;
 class TFile;
+class TDirectory;
+class TDirectoryFile;
+
 class TTree;
 class TChain;
 class TTreeReader;
@@ -69,6 +72,7 @@ namespace wsu {
 		       std::string const& outFileName,
 		       std::string const& confParmsFile,
 		       int debug=0);
+	
 	~HistogramMaker();
 	
 	int runLoop(int debug=0);
@@ -86,7 +90,9 @@ namespace wsu {
 	std::shared_ptr<TChain>      m_treeChain;
 	std::shared_ptr<TTreeReader> m_treeReader;
 	
-	std::shared_ptr<TFile>       m_outFile;
+	//std::shared_ptr<TFile>          m_outFile;
+	std::shared_ptr<TDirectory>     m_ptBinDir;
+	std::shared_ptr<TDirectoryFile> m_outFile;
 	
 	// histograms
 	// [3] for upper, lower, and combined

@@ -8,6 +8,8 @@
 #include "TLorentzVector.h"
 #include "TROOT.h"
 #include "TFile.h"
+#include "TDirectory.h"
+#include "TDirectoryFile.h"
 #include "TH2D.h"
 #include "TH1D.h"
 #include "TTree.h"
@@ -28,7 +30,10 @@ namespace wsu {
   namespace dileptons {
     namespace cosmics {
       
-      
+      //typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > Lorentz4V;
+      //typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> Vector3;
+      typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> Vector3;
+
       HistogramMaker::HistogramMaker(std::string const& fileList,
 				     std::string const& outFileName,
 				     std::string const& confParmsFile,
@@ -38,7 +43,7 @@ namespace wsu {
 		  << "fileList = "      << fileList      << std::endl
 		  << "outFileName = "   << outFileName   << std::endl
 		  << "confParmsFile = " << confParmsFile << std::endl
-		  << "debug = "         << debug         << std::endl;
+		  << "debug = "         << debug         << std::endl << std::flush;
 	
 	parseConfiguration(confParmsFile);
 	parseFileList(fileList);
@@ -53,7 +58,8 @@ namespace wsu {
 	// draw all plots inclusive, and then with the following binning
 	double ptBinMin[12] = {50., 100., 150., 200., 250., 300., 400., 500., 750., 1000., 1500., 2000.};
 
-	m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
+	//m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
+	m_outFile = std::shared_ptr<TDirectoryFile>(new TDirectoryFile(TString(outFileName+".root"),"RECREATE"));
 
 	for (int leg = 0; leg < 3; ++leg) {
 	  for (int ch = 0; ch < 2; ++ch) {
@@ -66,56 +72,61 @@ namespace wsu {
 	      else
 		ptbinlabel << ptBinMin[ptb] << "toInf";
 
-	      // TDirectory* myDirectory = new TDirecto
-	      h_Chi2[leb][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Chi2"),    "#Chi^{2}",         100,   -0.5,   99.5 ));
-	      h_Ndof[leb][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5 ));
-	      h_Chi2Ndof[leb][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,   -0.5,   99.5 ));
-	      h_Charge[leb][ch][ptb]   = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Charge"),  "q",                3,     -1.5,   1.5  ));
-	      h_Curve[leb][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Curve"),   "#frac{q}{p_{T}}",  2*500, -0.1,   0.1  ));
-	      h_Dxy[leb][ch][ptb]      = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Dxy"),     "D_{xy}",           2*500, -1000., 1000.));
-	      h_Dz[leb][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Dz"),      "D_{z}",            2*500, -1000., 1000.));
-	      h_DxyError[leb][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_DxyError"),"#DeltaD_{xy}",     100,   -100.,  100. ));
-	      h_DzError[leb][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_DzError"), "#DeltaD_{z}",      100,   -100.,  100. ));
-	      h_Pt[leb][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_Pt"),      "p_{T}",            300,    0.,    3000.));
-	      h_TrackPt[leb][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_TrackPt"), "p_{T}",            300,    0.,    3000.));
-	      h_PtError[leb][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_PtError"), "#Deltap_{T}",      500,    0.,    500. ));
-	      h_TrackEta[leb][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_TrackEta"),"#eta",             2*100, -5.,    5.   ));
-	      h_TrackPhi[leb][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_TrackPhi"),"#phi",             2*50,  -4.,    4.   ));
+	      m_outFile->mkdir(TString(ptbinlabel.str()));
+	      //TDirectory* ptbinDir = new TDirectory(TString(ptbinlabel.str()),TString(ptbinlabel.str()));
+	      //TDirectory* ptbinDir = m_outFile->mkdir(TString(ptbinlabel.str()));
+	      m_ptBinDir = std::shared_ptr<TDirectory>(m_outFile->mkdir(TString(ptbinlabel.str())));
+	      m_ptBinDir->cd();
+	      
+	      h_Chi2[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2"),    "#Chi^{2}",         100,   -0.5,   99.5 ));
+	      h_Ndof[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5 ));
+	      h_Chi2Ndof[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,   -0.5,   99.5 ));
+	      h_Charge[leg][ch][ptb]   = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Charge"),  "q",                3,     -1.5,   1.5  ));
+	      h_Curve[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Curve"),   "#frac{q}{p_{T}}",  2*500, -0.05,  0.05 ));
+	      h_Dxy[leg][ch][ptb]      = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dxy"),     "D_{xy}",           2*500, -1000., 1000.));
+	      h_Dz[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dz"),      "D_{z}",            2*500, -1000., 1000.));
+	      h_DxyError[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DxyError"),"#DeltaD_{xy}",     100,   -100.,  100. ));
+	      h_DzError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DzError"), "#DeltaD_{z}",      100,   -100.,  100. ));
+	      h_Pt[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Pt"),      "p_{T}",            300,    0.,    3000.));
+	      h_TrackPt[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPt"), "p_{T}",            300,    0.,    3000.));
+	      h_PtError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PtError"), "#Deltap_{T}",      500,    0.,    500. ));
+	      h_TrackEta[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackEta"),"#eta",             2*100, -5.,    5.   ));
+	      h_TrackPhi[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPhi"),"#phi",             2*50,  -4.,    4.   ));
 	    
-	      h_PixelHits[leb][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_PixelHits"),         "N_{pix. hits}",
+	      h_PixelHits[leg][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PixelHits"),         "N_{pix. hits}",
 										       100, -0.5, 99.5 ));
-	      h_TkHits[leb][ch][ptb]                  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_TkHits"),            "N_{trk. hits}",
+	      h_TkHits[leg][ch][ptb]                  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TkHits"),            "N_{trk. hits}",
 										       100, -0.5, 99.5 ));
-	      h_MuonStationHits[leb][ch][ptb]         = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_MuonStationHits"),   "N_{station hits}",
+	      h_MuonStationHits[leg][ch][ptb]         = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_MuonStationHits"),   "N_{station hits}",
 										       20,  -0.5, 19.5 ));
-	      h_ValidHits[leb][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_ValidHits"),         "N_{hits}",
+	      h_ValidHits[leg][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_ValidHits"),         "N_{hits}",
 										       200, -0.5, 199.5));
-	      h_MatchedMuonStations[leb][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_MatchedMuonStation"),"N_{matched stations}",
+	      h_MatchedMuonStations[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_MatchedMuonStation"),"N_{matched stations}",
 										       20,  -0.5, 19.5 ));
-	      h_TkLayersWithMeasurement[leb][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_TkLayersWithMeas"),  "N_{trk. layer w/ meas.}",
+	      h_TkLayersWithMeasurement[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TkLayersWithMeas"),  "N_{trk. layer w/ meas.}",
 										       200, -0.5, 199.5));
 	    
-	      h_Chi2[leb][ch][ptb]    ->Sumw2();
-	      h_Ndof[leb][ch][ptb]    ->Sumw2();
-	      h_Chi2Ndof[leb][ch][ptb]->Sumw2();
-	      h_Charge[leb][ch][ptb]  ->Sumw2();
-	      h_Curve[leb][ch][ptb]   ->Sumw2();
-	      h_Dxy[leb][ch][ptb]     ->Sumw2();
-	      h_Dz[leb][ch][ptb]      ->Sumw2();
-	      h_DxyError[leb][ch][ptb]->Sumw2();
-	      h_DzError[leb][ch][ptb] ->Sumw2();
-	      h_Pt[leb][ch][ptb]      ->Sumw2();
-	      h_TrackPt[leb][ch][ptb] ->Sumw2();
-	      h_PtError[leb][ch][ptb] ->Sumw2();
-	      h_TrackEta[leb][ch][ptb]->Sumw2();
-	      h_TrackPhi[leb][ch][ptb]->Sumw2();
+	      h_Chi2[leg][ch][ptb]    ->Sumw2();
+	      h_Ndof[leg][ch][ptb]    ->Sumw2();
+	      h_Chi2Ndof[leg][ch][ptb]->Sumw2();
+	      h_Charge[leg][ch][ptb]  ->Sumw2();
+	      h_Curve[leg][ch][ptb]   ->Sumw2();
+	      h_Dxy[leg][ch][ptb]     ->Sumw2();
+	      h_Dz[leg][ch][ptb]      ->Sumw2();
+	      h_DxyError[leg][ch][ptb]->Sumw2();
+	      h_DzError[leg][ch][ptb] ->Sumw2();
+	      h_Pt[leg][ch][ptb]      ->Sumw2();
+	      h_TrackPt[leg][ch][ptb] ->Sumw2();
+	      h_PtError[leg][ch][ptb] ->Sumw2();
+	      h_TrackEta[leg][ch][ptb]->Sumw2();
+	      h_TrackPhi[leg][ch][ptb]->Sumw2();
 	    
-	      h_PixelHits[leb][ch][ptb]              ->Sumw2();
-	      h_TkHits[leb][ch][ptb]                 ->Sumw2();
-	      h_MuonStationHits[leb][ch][ptb]        ->Sumw2();
-	      h_ValidHits[leb][ch][ptb]              ->Sumw2();
-	      h_MatchedMuonStations[leb][ch][ptb]    ->Sumw2();
-	      h_TkLayersWithMeasurement[leb][ch][ptb]->Sumw2();
+	      h_PixelHits[leg][ch][ptb]              ->Sumw2();
+	      h_TkHits[leg][ch][ptb]                 ->Sumw2();
+	      h_MuonStationHits[leg][ch][ptb]        ->Sumw2();
+	      h_ValidHits[leg][ch][ptb]              ->Sumw2();
+	      h_MatchedMuonStations[leg][ch][ptb]    ->Sumw2();
+	      h_TkLayersWithMeasurement[leg][ch][ptb]->Sumw2();
 	    
 	      for (int i = 0; i < nBiasBins; ++i) {
 		std::stringstream name;
@@ -123,108 +134,115 @@ namespace wsu {
 		name << std::setw(3) << std::setfill('0') << i + 1;
 
 		// inject positive bias
-		TString histname  = TString(charge[ch]+"_"+legs[leg]+"_CurvePlusBias_"+name.str());
+		TString histname  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurvePlusBias_"+name.str());
 		name.str("");
 		name.clear();
 		name << biasValue;
 		TString histtitle("#frac{q}{p_{T}}+#Delta#kappa("+name.str()+")");
 		if (debug > 3)
-		  std::cout << "creating histogram " << histname << " " << histtitle << std::endl;
-		h_CurvePlusBias[leb][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500, -0.1, 0.1));
-		h_CurvePlusBias[leb][ch][ptb][i]->Sumw2();
+		  std::cout << "creating histogram " << histname << " " << histtitle << std::endl << std::flush;
+		h_CurvePlusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500, -0.05, 0.05));
+		h_CurvePlusBias[leg][ch][ptb][i]->Sumw2();
 
 		// inject negative bias
 		name.str("");
 		name.clear();
 		name << std::setw(3) << std::setfill('0') << i + 1;
-		TString histname2  = TString(charge[ch]+"_"+legs[leg]+"_CurveMinusBias_"+name.str());
+		TString histname2  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveMinusBias_"+name.str());
 		name.str("");
 		name.clear();
 		name << biasValue;
 		TString histtitle2 = TString("#frac{q}{p_{T}}-#Delta#kappa("+name.str()+")");
 		if (debug > 3)
-		  std::cout << "trying to create problematic histogram " << histname2 << " " << histtitle2 << std::endl;
-		h_CurveMinusBias[leb][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2, 2*500, -0.1, 0.1));
-		h_CurveMinusBias[leb][ch][ptb][i]->Sumw2();
+		  std::cout << "trying to create problematic histogram " << histname2 << " " << histtitle2 << std::endl << std::flush;
+		h_CurveMinusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2, 2*500, -0.05, 0.05));
+		h_CurveMinusBias[leg][ch][ptb][i]->Sumw2();
 	      }
 	    }// end loop on pt binnings
 	  }// end loop on different charge histograms
 	}// end loop on different muon leg histograms
-	std::cout << "Ending the HistogramMaker constructor" << std::endl;
-      } // end constructorr
+	std::cout << "Ending the HistogramMaker constructor" << std::endl << std::flush;
+      } // end constructor
 
 
       HistogramMaker::~HistogramMaker()
       {
-	std::cout << "HistogramMaker destructor called" << std::endl;
+	std::cout << "HistogramMaker destructor called" << std::endl << std::flush;
 	m_outFile->Save();
 	m_outFile->Write();
 	m_outFile->Close();
-	std::cout << "Wrote and closed output file 0x" << std::hex << m_outFile.get() << std::dec << std::endl;
+	std::cout << "Wrote and closed output file 0x" << std::hex << m_outFile.get()
+		  << std::dec << std::endl << std::flush;
 
-	std::cout << "HistogramMaker destructor finished" << std::endl;
+	std::cout << "HistogramMaker destructor finished" << std::endl << std::flush;
       } // end destructor
 
 
       int HistogramMaker::runLoop(int debug)
       {
 	return Plot(m_tree.get());
-      }
+      } // end runLoop(int)
       
       
       void HistogramMaker::parseConfiguration(std::string const& confFileName)
       {
 	std::ifstream infile(confFileName.c_str());
 	if (!infile.is_open()) {
-	  std::cout << "Problem opening file " << confFileName << std::endl;
+	  std::cout << "Problem opening file " << confFileName << std::endl << std::flush;
 	  return; // maybe should exit(1) here?
 	}
  
-	std::string line;
-	while (std::getline(infile,line)) {
-	  if (line.find("#") == 0 || line.find("!") == 0)
+	std::string key;
+	while (std::getline(infile,key,'=')) {
+	  //std::cout << "key " << key << std::endl << std::flush;
+	  if (key.find("#") == 0 || key.find("!") == 0)
 	    continue; // found comment, skip processing
 	  
 	  // looking for NBiasBins, MaxKBias, MinPtCut, Arbitration, TrackAlgo, MuonLeg, MuCuts
-	  std::string key;
-	  std::getline(infile,key,'=');
-	  
 	  std::string value;
 	  std::getline(infile,value);
 	  std::istringstream valstream(value);
 
 	  if (key.find("NBiasBins") != std::string::npos) {
+	    //std::cout << "using NBiasBins " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.NBiasBins;
 	  } else if (key.find("MaxKBias") != std::string::npos) {
+	    //std::cout << "using MaxKBias " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.MaxKBias;
 	  } else if (key.find("MinPtCut") != std::string::npos) {
+	    //std::cout << "using MinPtCut " << valstream.str() << std::endl << std::flush;;
 	    valstream >> confParams.MinPtCut;
 	  } else if (key.find("Arbitration") != std::string::npos) {
+	    //std::cout << "using Arbitration " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.Arbitration = value;
 	  } else if (key.find("TrackAlgo") != std::string::npos) {
-	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+	    //std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+	    //std::cout << "using TrackAlgo " << value << std::endl << std::flush;
 	    confParams.TrackAlgo = value;
 	  } else if (key.find("MuonLeg") != std::string::npos) {
+	    //std::cout << "using MuonLeg " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.MuonLeg = value;
 	  } else if (key.find("PathPrefix") != std::string::npos) {
+	    //std::cout << "using PathPrefix " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    confParams.PathPrefix = value;
 	  }
-	  
 	}
-	return;
+
 	std::stringstream treeName;
 	treeName << "analysis" << confParams.TrackAlgo << "Muons/MuonTree";
+	std::cout << "looking for TTree " << treeName.str() << std::endl << std::flush;
 	m_treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
-      }
+	return;
+      } // end parseConfiguration(std::string)
       
       void HistogramMaker::parseFileList(std::string const& fileList)
       {
 	std::ifstream infile(fileList.c_str());
 	if (!infile.is_open()) {
-	  std::cout << "Problem opening file " << fileList << std::endl;
+	  std::cout << "Problem opening file " << fileList << std::endl << std::flush;
 	  return; // maybe should exit(1) here?
 	}
  
@@ -234,14 +252,15 @@ namespace wsu {
 	    continue; // found comment, skip processing, only at very beginning of line
 	  if (line.find(".root") == std::string::npos)
 	    continue; // found line without .root file name, skip
-	  std::stringstream filepath;
 
+	  std::stringstream filepath;
 	  filepath << confParams.PathPrefix << line; // need to strip off the newline?
+	  std::cout << filepath.str() << std::endl << std::flush;
 	  m_treeChain->Add(TString(filepath.str()));
 	}// end while loop over lines in file
 	m_tree = m_treeChain;
 	return;
-      }
+      } // end parseFileList(std::string)
       
 
       int HistogramMaker::Plot(TTree* intree)
@@ -267,9 +286,8 @@ namespace wsu {
 	TTreeReaderValue<Int_t>    upTrackMatchedMuonStations(  *m_treeReader,"upperMuon_numberOfMatchedStations");
 	TTreeReaderValue<Int_t>    upTrackTkLayersWithMeasurement(*m_treeReader,"upperMuon_trackerLayersWithMeasurement");
 
-	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > upTrackMuonP4(*m_treeReader,"upperMuon_P4");
-	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > upTrackTrack(*m_treeReader,"upperMuon_trackVec");
 	TTreeReaderValue<math::XYZTLorentzVector> upMuonP4(  *m_treeReader,"upperMuon_P4");
+	// still not working, thanks to ROOT...
 	TTreeReaderValue<math::XYZVector>         upTrackVec(*m_treeReader,"upperMuon_trackVec");
 
 	TTreeReaderValue<Double_t> lowTrackPt(       *m_treeReader, "lowerMuon_trackPt"          );
@@ -288,12 +306,12 @@ namespace wsu {
 	TTreeReaderValue<Int_t>    lowTrackMatchedMuonStations(    *m_treeReader,"lowerMuon_numberOfMatchedStations"     );
 	TTreeReaderValue<Int_t>    lowTrackTkLayersWithMeasurement(*m_treeReader,"lowerMuon_trackerLayersWithMeasurement");
 	
-	//TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > lowTrackMuonP4(*m_treeReader,"lowerMuon_P4");
-	//TTreeReaderValue<ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> > lowTrackTrackVec(*m_treeReader,"lowerMuon_trackVec");
 	TTreeReaderValue<math::XYZTLorentzVector> lowMuonP4(  *m_treeReader,"lowerMuon_P4");
+	// still not working, thanks to ROOT...
 	TTreeReaderValue<math::XYZVector>         lowTrackVec(*m_treeReader,"lowerMuon_trackVec");
-  
+	
 	int j = 0;
+	std::cout << "looping over entries in the TTree" << std::endl << std::flush;
 	while (m_treeReader->Next()){
 	  if(*upTrackChi2 > -1000) { //ensure values are from an actual event
 	    int combLow[2] = {1,2};
@@ -304,31 +322,31 @@ namespace wsu {
 	      double upperTrackEta = upTrackVec->eta();
 	      double upperTrackPhi = upTrackVec->phi();
 	      double upperCpT = (*upTrackCharge)/(upperTrackPt);
-	      h_Chi2[combUp[fill]][     (charge<0)?0:1]->Fill(*upTrackChi2);
-	      h_Ndof[combUp[fill]][     (charge<0)?0:1]->Fill(*upTrackNdof);
-	      h_Chi2Ndof[combUp[fill]][ (charge<0)?0:1]->Fill((*upTrackChi2)/(*upTrackNdof));
-	      h_Pt[combUp[fill]][       (charge<0)?0:1]->Fill(*upTrackPt);
-	      h_Charge[combUp[fill]][   (charge<0)?0:1]->Fill(*upTrackCharge);
-	      h_Curve[combUp[fill]][    (charge<0)?0:1]->Fill(upperCpT);
-	      h_Dxy[combUp[fill]][      (charge<0)?0:1]->Fill(*upTrackDxy);
-	      h_Dz[combUp[fill]][       (charge<0)?0:1]->Fill(*upTrackDz);
-	      h_PtError[combUp[fill]][  (charge<0)?0:1]->Fill(*upTrackPtError);
-	      h_DxyError[combUp[fill]][ (charge<0)?0:1]->Fill(*upTrackDxyError);
-	      h_DzError[combUp[fill]][  (charge<0)?0:1]->Fill(*upTrackDzError);
-	      h_TrackPt[combUp[fill]][  (charge<0)?0:1]->Fill(upperTrackPt);
-	      h_TrackEta[combUp[fill]][ (charge<0)?0:1]->Fill(upperTrackEta);
-	      h_TrackPhi[combUp[fill]][ (charge<0)?0:1]->Fill(upperTrackPhi);
+	      h_Chi2[combUp[fill]][     (charge<0)?0:1][13]->Fill(*upTrackChi2);
+	      h_Ndof[combUp[fill]][     (charge<0)?0:1][13]->Fill(*upTrackNdof);
+	      h_Chi2Ndof[combUp[fill]][ (charge<0)?0:1][13]->Fill((*upTrackChi2)/(*upTrackNdof));
+	      h_Pt[combUp[fill]][       (charge<0)?0:1][13]->Fill(*upTrackPt);
+	      h_Charge[combUp[fill]][   (charge<0)?0:1][13]->Fill(*upTrackCharge);
+	      h_Curve[combUp[fill]][    (charge<0)?0:1][13]->Fill(upperCpT);
+	      h_Dxy[combUp[fill]][      (charge<0)?0:1][13]->Fill(*upTrackDxy);
+	      h_Dz[combUp[fill]][       (charge<0)?0:1][13]->Fill(*upTrackDz);
+	      h_PtError[combUp[fill]][  (charge<0)?0:1][13]->Fill(*upTrackPtError);
+	      h_DxyError[combUp[fill]][ (charge<0)?0:1][13]->Fill(*upTrackDxyError);
+	      h_DzError[combUp[fill]][  (charge<0)?0:1][13]->Fill(*upTrackDzError);
+	      h_TrackPt[combUp[fill]][  (charge<0)?0:1][13]->Fill(upperTrackPt);
+	      h_TrackEta[combUp[fill]][ (charge<0)?0:1][13]->Fill(upperTrackEta);
+	      h_TrackPhi[combUp[fill]][ (charge<0)?0:1][13]->Fill(upperTrackPhi);
 	      
-	      h_PixelHits[combUp[fill]][              (charge<0)?0:1]->Fill(*upTrackPhits);
-	      h_TkHits[combUp[fill]][                 (charge<0)?0:1]->Fill(*upTrackThits);
-	      h_MuonStationHits[combUp[fill]][        (charge<0)?0:1]->Fill(*upTrackMhits);
-	      h_ValidHits[combUp[fill]][              (charge<0)?0:1]->Fill(*upTrackValidHits);
-	      h_MatchedMuonStations[combUp[fill]][    (charge<0)?0:1]->Fill(*upTrackMatchedMuonStations);
-	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1]->Fill(*upTrackTkLayersWithMeasurement);
+	      h_PixelHits[combUp[fill]][              (charge<0)?0:1][13]->Fill(*upTrackPhits);
+	      h_TkHits[combUp[fill]][                 (charge<0)?0:1][13]->Fill(*upTrackThits);
+	      h_MuonStationHits[combUp[fill]][        (charge<0)?0:1][13]->Fill(*upTrackMhits);
+	      h_ValidHits[combUp[fill]][              (charge<0)?0:1][13]->Fill(*upTrackValidHits);
+	      h_MatchedMuonStations[combUp[fill]][    (charge<0)?0:1][13]->Fill(*upTrackMatchedMuonStations);
+	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][13]->Fill(*upTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < nBiasBins; ++i) {
-		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][i]->Fill(upperCpT+(i+1)*(maxBias/nBiasBins));
-		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][i]->Fill(upperCpT-(i+1)*(maxBias/nBiasBins));
+		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][13][i]->Fill(upperCpT+(i+1)*(maxBias/nBiasBins));
+		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][13][i]->Fill(upperCpT-(i+1)*(maxBias/nBiasBins));
 	      }
 	      
 	      charge = *lowTrackCharge;
@@ -336,39 +354,40 @@ namespace wsu {
 	      double lowerTrackEta = lowTrackVec->eta();
 	      double lowerTrackPhi = lowTrackVec->phi();
 	      double lowerCpT = (*lowTrackCharge)/(lowerTrackPt);
-	      h_Chi2[combLow[fill]][    (charge<0)?0:1]->Fill(*lowTrackChi2);
-	      h_Ndof[combLow[fill]][    (charge<0)?0:1]->Fill(*lowTrackNdof);
-	      h_Chi2Ndof[combLow[fill]][(charge<0)?0:1]->Fill((*lowTrackChi2)/(*lowTrackNdof));
-	      h_Pt[combLow[fill]][      (charge<0)?0:1]->Fill(*lowTrackPt);
-	      h_Charge[combLow[fill]][  (charge<0)?0:1]->Fill(*lowTrackCharge);
-	      h_Curve[combLow[fill]][   (charge<0)?0:1]->Fill(lowerCpT);
-	      h_Dxy[combLow[fill]][     (charge<0)?0:1]->Fill(*lowTrackDxy);
-	      h_Dz[combLow[fill]][      (charge<0)?0:1]->Fill(*lowTrackDz);
-	      h_PtError[combLow[fill]][ (charge<0)?0:1]->Fill(*lowTrackPtError);
-	      h_DxyError[combLow[fill]][(charge<0)?0:1]->Fill(*lowTrackDxyError);
-	      h_DzError[combLow[fill]][ (charge<0)?0:1]->Fill(*lowTrackDzError);
-	      h_TrackPt[combLow[fill]][ (charge<0)?0:1]->Fill(lowerTrackPt);
-	      h_TrackEta[combLow[fill]][(charge<0)?0:1]->Fill(lowerTrackEta);
-	      h_TrackPhi[combLow[fill]][(charge<0)?0:1]->Fill(lowerTrackPhi);
+	      h_Chi2[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackChi2);
+	      h_Ndof[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackNdof);
+	      h_Chi2Ndof[combLow[fill]][(charge<0)?0:1][13]->Fill((*lowTrackChi2)/(*lowTrackNdof));
+	      h_Pt[combLow[fill]][      (charge<0)?0:1][13]->Fill(*lowTrackPt);
+	      h_Charge[combLow[fill]][  (charge<0)?0:1][13]->Fill(*lowTrackCharge);
+	      h_Curve[combLow[fill]][   (charge<0)?0:1][13]->Fill(lowerCpT);
+	      h_Dxy[combLow[fill]][     (charge<0)?0:1][13]->Fill(*lowTrackDxy);
+	      h_Dz[combLow[fill]][      (charge<0)?0:1][13]->Fill(*lowTrackDz);
+	      h_PtError[combLow[fill]][ (charge<0)?0:1][13]->Fill(*lowTrackPtError);
+	      h_DxyError[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackDxyError);
+	      h_DzError[combLow[fill]][ (charge<0)?0:1][13]->Fill(*lowTrackDzError);
+	      h_TrackPt[combLow[fill]][ (charge<0)?0:1][13]->Fill(lowerTrackPt);
+	      h_TrackEta[combLow[fill]][(charge<0)?0:1][13]->Fill(lowerTrackEta);
+	      h_TrackPhi[combLow[fill]][(charge<0)?0:1][13]->Fill(lowerTrackPhi);
 	      
-	      h_PixelHits[combLow[fill]][          (charge<0)?0:1]->Fill(*lowTrackPhits);
-	      h_TkHits[combLow[fill]][             (charge<0)?0:1]->Fill(*lowTrackThits);
-	      h_MuonStationHits[combLow[fill]][    (charge<0)?0:1]->Fill(*lowTrackMhits);
-	      h_ValidHits[combLow[fill]][          (charge<0)?0:1]->Fill(*lowTrackValidHits);
-	      h_MatchedMuonStations[combLow[fill]][(charge<0)?0:1]->Fill(*lowTrackMatchedMuonStations);
-	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1]->Fill(*lowTrackTkLayersWithMeasurement);
+	      h_PixelHits[combLow[fill]][          (charge<0)?0:1][13]->Fill(*lowTrackPhits);
+	      h_TkHits[combLow[fill]][             (charge<0)?0:1][13]->Fill(*lowTrackThits);
+	      h_MuonStationHits[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackMhits);
+	      h_ValidHits[combLow[fill]][          (charge<0)?0:1][13]->Fill(*lowTrackValidHits);
+	      h_MatchedMuonStations[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackMatchedMuonStations);
+	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < nBiasBins; ++i) {
-		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][i]->Fill(lowerCpT+(i+1)*(maxBias/nBiasBins));
-		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][i]->Fill(lowerCpT-(i+1)*(maxBias/nBiasBins));
+		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][13][i]->Fill(lowerCpT+(i+1)*(maxBias/nBiasBins));
+		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][13][i]->Fill(lowerCpT-(i+1)*(maxBias/nBiasBins));
 	      }
 	      ++j;
 	    }// closing if fill
 	  }// closing for loop over combining plots
 	} // end while loop
+	std::cout << "done looping over " << j << " entries in the TTree" << std::endl << std::flush;
 
 	return j;
-      }
+      } // end Plot(TTree*)
 
     } // end namespace wsu::dileptons::cosmics
   } // end namespace wsu::dileptons
