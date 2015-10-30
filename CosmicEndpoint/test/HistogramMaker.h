@@ -82,6 +82,7 @@ namespace wsu {
 	void parseConfiguration(std::string const& confFileName);
 	void parseFileList(     std::string const& inputFiles);
 
+	ConfigurationParameters m_confParams;
 	std::string m_inFileList, m_outFileName, m_confFileName;
 	bool m_debug;
 
@@ -115,7 +116,6 @@ namespace wsu {
 	//libconfig::config_t         *cfg;
 	//libconfig::config_setting_t *setting;
 	
-	ConfigurationParameters confParams;
       }; // end class HistogramMaker
     } // end namespace wsu::dileptons::cosmics
   } // end namespace wsu::dileptons

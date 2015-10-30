@@ -38,6 +38,7 @@ namespace wsu {
 				     std::string const& outFileName,
 				     std::string const& confParmsFile,
 				     int debug) :
+	m_confParams(),
 	m_inFileList(fileList),
 	m_outFileName(outFileName),
 	m_confFileName(confParmsFile),
@@ -49,11 +50,11 @@ namespace wsu {
 		  << "confParmsFile = " << confParmsFile << std::endl
 		  << "debug = "         << debug         << std::endl << std::flush;
 	
-	std::cout << "HistogramMaker constructed with:"   << std::endl
-		  << "fileList = "      << m_inFileList   << std::endl
-		  << "outFileName = "   << m_outFileName  << std::endl
-		  << "confParmsFile = " << m_confFileName << std::endl
-		  << "debug = "         << m_debug        << std::endl << std::flush;
+	std::cout << "HistogramMaker constructed with:"    << std::endl
+		  << "m_inFileList = "   << m_inFileList   << std::endl
+		  << "m_outFileName = "  << m_outFileName  << std::endl
+		  << "m_confFileName = " << m_confFileName << std::endl
+		  << "m_debug = "        << m_debug        << std::endl << std::flush;
 	
 	std::cout << "Parsing config file " << confParmsFile << std::endl;
 	parseConfiguration(confParmsFile);
@@ -62,9 +63,9 @@ namespace wsu {
 	
 	std::cout << "Setting local varaiables " << std::endl;
 
-	nBiasBins = confParams.NBiasBins;
-	maxBias   = confParams.MaxKBias;
-	minPt     = confParams.MinPtCut;
+	nBiasBins = m_confParams.NBiasBins;
+	maxBias   = m_confParams.MaxKBias;
+	minPt     = m_confParams.MinPtCut;
 
 	std::string legs[3]   = {"up", "low", "comb"};
 	std::string charge[2] = {"muon", "antiMuon"};
@@ -223,40 +224,40 @@ namespace wsu {
 	  if (key.find("NBiasBins") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using NBiasBins " << valstream.str() << std::endl << std::flush;;
-	    valstream >> confParams.NBiasBins;
+	    valstream >> m_confParams.NBiasBins;
 	  } else if (key.find("MaxKBias") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using MaxKBias " << valstream.str() << std::endl << std::flush;;
-	    valstream >> confParams.MaxKBias;
+	    valstream >> m_confParams.MaxKBias;
 	  } else if (key.find("MinPtCut") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using MinPtCut " << valstream.str() << std::endl << std::flush;;
-	    valstream >> confParams.MinPtCut;
+	    valstream >> m_confParams.MinPtCut;
 	  } else if (key.find("Arbitration") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using Arbitration " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-	    confParams.Arbitration = value;
+	    m_confParams.Arbitration = value;
 	  } else if (key.find("TrackAlgo") != std::string::npos) {
 	    //std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    if (m_debug > 2)
 	      std::cout << "using TrackAlgo " << value << std::endl << std::flush;
-	    confParams.TrackAlgo = value;
+	    m_confParams.TrackAlgo = value;
 	  } else if (key.find("MuonLeg") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using MuonLeg " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-	    confParams.MuonLeg = value;
+	    m_confParams.MuonLeg = value;
 	  } else if (key.find("PathPrefix") != std::string::npos) {
 	    if (m_debug > 2)
 	      std::cout << "using PathPrefix " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-	    confParams.PathPrefix = value;
+	    m_confParams.PathPrefix = value;
 	  }
 	}
 
 	std::stringstream treeName;
-	treeName << "analysis" << confParams.TrackAlgo << "Muons/MuonTree";
+	treeName << "analysis" << m_confParams.TrackAlgo << "Muons/MuonTree";
 	std::cout << "looking for TTree " << treeName.str() << std::endl << std::flush;
 	m_treeChain  = std::shared_ptr<TChain>(new TChain(TString(treeName.str())));
 	std::cout << "done with parseConfiguration " << std::endl << std::flush;
@@ -279,7 +280,7 @@ namespace wsu {
 	    continue; // found line without .root file name, skip
 	  
 	  std::stringstream filepath;
-	  filepath << confParams.PathPrefix << line; // need to strip off the newline?
+	  filepath << m_confParams.PathPrefix << line; // need to strip off the newline?
 	  std::cout << filepath.str() << std::endl << std::flush;
 	  m_treeChain->Add(TString(filepath.str()));
 	}// end while loop over lines in file
@@ -313,8 +314,8 @@ namespace wsu {
 
       int HistogramMaker::Plot(TTree* intree)
       {
-	maxBias     = confParams.MaxKBias;
-	nBiasBins   = confParams.NBiasBins;
+	maxBias     = m_confParams.MaxKBias;
+	nBiasBins   = m_confParams.NBiasBins;
 
 	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
 
