@@ -31,7 +31,7 @@ def splitJobsForBsub(inputFile, numberOfJobs):
 		f.close()
 		return fid
 
-def bSubSplitJobs(pyScriptName, configFile, inputFile, numberOfJobs):
+def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 	samplesListsDir="samplesLists_data"
 
 	if not os.path.exists("output"):
@@ -43,21 +43,37 @@ def bSubSplitJobs(pyScriptName, configFile, inputFile, numberOfJobs):
 	print "Prepared %i jobs ready to be submitted to bsub." % nJobs
 	for i in range (1, nJobs+1):
 		splitListFile="split_%i_%s" % (i , inputFile)
-		pyCommand = "runEndpoint -i " + samplesListsDir + "/splitLists/" + splitListFile + " " + " -o output/" + pyScriptName + "-output_%i" %i + " -c " + configFile
-		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i)
+		rootScriptName = "root-%s-%s.C" % (pyScriptName, i)
+		f = open(rootScriptName, "w")
+		f.write("{\n")
+		#f.write("  gROOT->ProcessLine(\" .L %s/Plot.so\");\n"%(os.getcwd()))
+		f.write("  gROOT->ProcessLine(\" .L %Plot.so\");\n")
+		for tk in range(5):
+			f.write("  Plot(\"%s\",\"%s\",%d);\n"%(samplesListsDir + "/splitLists/" + splitListFile,
+							     outputFile, tk+1))
+		f.write("}\n")
+		pyCommand = "root -x -b -q %s"%(rootScriptName)
+		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i, proxyPath)
 
-def makeBsubShellScript(pyCommand, splitListName, pyScriptName, index):
-	f = open("bsubs/bsub-%s-%s.sh" % (pyScriptName, index), "w")
-	f.write("#!/bin/bash\n")
-	f.write("source /cvmfs/cms.cern.ch/cmsset_default.sh\n")
-	f.write("export X509_USER_PROXY=/afs/cern.ch/user/s/sturdy/x509up_u17329")
-	f.write("cd " + os.getcwd()+"\n")
-	f.write("cmsenv\n")
-	f.write("export PYTHONPATH=$PYTHONPATH:$CMSSW_BASE/src/WSUDiLeptons/CosmicEndpoint/test\n")
-	f.write("export PATH=$PATH:$CMSSW_BASE/test/$SCRAM_ARCH\n")
-	f.write(pyCommand)
+def makeBsubShellScript(pyCommand, splitListName, pyScriptName, index, proxyPath):
+	subfile = "bsubs/bsub-%s-%s.sh" % (pyScriptName, index)
+	f = open(subfile, "w")
+	f.write("""#!/bin/bash
+export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
+source $VO_CMS_SW_DIR/cmsset_default.sh
+#source /cvmfs/cms.cern.ch/cmsset_default.sh
+export X509_USER_PROXY=%s
+cd %s
+alias cmsenv='eval `scramv1 runtime -sh`'
+cmsenv
+eval `scramv1 runtime -sh`
+%s
+"""%(proxyPath, os.getcwd(), pyCommand))
 	f.close()
-	os.chmod("bsubs/bsub-%s-%s.sh" % (pyScriptName, index), 0777)
+	os.chmod(subfile, 0777)
+	cmd = "bsub -q 8nm %s/%s"%(os.getcwd(),subfile)
+	print cmd
+	#os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"
