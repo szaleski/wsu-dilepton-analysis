@@ -30,8 +30,8 @@ namespace wsu {
   namespace dileptons {
     namespace cosmics {
       
-      //typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > Lorentz4V;
-      //typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> Vector3;
+      // typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > Lorentz4V;
+      // typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<double>,ROOT::Math::DefaultCoordinateSystemTag> Vector3;
       typedef ROOT::Math::DisplacementVector3D<ROOT::Math::Cartesian3D<Double32_t>,ROOT::Math::DefaultCoordinateSystemTag> Vector3;
 
       HistogramMaker::HistogramMaker(std::string const& fileList,
@@ -44,7 +44,7 @@ namespace wsu {
 	m_confFileName(confParmsFile),
 	m_debug(debug)
       {
-	if (m_debug > 2)
+	if (m_debug > DebugLevel::LOW)
 	  std::cout << "HistogramMaker constructed with:"    << std::endl
 		    << "m_inFileList = "   << m_inFileList   << std::endl
 		    << "m_outFileName = "  << m_outFileName  << std::endl
@@ -65,26 +65,28 @@ namespace wsu {
 	// draw all plots inclusive, and then with the following binning
 	double ptBinMin[12] = {50., 100., 150., 200., 250., 300., 400., 500., 750., 1000., 1500., 2000.};
 
-	//m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
-	m_outFile = std::shared_ptr<TDirectoryFile>(new TDirectoryFile(TString(outFileName+".root"),"RECREATE"));
-
-	for (int leg = 0; leg < 3; ++leg) {
-	  for (int ch = 0; ch < 2; ++ch) {
-	    for (int ptb = 0; ptb < 13; ++ptb) {
-	      std::stringstream ptbinlabel;
-	      if (ptb == 12)
-		ptbinlabel << "inclusive";
-	      else if (ptb < 12)
-		ptbinlabel << ptBinMin[ptb] << "to" << ptBinMin[ptb+1];
-	      else
-		ptbinlabel << ptBinMin[ptb] << "toInf";
-
-	      m_outFile->mkdir(TString(ptbinlabel.str()));
-	      //TDirectory* ptbinDir = new TDirectory(TString(ptbinlabel.str()),TString(ptbinlabel.str()));
-	      //TDirectory* ptbinDir = m_outFile->mkdir(TString(ptbinlabel.str()));
-	      m_ptBinDir = std::shared_ptr<TDirectory>(m_outFile->mkdir(TString(ptbinlabel.str())));
-	      m_ptBinDir->cd();
-	      
+	m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
+	// m_outFileD = std::shared_ptr<TDirectoryFile>(new TDirectoryFile(TString(outFileName+".root"),"RECREATE"));
+	m_outFile->cd();
+	
+	for (int ptb = 0; ptb < 13; ++ptb) {
+	  std::stringstream ptbinlabel;
+	  if (ptb == 12)
+	    ptbinlabel << "inclusive";
+	  else if (ptb < 11)
+	    ptbinlabel << ptBinMin[ptb] << "to" << ptBinMin[ptb+1];
+	  else
+	    ptbinlabel << ptBinMin[ptb] << "toInf";
+	  
+	  // m_outFile->mkdir(TString(ptbinlabel.str()));
+	  // TDirectory* ptbinDir = new TDirectory(TString(ptbinlabel.str()),TString(ptbinlabel.str()));
+	  // TDirectory* ptbinDir = m_outFile->mkdir(TString(ptbinlabel.str()));
+	  m_outFile->cd();
+	  m_ptBinDir[ptb] = std::shared_ptr<TDirectory>(m_outFile->mkdir(TString(ptbinlabel.str())));
+	  m_ptBinDir[ptb]->cd();
+	  
+	  for (int leg = 0; leg < 3; ++leg) {
+	    for (int ch = 0; ch < 2; ++ch) {
 	      h_Chi2[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2"),    "#Chi^{2}",         100,   -0.5,   99.5 ));
 	      h_Ndof[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5 ));
 	      h_Chi2Ndof[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,   -0.5,   99.5 ));
@@ -127,7 +129,7 @@ namespace wsu {
 	      h_PtError[leg][ch][ptb] ->Sumw2();
 	      h_TrackEta[leg][ch][ptb]->Sumw2();
 	      h_TrackPhi[leg][ch][ptb]->Sumw2();
-	    
+	      
 	      h_PixelHits[leg][ch][ptb]              ->Sumw2();
 	      h_TkHits[leg][ch][ptb]                 ->Sumw2();
 	      h_MuonStationHits[leg][ch][ptb]        ->Sumw2();
@@ -141,28 +143,34 @@ namespace wsu {
 		name << std::setw(3) << std::setfill('0') << i + 1;
 
 		// inject positive bias
-		TString histname  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurvePlusBias_"+name.str());
+		TString histname
+		  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurvePlusBias_"+name.str());
 		name.str("");
 		name.clear();
 		name << biasValue;
 		TString histtitle("#frac{q}{p_{T}}+#Delta#kappa("+name.str()+")");
-		if (m_debug > 3)
-		  std::cout << "creating histogram " << histname << " " << histtitle << std::endl << std::flush;
-		h_CurvePlusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500, -0.05, 0.05));
+		if (m_debug > DebugLevel::BIASHISTOGRAMS)
+		  std::cout << "creating histogram " << histname << " " << histtitle
+			    << std::endl << std::flush;
+		h_CurvePlusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500,
+										  -0.05, 0.05));
 		h_CurvePlusBias[leg][ch][ptb][i]->Sumw2();
 
 		// inject negative bias
 		name.str("");
 		name.clear();
 		name << std::setw(3) << std::setfill('0') << i + 1;
-		TString histname2  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveMinusBias_"+name.str());
+		TString histname2
+		  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveMinusBias_"+name.str());
 		name.str("");
 		name.clear();
 		name << biasValue;
 		TString histtitle2 = TString("#frac{q}{p_{T}}-#Delta#kappa("+name.str()+")");
-		if (m_debug > 3)
-		  std::cout << "trying to create problematic histogram " << histname2 << " " << histtitle2 << std::endl << std::flush;
-		h_CurveMinusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2, 2*500, -0.05, 0.05));
+		if (m_debug > DebugLevel::BIASHISTOGRAMS)
+		  std::cout << "trying to create problematic histogram " << histname2 << " " 
+			    << histtitle2 << std::endl << std::flush;
+		h_CurveMinusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2,
+										   2*500, -0.05, 0.05));
 		h_CurveMinusBias[leg][ch][ptb][i]->Sumw2();
 	      }
 	    }// end loop on pt binnings
@@ -175,7 +183,49 @@ namespace wsu {
       HistogramMaker::~HistogramMaker()
       {
 	std::cout << "HistogramMaker destructor called" << std::endl << std::flush;
-	m_outFile->Save();
+	m_outFile->cd();
+	for (int ptb = 0; ptb < 12; ++ptb) {
+	  // write the histogram objects to their corresponding TDirectory
+	  m_outFile->cd();
+	  m_ptBinDir[ptb]->cd();
+	  for (int leg = 0; leg < 3; ++leg) {
+	    for (int ch = 0; ch < 2; ++ch) {
+	      h_Chi2[leg][ch][ptb]    ->Write();
+	      h_Ndof[leg][ch][ptb]    ->Write();
+	      h_Chi2Ndof[leg][ch][ptb]->Write();
+	      h_Charge[leg][ch][ptb]  ->Write();
+	      h_Curve[leg][ch][ptb]   ->Write();
+	      h_Dxy[leg][ch][ptb]     ->Write();
+	      h_Dz[leg][ch][ptb]      ->Write();
+	      h_DxyError[leg][ch][ptb]->Write();
+	      h_DzError[leg][ch][ptb] ->Write();
+	      h_Pt[leg][ch][ptb]      ->Write();
+	      h_TrackPt[leg][ch][ptb] ->Write();
+	      h_PtError[leg][ch][ptb] ->Write();
+	      h_TrackEta[leg][ch][ptb]->Write();
+	      h_TrackPhi[leg][ch][ptb]->Write();
+	      
+	      h_PixelHits[leg][ch][ptb]              ->Write();
+	      h_TkHits[leg][ch][ptb]                 ->Write();
+	      h_MuonStationHits[leg][ch][ptb]        ->Write();
+	      h_ValidHits[leg][ch][ptb]              ->Write();
+	      h_MatchedMuonStations[leg][ch][ptb]    ->Write();
+	      h_TkLayersWithMeasurement[leg][ch][ptb]->Write();
+
+	      for (int i = 0; i < m_nBiasBins; ++i) {
+		h_CurvePlusBias[leg][ch][ptb][i] ->Write();
+		h_CurveMinusBias[leg][ch][ptb][i]->Write();		
+	      }	      
+	    }
+	  }
+	  // write the directory to the TFile object
+	  m_outFile->cd();
+	  // m_ptBinDir[ptb]->Save();
+	  m_ptBinDir[ptb]->Write();
+	}
+	// write the TFile object to disk
+	m_outFile->cd();
+	// m_outFile->Save();
 	m_outFile->Write();
 	m_outFile->Close();
 	std::cout << "Wrote and closed output file 0x" << std::hex << m_outFile.get()
@@ -205,7 +255,7 @@ namespace wsu {
 
 	std::string line;
 	while (std::getline(infile,line)) {
-	  if (m_debug > 7)
+	  if (m_debug > DebugLevel::CONFIGLINES)
 	    std::cout << "line " << line << std::endl << std::flush;
 
 	  if (line.find("#") == 0 || line.find("!") == 0)
@@ -233,48 +283,47 @@ namespace wsu {
 
 	  std::istringstream valstream(value);
 	  
-	  if (m_debug > 5)
+	  if (m_debug > DebugLevel::CONFIGPARSER)
 	    std::cout << "key "   << key   << std::endl
 		      << "value " << value << std::endl
 		      << std::flush;
 	  
 
 	  if (key.find("NBiasBins") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using NBiasBins " << valstream.str() << std::endl << std::flush;;
 	    valstream >> m_confParams.NBiasBins;
 	  } else if (key.find("MaxKBias") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using MaxKBias " << valstream.str() << std::endl << std::flush;;
 	    valstream >> m_confParams.MaxKBias;
 	  } else if (key.find("MinPtCut") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using MinPtCut " << valstream.str() << std::endl << std::flush;;
 	    valstream >> m_confParams.MinPtCut;
 	  } else if (key.find("Arbitration") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using Arbitration " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    m_confParams.Arbitration = value;
 	  } else if (key.find("TrackAlgo") != std::string::npos) {
-	    //std::transform(value.begin(), value.end(), value.begin(), ::tolower);
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using TrackAlgo " << value << std::endl << std::flush;
 	    m_confParams.TrackAlgo = value;
 	  } else if (key.find("MuonLeg") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using MuonLeg " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    m_confParams.MuonLeg = value;
 	  } else if (key.find("PathPrefix") != std::string::npos) {
-	    if (m_debug > 2)
+	    if (m_debug > DebugLevel::CONFIGPARAMS)
 	      std::cout << "using PathPrefix " << value << std::endl << std::flush;
 	    std::transform(value.begin(), value.end(), value.begin(), ::tolower);
 	    m_confParams.PathPrefix = value;
 	  }
 	}
 	
-	//set the member variables as taken from the config
+	// set the member variables as taken from the config
 	m_nBiasBins = m_confParams.NBiasBins;
 	m_maxBias   = m_confParams.MaxKBias;
 	m_minPt     = m_confParams.MinPtCut;
@@ -311,26 +360,24 @@ namespace wsu {
 	
 	m_tree = m_treeChain;
 
-	if (m_debug > 5) {
+	if (m_debug > DebugLevel::TREEINFO) {
 	  std::cout << "m_treeChain has the following files:" << std::endl;
 	  auto chainIter = m_tree->GetListOfLeaves()->MakeIterator();
-	  do {
-	    TChain* chainItem = (TChain*)chainIter->Next();
+	  while (TChain* chainItem = (TChain*)chainIter->Next()) {
 	    std::cout << chainItem->GetName() << " "
 		      << chainItem->GetTitle() << " "
 		      << chainItem->ClassName() << " "
 		      << std::endl;
-	  } while (chainIter->Next());
+	  }
 	  
 	  std::cout << "m_tree has the following leaves:"      << std::endl;
 	  auto treeIter = m_tree->GetListOfLeaves()->MakeIterator();
-	  do {
-	    TTree* treeItem = (TTree*)treeIter->Next();
+	  while (TTree* treeItem = (TTree*)treeIter->Next()) {
 	    std::cout << treeItem->GetName() << " "
 		      << treeItem->GetTitle() << " "
 		      << treeItem->ClassName() << " "
 		      << std::endl;
-	  } while (treeIter->Next());
+	  }
 	}
 	return;
       } // end parseFileList(std::string)
@@ -340,26 +387,24 @@ namespace wsu {
       {
 	m_treeReader = std::shared_ptr<TTreeReader>(new TTreeReader(intree));
 
-	if (m_debug > 5) {
+	if (m_debug > DebugLevel::TREEINFO) {
 	  std::cout << "intree has the following leaves:" << std::endl;
 	  auto treeIter = intree->GetListOfLeaves()->MakeIterator();
-	  do {
-	    TTree* treeItem = (TTree*)treeIter->Next();
+	  while (TTree* treeItem = (TTree*)treeIter->Next()) {
 	    std::cout << treeItem->GetName() << " "
 		      << treeItem->GetTitle() << " "
 		      << treeItem->ClassName() << " "
 		      << std::endl;
-	  } while (treeIter->Next());
+	  }
 	  
 	  std::cout << "m_treeReader has the following leaves:" << std::endl;
 	  treeIter = m_treeReader->GetTree()->GetListOfLeaves()->MakeIterator();
-	  do {
-	    TTree* treeItem = (TTree*)treeIter->Next();
+	  while (TTree* treeItem = (TTree*)treeIter->Next()) {
 	    std::cout << treeItem->GetName() << " "
 		      << treeItem->GetTitle() << " "
 		      << treeItem->ClassName() << " "
 		      << std::endl;
-	  } while (treeIter->Next());
+	  }
 	}
 
 	TTreeReaderValue<Double_t> upTrackPt(       *m_treeReader, "upperMuon_trackPt"          );
@@ -403,9 +448,15 @@ namespace wsu {
 	TTreeReaderValue<math::XYZVector>         lowTrackVec(*m_treeReader,"lowerMuon_trackVec");
 	
 	int j = 0;
-	std::cout << "looping over entries in the TTree" << std::endl << std::flush;
+	std::cout << "looping over entries in the TTree, nEntries = "
+		  << m_treeReader->GetEntries(true)
+		  << std::endl << std::flush;
+	
 	while (m_treeReader->Next()){
-	  if (*upTrackChi2 > -1000) { //ensure values are from an actual event
+	  if (m_debug > DebugLevel::EVENTLOOP)
+	    std::cout << "processing event " << j << std::endl;
+	  
+	  if (*upTrackChi2 > -1000) { // ensure values are from an actual event
 	    int combLow[2] = {1,2};
 	    int combUp[2] = {0,2};
 	    for (int fill = 0; fill < 2; ++fill) {
@@ -414,31 +465,119 @@ namespace wsu {
 	      double upperTrackEta = upTrackVec->eta();
 	      double upperTrackPhi = upTrackVec->phi();
 	      double upperCpT = (*upTrackCharge)/(upperTrackPt);
-	      h_Chi2[combUp[fill]][     (charge<0)?0:1][13]->Fill(*upTrackChi2);
-	      h_Ndof[combUp[fill]][     (charge<0)?0:1][13]->Fill(*upTrackNdof);
-	      h_Chi2Ndof[combUp[fill]][ (charge<0)?0:1][13]->Fill((*upTrackChi2)/(*upTrackNdof));
-	      h_Pt[combUp[fill]][       (charge<0)?0:1][13]->Fill(*upTrackPt);
-	      h_Charge[combUp[fill]][   (charge<0)?0:1][13]->Fill(*upTrackCharge);
-	      h_Curve[combUp[fill]][    (charge<0)?0:1][13]->Fill(upperCpT);
-	      h_Dxy[combUp[fill]][      (charge<0)?0:1][13]->Fill(*upTrackDxy);
-	      h_Dz[combUp[fill]][       (charge<0)?0:1][13]->Fill(*upTrackDz);
-	      h_PtError[combUp[fill]][  (charge<0)?0:1][13]->Fill(*upTrackPtError);
-	      h_DxyError[combUp[fill]][ (charge<0)?0:1][13]->Fill(*upTrackDxyError);
-	      h_DzError[combUp[fill]][  (charge<0)?0:1][13]->Fill(*upTrackDzError);
-	      h_TrackPt[combUp[fill]][  (charge<0)?0:1][13]->Fill(upperTrackPt);
-	      h_TrackEta[combUp[fill]][ (charge<0)?0:1][13]->Fill(upperTrackEta);
-	      h_TrackPhi[combUp[fill]][ (charge<0)?0:1][13]->Fill(upperTrackPhi);
+
+	      if (m_debug > DebugLevel::HISTOGRAMS && j == 0) {
+		std::cout << "Current histograms: "
+			  << "h_Chi2["      << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Chi2[combUp[fill]][(charge<0)?0:1][12]     << std::dec << " "
+			  << h_Chi2[combUp[fill]][(charge<0)?0:1][12]->GetName()      << std::endl
+			  << "h_Ndof["      << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Ndof[combUp[fill]][(charge<0)?0:1][12]     << std::dec << " "
+			  << h_Ndof[combUp[fill]][(charge<0)?0:1][12]->GetName()      << std::endl
+			  << "h_Chi2Ndof["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Chi2Ndof[combUp[fill]][(charge<0)?0:1][12] << std::dec << " "
+			  << h_Chi2Ndof[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_Charge["    << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Charge[combUp[fill]][(charge<0)?0:1][12]   << std::dec << " "
+			  << h_Charge[combUp[fill]][(charge<0)?0:1][12]->GetName()   << std::endl
+			  << "h_Curve["     << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Curve[combUp[fill]][(charge<0)?0:1][12]    << std::dec << " "
+			  << h_Curve[combUp[fill]][(charge<0)?0:1][12]->GetName()    << std::endl
+			  << "h_Dxy["       << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Dxy[combUp[fill]][(charge<0)?0:1][12]      << std::dec << " "
+			  << h_Dxy[combUp[fill]][(charge<0)?0:1][12]->GetName()      << std::endl
+			  << "h_Dz["        << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Dz[combUp[fill]][(charge<0)?0:1][12]       << std::dec << " "
+			  << h_Dz[combUp[fill]][(charge<0)?0:1][12]->GetName()       << std::endl
+			  << "h_DxyError["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_DxyError[combUp[fill]][(charge<0)?0:1][12] << std::dec << " "
+			  << h_DxyError[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_DzError["   << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_DzError[combUp[fill]][(charge<0)?0:1][12]  << std::dec << " "
+			  << h_DzError[combUp[fill]][(charge<0)?0:1][12]->GetName()  << std::endl
+			  << "h_Pt["        << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_Pt[combUp[fill]][(charge<0)?0:1][12]       << std::dec << " "
+			  << h_Pt[combUp[fill]][(charge<0)?0:1][12]->GetName()       << std::endl
+			  << "h_TrackPt["   << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_TrackPt[combUp[fill]][(charge<0)?0:1][12]  << std::dec << " "
+			  << h_TrackPt[combUp[fill]][(charge<0)?0:1][12]->GetName()  << std::endl
+			  << "h_PtError["   << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_PtError[combUp[fill]][(charge<0)?0:1][12]  << std::dec << " "
+			  << h_PtError[combUp[fill]][(charge<0)?0:1][12]->GetName()  << std::endl
+			  << "h_TrackEta["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_TrackEta[combUp[fill]][(charge<0)?0:1][12] << std::dec << " "
+			  << h_TrackEta[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_TrackPhi["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_TrackPhi[combUp[fill]][(charge<0)?0:1][12] << std::dec << " "
+			  << h_TrackPhi[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_PixelHits[" << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_PixelHits[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " " << h_PixelHits[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_TkHits["    << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_TkHits[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " " << h_TkHits[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl
+			  << "h_MuonStationHits[" << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_MuonStationHits[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " " << h_MuonStationHits[combUp[fill]][(charge<0)?0:1][12]->GetName()
+			  << std::endl
+			  << "h_ValidHits[" << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "] "
+			  << std::hex << h_ValidHits[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " " << h_ValidHits[combUp[fill]][(charge<0)?0:1][12]->GetName()
+			  << std::endl
+			  << "h_MatchedMuonStations[" << combUp[fill] << "][" << ((charge<0)?0:1) << "]["
+			  << 12 << "] "
+			  << std::hex << h_MatchedMuonStations[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " " << h_MatchedMuonStations[combUp[fill]][(charge<0)?0:1][12]->GetName()
+			  << std::endl
+			  << "h_TkLayersWithMeasurement[" << combUp[fill] << "][" << ((charge<0)?0:1) << "]["
+			  << 12 << "] "
+			  << std::hex << h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][12]
+			  << std::dec << " "
+			  << h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][12]->GetName() << std::endl;
+		
+		for (int i = 0; i < m_nBiasBins; ++i) {
+		  if (m_debug > DebugLevel::BIASHISTOGRAMS)
+		    std::cout 
+		      << "h_CurvePlusBias["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "]["
+		      << i << "] "
+		      << std::hex << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i] << std::dec << " "
+		      << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i]->GetName()  << std::endl
+		      << "h_CurveMinusBias[" << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "]["
+		      << i << "] "
+		      << std::hex << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i] << std::dec << " "
+		      << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->GetName()  << std::endl;
+		}
+	      }
+
+	      int ptb = 12; // getPtBin(upperTrackPt); need to change to the appropriate directory
+	      m_outFile->cd();
+	      m_ptBinDir[ptb]->cd();
+
+	      h_Chi2[combUp[fill]][     (charge<0)?0:1][12]->Fill(*upTrackChi2);
+	      h_Ndof[combUp[fill]][     (charge<0)?0:1][12]->Fill(*upTrackNdof);
+	      h_Chi2Ndof[combUp[fill]][ (charge<0)?0:1][12]->Fill((*upTrackChi2)/(*upTrackNdof));
+	      h_Pt[combUp[fill]][       (charge<0)?0:1][12]->Fill(*upTrackPt);
+	      h_Charge[combUp[fill]][   (charge<0)?0:1][12]->Fill(*upTrackCharge);
+	      h_Curve[combUp[fill]][    (charge<0)?0:1][12]->Fill(upperCpT);
+	      h_Dxy[combUp[fill]][      (charge<0)?0:1][12]->Fill(*upTrackDxy);
+	      h_Dz[combUp[fill]][       (charge<0)?0:1][12]->Fill(*upTrackDz);
+	      h_PtError[combUp[fill]][  (charge<0)?0:1][12]->Fill(*upTrackPtError);
+	      h_DxyError[combUp[fill]][ (charge<0)?0:1][12]->Fill(*upTrackDxyError);
+	      h_DzError[combUp[fill]][  (charge<0)?0:1][12]->Fill(*upTrackDzError);
+	      h_TrackPt[combUp[fill]][  (charge<0)?0:1][12]->Fill(upperTrackPt);
+	      h_TrackEta[combUp[fill]][ (charge<0)?0:1][12]->Fill(upperTrackEta);
+	      h_TrackPhi[combUp[fill]][ (charge<0)?0:1][12]->Fill(upperTrackPhi);
 	      
-	      h_PixelHits[combUp[fill]][              (charge<0)?0:1][13]->Fill(*upTrackPhits);
-	      h_TkHits[combUp[fill]][                 (charge<0)?0:1][13]->Fill(*upTrackThits);
-	      h_MuonStationHits[combUp[fill]][        (charge<0)?0:1][13]->Fill(*upTrackMhits);
-	      h_ValidHits[combUp[fill]][              (charge<0)?0:1][13]->Fill(*upTrackValidHits);
-	      h_MatchedMuonStations[combUp[fill]][    (charge<0)?0:1][13]->Fill(*upTrackMatchedMuonStations);
-	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][13]->Fill(*upTrackTkLayersWithMeasurement);
+	      h_PixelHits[combUp[fill]][              (charge<0)?0:1][12]->Fill(*upTrackPhits);
+	      h_TkHits[combUp[fill]][                 (charge<0)?0:1][12]->Fill(*upTrackThits);
+	      h_MuonStationHits[combUp[fill]][        (charge<0)?0:1][12]->Fill(*upTrackMhits);
+	      h_ValidHits[combUp[fill]][              (charge<0)?0:1][12]->Fill(*upTrackValidHits);
+	      h_MatchedMuonStations[combUp[fill]][    (charge<0)?0:1][12]->Fill(*upTrackMatchedMuonStations);
+	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][12]->Fill(*upTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < m_nBiasBins; ++i) {
-		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][13][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
-		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][13][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
 	      
 	      charge = *lowTrackCharge;
@@ -446,35 +585,40 @@ namespace wsu {
 	      double lowerTrackEta = lowTrackVec->eta();
 	      double lowerTrackPhi = lowTrackVec->phi();
 	      double lowerCpT = (*lowTrackCharge)/(lowerTrackPt);
-	      h_Chi2[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackChi2);
-	      h_Ndof[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackNdof);
-	      h_Chi2Ndof[combLow[fill]][(charge<0)?0:1][13]->Fill((*lowTrackChi2)/(*lowTrackNdof));
-	      h_Pt[combLow[fill]][      (charge<0)?0:1][13]->Fill(*lowTrackPt);
-	      h_Charge[combLow[fill]][  (charge<0)?0:1][13]->Fill(*lowTrackCharge);
-	      h_Curve[combLow[fill]][   (charge<0)?0:1][13]->Fill(lowerCpT);
-	      h_Dxy[combLow[fill]][     (charge<0)?0:1][13]->Fill(*lowTrackDxy);
-	      h_Dz[combLow[fill]][      (charge<0)?0:1][13]->Fill(*lowTrackDz);
-	      h_PtError[combLow[fill]][ (charge<0)?0:1][13]->Fill(*lowTrackPtError);
-	      h_DxyError[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackDxyError);
-	      h_DzError[combLow[fill]][ (charge<0)?0:1][13]->Fill(*lowTrackDzError);
-	      h_TrackPt[combLow[fill]][ (charge<0)?0:1][13]->Fill(lowerTrackPt);
-	      h_TrackEta[combLow[fill]][(charge<0)?0:1][13]->Fill(lowerTrackEta);
-	      h_TrackPhi[combLow[fill]][(charge<0)?0:1][13]->Fill(lowerTrackPhi);
+
+	      ptb = 12; // getPtBin(upperTrackPt); need to change to the appropriate directory
+	      m_outFile->cd();
+	      m_ptBinDir[ptb]->cd();
 	      
-	      h_PixelHits[combLow[fill]][          (charge<0)?0:1][13]->Fill(*lowTrackPhits);
-	      h_TkHits[combLow[fill]][             (charge<0)?0:1][13]->Fill(*lowTrackThits);
-	      h_MuonStationHits[combLow[fill]][    (charge<0)?0:1][13]->Fill(*lowTrackMhits);
-	      h_ValidHits[combLow[fill]][          (charge<0)?0:1][13]->Fill(*lowTrackValidHits);
-	      h_MatchedMuonStations[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackMatchedMuonStations);
-	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1][13]->Fill(*lowTrackTkLayersWithMeasurement);
+	      h_Chi2[combLow[fill]][    (charge<0)?0:1][12]->Fill(*lowTrackChi2);
+	      h_Ndof[combLow[fill]][    (charge<0)?0:1][12]->Fill(*lowTrackNdof);
+	      h_Chi2Ndof[combLow[fill]][(charge<0)?0:1][12]->Fill((*lowTrackChi2)/(*lowTrackNdof));
+	      h_Pt[combLow[fill]][      (charge<0)?0:1][12]->Fill(*lowTrackPt);
+	      h_Charge[combLow[fill]][  (charge<0)?0:1][12]->Fill(*lowTrackCharge);
+	      h_Curve[combLow[fill]][   (charge<0)?0:1][12]->Fill(lowerCpT);
+	      h_Dxy[combLow[fill]][     (charge<0)?0:1][12]->Fill(*lowTrackDxy);
+	      h_Dz[combLow[fill]][      (charge<0)?0:1][12]->Fill(*lowTrackDz);
+	      h_PtError[combLow[fill]][ (charge<0)?0:1][12]->Fill(*lowTrackPtError);
+	      h_DxyError[combLow[fill]][(charge<0)?0:1][12]->Fill(*lowTrackDxyError);
+	      h_DzError[combLow[fill]][ (charge<0)?0:1][12]->Fill(*lowTrackDzError);
+	      h_TrackPt[combLow[fill]][ (charge<0)?0:1][12]->Fill(lowerTrackPt);
+	      h_TrackEta[combLow[fill]][(charge<0)?0:1][12]->Fill(lowerTrackEta);
+	      h_TrackPhi[combLow[fill]][(charge<0)?0:1][12]->Fill(lowerTrackPhi);
+	      
+	      h_PixelHits[combLow[fill]][          (charge<0)?0:1][12]->Fill(*lowTrackPhits);
+	      h_TkHits[combLow[fill]][             (charge<0)?0:1][12]->Fill(*lowTrackThits);
+	      h_MuonStationHits[combLow[fill]][    (charge<0)?0:1][12]->Fill(*lowTrackMhits);
+	      h_ValidHits[combLow[fill]][          (charge<0)?0:1][12]->Fill(*lowTrackValidHits);
+	      h_MatchedMuonStations[combLow[fill]][(charge<0)?0:1][12]->Fill(*lowTrackMatchedMuonStations);
+	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1][12]->Fill(*lowTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < m_nBiasBins; ++i) {
-		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][13][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
-		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][13][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][12][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][12][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
-	      ++j;
 	    }// closing if fill
 	  }// closing for loop over combining plots
+	  ++j; // increment event counter
 	} // end while loop
 	std::cout << "done looping over " << j << " entries in the TTree" << std::endl << std::flush;
 

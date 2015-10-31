@@ -22,6 +22,21 @@ namespace wsu {
   namespace dileptons {
     namespace cosmics {
       
+      enum DebugLevel {
+	OFF = -1,
+	MIN = 0,
+	LOW = 1,
+	MAX = 19,
+	POINTERS       = 1,
+	TREEINFO       = 3,
+	HISTOGRAMS     = 2,
+	BIASHISTOGRAMS = 5,
+	CONFIGLINES    = 6,
+	CONFIGPARSER   = 5,
+	CONFIGPARAMS   = 2,
+	EVENTLOOP      = 6
+      };
+      
       typedef struct HighPtMuonCuts {
 	int numValidHits;
 	int numMatchedStations;
@@ -95,26 +110,27 @@ namespace wsu {
 	std::shared_ptr<TChain>      m_treeChain;
 	std::shared_ptr<TTreeReader> m_treeReader;
 	
-	//std::shared_ptr<TFile>          m_outFile;
-	std::shared_ptr<TDirectory>     m_ptBinDir;
-	std::shared_ptr<TDirectoryFile> m_outFile;
+	std::shared_ptr<TFile>          m_outFile;
+	std::shared_ptr<TDirectory>     m_ptBinDir[13];
+	std::shared_ptr<TDirectoryFile> m_outFileD;
 	
 	// histograms
 	// [3] for upper, lower, and combined
 	// [2] for plus/minus
-	// [12+1] for inclusive, and then pT bins {50., 100., 150., 200., 250., 300., 400., 500., 750., 1000., 1500., 2000.}
+	// [12+1] for inclusive, and then pT bins
+	//  - {50., 100., 150., 200., 250., 300., 400., 500., 750., 1000., 1500., 2000.}
 	std::shared_ptr<TH1D> h_Chi2[3][2][13],   h_Ndof[3][2][13], h_Chi2Ndof[3][2][13];
 	std::shared_ptr<TH1D> h_Charge[3][2][13], h_Curve[3][2][13];
 	std::shared_ptr<TH1D> h_Dxy[3][2][13],    h_Dz[3][2][13],      h_DxyError[3][2][13], h_DzError [3][2][13];
-	std::shared_ptr<TH1D> h_Pt[3][2][13],     h_TrackPt[3][2][13], h_PtError[3][2][13],  h_TrackEta[3][2][13], h_TrackPhi[3][2][13];
+	std::shared_ptr<TH1D> h_Pt[3][2][13],     h_TrackPt[3][2][13], h_PtError[3][2][13];
+	std::shared_ptr<TH1D> h_TrackEta[3][2][13], h_TrackPhi[3][2][13];
 
 	std::shared_ptr<TH1D> h_TkHits[3][2][13], h_PixelHits[3][2][13], h_ValidHits[3][2][13];
-	std::shared_ptr<TH1D> h_MuonStationHits[3][2][13], h_MatchedMuonStations[3][2][13], h_TkLayersWithMeasurement[3][2][13];
+	std::shared_ptr<TH1D> h_MuonStationHits[3][2][13], h_MatchedMuonStations[3][2][13],
+	  h_TkLayersWithMeasurement[3][2][13];
 	
-	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][13][500], h_CurveMinusBias[3][2][13][500]; // what to do when 500 is too many/few?
-	
-	//libconfig::config_t         *cfg;
-	//libconfig::config_setting_t *setting;
+	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][13][100], h_CurveMinusBias[3][2][13][100];
+	// what to do when 100 is too many/few?
 	
       }; // end class HistogramMaker
     } // end namespace wsu::dileptons::cosmics
