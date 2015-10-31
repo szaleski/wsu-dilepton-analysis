@@ -73,7 +73,7 @@ eval `scramv1 runtime -sh`
 	os.chmod(subfile, 0777)
 	cmd = "bsub -q 8nm %s/%s"%(os.getcwd(),subfile)
 	print cmd
-	#os.system(cmd)
+	os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"
