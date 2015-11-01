@@ -13,8 +13,8 @@ def splitJobsForBsub(inputFile, numberOfJobs):
 	inputFilePath = samplesListsDir+"/"+inputFile
 	num_input_samples = sum(1 for line in open(inputFilePath))
 	with open(inputFilePath) as inputSamplesList:
-		#print "number of input samples is %i" % num_input_samples
-		chunksize = num_input_samples / (numberOfJobs-1)
+		print "number of input samples is %i" % num_input_samples
+		chunksize = math.ceil(1.0*num_input_samples/numberOfJobs)
 		print "chunksize is: %i" % chunksize
 		fid = 1
 		lineswritten = 0
@@ -23,7 +23,7 @@ def splitJobsForBsub(inputFile, numberOfJobs):
 			#print "%i : \n      %s" % (i, line)
 			f.write(line)
 			lineswritten+=1
-			if lineswritten == chunksize and fid<numberOfJobs:
+			if lineswritten == chunksize:# and fid < numberOfJobs:
 				f.close()
 				fid += 1
 				lineswritten = 0
@@ -47,10 +47,12 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 		f = open(rootScriptName, "w")
 		f.write("{\n")
 		#f.write("  gROOT->ProcessLine(\" .L %s/Plot.so\");\n"%(os.getcwd()))
+		inputFileList = samplesListsDir + "/splitLists/" + splitListFile
 		f.write("  gROOT->ProcessLine(\" .L Plot.so\");\n")
 		for tk in range(5):
-			f.write("  Plot(\"%s\",\"output/%s_%d_\",%d);\n"%(samplesListsDir + "/splitLists/" + splitListFile,
-									  outputFile, i, tk+1))
+			f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f);\n"%(inputFileList,
+										  outputFile, i, tk+1,
+										  150.,0.001))
 		f.write("}\n")
 		pyCommand = "root -x -b -q %s"%(rootScriptName)
 		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i, proxyPath)
@@ -68,12 +70,23 @@ alias cmsenv='eval `scramv1 runtime -sh`'
 cmsenv
 eval `scramv1 runtime -sh`
 %s
+#### here do some cleanup, e.g., remove input scripts, remove split lists, remove bsub script
+### but only if the bsub job exited cleanly
+##jobfailed = $(fgrep Killed "LSFJOB_$jobid/STDOUT")
+##if [jobfailed];
+##then
+##    #do nothing
+##else
+##    rm root.C script
+##    rm bsubs/bsub-script
+##    rm -rf LSFJOB_$jobid
+##fi
 """%(proxyPath, os.getcwd(), pyCommand))
 	f.close()
 	os.chmod(subfile, 0777)
-	cmd = "bsub -q 8nm %s/%s"%(os.getcwd(),subfile)
+	cmd = "bsub -q 1nh %s/%s"%(os.getcwd(),subfile)
 	print cmd
-	os.system(cmd)
+	#os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"

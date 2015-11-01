@@ -182,6 +182,7 @@ namespace wsu {
 
       HistogramMaker::~HistogramMaker()
       {
+	/*
 	std::cout << "HistogramMaker destructor called" << std::endl << std::flush;
 	m_outFile->cd();
 	for (int ptb = 0; ptb < 12; ++ptb) {
@@ -230,7 +231,7 @@ namespace wsu {
 	m_outFile->Close();
 	std::cout << "Wrote and closed output file 0x" << std::hex << m_outFile.get()
 		  << std::dec << std::endl << std::flush;
-
+	*/
 	std::cout << "HistogramMaker destructor finished" << std::endl << std::flush;
       } // end destructor
 
@@ -407,6 +408,10 @@ namespace wsu {
 	  }
 	}
 
+	TTreeReaderValue<Int_t>    run(  *m_treeReader, "muonRunNumber"  );
+	TTreeReaderValue<Int_t>    lumi( *m_treeReader, "muonLumiBlock"  );
+	TTreeReaderValue<Int_t>    event(*m_treeReader, "muonEventNumber");
+
 	TTreeReaderValue<Double_t> upTrackPt(       *m_treeReader, "upperMuon_trackPt"          );
 	TTreeReaderValue<Double_t> upTrackDxy(      *m_treeReader, "upperMuon_dxy"              );
 	TTreeReaderValue<Double_t> upTrackDz(       *m_treeReader, "upperMuon_dz"               );
@@ -425,7 +430,7 @@ namespace wsu {
 
 	TTreeReaderValue<math::XYZTLorentzVector> upMuonP4(  *m_treeReader,"upperMuon_P4");
 	// still not working, thanks to ROOT...
-	TTreeReaderValue<math::XYZVector>         upTrackVec(*m_treeReader,"upperMuon_trackVec");
+	//TTreeReaderValue<Vector3>         upTrackVec(*m_treeReader,"upperMuon_trackVec");
 
 	TTreeReaderValue<Double_t> lowTrackPt(       *m_treeReader, "lowerMuon_trackPt"          );
 	TTreeReaderValue<Double_t> lowTrackDxy(      *m_treeReader, "lowerMuon_dxy"              );
@@ -445,26 +450,31 @@ namespace wsu {
 	
 	TTreeReaderValue<math::XYZTLorentzVector> lowMuonP4(  *m_treeReader,"lowerMuon_P4");
 	// still not working, thanks to ROOT...
-	TTreeReaderValue<math::XYZVector>         lowTrackVec(*m_treeReader,"lowerMuon_trackVec");
+	//TTreeReaderValue<Vector3>         lowTrackVec(*m_treeReader,"lowerMuon_trackVec");
 	
 	int j = 0;
 	std::cout << "looping over entries in the TTree, nEntries = "
 		  << m_treeReader->GetEntries(true)
 		  << std::endl << std::flush;
 	
+	std::ofstream lumiFileOut100;
+	lumiFileOut100.open(m_outFileName+"_pt100.txt");
+	std::ofstream lumiFileOut200;
+	lumiFileOut200.open(m_outFileName+"_pt200.txt");
+	
 	while (m_treeReader->Next()){
 	  if (m_debug > DebugLevel::EVENTLOOP)
 	    std::cout << "processing event " << j << std::endl;
 	  
-	  if (*upTrackChi2 > -1000) { // ensure values are from an actual event
-	    int combLow[2] = {1,2};
+	  if (*upTrackChi2 > -1) { // ensure values are from an actual event
+	    //int combLow[2] = {1,2};
 	    int combUp[2] = {0,2};
 	    for (int fill = 0; fill < 2; ++fill) {
 	      int charge = *upTrackCharge;
-	      double upperTrackPt = sqrt(upTrackVec->perp2());
-	      double upperTrackEta = upTrackVec->eta();
-	      double upperTrackPhi = upTrackVec->phi();
-	      double upperCpT = (*upTrackCharge)/(upperTrackPt);
+	      double upperTrackPt = *upTrackPt; // sqrt(upTrackVec->perp2());
+	      //double upperTrackEta = upTrackVec->eta();
+	      //double upperTrackPhi = upTrackVec->phi();
+	      //double upperCpT = (*upTrackCharge)/(upperTrackPt);
 
 	      if (m_debug > DebugLevel::HISTOGRAMS && j == 0) {
 		std::cout << "Current histograms: "
@@ -548,7 +558,7 @@ namespace wsu {
 		      << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->GetName()  << std::endl;
 		}
 	      }
-
+	      /*
 	      int ptb = 12; // getPtBin(upperTrackPt); need to change to the appropriate directory
 	      m_outFile->cd();
 	      m_ptBinDir[ptb]->cd();
@@ -579,13 +589,14 @@ namespace wsu {
 		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
 		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
-	      
+	      */
 	      charge = *lowTrackCharge;
-	      double lowerTrackPt = sqrt(lowTrackVec->perp2());
-	      double lowerTrackEta = lowTrackVec->eta();
-	      double lowerTrackPhi = lowTrackVec->phi();
-	      double lowerCpT = (*lowTrackCharge)/(lowerTrackPt);
-
+	      double lowerTrackPt = *lowTrackPt; // sqrt(lowTrackVec->perp2());
+	      //double lowerTrackPt = sqrt(lowTrackVec->perp2());
+	      //double lowerTrackEta = lowTrackVec->eta();
+	      //double lowerTrackPhi = lowTrackVec->phi();
+	      //double lowerCpT = (*lowTrackCharge)/(lowerTrackPt);
+	      /*
 	      ptb = 12; // getPtBin(upperTrackPt); need to change to the appropriate directory
 	      m_outFile->cd();
 	      m_ptBinDir[ptb]->cd();
@@ -616,10 +627,26 @@ namespace wsu {
 		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][12][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
 		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][12][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
-	    }// closing if fill
-	  }// closing for loop over combining plots
+	      */
+	      if (fill == 0) {
+		//if (upperTrackPt > m_minPt && lowerTrackPt > m_minPt) {
+		if (upperTrackPt > 100. && lowerTrackPt > 100.)
+		  lumiFileOut100 << "\"" << *run << "\":"
+				 << " [[" << *lumi << "," << *lumi << "]]"
+				 << " : " << *event << std::endl;
+		if (upperTrackPt > 200. && lowerTrackPt > 200.)
+		  lumiFileOut200 << "\"" << *run << "\":"
+				 << " [[" << *lumi << "," << *lumi << "]]"
+				 << " : " << *event << std::endl;
+	      }
+	    } // closing if fill
+	  } // closing for loop over combining plots
 	  ++j; // increment event counter
 	} // end while loop
+
+	lumiFileOut100.close();
+	lumiFileOut200.close();
+
 	std::cout << "done looping over " << j << " entries in the TTree" << std::endl << std::flush;
 
 	return j;
