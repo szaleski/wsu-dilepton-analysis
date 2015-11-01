@@ -393,7 +393,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_tightMuLowerPlusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuLowerPlusCurveMinusBias[nBiasBins];
 
-  for(int i =0; i < nBiasBins; ++i){
+  for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
     h_tightMuMinusCurvePlusBias[i] = new TH1F(TString("tightMuMinusCurvePlusBias" + name.str()), TString("tightMuMinusCurvePlusBias" + name.str()), 1000, -0.01, 0.01);
@@ -556,7 +556,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_muLowerPlusCurvePlusBias[nBiasBins];
   TH1F *h_muLowerPlusCurveMinusBias[nBiasBins];
 
-  for(int i =0; i < nBiasBins; ++i){
+  for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
     h_muMinusCurvePlusBias[i] = new TH1F(TString("muMinusCurvePlusBias" + name.str()), TString("muMinusCurvePlusBias" + name.str()), 1000, -0.01, 0.01);
@@ -598,7 +598,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
   TH1F *h_upperCurvePlusBias[nBiasBins];
   TH1F *h_upperCurveMinusBias[nBiasBins];
-  for(int i =0; i < nBiasBins; ++i){
+  for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
     h_upperCurvePlusBias[i] = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + name.str()), 1000, -0.01, 0.01);
@@ -631,7 +631,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
   TH1F *h_lowerCurvePlusBias[nBiasBins];
   TH1F *h_lowerCurveMinusBias[nBiasBins];
-  for(int i =0; i < nBiasBins; ++i){
+  for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
     h_lowerCurvePlusBias[i] = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + name.str()), 1000, -0.01, 0.01);
@@ -1352,7 +1352,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	//h_lowerTrackPhi->Fill((*lowTrackerTrack).Phi());
 	h_lowerTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
-	for(int i = 0; i < nBiasBins; ++i){
+	for (int i = 0; i < nBiasBins; ++i) {
 	  h_lowerCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	  h_lowerCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	  if (debug)
@@ -1466,7 +1466,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	   subsequent code in the same function, and only to show a logical separation of execution
 	*/
 
-	if(*lowTrackerCharge < 0){
+	if (*lowTrackerCharge < 0) {
 	  h_muMinusChi2->Fill(*lowTrackerChi2);
 	  h_muLowerMinusChi2->Fill(*lowTrackerChi2);
 	  h_muMinusNdof->Fill(*lowTrackerNdof);
@@ -1512,7 +1512,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_muLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
-	  for(int i = 0; i < nBiasBins; ++i){
+	  for (int i = 0; i < nBiasBins; ++i) {
 	    h_muMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	    h_muMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	    h_muLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
@@ -1593,7 +1593,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	      h_tightMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
 	    }
 
-	    for(int i = 0; i < nBiasBins; ++i){
+	    for (int i = 0; i < nBiasBins; ++i) {
 	      h_looseMuMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	      h_looseMuMinusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	      h_looseMuLowerMinusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
@@ -1702,7 +1702,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_muLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
-	  for(int i = 0; i < nBiasBins; ++i){
+	  for (int i = 0; i < nBiasBins; ++i) {
 	    h_muPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	    h_muPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	    h_muLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
@@ -1783,7 +1783,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	      h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	    }
 
-	    for(int i = 0; i < nBiasBins; ++i){
+	    for (int i = 0; i < nBiasBins; ++i) {
 	      h_looseMuPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
 	      h_looseMuPlusCurveMinusBias[i]->Fill(lowerCpT - (i + 1)*(maxBias/nBiasBins));	
 	      h_looseMuLowerPlusCurvePlusBias[i]->Fill(lowerCpT + (i + 1)*(maxBias/nBiasBins));
