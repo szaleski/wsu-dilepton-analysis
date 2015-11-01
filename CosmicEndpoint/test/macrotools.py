@@ -52,7 +52,7 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 		for tk in range(5):
 			f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f);\n"%(inputFileList,
 										  outputFile, i, tk+1,
-										  150.,0.001))
+										  50.,0.001))
 		f.write("}\n")
 		pyCommand = "root -x -b -q %s"%(rootScriptName)
 		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i, proxyPath)
@@ -86,7 +86,7 @@ eval `scramv1 runtime -sh`
 	os.chmod(subfile, 0777)
 	cmd = "bsub -q 1nh %s/%s"%(os.getcwd(),subfile)
 	print cmd
-	#os.system(cmd)
+	os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"
