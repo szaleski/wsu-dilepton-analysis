@@ -103,7 +103,7 @@ private:
   int lowerMuon_trackerHits, lowerMuon_muonStationHits;
   int lowerMuon_numberOfValidHits, lowerMuon_numberOfMatchedStations;
   int lowerMuon_trackerLayersWithMeasurement;
-
+  int lowerMuon_numberOfValidMuonHits;
 
   //TLorentzVector upperMuon_P4; 
   reco::Candidate::LorentzVector upperMuon_P4;
@@ -115,6 +115,7 @@ private:
   int  upperMuon_trackerHits, upperMuon_muonStationHits;
   int  upperMuon_numberOfValidHits, upperMuon_numberOfMatchedStations;
   int upperMuon_trackerLayersWithMeasurement;
+  int upperMuon_numberOfValidMuonHits;
 
 };
 

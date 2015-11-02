@@ -123,6 +123,9 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   upperMuon_trackerLayersWithMeasurement = -1000;
   lowerMuon_trackerLayersWithMeasurement = -1000;
 
+  upperMuon_numberOfValidMuonHits = -1000;
+  lowerMuon_numberOfValidMuonHits = -1000;
+
 
   //  reco::TrackHitPattern *upperMuon_numberOfValidHits, *lowerMuon_numberOfValidHits;
 
@@ -223,6 +226,7 @@ if (ref->outerPosition().Y() > 0){
 	upperMuon_trackPt =ref->pt();
 	upperMuon_trackVec = ref->momentum();
        	upperMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
+	upperMuon_numberOfValidMuonHits = ref->hitPattern().numberOfValidMuonHits();
 
 	double relError = upperMuon_ptError/upperMuon_trackPt;
 	std::cout << "\nMuon pT Error/pT is: " << relError << std::endl;
@@ -258,6 +262,7 @@ if (ref->outerPosition().Y() > 0){
 	lowerMuon_trackPt =ref->pt();
 	lowerMuon_trackVec = ref->momentum();
 	lowerMuon_trackerLayersWithMeasurement =ref->hitPattern().trackerLayersWithMeasurement();
+	lowerMuon_numberOfValidMuonHits = ref->hitPattern().numberOfValidMuonHits();
 	std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
 	
 
@@ -315,6 +320,7 @@ void MuonAnalyzer::beginJob()
   cosmicTree->Branch("muonEventNumber", &event, 10000, 1);
   cosmicTree->Branch("muonRunNumber", &run, 10000, 1);
   cosmicTree->Branch("muonLumiBlock", &lumi, 10000, 1 );  
+  cosmicTree->Branch("upperMuon_numberOfValidMuonHits", &upperMuon_numberOfValidMuonHits, 10000, 1);
 
    cosmicTree->Branch("lowerMuon_P4",     &lowerMuon_P4,     10000, 1    );
   cosmicTree->Branch("lowerMuon_chi2",    &lowerMuon_chi2,    10000, 1   );
@@ -334,6 +340,7 @@ void MuonAnalyzer::beginJob()
   cosmicTree->Branch("lowerMuon_trackVec", &lowerMuon_trackVec, 10000, 1);
   cosmicTree->Branch("lowerMuon_trackPt", &lowerMuon_trackPt, 10000, 1);
  cosmicTree->Branch("lowerMuon_trackerLayersWithMeasurement", &lowerMuon_trackerLayersWithMeasurement, 10000, 1);
+  cosmicTree->Branch("lowerMuon_numberOfValidMuonHits", &lowerMuon_numberOfValidMuonHits, 10000, 1);
  
   //   numberOfValidHits recoTrackHitPattern
   //  numberofMatchedStations recoMuon
