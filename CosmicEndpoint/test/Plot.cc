@@ -27,35 +27,57 @@
 #include <math.h>
 #include <cmath>
 
-void Plot(std::string const& file1, std::string const& outFile, int trackVal_, double minPt_, double maxBias_, double factor_=1.0)
+void Plot(std::string const& file1, std::string const& outFile, int trackVal_, double minPt_,
+	  double maxBias_, int nBiasBins_, double factor_=1.0)
 {
   TFile *g;
   TChain *myChain;
 
+  std::string trackAlgo;
+  std::ofstream lumiFileOut100_loose;
+  std::ofstream lumiFileOut200_loose;
+  std::ofstream lumiFileOut400_loose;
+  std::ofstream lumiFileOut100_tight;
+  std::ofstream lumiFileOut200_tight;
+  std::ofstream lumiFileOut400_tight;
+  
   if (trackVal_== 1) {
     myChain = new TChain(TString("analysisTrackerMuons/MuonTree"));
     g = new TFile(TString(outFile + "TrackerOnly.root"),"RECREATE"); 
+    trackAlgo = "trackerOnly";
   }  
   else if (trackVal_== 2) {
     myChain = new TChain(TString("analysisTPFMSMuons/MuonTree"));
     g = new TFile(TString(outFile + "TPFMS.root"),"RECREATE"); 
+    trackAlgo = "tpfms";
   }  
   else if (trackVal_== 3) {
     myChain = new TChain(TString("analysisDYTMuons/MuonTree"));
     g = new TFile(TString(outFile + "DYTT.root"),"RECREATE"); 
+    trackAlgo = "dyt";
   } 
   else if (trackVal_== 4) {
     myChain = new TChain(TString("analysisPickyMuons/MuonTree"));
     g = new TFile(TString(outFile + "Picky.root"),"RECREATE"); 
+    trackAlgo = "picky";
   } 
   else if (trackVal_== 5) {
     myChain = new TChain(TString("analysisTunePMuons/MuonTree"));
     g = new TFile(TString(outFile + "TuneP.root"),"RECREATE"); 
+    trackAlgo = "tuneP";
   } 
   else {
     std::cout << "\n\nINVALID TRACK SPECIFIED! Choose a value between [1, 5]";
     return;
   }  
+
+  lumiFileOut100_loose.open(outFile+trackAlgo+"_pt100_loose.txt");
+  lumiFileOut200_loose.open(outFile+trackAlgo+"_pt200_loose.txt");
+  lumiFileOut400_loose.open(outFile+trackAlgo+"_pt400_loose.txt");
+  
+  lumiFileOut100_tight.open(outFile+trackAlgo+"_pt100_tight.txt");
+  lumiFileOut200_tight.open(outFile+trackAlgo+"_pt200_tight.txt");
+  lumiFileOut400_tight.open(outFile+trackAlgo+"_pt400_tight.txt");
   
   std::string name;
   std::ifstream file(file1);
@@ -78,10 +100,74 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   std::cout<<"arg 1 is:  " << file1 << std::endl;
 
   float maxBias = maxBias_;
-  int nBiasBins = 250;
+  int nBiasBins = nBiasBins_;
   
-  TH1I * h_countersUpper = new TH1I("upperCounters","upperCounters",55, -0.5, 54.5);
-  TH1I * h_countersLower = new TH1I("lowerCounters","lowerCounters",55, -0.5, 54.5);
+  std::string counterBinLabels[55] = {
+    "Uncut",                                // 0
+    "#frac{#Deltap_{T}}{p_{T}} N-1 (loose)",// 1
+    "N_{Trk Hits} N-1 (loose)",             // 2
+    "N_{Pix Hits} N-1 (loose)",             // 3
+    "N_{Valid #mu Hits} N-1 (loose)",       // 4
+    "N_{Matched Station Hits} N-1 (loose)", // 5
+    "D_{xy} N-1 (loose)",                   // 6
+    "D_{z} N-1 (loose)",                    // 7
+    "p_{T} N-1 (loose)",                    // 8
+    "",
+    "",
+
+    "#frac{#Deltap_{T}}{p_{T}} N-1 (w/ D_{xy})",// 11
+    "N_{Trk Hits} N-1 (w/ D_{xy})",             // 12
+    "N_{Pix Hits} N-1 (w/ D_{xy})",             // 13
+    "N_{Valid #mu Hits} N-1 (w/ D_{xy})",       // 14
+    "N_{Matched Station Hits} N-1 (w/ D_{xy})", // 15
+    "D_{xy} N-1 (w/ D_{xy})",                   // 16
+    "D_{z} N-1 (w/ D_{xy})",                    // 17
+    "p_{T} N-1 (w/ D_{xy})",                    // 18
+    "",
+    "",
+
+    "#frac{#Deltap_{T}}{p_{T}} N-1 (w/ D_{z})",// 21
+    "N_{Trk Hits} N-1 (w/ D_{z})",             // 22
+    "N_{Pix Hits} N-1 (w/ D_{z})",             // 23
+    "N_{Valid #mu Hits} N-1 (w/ D_{z})",       // 24
+    "N_{Matched Station Hits} N-1 (w/ D_{z})", // 25
+    "D_{xy} N-1 (w/ D_{z})",                   // 26
+    "D_{z} N-1 (w/ D_{z})",                    // 27
+    "p_{T} N-1 (w/ D_{z})",                    // 28
+    "",
+    "",
+
+    "#frac{#Deltap_{T}}{p_{T}} N-1 (tight)",// 31
+    "N_{Trk Hits} N-1 (tight)",             // 32
+    "N_{Pix Hits} N-1 (tight)",             // 33
+    "N_{Valid #mu Hits} N-1 (tight)",       // 34
+    "N_{Matched Station Hits} N-1 (tight)", // 35
+    "D_{xy} N-1 (tight)",                   // 36
+    "D_{z} N-1 (tight)",                    // 37
+    "p_{T} N-1 (tight)",                    // 38
+    "",
+    "",
+
+    "p_{T} > 50", // 40
+    "p_{T} > 100", // 41
+    "p_{T} > 150", // 42
+    "p_{T} > 200", // 43
+    "p_{T} > 300", // 44
+    "p_{T} > 400", // 45
+    "p_{T} > 500", // 46
+    "p_{T} > 1000", // 47
+    "p_{T} > 1500", // 48
+    "p_{T} > 2000", // 49
+    "p_{T} > 3000", // 50
+  };
+  
+  TH1I *h_countersUpper = new TH1I("upperCounters","upperCounters",55, -0.5, 54.5);
+  TH1I *h_countersLower = new TH1I("lowerCounters","lowerCounters",55, -0.5, 54.5);
+  
+  for (int b = 0; b < 55; ++b) {
+    h_countersUpper->GetXaxis()->SetBinLabel(b+1,TString(counterBinLabels[b]));
+    h_countersLower->GetXaxis()->SetBinLabel(b+1,TString(counterBinLabels[b]));
+  }
   
   TH1F *h_looseMuMinusChi2 = new TH1F("looseMuMinusChi2","looseMuMinusChi2", 500, 0., 100.);
   TH1F *h_looseMuUpperMinusChi2 = new TH1F("looseMuUpperMinusChi2","looseMuUpperMinusChi2", 500, 0., 100.);
@@ -639,6 +725,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   }
   
   std::cout << "\nCreating upper Muon TTreeReaderValues\n";
+  TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
+  TTreeReaderValue<Int_t>    lumi( trackReader, "muonLumiBlock"  );
+  TTreeReaderValue<Int_t>    event(trackReader, "muonEventNumber");
+  
   TTreeReaderValue<Double_t> upTrackerPt(trackReader,     "upperMuon_trackPt"        );
   TTreeReaderValue<Double_t> upTrackerDxy(trackReader,    "upperMuon_dxy"            );
   TTreeReaderValue<Double_t> upTrackerDz(trackReader,     "upperMuon_dz"             );
@@ -680,12 +770,16 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   std::cout << "\nMade it to Histogramming!\n";
   int j = 0;
   bool debug = false;
+
   
   while (trackReader.Next()) {
     if (debug)
       std::cout << "\nMade it into the first loop\n" << std::endl;
     g->cd();
-    
+
+    bool hasPt100Loose(false), hasPt200Loose(false), hasPt400Loose(false);
+    bool hasPt100Tight(false), hasPt200Tight(false), hasPt400Tight(false);
+
     if (*upTrackerChi2 > -1) {
       if (*upTrackerPt > minPt_) {
 	//maybe make the curvature be absolute value
@@ -870,22 +964,20 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_countersUpper->Fill(42);
 	if (*upTrackerPt > 200)
 	  h_countersUpper->Fill(43);
-	if (*upTrackerPt > 200)
-	  h_countersUpper->Fill(44);
 	if (*upTrackerPt > 300)
-	  h_countersUpper->Fill(45);
+	  h_countersUpper->Fill(44);
 	if (*upTrackerPt > 400)
-	  h_countersUpper->Fill(46);
+	  h_countersUpper->Fill(45);
 	if (*upTrackerPt > 500)
-	  h_countersUpper->Fill(47);
+	  h_countersUpper->Fill(46);
 	if (*upTrackerPt > 1000)
-	  h_countersUpper->Fill(48);
+	  h_countersUpper->Fill(47);
 	if (*upTrackerPt > 1500)
-	  h_countersUpper->Fill(49);
+	  h_countersUpper->Fill(48);
 	if (*upTrackerPt > 2000)
-	  h_countersUpper->Fill(50);
+	  h_countersUpper->Fill(49);
 	if (*upTrackerPt > 3000)
-	  h_countersUpper->Fill(51);
+	  h_countersUpper->Fill(50);
       
 	/* here you should have only one if statement and fill inside of them everything you need,
 	   I've started below, so just follow the logic to the end
@@ -931,10 +1023,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muUpperMinusDzError->Fill(*upTrackerDzError);
 	  h_muMinusTrackPt->Fill(*upTrackerPt);
 	  h_muUpperMinusTrackPt->Fill(*upTrackerPt);
-	  //h_muMinusTrackEta->Fill(upTrackerTrack->eta());
-	  //h_muUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	  //h_muMinusTrackPhi->Fill(upTrackerTrack->phi());
-	  //h_muUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
+	  h_muMinusTrackEta->Fill(upTrackerTrack->eta());
+	  h_muUpperMinusTrackEta->Fill(upTrackerTrack->eta());
+	  h_muMinusTrackPhi->Fill(upTrackerTrack->phi());
+	  h_muUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
 	  h_muMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	  h_muUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 
@@ -971,10 +1063,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	    h_looseMuMinusTrackPt->Fill(*upTrackerPt);
 	    h_looseMuUpperMinusTrackPt->Fill(*upTrackerPt);
-	    //h_looseMuMinusTrackEta->Fill(upTrackerTrack->eta());
-	    //h_looseMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	    //h_looseMuMinusTrackPhi->Fill(upTrackerTrack->phi());
-	    //h_looseMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
+	    h_looseMuMinusTrackEta->Fill(upTrackerTrack->eta());
+	    h_looseMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
+	    h_looseMuMinusTrackPhi->Fill(upTrackerTrack->phi());
+	    h_looseMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
 
 	    h_looseMuMinusPt->Fill(upTrackerMuonP4->pt());
 	    h_looseMuUpperMinusPt->Fill(upTrackerMuonP4->pt());
@@ -1006,10 +1098,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	      h_tightMuMinusTrackPt->Fill(*upTrackerPt);
 	      h_tightMuUpperMinusTrackPt->Fill(*upTrackerPt);
-	      //h_tightMuMinusTrackEta->Fill(upTrackerTrack->eta());
-	      //h_tightMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	      //h_tightMuMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      //h_tightMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_tightMuMinusTrackEta->Fill(upTrackerTrack->eta());
+	      h_tightMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
+	      h_tightMuMinusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_tightMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
 
 	      h_tightMuMinusPt->Fill(upTrackerMuonP4->pt());
 	      h_tightMuUpperMinusPt->Fill(upTrackerMuonP4->pt());
@@ -1120,10 +1212,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muUpperPlusDzError->Fill(*upTrackerDzError);
 	  h_muPlusTrackPt->Fill(*upTrackerPt);
 	  h_muUpperPlusTrackPt->Fill(*upTrackerPt);
-	  //h_muPlusTrackEta->Fill(upTrackerTrack->eta());
-	  //h_muUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	  //h_muPlusTrackPhi->Fill(upTrackerTrack->phi());
-	  //h_muUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
+	  h_muPlusTrackEta->Fill(upTrackerTrack->eta());
+	  h_muUpperPlusTrackEta->Fill(upTrackerTrack->eta());
+	  h_muPlusTrackPhi->Fill(upTrackerTrack->phi());
+	  h_muUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
 	  h_muPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	  h_muUpperPlusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 
@@ -1195,10 +1287,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	      h_tightMuPlusTrackPt->Fill(*upTrackerPt);
 	      h_tightMuUpperPlusTrackPt->Fill(*upTrackerPt);
-	      //h_tightMuPlusTrackEta->Fill(upTrackerTrack->eta());
-	      //h_tightMuUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	      //h_tightMuPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      //h_tightMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_tightMuPlusTrackEta->Fill(upTrackerTrack->eta());
+	      h_tightMuUpperPlusTrackEta->Fill(upTrackerTrack->eta());
+	      h_tightMuPlusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_tightMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
 
 	      h_tightMuPlusPt->Fill(upTrackerMuonP4->pt());
 	      h_tightMuUpperPlusPt->Fill(upTrackerMuonP4->pt());
@@ -1270,6 +1362,24 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	    }
 	  }
 	} // end else { // charge > 0
+
+	if (up_n1pt) {
+	  if (*upTrackerPt > 100) {
+	    hasPt100Loose = true;
+	    if (up_n1dxymax && up_n1dzmax)
+	      hasPt100Tight = true;
+	    if (*upTrackerPt > 200) {
+	      hasPt200Loose = true;
+	      if (up_n1dxymax && up_n1dzmax)
+		hasPt200Tight = true;
+	      if (*upTrackerPt > 400) {
+		hasPt400Loose = true;
+		if (up_n1dxymax && up_n1dzmax)
+		  hasPt400Tight = true;
+	      }
+	    }
+	  }
+	} // end setting up bools for lumi print info
       } // end if (*upTrackerPt > minPt_)      
       //////// Lower muon leg ///////
 
@@ -1333,8 +1443,8 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	h_lowerChi2->Fill(*lowTrackerChi2);
 	h_lowerNdof->Fill(*lowTrackerNdof);
 	h_lowerPt->Fill(lowTrackerMuonP4->pt());
-	//h_lowerEta->Fill(lowTrackerTrack->eta());
-	//h_lowerPhi->Fill(lowTrackerTrack->phi());
+	h_lowerEta->Fill(lowTrackerMuonP4->eta());
+	h_lowerPhi->Fill(lowTrackerMuonP4->phi());
 	h_lowerCharge->Fill(*lowTrackerCharge);
 	h_lowerCurve->Fill(lowerCpT);
 	h_lowerDxy->Fill(*lowTrackerDxy);
@@ -1349,8 +1459,8 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	h_lowerDxyError->Fill(*lowTrackerDxyError);
 	h_lowerDzError->Fill(*lowTrackerDzError);
 	h_lowerTrackPt->Fill(*lowTrackerPt);
-	// h_lowerTrackEta->Fill((*lowTrackerTrack).Eta());
-	//h_lowerTrackPhi->Fill((*lowTrackerTrack).Phi());
+	h_lowerTrackEta->Fill(lowTrackerTrack->eta());
+	h_lowerTrackPhi->Fill(lowTrackerTrack->phi());
 	h_lowerTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
 	for (int i = 0; i < nBiasBins; ++i) {
@@ -1482,10 +1592,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muLowerMinusDz->Fill(*lowTrackerDz);
 	  h_muMinusPt->Fill(lowTrackerMuonP4->pt());
 	  h_muLowerMinusPt->Fill(lowTrackerMuonP4->pt());
-	  h_muMinusEta->Fill(lowTrackerTrack->eta());
-	  h_muLowerMinusEta->Fill(lowTrackerTrack->eta());
-	  h_muMinusPhi->Fill(lowTrackerTrack->phi());
-	  h_muLowerMinusPhi->Fill(lowTrackerTrack->phi());
+	  h_muMinusEta->Fill(lowTrackerMuonP4->eta());
+	  h_muLowerMinusEta->Fill(lowTrackerMuonP4->eta());
+	  h_muMinusPhi->Fill(lowTrackerMuonP4->phi());
+	  h_muLowerMinusPhi->Fill(lowTrackerMuonP4->phi());
 	  h_muMinusPixelHits->Fill(*lowTrackerPhits);
 	  h_muLowerMinusPixelHits->Fill(*lowTrackerPhits);
 	  h_muMinusTrackerHits->Fill(*lowTrackerThits);
@@ -1506,10 +1616,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muLowerMinusDzError->Fill(*lowTrackerDzError);
 	  h_muMinusTrackPt->Fill(*lowTrackerPt);
 	  h_muLowerMinusTrackPt->Fill(*lowTrackerPt);
-	  //h_muMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	  //h_muLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	  //h_muMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	  //h_muLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	  h_muMinusTrackEta->Fill(lowTrackerTrack->eta());
+	  h_muLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
+	  h_muMinusTrackPhi->Fill(lowTrackerTrack->phi());
+	  h_muLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
 	  h_muMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_muLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
@@ -1546,10 +1656,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	    h_looseMuMinusTrackPt->Fill(*lowTrackerPt);
 	    h_looseMuLowerMinusTrackPt->Fill(*lowTrackerPt);
-	    //h_looseMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	    //h_looseMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	    //h_looseMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	    //h_looseMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	    h_looseMuMinusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_looseMuLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_looseMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
+	    h_looseMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
 
 	    h_looseMuMinusPt->Fill(lowTrackerMuonP4->pt());
 	    h_looseMuLowerMinusPt->Fill(lowTrackerMuonP4->pt());
@@ -1582,10 +1692,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	      h_tightMuMinusTrackPt->Fill(*lowTrackerPt);
 	      h_tightMuLowerMinusTrackPt->Fill(*lowTrackerPt);
-	      //h_tightMuMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	      //h_tightMuLowerMinusTrackEta->Fill((*lowTrackerTrack).Eta());
-	      //h_tightMuMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	      //h_tightMuLowerMinusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	      h_tightMuMinusTrackEta->Fill(lowTrackerTrack->eta());
+	      h_tightMuLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
+	      h_tightMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
+	      h_tightMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
 
 	      h_tightMuMinusPt->Fill(lowTrackerMuonP4->pt());
 	      h_tightMuLowerMinusPt->Fill(lowTrackerMuonP4->pt());
@@ -1672,10 +1782,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muLowerPlusDz->Fill(*lowTrackerDz);
 	  h_muPlusPt->Fill(lowTrackerMuonP4->pt());
 	  h_muLowerPlusPt->Fill(lowTrackerMuonP4->pt());
-	  h_muPlusEta->Fill(lowTrackerTrack->eta());
-	  h_muLowerPlusEta->Fill(lowTrackerTrack->eta());
-	  h_muPlusPhi->Fill(lowTrackerTrack->phi());
-	  h_muLowerPlusPhi->Fill(lowTrackerTrack->phi());
+	  h_muPlusEta->Fill(lowTrackerMuonP4->eta());
+	  h_muLowerPlusEta->Fill(lowTrackerMuonP4->eta());
+	  h_muPlusPhi->Fill(lowTrackerMuonP4->phi());
+	  h_muLowerPlusPhi->Fill(lowTrackerMuonP4->phi());
 	  h_muPlusPixelHits->Fill(*lowTrackerPhits);
 	  h_muLowerPlusPixelHits->Fill(*lowTrackerPhits);
 	  h_muPlusTrackerHits->Fill(*lowTrackerThits);
@@ -1696,10 +1806,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	  h_muLowerPlusDzError->Fill(*lowTrackerDzError);
 	  h_muPlusTrackPt->Fill(*lowTrackerPt);
 	  h_muLowerPlusTrackPt->Fill(*lowTrackerPt);
-	  //h_muPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	  //h_muLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	  //h_muPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	  //h_muLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	  h_muPlusTrackEta->Fill(lowTrackerTrack->eta());
+	  h_muLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
+	  h_muPlusTrackPhi->Fill(lowTrackerTrack->phi());
+	  h_muLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
 	  h_muPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_muLowerPlusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
@@ -1736,10 +1846,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	    h_looseMuPlusTrackPt->Fill(*lowTrackerPt);
 	    h_looseMuLowerPlusTrackPt->Fill(*lowTrackerPt);
-	    //h_looseMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	    //h_looseMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	    //h_looseMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	    //h_looseMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	    h_looseMuPlusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_looseMuLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_looseMuPlusTrackPhi->Fill(lowTrackerTrack->phi());
+	    h_looseMuLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
 
 	    h_looseMuPlusPt->Fill(lowTrackerMuonP4->pt());
 	    h_looseMuLowerPlusPt->Fill(lowTrackerMuonP4->pt());
@@ -1772,10 +1882,10 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 
 	      h_tightMuPlusTrackPt->Fill(*lowTrackerPt);
 	      h_tightMuLowerPlusTrackPt->Fill(*lowTrackerPt);
-	      //h_tightMuPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	      //h_tightMuLowerPlusTrackEta->Fill((*lowTrackerTrack).Eta());
-	      //h_tightMuPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
-	      //h_tightMuLowerPlusTrackPhi->Fill((*lowTrackerTrack).Phi());
+	      h_tightMuPlusTrackEta->Fill(lowTrackerTrack->eta());
+	      h_tightMuLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
+	      h_tightMuPlusTrackPhi->Fill(lowTrackerTrack->phi());
+	      h_tightMuLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
 
 	      h_tightMuPlusPt->Fill(lowTrackerMuonP4->pt());
 	      h_tightMuLowerPlusPt->Fill(lowTrackerMuonP4->pt());
@@ -1846,16 +1956,78 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
 	    }
 	  }
 	} // end else { // charge > 0
+	if (low_n1pt) {
+	  if (*lowTrackerPt > 100) {
+	    hasPt100Loose = true;
+	    if (low_n1dxymax && low_n1dzmax)
+	      hasPt100Tight = true;
+	    if (*lowTrackerPt > 200) {
+	      hasPt200Loose = true;
+	      if (low_n1dxymax && low_n1dzmax)
+		hasPt200Tight = true;
+	      if (*lowTrackerPt > 400) {
+		hasPt400Loose = true;
+		if (low_n1dxymax && low_n1dzmax)
+		  hasPt400Tight = true;
+	      }
+	    }
+	  }
+	} // end setting up bools for lumi print info
       } // end if (*lowTrackerPt > minPt_)
       
       // end of the loop
       j++;
       if (debug)
 	std::cout << "\n\nMade it through " << j << " sets of fills\n";	
+
+      if (hasPt100Loose)
+        lumiFileOut100_loose
+	  << "\"" << *run << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+
+      if (hasPt100Tight)
+        lumiFileOut100_tight
+	  << "\""  << *run  << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+
+      if (hasPt200Loose)
+        lumiFileOut200_loose
+	  << "\"" << *run << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+
+      if (hasPt200Tight)
+        lumiFileOut200_tight
+	  << "\""  << *run  << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+
+      if (hasPt400Loose)
+        lumiFileOut400_loose
+	  << "\"" << *run << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+
+      if (hasPt400Tight)
+        lumiFileOut400_tight
+	  << "\""  << *run  << "\":"
+	  << " [[" << *lumi << "," << *lumi << "]]"
+	  << " : " << *event << std::endl;
+      
     }//Closing if fill
     //  } // end if tracker.Next
   } // end while loop
   
+  lumiFileOut100_loose.close();
+  lumiFileOut200_loose.close();
+  lumiFileOut400_loose.close();
+  
+  lumiFileOut100_tight.close();
+  lumiFileOut200_tight.close();
+  lumiFileOut400_tight.close();
+
 
   std::cout << std::hex << g << std::dec << std::endl;
   
