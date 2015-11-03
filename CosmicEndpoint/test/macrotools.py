@@ -31,7 +31,7 @@ def splitJobsForBsub(inputFile, numberOfJobs):
 		f.close()
 		return fid
 
-def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
+def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs, debug):
 	samplesListsDir="samplesLists_data"
 
 	if not os.path.exists("output"):
@@ -50,18 +50,20 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 		inputFileList = samplesListsDir + "/splitLists/" + splitListFile
 		f.write("  gROOT->ProcessLine(\" .L Plot.so\");\n")
 		##the first execution seems to clear the proxy error
+		
 		f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f, %d, %f);\n"%(inputFileList,
 										  outputFile, i, 1,
 										  50.,0.005,500,1000.))
-		for tk in range(1,5):
+		for tk in range(5):
 			f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f, %d, %f);\n"%(inputFileList,
 											  outputFile, i, tk+1,
 											  50.,0.005,500,1000.))
 		f.write("}\n")
 		pyCommand = "root -x -b -q %s"%(rootScriptName)
-		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName, i, proxyPath)
+		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists/"+splitListFile, pyScriptName,
+				    i, proxyPath, debug)
 
-def makeBsubShellScript(pyCommand, splitListName, pyScriptName, index, proxyPath):
+def makeBsubShellScript(pyCommand, splitListName, pyScriptName, index, proxyPath, debug):
 	subfile = "bsubs/bsub-%s-%s.sh" % (pyScriptName, index)
 	f = open(subfile, "w")
 	f.write("""#!/bin/bash
@@ -90,7 +92,8 @@ eval `scramv1 runtime -sh`
 	os.chmod(subfile, 0777)
 	cmd = "bsub -q 1nh %s/%s"%(os.getcwd(),subfile)
 	print cmd
-	#os.system(cmd)
+	if not debug:
+		os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"
