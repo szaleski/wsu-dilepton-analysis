@@ -5,14 +5,30 @@ import ROOT as r
 from optparse import OptionParser
 #from histograms import outputHistograms
 
-def makeNicePlot(hist,color,marker,debug=False):
+def makeNicePlot(hist,params,debug=False):
     if debug:
         print hist
+        print params
+
+        #color,marker,coords,stats,
     hist.SetLineWidth(2)
-    hist.SetLineColor(color)
-    hist.SetMarkerStyle(marker)
-    hist.SetMarkerColor(color)
-    hist.SetMarkerStyle(marker)
+    hist.SetLineColor(params["color"])
+    hist.SetMarkerStyle(params["marker"])
+    hist.SetMarkerColor(params["color"])
+    hist.SetMarkerStyle(params["marker"])
+    hstat = hist.FindObject("stats")
+    if debug:
+        print hstat
+    hstat.SetTextColor(params["color"])
+    hstat.SetOptStat(params["stats"])
+    if params["coords"]["x"][0] > -0.1:
+        hstat.SetX1NDC(params["coords"]["x"][0])
+    if params["coords"]["x"][1] > -0.1:
+        hstat.SetX2NDC(params["coords"]["x"][1])
+    if params["coords"]["y"][0] > -0.1:
+        hstat.SetY1NDC(params["coords"]["y"][0])
+    if params["coords"]["y"][1] > -0.1:
+        hstat.SetY2NDC(params["coords"]["y"][1])
     return hist
 
 def checkRequiredArguments(opts, parser):
@@ -23,7 +39,6 @@ def checkRequiredArguments(opts, parser):
             missing_options.extend(option._long_opts)
         if len(missing_options) > 0:
             parser.error('Missing REQUIRED parameters: ' + str(missing_options))
-    return                                                        
                                                         
 if __name__ == "__main__":
     parser = OptionParser(usage="Usage: %prog -i inputfile.root -o outputfile.root [-d]")
@@ -36,18 +51,20 @@ if __name__ == "__main__":
     
     (options, args) = parser.parse_args()
     checkRequiredArguments(options, parser)
-    
+
+    debug = False
     if not options.debug:
         print "setting batch mode True"
         r.gROOT.SetBatch(True)
     else:
         print "setting batch mode False"
         r.gROOT.SetBatch(False)
+        debug = True
 
-    looseCanvas    = r.TCanvas("loose","loose",1600,900)
-    tightCanvas    = r.TCanvas("tight","tight",1600,900)
+    looseCanvas    = r.TCanvas("loose",   "loose",   1600,900)
+    tightCanvas    = r.TCanvas("tight",   "tight",   1600,900)
     combinedCanvas = r.TCanvas("combined","combined",1600,900)
-    counterCanvas  = r.TCanvas("counter","counter",1600,900)
+    counterCanvas  = r.TCanvas("counter", "counter", 1600,900)
     
     histograms = [
         "Chi2",
@@ -82,112 +99,70 @@ if __name__ == "__main__":
     tightCanvas.Divide(4,4)
     combinedCanvas.Divide(4,4)
     inputfile = r.TFile(options.infile,"READ")
+    #plus/upper is red
+    paramsP = {"color":r.kRed,  "marker":r.kFullCross  , "stats":111111, "coords": {"x": [-1,-1], "y": [0.5,0.7]}}
+    #minus/lower is blue
+    paramsM = {"color":r.kBlue, "marker":r.kFullDiamond, "stats":111111, "coords": {"x": [-1,-1], "y": [0.7,0.9]}}
+
     if options.debug:
         print inputfile
+
     for i,hist in enumerate(histograms):
         combinedMuUpper = inputfile.Get("%s%s"%("upper",hist))
         combinedMuLower = inputfile.Get("%s%s"%("lower",hist))
 
         looseMuPlus  = inputfile.Get("%s%s"%(cutmuons[0],hist))
         looseMuMinus = inputfile.Get("%s%s"%(cutmuons[1],hist))
-        if options.debug:
-            print tightmuons[0],hist
+
         tightMuPlus  = inputfile.Get("%s%s"%(cutmuons[2],hist))
         tightMuMinus = inputfile.Get("%s%s"%(cutmuons[3],hist))
-        
-        #plus/upper is red
-        tightMuPlus = makeNicePlot(tightMuPlus,r.kRed,r.kFullCross)
-        looseMuPlus = makeNicePlot(looseMuPlus,r.kRed,r.kFullCross)
-        combinedMuUpper = makeNicePlot(combinedMuUpper,r.kRed,r.kFullCross)
-        #minus/lower is blue
-        tightMuMinus = makeNicePlot(tightMuMinus,r.kBlue,r.kFullDiamond)
-        looseMuMinus = makeNicePlot(looseMuMinus,r.kBlue,r.kFullDiamond)
-        combinedMuLower = makeNicePlot(combinedMuLower,r.kBlue,r.kFullDiamond)
-        
+
         looseCanvas.cd(i+1)
         looseMax = max(looseMuMinus.GetMaximum(),looseMuPlus.GetMaximum())
         looseMuMinus.SetMaximum(looseMax*1.2)
         looseMuMinus.Draw("ep0")
-        r.gPad.Update()
-        lminus = looseMuMinus.FindObject("stats")
-        lminus.SetTextColor(r.kRed)
-        lminus.SetOptStat(111111)
-        lminus.SetY1NDC(0.5)
-        lminus.SetY2NDC(0.7)
         looseMuPlus.Draw("ep0sames")
         r.gPad.Update()
-        lplus = looseMuPlus.FindObject("stats")
-        lplus.SetTextColor(r.kBlue)
-        lplus.SetOptStat(111111)
-        lplus.SetY1NDC(0.7)
-        lplus.SetY2NDC(0.9)
+        looseMuPlus = makeNicePlot(looseMuPlus,paramsP,debug)
+        looseMuMinus = makeNicePlot(looseMuMinus,paramsM,debug)
         r.gPad.Update()
 
         tightCanvas.cd(i+1)
         tightMax = max(tightMuMinus.GetMaximum(),tightMuPlus.GetMaximum())
         tightMuMinus.SetMaximum(tightMax*1.2)
         tightMuMinus.Draw("ep0")
-        r.gPad.Update()
-        tminus = tightMuMinus.FindObject("stats")
-        tminus.SetTextColor(r.kRed)
-        tminus.SetOptStat(111111)
-        tminus.SetY1NDC(0.5)
-        tminus.SetY2NDC(0.7)
         tightMuPlus.Draw("ep0sames")
         r.gPad.Update()
-        tplus = tightMuPlus.FindObject("stats")
-        tplus.SetTextColor(r.kBlue)
-        tplus.SetOptStat(111111)
-        tplus.SetY1NDC(0.7)
-        tplus.SetY2NDC(0.9)
+        tightMuPlus = makeNicePlot(tightMuPlus,paramsP,debug)
+        tightMuMinus = makeNicePlot(tightMuMinus,paramsM,debug)
         r.gPad.Update()
 
         combinedCanvas.cd(i+1)
         combinedMax = max(combinedMuLower.GetMaximum(),combinedMuUpper.GetMaximum())
         combinedMuLower.SetMaximum(combinedMax*1.2)
         combinedMuLower.Draw("ep0")
-        r.gPad.Update()
-        lower = combinedMuLower.FindObject("stats")
-        lower.SetTextColor(r.kRed)
-        lower.SetOptStat(111111)
-        lower.SetY1NDC(0.5)
-        lower.SetY2NDC(0.7)
         combinedMuUpper.Draw("ep0sames")
         r.gPad.Update()
-        upper = combinedMuUpper.FindObject("stats")
-        upper.SetTextColor(r.kBlue)
-        upper.SetOptStat(111111)
-        upper.SetY1NDC(0.7)
-        upper.SetY2NDC(0.9)
+        combinedMuUpper = makeNicePlot(combinedMuUpper,paramsP,debug)
+        combinedMuLower = makeNicePlot(combinedMuLower,paramsM,debug)
         r.gPad.Update()
 
+    # event counters after applying various cuts
     counterCanvas.cd()
-    combinedMuUpper = inputfile.Get("upperCounters")
-    combinedMuUpper = makeNicePlot(combinedMuUpper,r.kRed,r.kFullCross)
-    combinedMuLower = inputfile.Get("lowerCounters")
-    combinedMuLower = makeNicePlot(combinedMuLower,r.kBlue,r.kFullDiamond)
-    combinedMuLower.SetTitle("Cut event counters")
-    combinedMuLower.Draw("ep0")
-    counterCanvas.cd()
+    counterMuUpper = inputfile.Get("upperCounters")
+    counterMuLower = inputfile.Get("lowerCounters")
+    counterMuLower.SetTitle("Cut event counters")
+    counterMuLower.Draw("ep0")
+    counterMuUpper.Draw("ep0sames")
     r.gPad.Update()
-    lower = combinedMuLower.FindObject("stats")
-    lower.SetTextColor(r.kRed)
-    lower.SetOptStat(11)
-    lower.SetX1NDC(0.8)
-    lower.SetX2NDC(0.9)
-    lower.SetY1NDC(0.7)
-    lower.SetY2NDC(0.8)
-    combinedMuUpper.Draw("ep0sames")
-    counterCanvas.cd()
-    r.gPad.Update()
-    upper = combinedMuUpper.FindObject("stats")
-    upper.SetTextColor(r.kBlue)
-    upper.SetOptStat(11)
-    upper.SetX1NDC(0.8)
-    upper.SetX2NDC(0.9)
-    upper.SetY1NDC(0.8)
-    upper.SetY2NDC(0.9)
-    counterCanvas.cd()
+    paramsP["stats"] = 11
+    paramsP["coords"]["x"] = [0.8,0.9]
+    paramsP["coords"]["y"] = [0.7,0.8]
+    counterMuUpper = makeNicePlot(counterMuUpper,paramsP)
+    paramsM["stats"] = 11
+    paramsM["coords"]["x"] = [0.8,0.9]
+    paramsM["coords"]["y"] = [0.8,0.9]
+    counterMuLower = makeNicePlot(counterMuLower,paramsM)
     r.gPad.Update()
     
     if options.debug:
