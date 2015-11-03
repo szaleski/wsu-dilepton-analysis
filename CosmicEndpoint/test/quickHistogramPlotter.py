@@ -107,6 +107,9 @@ if __name__ == "__main__":
     tightCanvas.Divide(4,4)
     combinedCanvas.Divide(4,4)
     inputfile = r.TFile(options.infile,"READ")
+    if not inputfile.IsOpen() or inputfile.IsZombie():
+        print "Unable to open %s"%(options.infile)
+        exit(1)
     #plus/upper is red
     paramsP = {"color":r.kRed,  "marker":r.kFullCross  , "stats":111111, "coords": {"x": [-1,-1], "y": [0.5,0.7]}}
     #minus/lower is blue
