@@ -34,12 +34,15 @@ if __name__ == "__main__":
     
     histograms = [
         "Chi2",
+        "Ndof",
+        "Charge",
         "TrackPt",
         "TrackEta",
         "TrackPhi",
         "PtRelErr",
         "Dz",
         "Dxy",
+        "Curve",
         "ValidHits",
         "PixelHits",
         "TrackerHits",
@@ -51,9 +54,11 @@ if __name__ == "__main__":
         "TightMuon",
         "AntiTightMuon",
         ]
-    loosemuons = [
+    cutmuons = [
         "looseMuPlus",
         "looseMuMinus",
+        "tightMuPlus",
+        "tightMuMinus",
         ]
     
     looseCanvas.Divide(4,4)
@@ -65,27 +70,11 @@ if __name__ == "__main__":
         combinedMuUpper = inputfile.Get("%s%s"%("upper",hist))
         combinedMuLower = inputfile.Get("%s%s"%("lower",hist))
 
-        looseMuPlus  = inputfile.Get("%s%s"%(loosemuons[0],hist))
-        looseMuMinus = inputfile.Get("%s%s"%(loosemuons[1],hist))
+        looseMuPlus  = inputfile.Get("%s%s"%(cutmuons[0],hist))
+        looseMuMinus = inputfile.Get("%s%s"%(cutmuons[1],hist))
         print tightmuons[0],hist
-        tightMuPlus  = inputfile.Get("%s%s"%(tightmuons[0],hist))
-        tightMuMinus = inputfile.Get("%s%s"%(tightmuons[1],hist))
-        #if hist == "MuonStationHits":
-        #    histname = "%sTight%s"%(tightmuons[0],hist)
-        #    print histname
-        #    tightMuPlus  = inputfile.Get(histname)
-        #    tightMuMinus = inputfile.Get(histname)
-        #if hist == "MatchedMuonStations":
-        #    #histname = "%s%sTight%s"%(tightmuons[0],hist[:7],hist[7:])
-        #    #print histname
-        #    #tightMuPlus  = inputfile.Get(histname)
-        #    #tightMuMinus = inputfile.Get(histname)
-        #    combinedMuUpper = inputfile.Get("%s%s"%("upper",hist[:-1]))
-        #    combinedMuLower = inputfile.Get("%s%s"%("lower",hist[:-1]))
-        #if hist == "TrackLayersWithMeasurement":
-        #    combinedMuUpper = inputfile.Get("%s%s"%("upper","TrackerLayersWithMeasurement"))
-        #    combinedMuLower = inputfile.Get("%s%s"%("lower","TrackerLayersWithMeasurement"))
-        
+        tightMuPlus  = inputfile.Get("%s%s"%(cutmuons[2],hist))
+        tightMuMinus = inputfile.Get("%s%s"%(cutmuons[3],hist))
         
         #plus/upper is red
         tightMuPlus = makeNicePlot(tightMuPlus,r.kRed,r.kFullCross)
