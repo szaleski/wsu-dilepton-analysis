@@ -49,6 +49,10 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs):
 		#f.write("  gROOT->ProcessLine(\" .L %s/Plot.so\");\n"%(os.getcwd()))
 		inputFileList = samplesListsDir + "/splitLists/" + splitListFile
 		f.write("  gROOT->ProcessLine(\" .L Plot.so\");\n")
+		##the first execution seems to clear the proxy error
+		f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f, %d, %f);\n"%(inputFileList,
+										  outputFile, i, 1,
+										  50.,0.005,500,1000.))
 		for tk in range(1,5):
 			f.write("  Plot(\"%s\",\"output/%s_%d_\",%d, %f, %f, %d, %f);\n"%(inputFileList,
 											  outputFile, i, tk+1,
@@ -86,7 +90,7 @@ eval `scramv1 runtime -sh`
 	os.chmod(subfile, 0777)
 	cmd = "bsub -q 1nh %s/%s"%(os.getcwd(),subfile)
 	print cmd
-	os.system(cmd)
+	#os.system(cmd)
 
 def clearSplitLists():
 	samplesListsDir="samplesLists_data"
