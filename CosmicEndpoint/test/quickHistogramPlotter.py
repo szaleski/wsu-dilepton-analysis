@@ -43,13 +43,21 @@ def checkRequiredArguments(opts, parser):
 if __name__ == "__main__":
     parser = OptionParser(usage="Usage: %prog -i inputfile.root -o outputfile.root [-d]")
     parser.add_option("-i", "--infile", type="string", dest="infile",
-                      help="[REQUIRED] Location of the input ROOT files", metavar="infile")
+                      metavar="infile",
+                      help="[REQUIRED] Location of the input ROOT files")
     parser.add_option("-o", "--outfile", type="string", dest="outfile",
-                      help="[REQUIRED] Name of the output ROOT file", metavar="outfile")
+                      metavar="outfile",
+                      help="[REQUIRED] Name of the output ROOT file")
+    parser.add_option("-b", "--rebins", type="int", dest="rebins",
+                      metavar="rebins", default=1,
+                      help="[OPTIONAL] Number of bins to combine in the q/pT plot (default is 1)")
     parser.add_option("-d", "--debug", action="store_true", dest="debug",
-                      help="[OPTIONAL] Debug mode", metavar="debug")
+                      metavar="debug",
+                      help="[OPTIONAL] Debug mode")
     
     (options, args) = parser.parse_args()
+    print options
+    print args
     checkRequiredArguments(options, parser)
 
     debug = False
@@ -117,6 +125,16 @@ if __name__ == "__main__":
         tightMuPlus  = inputfile.Get("%s%s"%(cutmuons[2],hist))
         tightMuMinus = inputfile.Get("%s%s"%(cutmuons[3],hist))
 
+        if hist == "Curve":
+            combinedMuUpper.Rebin(options.rebins)
+            combinedMuLower.Rebin(options.rebins)
+            
+            looseMuPlus.Rebin(options.rebins)
+            looseMuMinus.Rebin(options.rebins)
+
+            tightMuPlus.Rebin(options.rebins)
+            tightMuMinus.Rebin(options.rebins)
+            
         looseCanvas.cd(i+1)
         looseMax = max(looseMuMinus.GetMaximum(),looseMuPlus.GetMaximum())
         looseMuMinus.SetMaximum(looseMax*1.2)
@@ -165,6 +183,10 @@ if __name__ == "__main__":
     counterMuLower = makeNicePlot(counterMuLower,paramsM)
     r.gPad.Update()
     
+    looseCanvas.Update()
+    tightCanvas.Update()
+    combinedCanvas.Update()
+    counterCanvas.Update()
     if options.debug:
         raw_input("enter to end")
     output = r.TFile(options.outfile,"RECREATE")
