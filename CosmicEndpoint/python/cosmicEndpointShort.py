@@ -55,18 +55,22 @@ class cosmicEndpointShort() :
         tpfms = self.makeGraph(self.infiles["tpfms"],histBaseName, obsName, refName, "tpfms", needsFlip)
 
         for test in ["chi2","KS","AD","Chi2"]:
+            self.outdirs["picky"].cd()
             pickyCanvas = r.TCanvas("picky_%s"%test,"picky_%s"%test,800,800)
             picky[test].Draw("AP")
             pickyCanvas.Write()
 
+            self.outdirs["dyt"].cd()
             dytCanvas = r.TCanvas("dyt_%s"%test,"dyt_%s"%test,800,800)
             dyt[test].Draw("AP")
             dytCanvas.Write()
 
+            self.outdirs["tunep"].cd()
             tunepCanvas = r.TCanvas("tunep_%s"%test,"tunep_%s"%test,800,800)
             tunep[test].Draw("AP")
             tunepCanvas.Write()
 
+            self.outdirs["tpfms"].cd()
             tpfmsCanvas = r.TCanvas("tpfms_%s"%test,"tpfms_%s"%test,800,800)
             tpfms[test].Draw("AP")
             tpfmsCanvas.Write()
