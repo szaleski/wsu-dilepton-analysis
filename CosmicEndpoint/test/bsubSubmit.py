@@ -5,19 +5,29 @@ import sys,os
 
 from optparse import OptionParser
 
+def checkRequiredArguments(opts, parser):
+    """From: http://stackoverflow.com/questions/4407539/python-how-to-make-an-option-to-be-required-in-optparse"""
+    missing_options = []
+    for option in parser.option_list:
+        if re.match(r'^\[REQUIRED\]', option.help) and eval('opts.' + option.dest) == None:
+            missing_options.extend(option._long_opts)
+        if len(missing_options) > 0:
+            parser.error('Missing REQUIRED parameters: ' + str(missing_options))
+    return                                                        
+
 parser = OptionParser()
 parser.add_option("-n", "--njobs", type="int", dest="njobs",
                   default=10,
-                  help="Number of jobs to submit", metavar="njobs")
+                  help="[OPTIONAL] Number of jobs to submit (default is 10)", metavar="njobs")
 parser.add_option("-g", "--gridproxy", action="store_true", dest="gridproxy",
                   metavar="gridproxy",
-                  help="Generate a GRID proxy")
+                  help="[OPTIONAL] Generate a GRID proxy")
 parser.add_option("-i", "--infiles", type="string", dest="infiles",
                   metavar="infiles",
-                  help="Text file with list of input files to process ")
+                  help="[REQUIRED] Text file with list of input files to process ")
 parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   metavar="debug",
-                  help="Run in debug mode, i.e., don't submit jobs, just create them")
+                  help="[OPTIONAL] Run in debug mode, i.e., don't submit jobs, just create them")
 
 (options, args) = parser.parse_args()
 if options.gridproxy:

@@ -23,6 +23,7 @@ def checkRequiredArguments(opts, parser):
             missing_options.extend(option._long_opts)
         if len(missing_options) > 0:
             parser.error('Missing REQUIRED parameters: ' + str(missing_options))
+    return                                                        
                                                         
 if __name__ == "__main__":
     parser = OptionParser(usage="Usage: %prog -i inputfile.root -o outputfile.root [-d]")
