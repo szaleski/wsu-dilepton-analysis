@@ -459,12 +459,12 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_tightMuUpperPlusTrackPhi = new TH1F("tightMuUpperPlusTrackPhi","tightMuUpperPlusTrackPhi", 40, -4., 4.);
   TH1F *h_tightMuLowerMinusTrackPhi = new TH1F("LowertightMuMinusTrackPhi","LowertightMuMinusTrackPhi", 40, -4., 4.);
   TH1F *h_tightMuLowerPlusTrackPhi = new TH1F("tightMuLowerPlusTrackPhi","tightMuLowerPlusTrackPhi", 40, -4., 4.);
-  TH1F *h_tightMuMinusTrackerLayersWithMeasurement = new TH1F("tightMuMinusTrackerLayersWithMeasurement","tightMuMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_tightMuUpperMinusTrackerLayersWithMeasurement = new TH1F("tightMuUpperMinusTrackerLayersWithMeasurement","tightMuUpperMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_tightMuPlusTrackerLayersWithMeasurement = new TH1F("tightMuPlusTrackerLayersWithMeasurement","tightMuPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_tightMuUpperPlusTrackerLayersWithMeasurement = new TH1F("tightMuUpperPlusTrackerLayersWithMeasurement","tightMuUpperPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_tightMuLowerMinusTrackerLayersWithMeasurement = new TH1F("LowertightMuMinusTrackerLayersWithMeasurement","LowertightMuMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_tightMuLowerPlusTrackerLayersWithMeasurement = new TH1F("tightMuLowerPlusTrackerLayersWithMeasurement","tightMuLowerPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
+  TH1F *h_tightMuMinusTrackerLayersWithMeasurement = new TH1F("tightMuMinusTrackerLayersWithMeasurement","tightMuMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_tightMuUpperMinusTrackerLayersWithMeasurement = new TH1F("tightMuUpperMinusTrackerLayersWithMeasurement","tightMuUpperMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_tightMuPlusTrackerLayersWithMeasurement = new TH1F("tightMuPlusTrackerLayersWithMeasurement","tightMuPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_tightMuUpperPlusTrackerLayersWithMeasurement = new TH1F("tightMuUpperPlusTrackerLayersWithMeasurement","tightMuUpperPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_tightMuLowerMinusTrackerLayersWithMeasurement = new TH1F("LowertightMuMinusTrackerLayersWithMeasurement","LowertightMuMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_tightMuLowerPlusTrackerLayersWithMeasurement = new TH1F("tightMuLowerPlusTrackerLayersWithMeasurement","tightMuLowerPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
   TH1F *h_tightMuMinusCurvePlusBias[nBiasBins];
   TH1F *h_tightMuMinusCurveMinusBias[nBiasBins];
@@ -622,12 +622,12 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_muUpperPlusTrackPhi = new TH1F("muUpperPlusTrackPhi","muUpperPlusTrackPhi", 40, -4., 4.);
   TH1F *h_muLowerMinusTrackPhi = new TH1F("muLowerMinusTrackPhi","muLowerMinusTrackPhi", 40, -4., 4.);
   TH1F *h_muLowerPlusTrackPhi = new TH1F("muLowerPlusTrackPhi","muLowerPlusTrackPhi", 40, -4., 4.);
-  TH1F *h_muMinusTrackerLayersWithMeasurement      = new TH1F("muMinusTrackerLayersWithMeasurement","muMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_muUpperMinusTrackerLayersWithMeasurement = new TH1F("muUpperMinusTrackerLayersWithMeasurement","muUpperMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_muPlusTrackerLayersWithMeasurement       = new TH1F("muPlusTrackerLayersWithMeasurement","muPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_muUpperPlusTrackerLayersWithMeasurement  = new TH1F("muUpperPlusTrackerLayersWithMeasurement","muUpperPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_muLowerMinusTrackerLayersWithMeasurement = new TH1F("muLowerMinusTrackerLayersWithMeasurement","muLowerMinusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
-  TH1F *h_muLowerPlusTrackerLayersWithMeasurement  = new TH1F("muLowerPlusTrackerLayersWithMeasurement","muLowerPlusTrackerLayersWithMeasurement", 100, -0.5, 99.5);
+  TH1F *h_muMinusTrackerLayersWithMeasurement      = new TH1F("muMinusTrackerLayersWithMeasurement","muMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_muUpperMinusTrackerLayersWithMeasurement = new TH1F("muUpperMinusTrackerLayersWithMeasurement","muUpperMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_muPlusTrackerLayersWithMeasurement       = new TH1F("muPlusTrackerLayersWithMeasurement","muPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_muUpperPlusTrackerLayersWithMeasurement  = new TH1F("muUpperPlusTrackerLayersWithMeasurement","muUpperPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_muLowerMinusTrackerLayersWithMeasurement = new TH1F("muLowerMinusTrackerLayersWithMeasurement","muLowerMinusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
+  TH1F *h_muLowerPlusTrackerLayersWithMeasurement  = new TH1F("muLowerPlusTrackerLayersWithMeasurement","muLowerPlusTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
   TH1F *h_muMinusCurvePlusBias[nBiasBins];
   TH1F *h_muMinusCurveMinusBias[nBiasBins];
@@ -680,7 +680,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_upperMuonStationHits     = new TH1F("upperMuonStationHits","upperMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_upperValidHits           = new TH1F("upperValidHits","upperValidHits", 75, -0.5, 74.5);
   TH1F *h_upperMatchedMuonStations = new TH1F("upperMatchedMuonStations","upperMatchedMuonStations", 10, -0.5, 9.5);
-  TH1F *h_upperTrackerLayersWithMeasurement = new TH1F("upperTrackerLayersWithMeasurement","upperTrackerLayersWithMeasurement", 100, -0.5, 99.5);
+  TH1F *h_upperTrackerLayersWithMeasurement = new TH1F("upperTrackerLayersWithMeasurement","upperTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
   TH1F *h_upperCurvePlusBias[nBiasBins];
   TH1F *h_upperCurveMinusBias[nBiasBins];
@@ -713,7 +713,7 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   TH1F *h_lowerMuonStationHits     = new TH1F("lowerMuonStationHits","lowerMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_lowerValidHits           = new TH1F("lowerValidHits","lowerValidHits", 75, -0.5, 74.5);
   TH1F *h_lowerMatchedMuonStations = new TH1F("lowerMatchedMuonStations","lowerMatchedMuonStations", 10, -0.5, 9.5);
-  TH1F *h_lowerTrackerLayersWithMeasurement = new TH1F("lowerTrackerLayersWithMeasurement","lowerTrackerLayersWithMeasurement", 100, -0.5, 99.5);
+  TH1F *h_lowerTrackerLayersWithMeasurement = new TH1F("lowerTrackerLayersWithMeasurement","lowerTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
   TH1F *h_lowerCurvePlusBias[nBiasBins];
   TH1F *h_lowerCurveMinusBias[nBiasBins];
