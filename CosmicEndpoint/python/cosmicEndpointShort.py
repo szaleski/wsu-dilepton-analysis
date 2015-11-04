@@ -17,7 +17,7 @@ class cosmicEndpointShort() :
     
     """
     
-    def __init__(self, infiledir, outfile, maxbias, nBiasBins=100, rebins=1) :
+    def __init__(self, infiledir, outfile, maxbias, nBiasBins=100, factor=1, rebins=1) :
         import ROOT as r
         self.infiles = {}
         self.infiles["picky"] = r.TFile(infiledir+"/CosmicHistOut_Picky.root","r")
@@ -33,6 +33,7 @@ class cosmicEndpointShort() :
 
         self.maxbias   = maxbias
         self.nBiasBins = nBiasBins
+        self.factor    = factor
         self.rebins    = rebins
 
         self.graphInfo = {}
@@ -55,26 +56,37 @@ class cosmicEndpointShort() :
         tpfms = self.makeGraph(self.infiles["tpfms"],histBaseName, obsName, refName, "tpfms", needsFlip)
 
         for test in ["chi2","KS","AD","Chi2"]:
-            self.outdirs["picky"].cd()
+            self.outfile.cd()
+            #self.outdirs["picky"].cd()
             pickyCanvas = r.TCanvas("picky_%s"%test,"picky_%s"%test,800,800)
             picky[test].Draw("AP")
             pickyCanvas.Write()
+            #self.outfile.cd()
+            #self.outdirs["picky"].Write()
 
-            self.outdirs["dyt"].cd()
+            #self.outdirs["dyt"].cd()
             dytCanvas = r.TCanvas("dyt_%s"%test,"dyt_%s"%test,800,800)
             dyt[test].Draw("AP")
             dytCanvas.Write()
+            #self.outfile.cd()
+            #self.outdirs["dyt"].Write()
 
-            self.outdirs["tunep"].cd()
+            #self.outdirs["tunep"].cd()
             tunepCanvas = r.TCanvas("tunep_%s"%test,"tunep_%s"%test,800,800)
             tunep[test].Draw("AP")
             tunepCanvas.Write()
+            #self.outfile.cd()
+            #self.outdirs["tunep"].Write()
 
-            self.outdirs["tpfms"].cd()
+            #self.outdirs["tpfms"].cd()
             tpfmsCanvas = r.TCanvas("tpfms_%s"%test,"tpfms_%s"%test,800,800)
             tpfms[test].Draw("AP")
             tpfmsCanvas.Write()
-        
+            #self.outfile.cd()
+            #self.outdirs["tpfms"].Write()
+            
+            self.outfile.Write()
+
         for track in ["picky","dyt","tunep","tpfms"]:
             self.outdirs[track].cd()
             CounterCanvas = r.TCanvas("%sCounterCan"%track,"%sCounterCan"%track,800,800)
@@ -104,6 +116,7 @@ class cosmicEndpointShort() :
         
         nBiasBins = self.nBiasBins
         maxBias   = self.maxbias
+        factor    = self.factor
         #need two arrays, length = (2*nBiasBins)+1
         xVals = {}
         yVals = {}
@@ -166,7 +179,7 @@ class cosmicEndpointShort() :
 
         #print obs, ref
 
-        mode = 4
+        mode = 2
         self.calculateChi2(obs,ref,0,False,True)
         self.calculateChi2(obs,ref,1,False,True)
         self.calculateChi2(obs,ref,2,False,True)
@@ -241,7 +254,7 @@ class cosmicEndpointShort() :
                 obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
                 obs_negBias.Scale(ref_negBias.Integral()/obs_negBias.Integral())
             
-            biasVal = (i+1)*(maxBias/nBiasBins)
+            biasVal = (i+1)*(factor*maxBias/nBiasBins)
             xVals["chi2"][nBiasBins+1+i] = biasVal
             positiveBias = self.calculateChi2(obs_posBias,ref_posBias,mode)
             yVals["chi2"][nBiasBins+1+i] = positiveBias[1]
@@ -273,7 +286,7 @@ class cosmicEndpointShort() :
             negativeBias[0].Draw("ep0sames")
 
             self.outdirs[trackName].cd()
-            residualCan.Write()
+            #residualCan.Write()
             
             xVals["KS"][nBiasBins-(i+1)] = -1.*biasVal
             yVals["KS"][nBiasBins-(i+1)] = obs_negBias.KolmogorovTest(ref_negBias,"D")
@@ -307,7 +320,10 @@ class cosmicEndpointShort() :
         graph.SetMarkerSize(2)
         graph.SetMarkerStyle(graphParams["marker"])
         graph.SetTitle(graphParams["title"])
-        graph.GetXaxis().SetTitle("#Delta#kappa_{b}")
+        if (self.factor < 1000):
+            graph.GetXaxis().SetTitle("#Delta#kappa_{b} [c/GeV]")
+        else:
+            graph.GetXaxis().SetTitle("#Delta#kappa_{b} [c/TeV]")
         graph.GetYaxis().SetTitle(graphParams["yaxis"])
         return graph
 
@@ -325,7 +341,9 @@ class cosmicEndpointShort() :
         Obs = 0.
         Ref = 0.
         residuals = r.TH1D("residuals","residuals",100,-2.5,2.5)
-        
+
+        bins = []
+        bincount = 0
         for b in range(nBins):
             obs = hobs.GetBinContent(b+1);
             ref = href.GetBinContent(b+1);
@@ -333,7 +351,11 @@ class cosmicEndpointShort() :
             if (ref > 0 and obs > 0):
                 Obs += obs
                 Ref += ref
+                bincount += 1
+                bins.append(b)
 
+        if (debug) :
+            print "DEBUG1 Obs = %f, Ref = %f, N=%d"%(Obs,Ref,bincount),bins
         # first loop done, move on to calculate the chi2
         for b in range(nBins):
             obs = hobs.GetBinContent(b+1);
@@ -378,8 +400,11 @@ class cosmicEndpointShort() :
                 D_term2 = 1-(Obs/(Obs+Ref))
                 D_term3 = 1-(obs+ref)/(Obs+Ref)
                 D_res = math.sqrt(D_term1*D_term2*D_term3)
-                residual = N_res/D_res
-                residuals.Fill(residual)
+                if not D_res:
+                    print "N_res(%f-(%f*%f)) = %f, D_term1 = %f, D_term2 = %f, D_term3 = %f"%(obs,Obs,piest,N_res,D_term1,D_term2,D_term3)
+                else:
+                    residual = N_res/D_res
+                    residuals.Fill(residual)
                 if (debug) :
                     print "Bin%03d(mode=%d): binChi2 = %12.2f, Chi2 = %12.2f(%12.2f), ndf = %3d, residual = %3.4f"%(b,mode,
                                                                                                                     binChi2,
