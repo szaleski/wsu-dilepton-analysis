@@ -316,8 +316,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuMinusCurvePlusBias[i] = new TH1F(TString("looseMuMinusCurvePlusBias" + name.str()), TString("looseMuMinusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuMinusCurveMinusBias[i] = new TH1F(TString("looseMuMinusCurveMinusBias" + name.str()),TString("looseMuMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuMinusCurvePlusBias[i] = new TH1F(TString("looseMuMinusCurvePlusBias" + name.str()), TString("looseMuMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuMinusCurveMinusBias[i] = new TH1F(TString("looseMuMinusCurveMinusBias" + name.str()),TString("looseMuMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_looseMuUpperMinusCurvePlusBias[nBiasBins];
@@ -325,8 +325,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuUpperMinusCurvePlusBias[i] = new TH1F(TString("looseMuUpperMinusCurvePlusBias" + name.str()), TString("looseMuUpperMinusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),TString("looseMuUpperMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuUpperMinusCurvePlusBias[i] = new TH1F(TString("looseMuUpperMinusCurvePlusBias" + name.str()), TString("looseMuUpperMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),TString("looseMuUpperMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_looseMuLowerMinusCurvePlusBias[nBiasBins];
@@ -334,8 +334,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuLowerMinusCurvePlusBias[i] = new TH1F(TString("looseMuLowerMinusCurvePlusBias" + name.str()), TString("looseMuLowerMinusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),TString("looseMuLowerMinusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuLowerMinusCurvePlusBias[i] = new TH1F(TString("looseMuLowerMinusCurvePlusBias" + name.str()), TString("looseMuLowerMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),TString("looseMuLowerMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_looseMuPlusCurvePlusBias[nBiasBins];
@@ -343,8 +343,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuPlusCurvePlusBias[i] = new TH1F(TString("looseMuPlusCurvePlusBias" + name.str()), TString("looseMuPlusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuPlusCurveMinusBias[i] = new TH1F(TString("looseMuPlusCurveMinusBias" + name.str()),TString("looseMuPlusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuPlusCurvePlusBias[i] = new TH1F(TString("looseMuPlusCurvePlusBias" + name.str()), TString("looseMuPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuPlusCurveMinusBias[i] = new TH1F(TString("looseMuPlusCurveMinusBias" + name.str()),TString("looseMuPlusCurveMinusBias" + name.str()), 100, -01, 0.1);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_looseMuUpperPlusCurvePlusBias[nBiasBins];
@@ -352,8 +352,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuUpperPlusCurvePlusBias[i] = new TH1F(TString("looseMuUpperPlusCurvePlusBias" + name.str()), TString("looseMuUpperPlusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuUpperPlusCurveMinusBias[i] = new TH1F(TString("looseMuUpperPlusCurveMinusBias" + name.str()),TString("looseMuUpperPlusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuUpperPlusCurvePlusBias[i] = new TH1F(TString("looseMuUpperPlusCurvePlusBias" + name.str()), TString("looseMuUpperPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuUpperPlusCurveMinusBias[i] = new TH1F(TString("looseMuUpperPlusCurveMinusBias" + name.str()),TString("looseMuUpperPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_looseMuLowerPlusCurvePlusBias[nBiasBins];
@@ -361,8 +361,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuLowerPlusCurvePlusBias[i] = new TH1F(TString("looseMuLowerPlusCurvePlusBias" + name.str()), TString("looseMuLowerPlusCurvePlusBias" + name.str()), 50, 0, 0.1);
-    h_looseMuLowerPlusCurveMinusBias[i] = new TH1F(TString("looseMuLowerPlusCurveMinusBias" + name.str()),TString("looseMuLowerPlusCurveMinusBias" + name.str()), 50, 0, 0.1);  
+    h_looseMuLowerPlusCurvePlusBias[i] = new TH1F(TString("looseMuLowerPlusCurvePlusBias" + name.str()), TString("looseMuLowerPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_looseMuLowerPlusCurveMinusBias[i] = new TH1F(TString("looseMuLowerPlusCurveMinusBias" + name.str()),TString("looseMuLowerPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
 
@@ -498,8 +498,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuMinusCurvePlusBias[i] = new TH1F(TString("tightMuMinusCurvePlusBias" + name.str()), TString("tightMuMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuMinusCurveMinusBias[i] = new TH1F(TString("tightMuMinusCurveMinusBias" + name.str()),TString("tightMuMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuMinusCurvePlusBias[i] = new TH1F(TString("tightMuMinusCurvePlusBias" + name.str()), TString("tightMuMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuMinusCurveMinusBias[i] = new TH1F(TString("tightMuMinusCurveMinusBias" + name.str()),TString("tightMuMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_tightMuUpperMinusCurvePlusBias[nBiasBins];
@@ -507,8 +507,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuUpperMinusCurvePlusBias[i] = new TH1F(TString("tightMuUpperMinusCurvePlusBias" + name.str()), TString("tightMuUpperMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),TString("tightMuUpperMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuUpperMinusCurvePlusBias[i] = new TH1F(TString("tightMuUpperMinusCurvePlusBias" + name.str()), TString("tightMuUpperMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),TString("tightMuUpperMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_tightMuLowerMinusCurvePlusBias[nBiasBins];
@@ -516,8 +516,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuLowerMinusCurvePlusBias[i] = new TH1F(TString("tightMuLowerMinusCurvePlusBias" + name.str()), TString("tightMuLowerMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),TString("tightMuLowerMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuLowerMinusCurvePlusBias[i] = new TH1F(TString("tightMuLowerMinusCurvePlusBias" + name.str()), TString("tightMuLowerMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),TString("tightMuLowerMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_tightMuPlusCurvePlusBias[nBiasBins];
@@ -525,8 +525,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuPlusCurvePlusBias[i] = new TH1F(TString("tightMuPlusCurvePlusBias" + name.str()), TString("tightMuPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuPlusCurveMinusBias[i] = new TH1F(TString("tightMuPlusCurveMinusBias" + name.str()),TString("tightMuPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuPlusCurvePlusBias[i] = new TH1F(TString("tightMuPlusCurvePlusBias" + name.str()), TString("tightMuPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuPlusCurveMinusBias[i] = new TH1F(TString("tightMuPlusCurveMinusBias" + name.str()),TString("tightMuPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_tightMuUpperPlusCurvePlusBias[nBiasBins];
@@ -534,8 +534,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuUpperPlusCurvePlusBias[i] = new TH1F(TString("tightMuUpperPlusCurvePlusBias" + name.str()), TString("tightMuUpperPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuUpperPlusCurveMinusBias[i] = new TH1F(TString("tightMuUpperPlusCurveMinusBias" + name.str()),TString("tightMuUpperPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuUpperPlusCurvePlusBias[i] = new TH1F(TString("tightMuUpperPlusCurvePlusBias" + name.str()), TString("tightMuUpperPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuUpperPlusCurveMinusBias[i] = new TH1F(TString("tightMuUpperPlusCurveMinusBias" + name.str()),TString("tightMuUpperPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_tightMuLowerPlusCurvePlusBias[nBiasBins];
@@ -543,8 +543,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuLowerPlusCurvePlusBias[i] = new TH1F(TString("tightMuLowerPlusCurvePlusBias" + name.str()), TString("tightMuLowerPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_tightMuLowerPlusCurveMinusBias[i] = new TH1F(TString("tightMuLowerPlusCurveMinusBias" + name.str()),TString("tightMuLowerPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_tightMuLowerPlusCurvePlusBias[i] = new TH1F(TString("tightMuLowerPlusCurvePlusBias" + name.str()), TString("tightMuLowerPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_tightMuLowerPlusCurveMinusBias[i] = new TH1F(TString("tightMuLowerPlusCurveMinusBias" + name.str()),TString("tightMuLowerPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
 
@@ -679,8 +679,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muMinusCurvePlusBias[i] = new TH1F(TString("muMinusCurvePlusBias" + name.str()), TString("muMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muMinusCurveMinusBias[i] = new TH1F(TString("muMinusCurveMinusBias" + name.str()),TString("muMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muMinusCurvePlusBias[i] = new TH1F(TString("muMinusCurvePlusBias" + name.str()), TString("muMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muMinusCurveMinusBias[i] = new TH1F(TString("muMinusCurveMinusBias" + name.str()),TString("muMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_muUpperMinusCurvePlusBias[nBiasBins];
@@ -688,8 +688,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muUpperMinusCurvePlusBias[i] = new TH1F(TString("muUpperMinusCurvePlusBias" + name.str()), TString("muUpperMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),TString("muUpperMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muUpperMinusCurvePlusBias[i] = new TH1F(TString("muUpperMinusCurvePlusBias" + name.str()), TString("muUpperMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),TString("muUpperMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_muLowerMinusCurvePlusBias[nBiasBins];
@@ -697,8 +697,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muLowerMinusCurvePlusBias[i] = new TH1F(TString("muLowerMinusCurvePlusBias" + name.str()), TString("muLowerMinusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),TString("muLowerMinusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muLowerMinusCurvePlusBias[i] = new TH1F(TString("muLowerMinusCurvePlusBias" + name.str()), TString("muLowerMinusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),TString("muLowerMinusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_muPlusCurvePlusBias[nBiasBins];
@@ -706,8 +706,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muPlusCurvePlusBias[i] = new TH1F(TString("muPlusCurvePlusBias" + name.str()), TString("muPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muPlusCurveMinusBias[i] = new TH1F(TString("muPlusCurveMinusBias" + name.str()),TString("muPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muPlusCurvePlusBias[i] = new TH1F(TString("muPlusCurvePlusBias" + name.str()), TString("muPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muPlusCurveMinusBias[i] = new TH1F(TString("muPlusCurveMinusBias" + name.str()),TString("muPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_muUpperPlusCurvePlusBias[nBiasBins];
@@ -715,8 +715,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muUpperPlusCurvePlusBias[i] = new TH1F(TString("muUpperPlusCurvePlusBias" + name.str()), TString("muUpperPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muUpperPlusCurveMinusBias[i] = new TH1F(TString("muUpperPlusCurveMinusBias" + name.str()),TString("muUpperPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muUpperPlusCurvePlusBias[i] = new TH1F(TString("muUpperPlusCurvePlusBias" + name.str()), TString("muUpperPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muUpperPlusCurveMinusBias[i] = new TH1F(TString("muUpperPlusCurveMinusBias" + name.str()),TString("muUpperPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
   TH1F *h_muLowerPlusCurvePlusBias[nBiasBins];
@@ -724,8 +724,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muLowerPlusCurvePlusBias[i] = new TH1F(TString("muLowerPlusCurvePlusBias" + name.str()), TString("muLowerPlusCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_muLowerPlusCurveMinusBias[i] = new TH1F(TString("muLowerPlusCurveMinusBias" + name.str()),TString("muLowerPlusCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_muLowerPlusCurvePlusBias[i] = new TH1F(TString("muLowerPlusCurvePlusBias" + name.str()), TString("muLowerPlusCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_muLowerPlusCurveMinusBias[i] = new TH1F(TString("muLowerPlusCurveMinusBias" + name.str()),TString("muLowerPlusCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
 
@@ -761,8 +761,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_upperCurvePlusBias[i] = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_upperCurveMinusBias[i] = new TH1F(TString("upperCurveMinusBias" + name.str()),TString("upperCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_upperCurvePlusBias[i] = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_upperCurveMinusBias[i] = new TH1F(TString("upperCurveMinusBias" + name.str()),TString("upperCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   } 
 
@@ -793,8 +793,8 @@ int trackVal_ = 5;
   for(int i =0; i < nBiasBins; ++i){
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_lowerCurvePlusBias[i] = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + name.str()), 200, 0, 0.1);
-    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + name.str()), 200, 0, 0.1);  
+    h_lowerCurvePlusBias[i] = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + name.str()), 200, -0.05, 0.05);
+    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + name.str()), 200, -0.05, 0.05);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }   
   
@@ -1153,7 +1153,7 @@ int trackVal_ = 5;
 
       }
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) ){
 	
 
 	if(*upTrackerCharge < 0){
@@ -1360,7 +1360,7 @@ int trackVal_ = 5;
 	}
       }
 
-      if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
+      if((*upTrackerMatchedMuonStations > 1) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) ){
 
 	if(*upTrackerCharge < 0){
 	  h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
@@ -1374,7 +1374,7 @@ int trackVal_ = 5;
 	}
       }
 
-      if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) ){
+      if((*upTrackerMhits > 0) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) ){
 	if(*upTrackerCharge < 0){
 	  h_looseMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	  h_looseMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
@@ -1416,7 +1416,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/){
 	if(*upTrackerCharge < 0){
 	  h_looseMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	  h_looseMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
@@ -1436,7 +1436,7 @@ int trackVal_ = 5;
 
 
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerPt > 150)  /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
 	
 
 	if(*upTrackerCharge < 0){
@@ -1624,7 +1624,7 @@ int trackVal_ = 5;
 
       }
 
-      if((*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
+      if((*upTrackerMatchedMuonStations > 1) && (*upTrackerPt > 150)  /*&& ((*upTrackerPtError / *upTrackerPt) < 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
 
 	if(*upTrackerCharge < 0){
 	  h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
@@ -1638,7 +1638,7 @@ int trackVal_ = 5;
 	}
       }
 
-      if((*upTrackerMhits > 0) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
+      if((*upTrackerMhits > 0) && (*upTrackerPt > 150) /*&& ((*upTrackerPtError / *upTrackerPt) < 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5) ){
 	if(*upTrackerCharge < 0){
 	  h_tightMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	  h_tightMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
@@ -1680,7 +1680,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) < 0.3) && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerPt > 150)  /*&& ((*upTrackerPtError / *upTrackerPt) < 0.3)*/ && (*upTrackerDxy < 0.2) && (*upTrackerDz < 0.5)){
 	if(*upTrackerCharge < 0){
 	  h_tightMuMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	  h_tightMuUpperMinusTrackLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
@@ -1694,7 +1694,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDz < 0.5)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerPt > 150) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDz < 0.5)){
 	if(*upTrackerCharge < 0){
 	  h_tightMuMinusDxy->Fill(*upTrackerDxy);
 	  h_tightMuUpperMinusDxy->Fill(*upTrackerDxy);
@@ -1709,7 +1709,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && ((*upTrackerPtError / *upTrackerPt) > 0.3) && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2)){
+      if((*upTrackerMhits > 0) && (*upTrackerMatchedMuonStations > 1) && (*upTrackerPt > 150) /*&& ((*upTrackerPtError / *upTrackerPt) > 0.3)*/ && (*upTrackerLayersWithMeasurement > 5) && (*upTrackerDxy < 0.2)){
 	if(*upTrackerCharge < 0){
 	  h_tightMuMinusDz->Fill(*upTrackerDz);
 	  h_tightMuUpperMinusDz->Fill(*upTrackerDz);
@@ -2005,7 +2005,7 @@ int trackVal_ = 5;
       }
 
 	
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/ && (*lowTrackerLayersWithMeasurement > 5) ){
 
 	if(*lowTrackerCharge < 0){
 	  h_looseMuMinusChi2->Fill(*lowTrackerChi2);
@@ -2214,7 +2214,7 @@ int trackVal_ = 5;
 
 	
 
-      if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+      if((*lowTrackerMatchedMuonStations > 1) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/ && (*lowTrackerLayersWithMeasurement > 5) ){
 
 	if(*lowTrackerCharge < 0){
 	  h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
@@ -2228,7 +2228,7 @@ int trackVal_ = 5;
 	}
       }
 
-      if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) ){
+      if((*lowTrackerMhits > 0) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/ && (*lowTrackerLayersWithMeasurement > 5) ){
 	if(*lowTrackerCharge < 0){
 	  h_looseMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	  h_looseMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
@@ -2270,7 +2270,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3)){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/){
 	if(*lowTrackerCharge < 0){
 	  h_looseMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_looseMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
@@ -2292,7 +2292,7 @@ int trackVal_ = 5;
 
 
 
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/&& (*lowTrackerPt > 150) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
 	
 
 	if(*lowTrackerCharge < 0){
@@ -2481,7 +2481,7 @@ int trackVal_ = 5;
 
       }
 
-      if((*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
+      if((*lowTrackerMatchedMuonStations > 1) && /*((*lowTrackerPtError / *lowTrackerPt) < 0.3) &&*/ (*lowTrackerPt > 150) &&(*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
 
 	if(*lowTrackerCharge < 0){
 	  h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
@@ -2495,7 +2495,7 @@ int trackVal_ = 5;
 	}
       }
 
-      if((*lowTrackerMhits > 0) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
+      if((*lowTrackerMhits > 0) && /*((*lowTrackerPtError / *lowTrackerPt) < 0.3) &&*/ (*lowTrackerPt > 150) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5) ){
 	if(*lowTrackerCharge < 0){
 	  h_tightMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	  h_tightMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
@@ -2537,7 +2537,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) < 0.3) && (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerPt > 150) &&  /*((*lowTrackerPtError / *lowTrackerPt) < 0.3) &&*/ (*lowTrackerDxy < 0.2) && (*lowTrackerDz < 0.5)){
 	if(*lowTrackerCharge < 0){
 	  h_tightMuMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	  h_tightMuLowerMinusTrackLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
@@ -2551,7 +2551,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDz < 0.5)){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerPt > 150) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/ && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDz < 0.5)){
 	if(*lowTrackerCharge < 0){
 	  h_tightMuMinusDxy->Fill(*lowTrackerDxy);
 	  h_tightMuLowerMinusDxy->Fill(*lowTrackerDxy);
@@ -2566,7 +2566,7 @@ int trackVal_ = 5;
       }
 
 
-      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && ((*lowTrackerPtError / *lowTrackerPt) > 0.3) && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2)){
+      if((*lowTrackerMhits > 0) && (*lowTrackerMatchedMuonStations > 1) && (*lowTrackerPt > 150) /*&& ((*lowTrackerPtError / *lowTrackerPt) > 0.3)*/ && (*lowTrackerLayersWithMeasurement > 5) && (*lowTrackerDxy < 0.2)){
 	if(*lowTrackerCharge < 0){
 	  h_tightMuMinusDz->Fill(*lowTrackerDz);
 	  h_tightMuLowerMinusDz->Fill(*lowTrackerDz);
