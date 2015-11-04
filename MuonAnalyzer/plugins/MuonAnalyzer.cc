@@ -126,10 +126,17 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   upperMuon_trackVec.SetXYZ(0,0,0);
   lowerMuon_trackVec.SetXYZ(0,0,0);
 
+  upperMuon_trackerLayersWithMeasurement = -1000;
+  lowerMuon_trackerLayersWithMeasurement = -1000;
+  
+  upperMuon_numberOfValidMuonHits = -1000;
+  lowerMuon_numberOfValidMuonHits = -1000;
+  
+  
+  //  reco::TrackHitPattern *upperMuon_numberOfValidHits, *lowerMuon_numberOfValidHits;
   int muIdx = 0;
-  for (reco::MuonCollection::const_iterator muon=muonColl->begin();
-       muon!=muonColl->end(); ++muon) {
-    if (debug_ > 3) {
+  for (reco::MuonCollection::const_iterator muon=muonColl->begin(), muonCollEnd=muonColl->end();muon!=muonCollEnd; ++muon) {
+    if(debug_ > 3){
       std::cout << "globalMuon pt [GeV]: " << muon->pt() << 
 	"  eta : " << muon->eta() << 
 	"  phi : " << muon->phi() << 
@@ -214,12 +221,17 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     upperMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
 
     if( debug_ > 3){
-      std::cout << muon->numberOfMatchedStations(arbType) << std::endl;
-      std::cout << arbType;
-      std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
-    }
+      double relError = upperMuon_ptError/upperMuon_trackPt;
+      std::cout << "Muon pT Error/pT is: " << relError       << std::endl
+		<< "Muon pT Error is: "    << ref->ptError() << std::endl
+		<< "Muon pT is: "          << ref->pt()      << std::endl;
+      std::cout << "Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
+		<< "Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
+		<< "Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
+		<< "Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
+    } 
   }
-
+  
   else if (ref->outerPosition().Y() < 0){
     lowerMuon_P4       = muon->p4();
     lowerMuon_pT       = muon->pt();
@@ -233,7 +245,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     lowerMuon_dzError  = ref->dzError();
     lowerMuon_trackPt  = ref->pt();
     lowerMuon_trackVec = ref->momentum();
-
+    
     lowerMuon_pixelHits                    = ref->hitPattern().numberOfValidPixelHits();
     lowerMuon_trackerHits                  = ref->hitPattern().numberOfValidTrackerHits();
     lowerMuon_muonStationHits              = ref->hitPattern().muonStationsWithValidHits();
@@ -241,19 +253,27 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     lowerMuon_numberOfValidMuonHits        = ref->hitPattern().numberOfValidMuonHits();
     lowerMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
     lowerMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
-
+    
     if( debug_ > 3){
-      std::cout << ref->hitPattern().muonStationsWithValidHits() << std::endl << std::endl;
-    }
+      double relError = lowerMuon_ptError/lowerMuon_trackPt;
+      std::cout << "Muon pT Error/pT is: " << relError       << std::endl
+		<< "Muon pT Error is: "    << ref->ptError() << std::endl
+		<< "Muon pT is: "          << ref->pt()      << std::endl;
+      std::cout << "Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
+		<< "Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
+		<< "Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
+		<< "Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
+    } 
   }
-
-  if(debug_ > 1) std::cout << "\nHistograms Filled!\n";
+  if(debug_ > 1)
+    std::cout << "\nHistograms Filled!" << std::endl;
 }
 
 
 reco::TrackRef MuonAnalyzer::GetTrackType(int algoType,reco::MuonCollection::const_iterator muon){
   
-  if(debug_ > 1) std::cout << "\nStarted Finding Track Type!\n";
+  if(debug_ > 1)
+    std::cout << "Started Finding Track Type!" << std::endl;
 
   reco::TrackRef ref;
   
@@ -264,10 +284,10 @@ reco::TrackRef MuonAnalyzer::GetTrackType(int algoType,reco::MuonCollection::con
   else if (algoType == 5) ref = muon->tunePMuonBestTrack();
   else ref = muon->track();
   
-  if(debug_ > 1) std::cout << "\nReturning track type\n";
+  if(debug_ > 1)
+    std::cout << "Returning track type" << std::endl;
 
   return ref;
-  
 }
 
 
@@ -278,54 +298,56 @@ void MuonAnalyzer::beginJob()
   edm::Service< TFileService > fs;
   
   cosmicTree = fs->make<TTree>( "MuonTree", "TTree variables" );
-  cosmicTree->Branch("upperMuon_P4",     &upperMuon_P4,     10000, 1    );
-  cosmicTree->Branch("upperMuon_chi2",    &upperMuon_chi2,    10000, 1   );
-  cosmicTree->Branch("upperMuon_ndof",    &upperMuon_ndof,    10000, 1   );
-  cosmicTree->Branch("upperMuon_charge", &upperMuon_charge, 10000, 1);
-  cosmicTree->Branch("upperMuon_dxy",  &upperMuon_dxy,  10000, 1);
-  cosmicTree->Branch("upperMuon_dz", &upperMuon_dz, 10000, 1);
-  cosmicTree->Branch("upperMuon_pixelHits", &upperMuon_pixelHits, 10000, 1);
-  cosmicTree->Branch("upperMuon_trackerHits", &upperMuon_trackerHits, 10000, 1);
-  cosmicTree->Branch("upperMuon_muonStationHits", &upperMuon_muonStationHits, 10000, 1);
-  cosmicTree->Branch("upperMuon_numberOfValidMuonHits", &upperMuon_numberOfValidMuonHits, 10000, 1);
-  cosmicTree->Branch("upperMuon_numberOfValidHits", &upperMuon_numberOfValidHits, 10000, 1);
-  cosmicTree->Branch("upperMuon_numberOfMatchedStations", &upperMuon_numberOfMatchedStations, 10000, 1);
-  cosmicTree->Branch("upperMuon_ptError", &upperMuon_ptError, 10000, 1);
-  cosmicTree->Branch("upperMuon_dxyError", &upperMuon_dxyError, 10000, 1);
-  cosmicTree->Branch("upperMuon_dzError", &upperMuon_dzError, 10000, 1);
-  cosmicTree->Branch("upperMuon_pT", &upperMuon_pT, 10000, 1);
-  cosmicTree->Branch("upperMuon_trackVec", &upperMuon_trackVec, 10000, 1);
-  cosmicTree->Branch("upperMuon_trackPt", &upperMuon_trackPt, 10000, 1);
-  cosmicTree->Branch("upperMuon_trackerLayersWithMeasurement", &upperMuon_trackerLayersWithMeasurement, 10000, 1);
-  cosmicTree->Branch("muonEventNumber", &event, 10000, 1);
-  cosmicTree->Branch("muonRunNumber", &run, 10000, 1);
-  cosmicTree->Branch("muonLumiBlock", &lumi, 10000, 1 );  
 
-  cosmicTree->Branch("lowerMuon_P4",     &lowerMuon_P4,     10000, 1    );
-  cosmicTree->Branch("lowerMuon_chi2",    &lowerMuon_chi2,    10000, 1   );
-  cosmicTree->Branch("lowerMuon_ndof",    &lowerMuon_ndof,    10000, 1   );
-  cosmicTree->Branch("lowerMuon_charge", &lowerMuon_charge, 10000, 1);
-  cosmicTree->Branch("lowerMuon_dxy",  &lowerMuon_dxy,  10000, 1);
-  cosmicTree->Branch("lowerMuon_dz", &lowerMuon_dz, 10000, 1);
-  cosmicTree->Branch("lowerMuon_pixelHits", &lowerMuon_pixelHits, 10000, 1);
-  cosmicTree->Branch("lowerMuon_trackerHits", &lowerMuon_trackerHits, 10000, 1);
-  cosmicTree->Branch("lowerMuon_muonStationHits", &lowerMuon_muonStationHits, 10000, 1);
-  cosmicTree->Branch("lowerMuon_numberOfValidMuonHits", &lowerMuon_numberOfValidMuonHits, 10000, 1);
-  cosmicTree->Branch("lowerMuon_numberOfValidHits", &lowerMuon_numberOfValidHits, 10000, 1);
-  cosmicTree->Branch("lowerMuon_numberOfMatchedStations", &lowerMuon_numberOfMatchedStations, 10000, 1);
-  cosmicTree->Branch("lowerMuon_ptError", &lowerMuon_ptError, 10000, 1);
-  cosmicTree->Branch("lowerMuon_dxyError", &lowerMuon_dxyError, 10000, 1);
-  cosmicTree->Branch("lowerMuon_dzError", &lowerMuon_dzError, 10000, 1);
+  cosmicTree->Branch("muonEventNumber", &event, 10000, 1);
+  cosmicTree->Branch("muonRunNumber",   &run,   10000, 1);
+  cosmicTree->Branch("muonLumiBlock",   &lumi,  10000, 1);
+
+  /////////Muon in upper half of CMS
+  cosmicTree->Branch("upperMuon_pT", &upperMuon_pT, 10000, 1);
+  cosmicTree->Branch("upperMuon_P4", &upperMuon_P4, 10000, 1);
+
+  cosmicTree->Branch("upperMuon_trackPt",  &upperMuon_trackPt,  10000, 1);
+  cosmicTree->Branch("upperMuon_trackVec", &upperMuon_trackVec, 10000, 1);
+  cosmicTree->Branch("upperMuon_chi2",     &upperMuon_chi2,     10000, 1);
+  cosmicTree->Branch("upperMuon_ndof",     &upperMuon_ndof,     10000, 1);
+  cosmicTree->Branch("upperMuon_charge",   &upperMuon_charge,   10000, 1);
+  cosmicTree->Branch("upperMuon_dxy",      &upperMuon_dxy,      10000, 1);
+  cosmicTree->Branch("upperMuon_dz",       &upperMuon_dz,       10000, 1);
+  cosmicTree->Branch("upperMuon_ptError",  &upperMuon_ptError,  10000, 1);
+  cosmicTree->Branch("upperMuon_dxyError", &upperMuon_dxyError, 10000, 1);
+  cosmicTree->Branch("upperMuon_dzError",  &upperMuon_dzError,  10000, 1);
+
+  cosmicTree->Branch("upperMuon_pixelHits",                    &upperMuon_pixelHits,                    10000, 1);
+  cosmicTree->Branch("upperMuon_trackerHits",                  &upperMuon_trackerHits,                  10000, 1);
+  cosmicTree->Branch("upperMuon_muonStationHits",              &upperMuon_muonStationHits,              10000, 1);
+  cosmicTree->Branch("upperMuon_numberOfValidHits",            &upperMuon_numberOfValidHits,            10000, 1);
+  cosmicTree->Branch("upperMuon_numberOfValidMuonHits",        &upperMuon_numberOfValidMuonHits,        10000, 1);
+  cosmicTree->Branch("upperMuon_numberOfMatchedStations",      &upperMuon_numberOfMatchedStations,      10000, 1);
+  cosmicTree->Branch("upperMuon_trackerLayersWithMeasurement", &upperMuon_trackerLayersWithMeasurement, 10000, 1);
+  
+  /////////Muon in lower half of CMS
   cosmicTree->Branch("lowerMuon_pT", &lowerMuon_pT, 10000, 1);
+  cosmicTree->Branch("lowerMuon_P4", &lowerMuon_P4, 10000, 1);
+
+  cosmicTree->Branch("lowerMuon_trackPt",  &lowerMuon_trackPt,  10000, 1);
   cosmicTree->Branch("lowerMuon_trackVec", &lowerMuon_trackVec, 10000, 1);
-  cosmicTree->Branch("lowerMuon_trackPt", &lowerMuon_trackPt, 10000, 1);
+  cosmicTree->Branch("lowerMuon_chi2",     &lowerMuon_chi2,     10000, 1);
+  cosmicTree->Branch("lowerMuon_ndof",     &lowerMuon_ndof,     10000, 1);
+  cosmicTree->Branch("lowerMuon_charge",   &lowerMuon_charge,   10000, 1);
+  cosmicTree->Branch("lowerMuon_dxy",      &lowerMuon_dxy,      10000, 1);
+  cosmicTree->Branch("lowerMuon_dz",       &lowerMuon_dz,       10000, 1);
+  cosmicTree->Branch("lowerMuon_ptError",  &lowerMuon_ptError,  10000, 1);
+  cosmicTree->Branch("lowerMuon_dxyError", &lowerMuon_dxyError, 10000, 1);
+  cosmicTree->Branch("lowerMuon_dzError",  &lowerMuon_dzError,  10000, 1);
+
+  cosmicTree->Branch("lowerMuon_pixelHits",                    &lowerMuon_pixelHits,                    10000, 1);
+  cosmicTree->Branch("lowerMuon_trackerHits",                  &lowerMuon_trackerHits,                  10000, 1);
+  cosmicTree->Branch("lowerMuon_muonStationHits",              &lowerMuon_muonStationHits,              10000, 1);
+  cosmicTree->Branch("lowerMuon_numberOfValidHits",            &lowerMuon_numberOfValidHits,            10000, 1);
+  cosmicTree->Branch("lowerMuon_numberOfValidMuonHits",        &lowerMuon_numberOfValidMuonHits,        10000, 1);
+  cosmicTree->Branch("lowerMuon_numberOfMatchedStations",      &lowerMuon_numberOfMatchedStations,      10000, 1);
   cosmicTree->Branch("lowerMuon_trackerLayersWithMeasurement", &lowerMuon_trackerLayersWithMeasurement, 10000, 1);
- 
-  //   numberOfValidHits recoTrackHitPattern
-  //  numberofMatchedStations recoMuon
-  //  pTError
-  //  dxyError
-  //  dzError Track class
 }
 
 
