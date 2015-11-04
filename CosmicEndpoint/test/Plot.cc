@@ -71,13 +71,15 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
     return;
   }  
 
-  lumiFileOut100_loose.open(outFile+trackAlgo+"_pt100_loose.txt");
-  lumiFileOut200_loose.open(outFile+trackAlgo+"_pt200_loose.txt");
-  lumiFileOut400_loose.open(outFile+trackAlgo+"_pt400_loose.txt");
-  
-  lumiFileOut100_tight.open(outFile+trackAlgo+"_pt100_tight.txt");
-  lumiFileOut200_tight.open(outFile+trackAlgo+"_pt200_tight.txt");
-  lumiFileOut400_tight.open(outFile+trackAlgo+"_pt400_tight.txt");
+  if (symmetric_ && (maxBias_ < 0.0005)) {
+    lumiFileOut100_loose.open(trackAlgo+"_pt100_loose.txt");
+    lumiFileOut200_loose.open(trackAlgo+"_pt200_loose.txt");
+    lumiFileOut400_loose.open(trackAlgo+"_pt400_loose.txt");
+    
+    lumiFileOut100_tight.open(trackAlgo+"_pt100_tight.txt");
+    lumiFileOut200_tight.open(trackAlgo+"_pt200_tight.txt");
+    lumiFileOut400_tight.open(trackAlgo+"_pt400_tight.txt");
+  }
   
   std::string name;
   std::ifstream file(file1);
@@ -2069,72 +2071,74 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
       if (debug)
 	std::cout << "\n\nMade it through " << j << " sets of fills\n";	
 
-      if (hasPt100Loose)
-        lumiFileOut100_loose
-	  << "\"" << *run << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
+      if (symmetric_ && (maxBias_ < 0.0005)) {
+	if (hasPt100Loose)
+	  lumiFileOut100_loose
+	    << "\"" << *run << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
 
-      if (hasPt100Tight)
-        lumiFileOut100_tight
-	  << "\""  << *run  << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
+	if (hasPt100Tight)
+	  lumiFileOut100_tight
+	    << "\""  << *run  << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
 
-      if (hasPt200Loose)
-        lumiFileOut200_loose
-	  << "\"" << *run << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
+	if (hasPt200Loose)
+	  lumiFileOut200_loose
+	    << "\"" << *run << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
 
-      if (hasPt200Tight)
-        lumiFileOut200_tight
-	  << "\""  << *run  << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
+	if (hasPt200Tight)
+	  lumiFileOut200_tight
+	    << "\""  << *run  << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
 
-      if (hasPt400Loose)
-        lumiFileOut400_loose
-	  << "\"" << *run << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
+	if (hasPt400Loose)
+	  lumiFileOut400_loose
+	    << "\"" << *run << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
 
-      if (hasPt400Tight)
-        lumiFileOut400_tight
-	  << "\""  << *run  << "\":"
-	  << " [[" << *lumi << "," << *lumi << "]]"
-	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
-	  << std::endl;
-      
+	if (hasPt400Tight)
+	  lumiFileOut400_tight
+	    << "\""  << *run  << "\":"
+	    << " [[" << *lumi << "," << *lumi << "]]"
+	    << " : " << *event
+	    << "  " << upperstring.str()
+	    << "  " << lowerstring.str()
+	    << std::endl;
+      } // end if (symmetric_)
     }//Closing if fill
     //  } // end if tracker.Next
   } // end while loop
   
-  lumiFileOut100_loose.close();
-  lumiFileOut200_loose.close();
-  lumiFileOut400_loose.close();
-  
-  lumiFileOut100_tight.close();
-  lumiFileOut200_tight.close();
-  lumiFileOut400_tight.close();
-
+  if (symmetric_ && (maxBias_ < 0.0005)) {
+    lumiFileOut100_loose.close();
+    lumiFileOut200_loose.close();
+    lumiFileOut400_loose.close();
+    
+    lumiFileOut100_tight.close();
+    lumiFileOut200_tight.close();
+    lumiFileOut400_tight.close();
+  }
 
   std::cout << std::hex << g << std::dec << std::endl;
   
