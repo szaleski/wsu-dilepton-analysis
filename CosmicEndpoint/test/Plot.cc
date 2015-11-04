@@ -171,42 +171,42 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
     h_countersLower->GetXaxis()->SetBinLabel(b+1,TString(counterBinLabels[b]));
   }
   
-  TH1F *h_looseMuMinusChi2      = new TH1F("looseMuMinusChi2","looseMuMinusChi2", 50, 0., 150.);
+  TH1F *h_looseMuMinusChi2      = new TH1F("looseMuMinusChi2",     "looseMuMinusChi2", 50, 0., 150.);
   TH1F *h_looseMuUpperMinusChi2 = new TH1F("looseMuUpperMinusChi2","looseMuUpperMinusChi2", 50, 0., 150.);
-  TH1F *h_looseMuPlusChi2       = new TH1F("looseMuPlusChi2","looseMuPlusChi2", 50, 0., 150.);
-  TH1F *h_looseMuUpperPlusChi2  = new TH1F("looseMuUpperPlusChi2","looseMuUpperPlusChi2", 50, 0., 150.);
+  TH1F *h_looseMuPlusChi2       = new TH1F("looseMuPlusChi2",      "looseMuPlusChi2", 50, 0., 150.);
+  TH1F *h_looseMuUpperPlusChi2  = new TH1F("looseMuUpperPlusChi2", "looseMuUpperPlusChi2", 50, 0., 150.);
   TH1F *h_looseMuLowerMinusChi2 = new TH1F("looseMuLowerMinusChi2","looseMuLowerMinusChi2", 50, 0., 150.);
-  TH1F *h_looseMuLowerPlusChi2  = new TH1F("looseMuLowerPlusChi2","looseMuLowerPlusChi2", 50, 0., 150.);
-  TH1F *h_looseMuMinusNdof      = new TH1F("looseMuMinusNdof","looseMuMinusNdof", 100, -0.5, 99.5);
+  TH1F *h_looseMuLowerPlusChi2  = new TH1F("looseMuLowerPlusChi2", "looseMuLowerPlusChi2", 50, 0., 150.);
+  TH1F *h_looseMuMinusNdof      = new TH1F("looseMuMinusNdof",     "looseMuMinusNdof", 100, -0.5, 99.5);
   TH1F *h_looseMuUpperMinusNdof = new TH1F("looseMuUpperMinusNdof","looseMuUpperMinusNdof", 100, -0.5, 99.5);
-  TH1F *h_looseMuPlusNdof       = new TH1F("looseMuPlusNdof","looseMuPlusNdof", 100, -0.5, 99.5);
-  TH1F *h_looseMuUpperPlusNdof  = new TH1F("looseMuUpperPlusNdof","looseMuUpperPlusNdof", 100, -0.5, 99.5);
+  TH1F *h_looseMuPlusNdof       = new TH1F("looseMuPlusNdof",      "looseMuPlusNdof", 100, -0.5, 99.5);
+  TH1F *h_looseMuUpperPlusNdof  = new TH1F("looseMuUpperPlusNdof", "looseMuUpperPlusNdof", 100, -0.5, 99.5);
   TH1F *h_looseMuLowerMinusNdof = new TH1F("looseMuLowerMinusNdof","looseMuLowerMinusNdof", 100, -0.5, 99.5);
-  TH1F *h_looseMuLowerPlusNdof  = new TH1F("looseMuLowerPlusNdof","looseMuLowerPlusNdof", 100, -0.5, 99.5);
-  TH1F *h_looseMuMinusCharge    = new TH1F("looseMuMinusCharge","looseMuMinusCharge", 3, -1.5, 1.5);
+  TH1F *h_looseMuLowerPlusNdof  = new TH1F("looseMuLowerPlusNdof", "looseMuLowerPlusNdof", 100, -0.5, 99.5);
+  TH1F *h_looseMuMinusCharge      = new TH1F("looseMuMinusCharge",     "looseMuMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuUpperMinusCharge = new TH1F("looseMuUpperMinusCharge","looseMuUpperMinusCharge", 3, -1.5, 1.5);
-  TH1F *h_looseMuPlusCharge       = new TH1F("looseMuPlusCharge","looseMuPlusCharge", 3, -1.5, 1.5);
-  TH1F *h_looseMuUpperPlusCharge  = new TH1F("looseMuUpperPlusCharge","looseMuUpperPlusCharge", 3, -1.5, 1.5);
+  TH1F *h_looseMuPlusCharge       = new TH1F("looseMuPlusCharge",      "looseMuPlusCharge", 3, -1.5, 1.5);
+  TH1F *h_looseMuUpperPlusCharge  = new TH1F("looseMuUpperPlusCharge", "looseMuUpperPlusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuLowerMinusCharge = new TH1F("looseMuLowerMinusCharge","looseMuLowerMinusCharge", 3, -1.5, 1.5);
-  TH1F *h_looseMuLowerPlusCharge  = new TH1F("looseMuLowerPlusCharge","looseMuLowerPlusCharge", 3, -1.5, 1.5);
-  TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve","looseMuMinusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+  TH1F *h_looseMuLowerPlusCharge  = new TH1F("looseMuLowerPlusCharge", "looseMuLowerPlusCharge", 3, -1.5, 1.5);
+  TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve",     "looseMuMinusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
   TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-  TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve","looseMuPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-  TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve","looseMuUpperPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+  TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve",      "looseMuPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+  TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve", "looseMuUpperPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
   TH1F *h_looseMuLowerMinusCurve = new TH1F("looseMuLowerMinusCurve","looseMuLowerMinusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-  TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve","looseMuLowerPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-  TH1F *h_looseMuMinusDxy      = new TH1F("looseMuMinusDxy","looseMuMinusDxy", 100, -100., 100.);
+  TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve", "looseMuLowerPlusCurve", 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+  TH1F *h_looseMuMinusDxy      = new TH1F("looseMuMinusDxy",     "looseMuMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -100., 100.);
-  TH1F *h_looseMuPlusDxy       = new TH1F("looseMuPlusDxy","looseMuPlusDxy", 100, -100., 100.);
-  TH1F *h_looseMuUpperPlusDxy  = new TH1F("looseMuUpperPlusDxy","looseMuUpperPlusDxy", 100, -100., 100.);
+  TH1F *h_looseMuPlusDxy       = new TH1F("looseMuPlusDxy",      "looseMuPlusDxy", 100, -100., 100.);
+  TH1F *h_looseMuUpperPlusDxy  = new TH1F("looseMuUpperPlusDxy", "looseMuUpperPlusDxy", 100, -100., 100.);
   TH1F *h_looseMuLowerMinusDxy = new TH1F("looseMuLowerMinusDxy","looseMuLowerMinusDxy", 100, -100., 100.);
-  TH1F *h_looseMuLowerPlusDxy  = new TH1F("looseMuLowerPlusDxy","looseMuLowerPlusDxy", 100, -100., 100.);
-  TH1F *h_looseMuMinusDz       = new TH1F("looseMuMinusDz","looseMuMinusDz", 100, -250., 250.);
+  TH1F *h_looseMuLowerPlusDxy  = new TH1F("looseMuLowerPlusDxy", "looseMuLowerPlusDxy", 100, -100., 100.);
+  TH1F *h_looseMuMinusDz       = new TH1F("looseMuMinusDz",     "looseMuMinusDz", 100, -250., 250.);
   TH1F *h_looseMuUpperMinusDz  = new TH1F("looseMuUpperMinusDz","looseMuUpperMinusDz", 100, -250., 250.);
-  TH1F *h_looseMuPlusDz        = new TH1F("looseMuPlusDz","looseMuPlusDz", 100, -250., 250.);
-  TH1F *h_looseMuUpperPlusDz   = new TH1F("looseMuUpperPlusDz","looseMuUpperPlusDz", 100, -250., 250.);
+  TH1F *h_looseMuPlusDz        = new TH1F("looseMuPlusDz",      "looseMuPlusDz", 100, -250., 250.);
+  TH1F *h_looseMuUpperPlusDz   = new TH1F("looseMuUpperPlusDz", "looseMuUpperPlusDz", 100, -250., 250.);
   TH1F *h_looseMuLowerMinusDz  = new TH1F("looseMuLowerMinusDz","looseMuLowerMinusDz", 100, -250., 250.);
-  TH1F *h_looseMuLowerPlusDz   = new TH1F("looseMuLowerPlusDz","looseMuLowerPlusDz", 100, -250., 250.);
+  TH1F *h_looseMuLowerPlusDz   = new TH1F("looseMuLowerPlusDz", "looseMuLowerPlusDz", 100, -250., 250.);
   TH1F *h_looseMuMinusPixelHits      = new TH1F("looseMuMinusPixelHits","looseMuMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_looseMuUpperMinusPixelHits = new TH1F("looseMuUpperMinusPixelHits","looseMuUpperMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_looseMuPlusPixelHits       = new TH1F("looseMuPlusPixelHits","looseMuPlusPixelHits", 10, -0.5, 9.5);
@@ -320,18 +320,42 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   for (int i =0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_looseMuMinusCurvePlusBias[i]       = new TH1F(TString("looseMuMinusCurvePlusBias" + name.str()), TString("looseMuMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuMinusCurveMinusBias[i]      = new TH1F(TString("looseMuMinusCurveMinusBias" + name.str()),TString("looseMuMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias" + name.str()), TString("looseMuUpperMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),TString("looseMuUpperMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias" + name.str()), TString("looseMuLowerMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),TString("looseMuLowerMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_looseMuPlusCurvePlusBias[i]        = new TH1F(TString("looseMuPlusCurvePlusBias" + name.str()), TString("looseMuPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuPlusCurveMinusBias[i]       = new TH1F(TString("looseMuPlusCurveMinusBias" + name.str()),TString("looseMuPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_looseMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("looseMuUpperPlusCurvePlusBias" + name.str()), TString("looseMuUpperPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("looseMuUpperPlusCurveMinusBias" + name.str()),TString("looseMuUpperPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_looseMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("looseMuLowerPlusCurvePlusBias" + name.str()), TString("looseMuLowerPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_looseMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("looseMuLowerPlusCurveMinusBias" + name.str()),TString("looseMuLowerPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuMinusCurvePlusBias[i]       = new TH1F(TString("looseMuMinusCurvePlusBias"       + name.str()),
+						    TString("looseMuMinusCurvePlusBias"       + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuMinusCurveMinusBias[i]      = new TH1F(TString("looseMuMinusCurveMinusBias"      + name.str()),
+						    TString("looseMuMinusCurveMinusBias"      + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
+						    TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),
+						    TString("looseMuUpperMinusCurveMinusBias" + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
+						    TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),
+						    TString("looseMuLowerMinusCurveMinusBias" + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuPlusCurvePlusBias[i]        = new TH1F(TString("looseMuPlusCurvePlusBias"        + name.str()),
+						    TString("looseMuPlusCurvePlusBias"        + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuPlusCurveMinusBias[i]       = new TH1F(TString("looseMuPlusCurveMinusBias"       + name.str()),
+						    TString("looseMuPlusCurveMinusBias"       + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
+						    TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
+						    TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_looseMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
+						    TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_looseMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
+						    TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
     //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
 
@@ -484,18 +508,42 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_tightMuMinusCurvePlusBias[i]       = new TH1F(TString("tightMuMinusCurvePlusBias" + name.str()), TString("tightMuMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuMinusCurveMinusBias[i]      = new TH1F(TString("tightMuMinusCurveMinusBias" + name.str()),TString("tightMuMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_tightMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("tightMuUpperMinusCurvePlusBias" + name.str()), TString("tightMuUpperMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),TString("tightMuUpperMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_tightMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("tightMuLowerMinusCurvePlusBias" + name.str()), TString("tightMuLowerMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),TString("tightMuLowerMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_tightMuPlusCurvePlusBias[i]        = new TH1F(TString("tightMuPlusCurvePlusBias" + name.str()), TString("tightMuPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuPlusCurveMinusBias[i]       = new TH1F(TString("tightMuPlusCurveMinusBias" + name.str()),TString("tightMuPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_tightMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("tightMuUpperPlusCurvePlusBias" + name.str()), TString("tightMuUpperPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("tightMuUpperPlusCurveMinusBias" + name.str()),TString("tightMuUpperPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_tightMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("tightMuLowerPlusCurvePlusBias" + name.str()), TString("tightMuLowerPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_tightMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("tightMuLowerPlusCurveMinusBias" + name.str()),TString("tightMuLowerPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuMinusCurvePlusBias[i]       = new TH1F(TString("tightMuMinusCurvePlusBias"       + name.str()),
+						    TString("tightMuMinusCurvePlusBias"       + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuMinusCurveMinusBias[i]      = new TH1F(TString("tightMuMinusCurveMinusBias"      + name.str()),
+						    TString("tightMuMinusCurveMinusBias"      + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
+						    TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),
+						    TString("tightMuUpperMinusCurveMinusBias" + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
+						    TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),
+						    TString("tightMuLowerMinusCurveMinusBias" + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuPlusCurvePlusBias[i]        = new TH1F(TString("tightMuPlusCurvePlusBias"        + name.str()),
+						    TString("tightMuPlusCurvePlusBias"        + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuPlusCurveMinusBias[i]       = new TH1F(TString("tightMuPlusCurveMinusBias"       + name.str()),
+						    TString("tightMuPlusCurveMinusBias"       + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
+						    TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
+						    TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_tightMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
+						    TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_tightMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
+						    TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
+						    1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
   }
 
   TH1F *h_muMinusChi2 = new TH1F("muMinusChi2","muMinusChi2", 50, 0., 150.);
@@ -647,18 +695,42 @@ void Plot(std::string const& file1, std::string const& outFile, int trackVal_, d
   for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_muMinusCurvePlusBias[i]       = new TH1F(TString("muMinusCurvePlusBias" + name.str()), TString("muMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muMinusCurveMinusBias[i]      = new TH1F(TString("muMinusCurveMinusBias" + name.str()),TString("muMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias" + name.str()), TString("muUpperMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),TString("muUpperMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias" + name.str()), TString("muLowerMinusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),TString("muLowerMinusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_muPlusCurvePlusBias[i]        = new TH1F(TString("muPlusCurvePlusBias" + name.str()), TString("muPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muPlusCurveMinusBias[i]       = new TH1F(TString("muPlusCurveMinusBias" + name.str()),TString("muPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_muUpperPlusCurvePlusBias[i]   = new TH1F(TString("muUpperPlusCurvePlusBias" + name.str()), TString("muUpperPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muUpperPlusCurveMinusBias[i]  = new TH1F(TString("muUpperPlusCurveMinusBias" + name.str()),TString("muUpperPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    h_muLowerPlusCurvePlusBias[i]   = new TH1F(TString("muLowerPlusCurvePlusBias" + name.str()), TString("muLowerPlusCurvePlusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
-    h_muLowerPlusCurveMinusBias[i]  = new TH1F(TString("muLowerPlusCurveMinusBias" + name.str()),TString("muLowerPlusCurveMinusBias" + name.str()), 1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muMinusCurvePlusBias[i]       = new TH1F(TString("muMinusCurvePlusBias"       + name.str()),
+					       TString("muMinusCurvePlusBias"       + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muMinusCurveMinusBias[i]      = new TH1F(TString("muMinusCurveMinusBias"      + name.str()),
+					       TString("muMinusCurveMinusBias"      + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias"  + name.str()),
+					       TString("muUpperMinusCurvePlusBias"  + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),
+					       TString("muUpperMinusCurveMinusBias" + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias"  + name.str()),
+					       TString("muLowerMinusCurvePlusBias"  + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),
+					       TString("muLowerMinusCurveMinusBias" + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muPlusCurvePlusBias[i]        = new TH1F(TString("muPlusCurvePlusBias"        + name.str()),
+					       TString("muPlusCurvePlusBias"        + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muPlusCurveMinusBias[i]       = new TH1F(TString("muPlusCurveMinusBias"       + name.str()),
+					       TString("muPlusCurveMinusBias"       + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muUpperPlusCurvePlusBias[i]   = new TH1F(TString("muUpperPlusCurvePlusBias"   + name.str()),
+					       TString("muUpperPlusCurvePlusBias"   + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muUpperPlusCurveMinusBias[i]  = new TH1F(TString("muUpperPlusCurveMinusBias"  + name.str()),
+					       TString("muUpperPlusCurveMinusBias"  + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
+    h_muLowerPlusCurvePlusBias[i]   = new TH1F(TString("muLowerPlusCurvePlusBias"   + name.str()),
+					       TString("muLowerPlusCurvePlusBias"   + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
+    h_muLowerPlusCurveMinusBias[i]  = new TH1F(TString("muLowerPlusCurveMinusBias"  + name.str()),
+					       TString("muLowerPlusCurveMinusBias"  + name.str()),
+					       1000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
   }
 
   TH1F *h_upperChi2     = new TH1F("upperChi2","upperChi2", 50, 0., 150.);
