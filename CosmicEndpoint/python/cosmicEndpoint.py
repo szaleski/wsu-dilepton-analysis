@@ -69,9 +69,60 @@ class cosmicEndpoint() :
         binning = self.binning
         if pt > binning[-1]:
             
-        return bin
-    def runMinimization() :
+            return bin
+
+    def runMinimization(f, histBaseName, obsName, refName):
         return
 
-    def calculateChi2() :
-        return
+    def makeGraph(f, histBaseName, obsName, refName):
+        import numpy as np
+        
+        nBiasBins = 100
+        maxBias = 0.05 #0.005
+        #need two arrays, length = (2*nBiasBins)+1
+        xVals = np.empty(nBiasBins)
+        yVals = np.empty(nBiasBins)
+
+        obs = f.Get("%s%sCurve"%(histBaseName,obsName))
+        obs = f.Get("%s%sCurve"%(histBaseName,obsName))
+        
+        ref = f.Get("%s%sCurve"%(histBaseName,refName))
+        ref = f.Get("%s%sCurve"%(histBaseName,refName))
+        
+        xVals.at(nBiasBins+1) = 0
+        yVals.at(nBiasBins+1) = calculateChi2(obs,ref)
+
+        for i in range(nBiasBins):
+            obs_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,obsName,i+1))
+            obs_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,obsName,i+1))
+
+            ref_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,refName,i+1))
+            ref_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,refName,i+1))
+
+            biasVal = (i+1)*(maxBias/nBiasBins)
+            xVals.at(nBiasBins+1+i) = biasVal
+            yVals.at(nBiasBins+1+i) = calculateChi2(obs_posBias,ref_posBias)
+
+            xVals.at(i) = -1.*biasVal
+            yVals.at(i) = calculateChi2(obs_negBias,ref_negBias)
+            
+        graph = r.TGraph(histBaseName,histBaseName,xVals,yVals)
+        return graph
+
+    def calculateChi2(hobs,href):
+        if (hobs.GetNbinsX() != href.GetNbinsX()):
+            print "histograms have different number of bins in X:"
+            print hobs.GetName(),"has",hobs.GetNbinsX()
+            print href.GetName(),"has",href.GetNbinsX()
+            return -1.
+        
+        nBins = hobs.GetNbinsX()
+        cChi2 = 0.
+        for b in range(nBins):
+            obs = hobs.GetBinContent(b+1);
+            ref = href.GetBinContent(b+1);
+	
+            binChi2 = ((obs-ref)**2)/ref
+            cChi2 += binChi2
+        
+        return chi2

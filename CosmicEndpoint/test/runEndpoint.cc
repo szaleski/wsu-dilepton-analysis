@@ -183,9 +183,9 @@ int main(int argc, char **argv)
     desc.add_options()
       ("help,h", "produce help message")
       ("debug,d",  po::value<int>(&debug)->default_value(0), "set debug level, default is 0")
-      ("inputs,i", po::value<std::string>(&inputFiles), "input file list, a text file with the paths of the input files")
-      ("output,o", po::value<std::string>(&outputFile), "output file name")
-      ("config,c", po::value<std::string>(&configFile), "config file name");
+      ("inputs,i", po::value<std::string>(&inputFiles)->required(), "input file list, a text file with the paths of the input files")
+      ("output,o", po::value<std::string>(&outputFile)->required(), "output file name")
+      ("config,c", po::value<std::string>(&configFile)->required(), "config file name");
 
     po::variables_map vm;        
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -217,9 +217,15 @@ int main(int argc, char **argv)
   }
   
   //main body
-  std::cout << "parsed command line options, running endpoint study" << std::endl;
+  std::cout << "parsed command line options as:" << std::endl
+	    << "inputFiles = " << inputFiles     << std::endl
+	    << "outputFile = " << outputFile     << std::endl
+	    << "configFile = " << configFile     << std::endl
+	    << "debug = "      << debug          << std::endl
+	    << "running endpoint study"          << std::endl;
   
   wsu::dileptons::cosmics::HistogramMaker myHistograms(inputFiles, outputFile, configFile, debug);
-  
+  int nEvents = myHistograms.runLoop(0);
+  std::cout << "finished running endpoint study, processed " << nEvents << " events" << std::endl;
   return 0;
 }

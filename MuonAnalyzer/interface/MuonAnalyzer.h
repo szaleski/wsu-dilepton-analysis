@@ -101,7 +101,7 @@ private:
   double lowerMuon_trackPt;
   int lowerMuon_ndof, lowerMuon_charge, lowerMuon_pixelHits;
   int lowerMuon_trackerHits, lowerMuon_muonStationHits;
-  int lowerMuon_numberOfValidHits, lowerMuon_numberOfMatchedStations;
+  int lowerMuon_numberOfValidMuonHits, lowerMuon_numberOfValidHits, lowerMuon_numberOfMatchedStations;
   int lowerMuon_trackerLayersWithMeasurement;
 
 
@@ -113,7 +113,7 @@ private:
   double upperMuon_trackPt;
   int upperMuon_ndof, upperMuon_charge,upperMuon_pixelHits;
   int  upperMuon_trackerHits, upperMuon_muonStationHits;
-  int  upperMuon_numberOfValidHits, upperMuon_numberOfMatchedStations;
+  int  upperMuon_numberOfValidMuonHits, upperMuon_numberOfValidHits, upperMuon_numberOfMatchedStations;
   int upperMuon_trackerLayersWithMeasurement;
 
 };

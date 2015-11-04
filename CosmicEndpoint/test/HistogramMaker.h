@@ -5,11 +5,15 @@
 //#include "DataFormats/Math/interface/LorentzVector.h"
 //#include "DataFormats/Math/interface/LorentzVectorFwd.h"
 #include <string>
-//#include <libconfig.h++>
+#include <memory> /**for smart pointers*/
+//#include <libconfig.h++> /**for some config parsing, not working on lxplus*/
 
 // forward declare ROOT things
 class TH1D;
 class TFile;
+class TDirectory;
+class TDirectoryFile;
+
 class TTree;
 class TChain;
 class TTreeReader;
@@ -17,6 +21,21 @@ class TTreeReader;
 namespace wsu {
   namespace dileptons {
     namespace cosmics {
+      
+      enum DebugLevel {
+	OFF = -1,
+	MIN = 0,
+	LOW = 1,
+	MAX = 19,
+	POINTERS       = 1,
+	TREEINFO       = 3,
+	HISTOGRAMS     = 2,
+	BIASHISTOGRAMS = 5,
+	CONFIGLINES    = 6,
+	CONFIGPARSER   = 5,
+	CONFIGPARAMS   = 2,
+	EVENTLOOP      = 6
+      };
       
       typedef struct HighPtMuonCuts {
 	int numValidHits;
@@ -68,41 +87,51 @@ namespace wsu {
 		       std::string const& outFileName,
 		       std::string const& confParmsFile,
 		       int debug=0);
+	
 	~HistogramMaker();
 	
+	int runLoop(int debug=0);
+	
+      private:
+
 	void parseConfiguration(std::string const& confFileName);
 	void parseFileList(     std::string const& inputFiles);
-	
-	void Plot(TTree* inputTree);
 
-      private:
-	double maxBias, minPt;
-	int nBiasBins, massBinSize;
-	
-	TTree*       tree;
-	TChain*      treeChain;
-	TTreeReader* treeReader;
+	ConfigurationParameters m_confParams;
+	std::string m_inFileList, m_outFileName, m_confFileName;
+	int m_debug;
 
-	TFile *outFile;
+	int Plot(TTree* inputTree);
+
+	double m_maxBias, m_minPt;
+	int m_nBiasBins;
+	
+	std::shared_ptr<TTree>       m_tree;
+	std::shared_ptr<TChain>      m_treeChain;
+	std::shared_ptr<TTreeReader> m_treeReader;
+	
+	std::shared_ptr<TFile>          m_outFile;
+	std::shared_ptr<TDirectory>     m_ptBinDir[13];
+	std::shared_ptr<TDirectoryFile> m_outFileD;
 	
 	// histograms
 	// [3] for upper, lower, and combined
 	// [2] for plus/minus
-	TH1D *h_Chi2[3][2],   *h_Ndof[3][2], *h_Chi2Ndof[3][2];
-	TH1D *h_Charge[3][2], *h_Curve[3][2];
-	TH1D *h_Dxy[3][2],    *h_Dz[3][2],      *h_DxyError[3][2], *h_DzError [3][2];
-	TH1D *h_Pt[3][2],     *h_TrackPt[3][2], *h_PtError[3][2],  *h_TrackEta[3][2], *h_TrackPhi[3][2];
+	// [12+1] for inclusive, and then pT bins
+	//  - {50., 100., 150., 200., 250., 300., 400., 500., 750., 1000., 1500., 2000.}
+	std::shared_ptr<TH1D> h_Chi2[3][2][13],   h_Ndof[3][2][13], h_Chi2Ndof[3][2][13];
+	std::shared_ptr<TH1D> h_Charge[3][2][13], h_Curve[3][2][13];
+	std::shared_ptr<TH1D> h_Dxy[3][2][13],    h_Dz[3][2][13],      h_DxyError[3][2][13], h_DzError [3][2][13];
+	std::shared_ptr<TH1D> h_Pt[3][2][13],     h_TrackPt[3][2][13], h_PtError[3][2][13];
+	std::shared_ptr<TH1D> h_TrackEta[3][2][13], h_TrackPhi[3][2][13];
 
-	TH1D *h_TkHits[3][2], *h_PixelHits[3][2], *h_ValidHits[3][2];
-	TH1D *h_MuonStationHits[3][2], *h_MatchedMuonStations[3][2], *h_TkLayersWithMeasurement[3][2];
+	std::shared_ptr<TH1D> h_TkHits[3][2][13], h_PixelHits[3][2][13], h_ValidHits[3][2][13];
+	std::shared_ptr<TH1D> h_MuonStationHits[3][2][13], h_MatchedMuonStations[3][2][13],
+	  h_TkLayersWithMeasurement[3][2][13];
 	
-	TH1D *h_CurvePlusBias[3][2][500];
-	TH1D *h_CurveMinusBias[3][2][500];
+	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][13][100], h_CurveMinusBias[3][2][13][100];
+	// what to do when 100 is too many/few?
 	
-	//libconfig::config_t         *cfg;
-	//libconfig::config_setting_t *setting;
-	
-	ConfigurationParameters confParams;
       }; // end class HistogramMaker
     } // end namespace wsu::dileptons::cosmics
   } // end namespace wsu::dileptons
