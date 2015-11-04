@@ -48,7 +48,7 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs, 
 	nJobs = splitJobsForBsub(inputFile, numberOfJobs, maxBias, symasym)
 	print "Prepared %i jobs ready to be submitted to bsub." % nJobs
 	for i in range (1, nJobs+1):
-		splitListFile="split_%i_%s" % (i , inputFile)
+		splitListFile="split_%i_%s_%s" % (i, symasym, inputFile)
 		rootScriptName = "root-%s-%.2f_%s_%d.C" % (pyScriptName, 1000*maxBias, symasym, i)
 		f = open(rootScriptName, "w")
 		f.write("{\n")

@@ -161,6 +161,8 @@ class cosmicEndpointShort() :
         self.outdirs[trackName].cd()
         myCan2.Write()
 
+        # input histogram is signed (plus/minus), to compare we have to take the absolute value of one to
+        # mirror it on top of the second, however, at the moment, the outputs don't look good, so requires investigation
         if (needsFlip):
             # loop through bins getting the contents of each bin
             # create an array
