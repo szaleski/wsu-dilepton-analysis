@@ -57,48 +57,55 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs, 
 		f.write("  gROOT->ProcessLine(\" .L Plot.so\");\n")
 		##the first execution seems to clear the proxy error
 		
-		f.write("  Plot(\"%s\",\"/tmp/sturdy/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
-													 1000*maxBias,
-													 symasym,outputFile,i,
-													 1,
-													 50.,maxBias,1000,
-													 1000., symmetric))
+		# f.write("  Plot(\"${AFSJOBDIR}/%s\",\"/tmp/sturdy/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
+		f.write("  Plot(\"${AFSJOBDIR}/%s\",\"${OUTPUTDIR}/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
+														      1000*maxBias,
+														      symasym,outputFile,i,
+														      1,
+														      50.,maxBias,1000,
+														      1000., symmetric))
 		for tk in range(5):
-			f.write("  Plot(\"%s\",\"/tmp/sturdy/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
-														 1000*maxBias,
-														 symasym,outputFile,i,
-														 tk+1,
-														 50.,maxBias,1000,
-														 1000., symmetric))
+			# f.write("  Plot(\"${AFSJOBDIR}/%s\",\"/tmp/sturdy/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
+			f.write("  Plot(\"${AFSJOBDIR}/%s\",\"${OUTPUTDIR}/output%.2f/%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(inputFileList,
+															      1000*maxBias,
+															      symasym,outputFile,i,
+															      tk+1,
+															      50.,maxBias,1000,
+															      1000., symmetric))
 		f.write("}\n")
-		pyCommand = "root -x -b -q %s"%(rootScriptName)
+		# root -x -b -q  put this in the shell script
+		pyCommand = "%s"%(rootScriptName)
 		makeBsubShellScript(pyCommand, samplesListsDir+"/splitLists%.2f/"%(1000*maxBias)+splitListFile,
 				    pyScriptName, i, proxyPath, maxBias, symasym, debug)
 
 def makeBsubShellScript(pyCommand, splitListName, pyScriptName, index, proxyPath, maxBias, symasym, debug):
 	subfile = "bsubs%.2f/bsub-%s-%s-%s.sh"%(1000*maxBias,pyScriptName, symasym, index)
+	logfile = "bsubs%.2f/bsub-%s-%s-%s.log"%(1000*maxBias,pyScriptName, symasym, index)
 	f = open(subfile, "w")
 	f.write("""#!/bin/bash
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 source $VO_CMS_SW_DIR/cmsset_default.sh
 export X509_USER_PROXY=%s
+
+echo $hostname >& %s
+export JOBDIR=${PWD}
+echo ${JOBDIR} >> %s
+export OUTPUTDIR=${JOBDIR}/output%.2f
+echo ${OUTPUTDIR} >> %s
+mkdir ${OUTPUTDIR}
+
 cd %s
-mkdir /tmp/sturdy/output%.2f
+export AFSJOBDIR=${PWD}
 eval `scramv1 runtime -sh`
-%s
-rsync -aAXch --progress /tmp/sturdy/output%.2f lxplus0104:/tmp/sturdy/
-#### here do some cleanup, e.g., remove input scripts, remove split lists, remove bsub script
-### but only if the bsub job exited cleanly
-##jobfailed = $(fgrep Killed "LSFJOB_$jobid/STDOUT")
-##if [jobfailed];
-##then
-##    #do nothing
-##else
-##    rm root.C script
-##    rm bsubs/bsub-script
-##    rm -rf LSFJOB_$jobid
-##fi
-"""%(proxyPath, os.getcwd(), 1000*maxBias, pyCommand, 1000*maxBias))
+cp Plot* ${JOBDIR}/
+cp %s ${JOBDIR}/
+cd ${JOBDIR}
+root -b -q -x %s
+rsync -aAXch --progress ${OUTPUTDIR} lxplus0104:/tmp/sturdy/
+"""%(proxyPath,
+     logfile,logfile,
+     1000*maxBias,logfile,os.getcwd(),
+     pyCommand,pyCommand)) #, 1000*maxBias)
 	f.close()
 	os.chmod(subfile, 0777)
 	cmd = "bsub -q 1nh %s/%s"%(os.getcwd(),subfile)
