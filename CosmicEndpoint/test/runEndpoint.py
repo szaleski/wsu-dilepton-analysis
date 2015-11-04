@@ -15,6 +15,9 @@ if __name__ == "__main__":
     parser.add_option("-r", "--rebins", type="int", dest="rebins",
                       metavar="rebins", default=1,
                       help="Number of bins to merge into one in the input histograms")
+    parser.add_option("-f", "--factor", type="int", dest="factor",
+                      metavar="factor", default=1,
+                      help="Multiplicative factor on the curvature")
     parser.add_option("-b", "--maxbias", type="float", dest="maxbias",
                       metavar="maxbias", default=0.005,
                       help="Maximum bias that was injected into the curvature")
@@ -34,7 +37,9 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     r.gROOT.SetBatch(True)
-    myStudy = cosmicEndpointShort(options.infiledir,options.outfile,options.maxbias,options.nbiasbins,options.rebins)
+    myStudy = cosmicEndpointShort(options.infiledir,options.outfile,
+                                  options.maxbias,options.nbiasbins,options.factor,
+                                  options.rebins)
     print myStudy
     needsFlip = False
     if options.symmetric:

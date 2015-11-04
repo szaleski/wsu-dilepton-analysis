@@ -179,11 +179,11 @@ class cosmicEndpointShort() :
 
         #print obs, ref
 
-        mode = 2
-        self.calculateChi2(obs,ref,0,False,True)
-        self.calculateChi2(obs,ref,1,False,True)
-        self.calculateChi2(obs,ref,2,False,True)
-        self.calculateChi2(obs,ref,3,False,True)
+        mode = 0
+        #self.calculateChi2(obs,ref,0,False,True)
+        #self.calculateChi2(obs,ref,1,False,True)
+        #self.calculateChi2(obs,ref,2,False,True)
+        #self.calculateChi2(obs,ref,3,False,True)
         # should perhaps return chi2/ndof?
         xVals["chi2"][nBiasBins] = 0.
         curvatureChi2 = self.calculateChi2(obs,ref,mode)
@@ -197,6 +197,7 @@ class cosmicEndpointShort() :
         yVals["AD"][nBiasBins] = obs.AndersonDarlingTest(ref,"D")
 
         xVals["Chi2"][nBiasBins] = 0.
+        #th1residuals = []
         yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,"PCHI2/NDF")
                 
         myCan3 = r.TCanvas("%s_%s_analyzed"%(histBaseName,trackName),
