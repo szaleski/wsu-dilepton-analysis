@@ -162,7 +162,8 @@ class cosmicEndpointShort() :
         myCan2.Write()
 
         # input histogram is signed (plus/minus), to compare we have to take the absolute value of one to
-        # mirror it on top of the second, however, at the moment, the outputs don't look good, so requires investigation
+        # mirror it on top of the second, however, at the moment, the outputs don't look good, so
+        # requires investigation
         if (needsFlip):
             # loop through bins getting the contents of each bin
             # create an array
@@ -238,6 +239,7 @@ class cosmicEndpointShort() :
             obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
             obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
             obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            
             for b in range(obs_posBias.GetNbinsX()):
                 obs_posBiasValsX[b] = b+1
                 obs_negBiasValsX[b] = b+1
@@ -253,6 +255,33 @@ class cosmicEndpointShort() :
                     obs_posBias.SetBinContent(b+1,obs_posBiasValsYRev[b])
                     obs_negBias.SetBinContent(b+1,obs_negBiasValsYRev[b])
                 
+            if (i%100 == 0):
+                myCan1 = r.TCanvas("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i),
+                                   "%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i),
+                                   800,800)
+                obs_posBias.SetLineColor(r.kRed)
+                obs_posBias.SetLineWidth(2)
+                ref_posBias.SetLineColor(r.kBlue)
+                ref_posBias.SetLineWidth(2)
+                
+                obs_posBias.Draw("ep0")
+                ref_posBias.Draw("ep0sames")
+                self.outdirs[trackName].cd()
+                myCan1.Write()
+
+                myCan2 = r.TCanvas("%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i),
+                                   "%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i),
+                                   800,800)
+                obs_negBias.SetLineColor(r.kRed)
+                obs_negBias.SetLineWidth(2)
+                ref_negBias.SetLineColor(r.kBlue)
+                ref_negBias.SetLineWidth(2)
+                
+                obs_negBias.Draw("ep0")
+                ref_negBias.Draw("ep0sames")
+                self.outdirs[trackName].cd()
+                myCan2.Write()
+            
             if (obs_posBias.Integral()>0):
                 obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
                 obs_negBias.Scale(ref_negBias.Integral()/obs_negBias.Integral())
