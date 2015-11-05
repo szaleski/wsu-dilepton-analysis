@@ -2247,8 +2247,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	    << "  " << lowerstring.str()
 	    << std::endl;
       } // end if (symmetric_)
-    }//Closing if fill
-    //  } // end if tracker.Next
+    } // Closing if fill
   } // end while loop
   
   //if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
