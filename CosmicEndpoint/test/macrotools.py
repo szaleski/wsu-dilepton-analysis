@@ -60,7 +60,7 @@ def bSubSplitJobs(pyScriptName, outputFile, inputFile, proxyPath, numberOfJobs,
 	print "Prepared %i jobs ready to be submitted to bsub." % nJobs
 	for i in range (1, nJobs+1):
 		splitListFile="split_%i_%s_%s" % (i, symasym, inputFile)
-		rootScriptName = "root-%s-_b%.2f_pt%2.0f_n%d_%s_%d.C"%(pyScriptName, 1000*maxBias,minPt,nBiasBins, symasym, i)
+		rootScriptName = "root-%s-b%.2f_pt%2.0f_n%d_%s_%d.C"%(pyScriptName, 1000*maxBias,minPt,nBiasBins, symasym, i)
 		f = open("%s/%s"%(rootScriptDir,rootScriptName), "w")
 		f.write("{\n")
 		#f.write("  gROOT->ProcessLine(\" .L %s/Plot.so\");\n"%(os.getcwd()))
@@ -96,6 +96,10 @@ export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 source $VO_CMS_SW_DIR/cmsset_default.sh
 export X509_USER_PROXY=%s
 
+kinit -R
+aklog
+klist
+
 echo "hostname is $HOSTNAME" #|& tee %s
 export JOBDIR=${PWD}
 echo "batch job directory is ${JOBDIR}" #| tee -a %s
@@ -112,8 +116,9 @@ cp %s/%s ${JOBDIR}/
 cd ${JOBDIR}
 ls -tar #|tee -a %s
 root -b -q -x %s
-tee #|tee -a %s
-rsync -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
+tree #|tee -a %s
+echo "rsync \"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
+rsync "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
      logfile,logfile,
      1000*maxBias,minPt,nBiasBins,
