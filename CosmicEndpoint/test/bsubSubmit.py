@@ -34,6 +34,12 @@ parser.add_option("-m", "--maxbias", type="float", dest="maxbias",
 parser.add_option("-a", "--asymmetric", action="store_true", dest="asymmetric",
                   metavar="asymmetric", default=False,
                   help="[OPTIONAL] Specify whether to create asymmetric (absolute value) curvature (default = False)")
+parser.add_option("-p", "--minpt", type="float", dest="minpt",
+                  metavar="minpt", default=50.,
+                  help="[OPTIONAL] Minimum pT cut to apply to the muons (default = 50.)")
+parser.add_option("-b", "--nbiasbins", type="int", dest="nbiasbins",
+                  metavar="nbiasbins", default=1000,
+                  help="[OPTIONAL] Number of steps to vary the injected bias by (default = 1000)")
 
 (options, args) = parser.parse_args()
 if options.gridproxy:
@@ -50,6 +56,8 @@ cmd = "cp /tmp/x509up_u%s  %s"%(userkey,proxyPath)
 print cmd
 os.system(cmd)
 if options.asymmetric:
-    bSubSplitJobs("craft15", "histograms", options.infiles, proxyPath, options.njobs, options.maxbias,False,debug)
+    bSubSplitJobs("craft15", "histograms", options.infiles, proxyPath, options.njobs,
+                  options.maxbias, options.minpt, options.nbiasbins, False, debug)
 else:
-    bSubSplitJobs("craft15", "histograms", options.infiles, proxyPath, options.njobs, options.maxbias,True,debug)
+    bSubSplitJobs("craft15", "histograms", options.infiles, proxyPath, options.njobs,
+                  options.maxbias, options.minpt, options.nbiasbins, True, debug)
