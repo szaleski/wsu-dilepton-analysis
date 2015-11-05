@@ -126,6 +126,7 @@ rsync "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXc
      os.getcwd(),
      rootScriptDir,pyCommand,logfile,
      pyCommand,logfile,
+     socket.gethostname(),
      socket.gethostname()))
 	f.close()
 	os.chmod(subfile, 0777)
