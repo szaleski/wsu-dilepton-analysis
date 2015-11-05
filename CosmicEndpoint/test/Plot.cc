@@ -31,7 +31,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	  double maxBias_, int nBiasBins_, double factor_=1.0, bool symmetric_=false)
 {
   std::cout<<"arg 1 is:  " << filelist << std::endl;
-  std::cout<<"arg 2 is:  " << outFile << std::endl;
+  std::cout<<"arg 2 is:  " << outFile  << std::endl;
 
   TFile *g;
   TChain *myChain;
@@ -44,52 +44,90 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   std::ofstream lumiFileOut200_tight;
   std::ofstream lumiFileOut400_tight;
   
+  std::string outdir; // expect to be in /tmp for bsub jobs, not set otherwise
+  std::cout << "checking for OUTPUTDIR ";
+  const char* envvar = std::getenv("OUTPUTDIR");
+  if (envvar)
+    outdir = std::string(envvar);
+  
+  std::cout << outdir << std::endl;
+  std::string outname;
+  
   if (trackVal_== 1) {
     myChain = new TChain(TString("analysisTrackerMuons/MuonTree"));
-    g = new TFile(TString(outFile + "TrackerOnly.root"),"RECREATE"); 
+    //g = new TFile(TString(outFile+"TrackerOnly.root"),"RECREATE"); 
+    outname = "TrackerOnly";
     trackAlgo = "trackerOnly";
   }  
   else if (trackVal_== 2) {
     myChain = new TChain(TString("analysisTPFMSMuons/MuonTree"));
-    g = new TFile(TString(outFile + "TPFMS.root"),"RECREATE"); 
+    //g = new TFile(TString(outFile+"TPFMS.root"),"RECREATE"); 
+    outname = "TPFMS";
     trackAlgo = "tpfms";
   }  
   else if (trackVal_== 3) {
     myChain = new TChain(TString("analysisDYTMuons/MuonTree"));
-    g = new TFile(TString(outFile + "DYTT.root"),"RECREATE"); 
+    //g = new TFile(TString(outFile+"DYTT.root"),"RECREATE"); 
+    outname = "DYTT";
     trackAlgo = "dyt";
   } 
   else if (trackVal_== 4) {
     myChain = new TChain(TString("analysisPickyMuons/MuonTree"));
-    g = new TFile(TString(outFile + "Picky.root"),"RECREATE"); 
+    //g = new TFile(TString(outFile+"Picky.root"),"RECREATE"); 
+    outname = "Picky";
     trackAlgo = "picky";
   } 
   else if (trackVal_== 5) {
     myChain = new TChain(TString("analysisTunePMuons/MuonTree"));
-    g = new TFile(TString(outFile + "TuneP.root"),"RECREATE"); 
+    //g = new TFile(TString(outFile+"TuneP.root"),"RECREATE"); 
+    outname = "TuneP";
     trackAlgo = "tuneP";
   } 
   else {
     std::cout << "INVALID TRACK SPECIFIED! Choose a value between [1, 5]" << std::endl;
     return;
   }  
+
+  std::cout << "chose the track object"  << std::endl;
+
+  std::stringstream outrootfile, outlumifile;
+  if (outdir.find("/tmp") != std::string::npos) {
+    outrootfile << outdir << "/" << outFile << outname;
+    outlumifile << outdir << "/" << outFile << trackAlgo;
+  }
+  else {
+    outrootfile << outFile << outname;
+    outlumifile << outFile << trackAlgo;
+  }
+
+  std::cout << "checked for found OUTPUTDIR "
+	    << outdir            << std::endl
+	    << outrootfile.str() << std::endl
+	    << outlumifile.str() << std::endl;
+
+  g = new TFile(TString(outrootfile.str()+".root"),"RECREATE"); 
+  //if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
+    lumiFileOut100_loose.open(outlumifile.str()+"_pt100_loose.txt");
+    lumiFileOut200_loose.open(outlumifile.str()+"_pt200_loose.txt");
+    lumiFileOut400_loose.open(outlumifile.str()+"_pt400_loose.txt");
+    
+    lumiFileOut100_tight.open(outlumifile.str()+"_pt100_tight.txt");
+    lumiFileOut200_tight.open(outlumifile.str()+"_pt200_tight.txt");
+    lumiFileOut400_tight.open(outlumifile.str()+"_pt400_tight.txt");
+  //}
   
   std::cout << "Processing tracks from " << trackAlgo << " algorithm" << std::endl;
 
-  //if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
-    lumiFileOut100_loose.open(outFile+trackAlgo+"_pt100_loose.txt");
-    lumiFileOut200_loose.open(outFile+trackAlgo+"_pt200_loose.txt");
-    lumiFileOut400_loose.open(outFile+trackAlgo+"_pt400_loose.txt");
-    
-    lumiFileOut100_tight.open(outFile+trackAlgo+"_pt100_tight.txt");
-    lumiFileOut200_tight.open(outFile+trackAlgo+"_pt200_tight.txt");
-    lumiFileOut400_tight.open(outFile+trackAlgo+"_pt400_tight.txt");
-  //}
   
   std::string name;
   std::stringstream inputfiles;
-  std::string jobdir = std::getenv("AFSJOBDIR");
 
+  std::string jobdir;
+  std::cout << "checking for AFSJOBDIR ";
+  const char* afsvar = std::getenv("AFSJOBDIR");
+  if (afsvar)
+    jobdir = std::string(afsvar);
+  
   // what if AFSJOBDIR is not set, then just assume current working directory
   if (jobdir.find("afs") != std::string::npos)
     inputfiles << jobdir << "/" << filelist;
