@@ -2192,6 +2192,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
       if (debug)
 	std::cout << "Made it through " << j << " sets of fills" << std::endl;	
 
+      // print the event info to the file for various selections
       if (symmetric_ && (maxBias_ < 0.0005)) {
 	if (hasPt100Loose)
 	  lumiFileOut100_loose
@@ -2267,4 +2268,3 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 
   return;
 }
-
