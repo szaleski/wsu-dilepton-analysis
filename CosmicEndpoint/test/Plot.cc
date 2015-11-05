@@ -76,15 +76,15 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   
   std::cout << "Processing tracks from " << trackAlgo << " algorithm" << std::endl;
 
-  if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
-    lumiFileOut100_loose.open(trackAlgo+"_pt100_loose.txt");
-    lumiFileOut200_loose.open(trackAlgo+"_pt200_loose.txt");
-    lumiFileOut400_loose.open(trackAlgo+"_pt400_loose.txt");
+  //if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
+    lumiFileOut100_loose.open(outFile+trackAlgo+"_pt100_loose.txt");
+    lumiFileOut200_loose.open(outFile+trackAlgo+"_pt200_loose.txt");
+    lumiFileOut400_loose.open(outFile+trackAlgo+"_pt400_loose.txt");
     
-    lumiFileOut100_tight.open(trackAlgo+"_pt100_tight.txt");
-    lumiFileOut200_tight.open(trackAlgo+"_pt200_tight.txt");
-    lumiFileOut400_tight.open(trackAlgo+"_pt400_tight.txt");
-  }
+    lumiFileOut100_tight.open(outFile+trackAlgo+"_pt100_tight.txt");
+    lumiFileOut200_tight.open(outFile+trackAlgo+"_pt200_tight.txt");
+    lumiFileOut400_tight.open(outFile+trackAlgo+"_pt400_tight.txt");
+  //}
   
   std::string name;
   std::stringstream inputfiles;
@@ -2215,7 +2215,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
     //  } // end if tracker.Next
   } // end while loop
   
-  if (symmetric_ && (maxBias_ < 0.0005)) {
+  //if (symmetric_ && (maxBias_ < 0.0005) && minPt_ < 100) {
     lumiFileOut100_loose.close();
     lumiFileOut200_loose.close();
     lumiFileOut400_loose.close();
@@ -2223,7 +2223,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
     lumiFileOut100_tight.close();
     lumiFileOut200_tight.close();
     lumiFileOut400_tight.close();
-  }
+  //}
 
   std::cout << std::hex << g << std::dec << std::endl;
   
