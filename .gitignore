@@ -5,3 +5,17 @@
 !*.h
 !*.xml
 __init__.py
+!CosmicEndpoint
+!CosmicEndpoint/interface
+!CosmicEndpoint/plugins
+!CosmicEndpoint/python
+!CosmicEndpoint/test
+!CosmicEndpoint/src
+!MuonAnalyzer
+!MuonAnalyzer/interface
+!MuonAnalyzer/plugins
+!MuonAnalyzer/python
+!MuonAnalyzer/test
+!MuonAnalyzer/src
+!README.md
+!LICENSE
