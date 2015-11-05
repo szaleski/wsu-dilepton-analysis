@@ -44,13 +44,6 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   std::ofstream lumiFileOut200_tight;
   std::ofstream lumiFileOut400_tight;
   
-  std::string outdir; // expect to be in /tmp for bsub jobs, not set otherwise
-  std::cout << "checking for OUTPUTDIR " << std::endl;
-  const char* envvar = std::getenv("OUTPUTDIR");
-  if (envvar)
-    outdir = std::string(envvar);
-  
-  std::cout << outdir << std::endl;
   std::string outname;
   
   if (trackVal_== 1) {
@@ -91,7 +84,14 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   std::cout << "chose the track object"  << std::endl;
 
   std::stringstream outrootfile, outlumifile;
-  if (outdir.find("/tmp") != std::string::npos) {
+  std::string outdir; // expect to be in /tmp for bsub jobs, not set otherwise
+  std::cout << "checking for OUTPUTDIR " << std::endl;
+  const char* envvar = std::getenv("OUTPUTDIR");
+  if (envvar) {
+    outdir = std::string(envvar);
+    
+    std::cout << outdir << std::endl;
+    //if (outdir.find("/tmp") != std::string::npos) {
     outrootfile << outdir << "/" << outFile << outname;
     outlumifile << outdir << "/" << outFile << trackAlgo;
   }
@@ -125,14 +125,16 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   std::string jobdir;
   std::cout << "checking for AFSJOBDIR ";
   const char* afsvar = std::getenv("AFSJOBDIR");
-  if (afsvar)
+  if (afsvar) {
     jobdir = std::string(afsvar);
   
   // what if AFSJOBDIR is not set, then just assume current working directory
-  if (jobdir.find("afs") != std::string::npos)
+  // if (jobdir.find("afs") != std::string::npos)
     inputfiles << jobdir << "/" << filelist;
-  else 
+  }
+  else { 
     inputfiles << "./" << filelist;
+  }
   
   std::ifstream file(inputfiles.str());
   std:: cout << "opening input file list " << inputfiles.str() << std::hex << "  " << file << std::endl;
