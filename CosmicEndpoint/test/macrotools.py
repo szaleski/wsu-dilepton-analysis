@@ -118,7 +118,7 @@ ls -tar
 root -b -q -x %s
 tree
 echo "rsync \"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
-rsync "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
+rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
      #logfile,logfile,
      1000*maxBias,minPt,nBiasBins,
@@ -131,7 +131,8 @@ rsync "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXc
 	f.close()
 	os.chmod(subfile, 0777)
 	# cmd = "bsub -q test -W 0:20 %s/%s"%(subfile) #submit to the test queue if debug (only a single job though
-	cmd = "bsub -q 8nm -W 0:10 %s"%(subfile)
+	#cmd = "bsub -q 8nm -W 0:10 %s"%(subfile)
+	cmd = "bsub -q 1nh -W 0:30 %s"%(subfile)
 	print cmd
 	if not debug:
 		os.system(cmd)
