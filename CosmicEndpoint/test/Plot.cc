@@ -407,7 +407,6 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
     h_looseMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
 						    TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
 						    5000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   }
 
   TH1F *h_tightMuMinusChi2 = new TH1F("tightMuMinusChi2","tightMuMinusChi2", 50, 0., 150.);
@@ -814,7 +813,6 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
     name << std::setw(3) << std::setfill('0') << i + 1;
     h_upperCurvePlusBias[i]  = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + name.str()), 5000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
     h_upperCurveMinusBias[i] = new TH1F(TString("upperCurveMinusBias" + name.str()),TString("upperCurveMinusBias" + name.str()), 5000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
-    //    std::cout << "\nCreated bias empty histograms number: " << i << std::endl;
   } 
 
   TH1F *h_lowerChi2     = new TH1F("lowerChi2",  "lowerChi2",   50, 0., 150.);
@@ -849,7 +847,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
     h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + name.str()), 5000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);  
   }
   
-  std::cout << "\nCreating upper muMinus TTreeReaderValues\n";
+  std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
   TTreeReaderValue<Int_t>    lumi( trackReader, "muonLumiBlock"  );
   TTreeReaderValue<Int_t>    event(trackReader, "muonEventNumber");
@@ -875,7 +873,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   TTreeReaderValue<Int_t> upTrackerLayersWithMeasurement(trackReader,"upperMuon_trackerLayersWithMeasurement");
 
 
-  std::cout << "\nCreating lower muMinus TTreeReaderValues\n";
+  std::cout << "Creating lower muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<Double_t> lowTrackerPt(trackReader,     "lowerMuon_trackPt"        );
   TTreeReaderValue<Int_t>    lowTrackerCharge(trackReader, "lowerMuon_charge"         );
   TTreeReaderValue<ROOT::Math::LorentzVector<ROOT::Math::PxPyPzE4D<double> > > lowTrackerMuonP4(trackReader,"lowerMuon_P4");
@@ -895,14 +893,14 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
   TTreeReaderValue<Int_t>    lowTrackerMatchedMuonStations(trackReader,  "lowerMuon_numberOfMatchedStations"     );
   TTreeReaderValue<Int_t>    lowTrackerLayersWithMeasurement(trackReader,"lowerMuon_trackerLayersWithMeasurement");
   
-  std::cout << "\nMade it to Histogramming!\n";
+  std::cout << "Made it to Histogramming!" << std::endl;
   int j = 0;
   bool debug = false;
 
   
   while (trackReader.Next()) {
     if (debug)
-      std::cout << "\nMade it into the first loop\n" << std::endl;
+      std::cout << "Made it into the first loop" << std::endl;
     g->cd();
 
     bool hasPt100Loose(false), hasPt200Loose(false), hasPt400Loose(false);
@@ -1017,7 +1015,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	  h_upperCurvePlusBias[i]->Fill( upperCpT+(i+1)*(factor_*maxBias/nBiasBins));
 	  h_upperCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	  if (debug)
-	    std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	    std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	}
 
 	h_countersUpper->Fill(0);
@@ -1181,7 +1179,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	    h_muUpperMinusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	  
 	    if (debug)
-	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	      std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	  }
 	
 	  // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
@@ -1277,7 +1275,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 		h_tightMuUpperMinusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	      }
 	      if (debug)
-		std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+		std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	    }
 	  } // end if (up_n1pt)
 
@@ -1388,7 +1386,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	    h_muUpperPlusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));
 	  
 	    if (debug)
-	      std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+	      std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	  }
 	
 	  // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
@@ -1476,7 +1474,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 		h_tightMuUpperPlusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));
 	      }
 	      if (debug)
-		std::cout << "\nMade it through the upper bias loop " << i << std::endl; 
+		std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	    }
 	    // end if (up_n1pt)
 	  }
@@ -1649,7 +1647,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	  h_lowerCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
 	  h_lowerCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	  if (debug)
-	    std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
+	    std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	}
 
 	h_countersLower->Fill(0);
@@ -1816,7 +1814,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	    h_muLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 
 	    if (debug)
-	      std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
+	      std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	  }
 	
 	  // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
@@ -1904,7 +1902,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 		h_tightMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	      }
 	      if (debug)
-		std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
+		std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	    }
 	  } // end if (low_n1pt)
 
@@ -2019,7 +2017,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 	    h_muLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 
 	    if (debug)
-	      std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
+	      std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	  }
 	
 	  // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
@@ -2121,7 +2119,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
 		h_tightMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 	      }
 	      if (debug)
-		std::cout << "\nMade it through the lower bias loop " << i << std::endl; 
+		std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	    }
 	  }
 
@@ -2192,7 +2190,7 @@ void Plot(std::string const& filelist, std::string const& outFile, int trackVal_
       // end of the loop
       j++;
       if (debug)
-	std::cout << "\n\nMade it through " << j << " sets of fills\n";	
+	std::cout << "Made it through " << j << " sets of fills" << std::endl;	
 
       if (symmetric_ && (maxBias_ < 0.0005)) {
 	if (hasPt100Loose)
