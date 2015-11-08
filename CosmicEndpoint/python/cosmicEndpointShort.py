@@ -50,6 +50,7 @@ class cosmicEndpointShort() :
     def runMinimization(self, histBaseName, obsName, refName, needsFlip):
         import ROOT as r
         self.outfile.cd()
+        print self.infiles
         picky = self.makeGraph(self.infiles["picky"],histBaseName, obsName, refName, "picky", needsFlip)
         dyt   = self.makeGraph(self.infiles["dyt"  ],histBaseName, obsName, refName, "dyt"  , needsFlip)
         tunep = self.makeGraph(self.infiles["tunep"],histBaseName, obsName, refName, "tunep", needsFlip)
@@ -126,11 +127,12 @@ class cosmicEndpointShort() :
 
         obs = f.Get("%s%sCurve"%(histBaseName,obsName))
         ref = f.Get("%s%sCurve"%(histBaseName,refName))
+        print obs
+        print ref
+        print f
+
         obs = obs.Rebin(self.rebins)
         ref = ref.Rebin(self.rebins)
-        # print obs
-        # print ref
-        # print f
 
         myCan1 = r.TCanvas("%s_%s_original"%(histBaseName,trackName),
                            "%s_%s_original"%(histBaseName,trackName),

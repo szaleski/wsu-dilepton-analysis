@@ -45,5 +45,5 @@ if __name__ == "__main__":
     if options.symmetric:
         needsFlip = True
 
-    myStudy.runMinimization("looseMuUpper","Minus", "Plus", needsFlip) # run with the minus as the observed, plus as the reference
-    # myStudy.runMinimization("looseMuUpper","Plus", "Minus", needsFlip)
+#    myStudy.runMinimization("looseLower","Muon", "AntiMuon", needsFlip) # run with the minus as the observed, plus as the reference
+    myStudy.runMinimization("looseMuUpper","Plus", "Minus", needsFlip)
