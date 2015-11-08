@@ -4,42 +4,9 @@ import ROOT as r
 
 from optparse import OptionParser
 #from histograms import outputHistograms
+from wsuPythonUtils import checkRequiredArguments
+from wsuPyROOTUtils import makeNicePlot
 
-def makeNicePlot(hist,params,debug=False):
-    if debug:
-        print hist
-        print params
-
-        #color,marker,coords,stats,
-    hist.SetLineWidth(2)
-    hist.SetLineColor(params["color"])
-    hist.SetMarkerStyle(params["marker"])
-    hist.SetMarkerColor(params["color"])
-    hist.SetMarkerStyle(params["marker"])
-    hstat = hist.FindObject("stats")
-    if debug:
-        print hstat
-    hstat.SetTextColor(params["color"])
-    hstat.SetOptStat(params["stats"])
-    if params["coords"]["x"][0] > -0.1:
-        hstat.SetX1NDC(params["coords"]["x"][0])
-    if params["coords"]["x"][1] > -0.1:
-        hstat.SetX2NDC(params["coords"]["x"][1])
-    if params["coords"]["y"][0] > -0.1:
-        hstat.SetY1NDC(params["coords"]["y"][0])
-    if params["coords"]["y"][1] > -0.1:
-        hstat.SetY2NDC(params["coords"]["y"][1])
-    return hist
-
-def checkRequiredArguments(opts, parser):
-    """From: http://stackoverflow.com/questions/4407539/python-how-to-make-an-option-to-be-required-in-optparse"""
-    missing_options = []
-    for option in parser.option_list:
-        if re.match(r'^\[REQUIRED\]', option.help) and eval('opts.' + option.dest) == None:
-            missing_options.extend(option._long_opts)
-        if len(missing_options) > 0:
-            parser.error('Missing REQUIRED parameters: ' + str(missing_options))
-                                                        
 if __name__ == "__main__":
     parser = OptionParser(usage="Usage: %prog -i inputfile.root -o outputfile.root [-d]")
     parser.add_option("-i", "--infile", type="string", dest="infile",

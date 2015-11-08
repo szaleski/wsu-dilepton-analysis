@@ -117,7 +117,7 @@ cd ${JOBDIR}
 ls -tar
 root -b -q -x %s
 tree
-echo "rsync \"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
+echo "rsync \\"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
 rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
      #logfile,logfile,
