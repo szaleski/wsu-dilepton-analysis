@@ -916,7 +916,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   
   std::cout << "Made it to Histogramming!" << std::endl;
   int j = 0;
-  double maxDR = 0.3;
+  double maxDR = 0.15; // what is reasonable here? Aachen did dPhi < 0.1, dTheta (eta?) < 0.05
   while (trackReader.Next()) {
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
