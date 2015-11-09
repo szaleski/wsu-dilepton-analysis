@@ -229,10 +229,10 @@ void Plot(std::string const& filelist, std::string const& outFile,
   }
 
   // histograms for upper leg muons, inclusive
-  TH1F *h_upperPt       = new TH1F("upperPt", "upperPt", 300, 0., 3000.);
-  TH1F *h_upperEta      = new TH1F("upperEta","upperEta", 40, -2., 2.);
-  TH1F *h_upperPhi      = new TH1F("upperPhi","upperPhi", 40, -4., 4.);
-  TH1F *h_upperChi2     = new TH1F("upperChi2",  "upperChi2",   50, 0., 150.);
+  TH1F *h_upperPt       = new TH1F("upperPt",    "upperPt",    300,  0., 3000.);
+  TH1F *h_upperEta      = new TH1F("upperEta",   "upperEta",    40, -2.,    2.);
+  TH1F *h_upperPhi      = new TH1F("upperPhi",   "upperPhi",    40, -4.,    4.);
+  TH1F *h_upperChi2     = new TH1F("upperChi2",  "upperChi2",   50,  0.,  150.);
   TH1F *h_upperNdof     = new TH1F("upperNdof",  "upperNdof",   100, -0.5, 99.5);
   TH1F *h_upperCharge   = new TH1F("upperCharge","upperCharge", 3, -1.5, 1.5);
   TH1F *h_upperCurve    = new TH1F("upperCurve", "upperCurve",  5000, symmetric_ ? -0.01*factor_ : 0., 0.01*factor_);
@@ -916,7 +916,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   
   std::cout << "Made it to Histogramming!" << std::endl;
   int j = 0;
-  
+  double maxDR = 0.3;
   while (trackReader.Next()) {
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
@@ -927,9 +927,30 @@ void Plot(std::string const& filelist, std::string const& outFile,
     
     std::stringstream upperstring;
     std::stringstream lowerstring;
-
+    
+    // make sure we're not reading from the skipped events
     if (*upTrackerChi2 > -1) {
-      if (sqrt(upTrackerTrack->perp2()) > minPt_) {
+      // what about cases where the upper/lower muon have pT passing, but not the other leg
+      // also, interest in (q/pT_up - q/pT_low)/(sqrt(2)*(q/pT_low)), relative residual
+      // and possibly (q/pT_low - q/pT_up)/(sqrt(2)*(q/pT_up)), relative residual?
+      // binned vs. pT (50,60,75,100,150,200,300,400,500,750,1000,1500,2000,3000,inf?
+      // can't apply a tight min pT cut for these
+      // should we apply a dR cut to ensure they are well matched, e.g., dR < 0.1, 0.3?
+      
+      //if (sqrt(upTrackerTrack->perp2()) > minPt_) {
+      if (sqrt(upTrackerTrack->perp2()) > minPt_ || sqrt(lowTrackerTrack->perp2()) > minPt_) {
+	/** ensure that the two muon tracks are indeed the same muon */
+	// double deltaR = upTrackerMuonP4->DR(*lowTrackerMuonP4); // why doesn't this work?
+	double dEta = upTrackerMuonP4->eta()-lowTrackerMuonP4->eta();
+	double dPhi = upTrackerMuonP4->phi()-lowTrackerMuonP4->phi();
+	if (dPhi >= M_PI)
+	  dPhi-=2*M_PI;
+	else if (dPhi < -M_PI)
+	  dPhi+=2*M_PI;
+	double deltaR = sqrt((dEta*dEta) + (dPhi*dPhi));
+	if (deltaR > maxDR)
+	  continue;
+	
 	double upperCpT = factor_*(*upTrackerCharge)/(sqrt(upTrackerTrack->perp2())); //(*upTrackerMuonP4).Pt();
 	// make the curvature absolute value (asymmetric)
 	if (!symmetric_)
@@ -1572,11 +1593,13 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    }
 	  } // end setting up bools for lumi print info
 	} // end check on up_superpointing
-      } // end if (sqrt(upTrackerTrack->perp2()) > minPt_)
+	
+	/* // commented out to include or of tracks
+	} // end if (sqrt(upTrackerTrack->perp2()) > minPt_)
 
-      //////// Lower muon leg ///////
-      // what about cases where the upper/lower muon have pT passing, but not the other leg
-      if (sqrt(lowTrackerTrack->perp2()) > minPt_) {
+	//////// Lower muon leg ///////
+	if (sqrt(lowTrackerTrack->perp2()) > minPt_) {
+	*/
 	double lowerCpT = factor_*(*lowTrackerCharge)/(sqrt(lowTrackerTrack->perp2()));
 	if (!symmetric_)
 	  lowerCpT = factor_/(sqrt(lowTrackerTrack->perp2()));
@@ -2218,8 +2241,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    }
 	  } // end setting up bools for lumi print info
 	} // end check on low_superpointing
-      } // end if (sqrt(lowTrackerTrack->perp2()) > minPt_)
-      
+	//} // end if (sqrt(lowTrackerTrack->perp2()) > minPt_)
+      } // end if (sqrt(upTrackerTrack->perp2()) > minPt_ || sqrt(lowTrackerTrack->perp2()) > minPt_)
       // end of the loop
       j++;
       if (debug)
