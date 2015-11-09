@@ -1557,24 +1557,25 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  if (up_n1pt) {
 	    if (sqrt(upTrackerTrack->perp2()) > 100) {
 	      hasPt100Loose = true;
-	      if (up_n1dxymax && up_n1dzmax)
+	      if (up_tightdxy && up_tightdz)
 		hasPt100Tight = true;
 	      if (sqrt(upTrackerTrack->perp2()) > 200) {
 		hasPt200Loose = true;
-		if (up_n1dxymax && up_n1dzmax)
+		if (up_tightdxy && up_tightdz)
 		  hasPt200Tight = true;
 		if (sqrt(upTrackerTrack->perp2()) > 400) {
 		  hasPt400Loose = true;
-		  if (up_n1dxymax && up_n1dzmax)
+		  if (up_tightdxy && up_tightdz)
 		    hasPt400Tight = true;
 		}
 	      }
 	    }
 	  } // end setting up bools for lumi print info
 	} // end check on up_superpointing
-      } // end if (sqrt(upTrackerTrack->perp2()) > minPt_)      
+      } // end if (sqrt(upTrackerTrack->perp2()) > minPt_)
 
       //////// Lower muon leg ///////
+      // what about cases where the upper/lower muon have pT passing, but not the other leg
       if (sqrt(lowTrackerTrack->perp2()) > minPt_) {
 	double lowerCpT = factor_*(*lowTrackerCharge)/(sqrt(lowTrackerTrack->perp2()));
 	if (!symmetric_)
@@ -2202,15 +2203,15 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  if (low_n1pt) {
 	    if (sqrt(lowTrackerTrack->perp2()) > 100) {
 	      hasPt100Loose = true;
-	      if (low_n1dxymax && low_n1dzmax)
+	      if (low_tightdxy && low_tightdz)
 		hasPt100Tight = true;
 	      if (sqrt(lowTrackerTrack->perp2()) > 200) {
 		hasPt200Loose = true;
-		if (low_n1dxymax && low_n1dzmax)
+		if (low_tightdxy && low_tightdz)
 		  hasPt200Tight = true;
 		if (sqrt(lowTrackerTrack->perp2()) > 400) {
 		  hasPt400Loose = true;
-		  if (low_n1dxymax && low_n1dzmax)
+		  if (low_tightdxy && low_tightdz)
 		    hasPt400Tight = true;
 		}
 	      }
@@ -2229,8 +2230,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\"" << *run << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
       
       if (hasPt100Tight)
@@ -2238,8 +2239,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\""  << *run  << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
       
       if (hasPt200Loose)
@@ -2247,8 +2248,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\"" << *run << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
       
       if (hasPt200Tight)
@@ -2256,8 +2257,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\""  << *run  << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
       
       if (hasPt400Loose)
@@ -2265,8 +2266,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\"" << *run << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
       
       if (hasPt400Tight)
@@ -2274,8 +2275,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  << "\""  << *run  << "\":"
 	  << " [[" << *lumi << "," << *lumi << "]]"
 	  << " : " << *event
-	  << "  " << upperstring.str()
-	  << "  " << lowerstring.str()
+	  << " (upper leg) " << upperstring.str()
+	  << " (lower leg) " << lowerstring.str()
 	  << std::endl;
     } // closing if (*upTrackerChi2 > -1)
   } // end while loop
