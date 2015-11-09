@@ -139,8 +139,8 @@ class cosmicEndpointShort() :
         ref = f.Get("%s%sCurve"%(histBaseName,refName))
 
         # set bin content to 0 for bins outside the min pT cut
-        #obs = self.setMinPT(obs,5000,200./1000.)
-        #ref = self.setMinPT(ref,5000,200./1000.)
+        obs = self.setMinPT(obs,5000,200./1000.)
+        ref = self.setMinPT(ref,5000,200./1000.)
         
         obs = obs.Rebin(self.rebins)
         ref = ref.Rebin(self.rebins)
@@ -218,11 +218,11 @@ class cosmicEndpointShort() :
         xVals["AD"][nBiasBins] = 0.
         yVals["AD"][nBiasBins] = obs.AndersonDarlingTest(ref,"D")
 
-        chi2opts = "UUNORMPCHI2/NDF"
+        chi2opts = "PUUNORMCHI2/NDF"
         xVals["Chi2"][nBiasBins] = 0.
         resids = np.zeros(5000,np.dtype('float64')) # pointer argument, one per bin, not quite working
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,"PCHI2/NDF",resids)
-        yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,chi2opts,resids)
+        #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,chi2opts,resids)
         if getResiduals:
             print "residuals", resids
             self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].cd()
@@ -246,17 +246,19 @@ class cosmicEndpointShort() :
         histopts = "UUNORM" # unweighted/weighted, normalized
         #histopts = "UUNORM" # unweighted/weighted, normalized
         
-        dummy = obs.Chi2Test(ref,"PCHI2/NDF")       # default options, return chi2/ndf, print summary
-        dummy = obs.Chi2Test(ref,"UWPCHI2/NDF")     # histograms are unweighted/weighted, respectively
-        dummy = obs.Chi2Test(ref,"UUPCHI2/NDF")     # unweighted/unweighted, return chi2/ndf, print summary
-        dummy = obs.Chi2Test(ref,"UUNORMPCHI2/NDF") # one or more histogram is scaled
-        dummy = ref.Chi2Test(obs,"UWNORMPCHI2/NDF") # 
-        dummy = obs.Chi2Test(ref,"UWNORMPCHI2/NDF") # 
+        #dummy = obs.Chi2Test(ref,"PCHI2/NDF")       # default options, return chi2/ndf, print summary
+        #dummy = obs.Chi2Test(ref,"UWPCHI2/NDF")     # histograms are unweighted/weighted, respectively
+        #dummy = obs.Chi2Test(ref,"UUPCHI2/NDF")     # unweighted/unweighted, return chi2/ndf, print summary
+        #dummy = obs.Chi2Test(ref,"UUNORMPCHI2/NDF") # one or more histogram is scaled
+        #dummy = ref.Chi2Test(obs,"UWNORMPCHI2/NDF") # 
+        #dummy = obs.Chi2Test(ref,"UWNORMPCHI2/NDF") # 
 
         prob = obs.Chi2TestX(ref,chi2Val,chi2ndf,igood,histopts,resids)
+        print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
         if chi2ndf > 0:
-            yVals["Chi2"][nBiasBins] = chi2Val/chi2ndf
+            yVals["Chi2"][nBiasBins] = chi2Val/(1.*chi2ndf)
         else:
+            print "problem, no degrees of freedom"
             yVals["Chi2"][nBiasBins] = -1
             
         if getResiduals:
@@ -305,38 +307,18 @@ class cosmicEndpointShort() :
             obs_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,obsName,i+1))
             obs_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,obsName,i+1))
             # set bin content to 0 for bins outside the min pT cut
-            #obs_posBias = self.setMinPT(obs_posBias,5000,200./1000.)
-            #obs_negBias = self.setMinPT(obs_negBias,5000,200./1000.)
+            obs_posBias = self.setMinPT(obs_posBias,5000,200./1000.)
+            obs_negBias = self.setMinPT(obs_negBias,5000,200./1000.)
             obs_posBias.Rebin(self.rebins)
             obs_negBias.Rebin(self.rebins)
         
             ref_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,refName,i+1))
             ref_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,refName,i+1))
-            #ref_posBias = self.setMinPT(ref_posBias,5000,200./1000.)
-            #ref_negBias = self.setMinPT(ref_negBias,5000,200./1000.)
+            ref_posBias = self.setMinPT(ref_posBias,5000,200./1000.)
+            ref_negBias = self.setMinPT(ref_negBias,5000,200./1000.)
             ref_posBias.Rebin(self.rebins)
             ref_negBias.Rebin(self.rebins)
 
-            obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
-            obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
-            
-            for b in range(obs_posBias.GetNbinsX()):
-                obs_posBiasValsX[b] = b+1
-                obs_negBiasValsX[b] = b+1
-                obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
-                obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
-
-            if (needsFlip):
-                obs_posBiasValsYRev = np.fliplr([obs_posBiasValsY])[0]
-                obs_negBiasValsYRev = np.fliplr([obs_negBiasValsY])[0]
-                # obs_posBias.SetContent(obs_posBiasValsYRev)
-                # obs_negBias.SetContent(obs_negBiasValsYRev)
-                for b in range(obs_posBias.GetNbinsX()):
-                    obs_posBias.SetBinContent(b+1,obs_posBiasValsYRev[b])
-                    obs_negBias.SetBinContent(b+1,obs_negBiasValsYRev[b])
-                
             if (i%100 == 0):
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
                 posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i),
@@ -366,6 +348,56 @@ class cosmicEndpointShort() :
 
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
+
+            obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+            obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+            obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            
+            for b in range(obs_posBias.GetNbinsX()):
+                obs_posBiasValsX[b] = b+1
+                obs_negBiasValsX[b] = b+1
+                obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
+                obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
+
+            if (needsFlip):
+                obs_posBiasValsYRev = np.fliplr([obs_posBiasValsY])[0]
+                obs_negBiasValsYRev = np.fliplr([obs_negBiasValsY])[0]
+                # obs_posBias.SetContent(obs_posBiasValsYRev)
+                # obs_negBias.SetContent(obs_negBiasValsYRev)
+                for b in range(obs_posBias.GetNbinsX()):
+                    obs_posBias.SetBinContent(b+1,obs_posBiasValsYRev[b])
+                    obs_negBias.SetBinContent(b+1,obs_negBiasValsYRev[b])
+                
+            if (i%100 == 0):
+                self.outdirs["obs_%s"%(obsName)][trackName].cd()
+                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i),
+                                       "%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i),
+                                       800,800)
+                obs_posBias.SetLineColor(r.kRed)
+                obs_posBias.SetLineWidth(2)
+                ref_posBias.SetLineColor(r.kBlue)
+                ref_posBias.SetLineWidth(2)
+                
+                obs_posBias.Draw("ep0")
+                ref_posBias.Draw("ep0sames")
+                posBiasCan.Write("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i))
+
+                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i),
+                                       "%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i),
+                                       800,800)
+                obs_negBias.SetLineColor(r.kRed)
+                obs_negBias.SetLineWidth(2)
+                ref_negBias.SetLineColor(r.kBlue)
+                ref_negBias.SetLineWidth(2)
+                
+                obs_negBias.Draw("ep0")
+                ref_negBias.Draw("ep0sames")
+                self.outdirs["obs_%s"%(obsName)][trackName].cd()
+                negBiasCan.Write("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i))
+
+                #self.outfile.cd()
+                #self.outdirs["obs_%s"%(obsName)][trackName].Write()
             
             if (obs_posBias.Integral()>0):
                 obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
@@ -392,13 +424,18 @@ class cosmicEndpointShort() :
             yVals["AD"][nBiasBins+1+i] = obs_posBias.AndersonDarlingTest(ref_posBias,"D")
             
             xVals["Chi2"][nBiasBins+1+i] = biasVal
-            resids = np.zeros(5000,np.dtype('float64'))
+            chi2Val = r.Double(0.) # necessary for pass-by-reference in python
+            chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
+            igood   = r.Long(0)    # necessary for pass-by-reference in python
+            resids  = np.zeros(5000,np.dtype('float64'))
             prob = obs_posBias.Chi2TestX(ref_posBias,chi2Val,chi2ndf,igood,histopts,resids)
+            print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
-                yVals["Chi2"][nBiasBins-(i+1)] = chi2Val/chi2ndf
+                yVals["Chi2"][nBiasBins+1+i] = chi2Val/(1.*chi2ndf)
             else:
-                yVals["Chi2"][nBiasBins-(i+1)] = -1
-            #yVals["Chi2"][nBiasBins-(i+1)] = obs_posBias.Chi2Test(ref_posBias,chi2opts,resids)
+                print "problem, no degrees of freedom"
+                yVals["Chi2"][nBiasBins+1+i] = -1
+            #yVals["Chi2"][nBiasBins+1+i] = obs_posBias.Chi2Test(ref_posBias,chi2opts,resids)
 
             if getResiduals:
                 self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].cd()
@@ -436,11 +473,16 @@ class cosmicEndpointShort() :
             yVals["AD"][nBiasBins-(i+1)] = obs_negBias.AndersonDarlingTest(ref_negBias,"D")
             
             xVals["Chi2"][nBiasBins-(i+1)] = -1.*biasVal
-            resids = np.zeros(5000,np.dtype('float64'))
+            chi2Val = r.Double(0.) # necessary for pass-by-reference in python
+            chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
+            igood   = r.Long(0)    # necessary for pass-by-reference in python
+            resids  = np.zeros(5000,np.dtype('float64'))
             prob = obs_negBias.Chi2TestX(ref_negBias,chi2Val,chi2ndf,igood,histopts,resids)
+            print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
-                yVals["Chi2"][nBiasBins-(i+1)] = chi2Val/chi2ndf
+                yVals["Chi2"][nBiasBins-(i+1)] = chi2Val/(1.*chi2ndf)
             else:
+                print "problem, no degrees of freedom"
                 yVals["Chi2"][nBiasBins-(i+1)] = -1
             #yVals["Chi2"][nBiasBins-(i+1)] = obs_negBias.Chi2Test(ref_negBias,chi2opts)
                 
