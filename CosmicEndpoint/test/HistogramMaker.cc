@@ -87,39 +87,60 @@ namespace wsu {
 	  
 	  for (int leg = 0; leg < 3; ++leg) {
 	    for (int ch = 0; ch < 2; ++ch) {
-	      h_Chi2[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2"),    "#Chi^{2}",         100,   -0.5,   99.5 ));
-	      h_Ndof[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5 ));
-	      h_Chi2Ndof[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,   -0.5,   99.5 ));
-	      h_Charge[leg][ch][ptb]   = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Charge"),  "q",                3,     -1.5,   1.5  ));
-	      h_Curve[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Curve"),   "#frac{q}{p_{T}}",  2*500, -0.05,  0.05 ));
-	      h_Dxy[leg][ch][ptb]      = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dxy"),     "D_{xy}",           2*500, -1000., 1000.));
-	      h_Dz[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dz"),      "D_{z}",            2*500, -1000., 1000.));
-	      h_DxyError[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DxyError"),"#DeltaD_{xy}",     100,   -100.,  100. ));
-	      h_DzError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DzError"), "#DeltaD_{z}",      100,   -100.,  100. ));
-	      h_Pt[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Pt"),      "p_{T}",            300,    0.,    3000.));
-	      h_TrackPt[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPt"), "p_{T}",            300,    0.,    3000.));
-	      h_PtError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PtError"), "#Deltap_{T}",      500,    0.,    500. ));
-	      h_TrackEta[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackEta"),"#eta",             2*100, -5.,    5.   ));
-	      h_TrackPhi[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPhi"),"#phi",             2*50,  -4.,    4.   ));
+	      h_Chi2[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2"),    "#Chi^{2}",         50,     0.,    150.));
+	      h_Ndof[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5));
+	      h_Chi2Ndof[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,    0.,    50. ));
+	      h_Charge[leg][ch][ptb]   = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Charge"),  "q",                3,     -1.5,   1.5 ));
+	      h_Curve[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Curve"),   "#frac{q}{p_{T}}",
+									5000,m_confParams.IsSymmetric?-0.01*factor_:0.,0.01*factor_));
+	      
+	      h_CurveLowerResidual[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveLowerResidual"),
+										     "#frac{#frac{q}{p_{T,up}}-#frac{q}{p_{T,low}}}{#sqrt{2}#frac{q}{p_{T,low}}}",
+										     500,-0.5,0.5));
+	      h_CurveUpperResidual[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveUpperResidual"),
+										     "#frac{#frac{q}{p_{T,low}}-#frac{q}{p_{T,up}}}{#sqrt{2}#frac{q}{p_{T,up}}}",
+										     500,-0.5,0.5));
+
+	      h_CurveLowerPulls[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveLowerPulls"),
+										  "#frac{#frac{q}{p_{T,up}}-#frac{q}{p_{T,low}}}{#sqrt{#sigma^{2}_{#frac{q}{p_{T}}}^{up}+#sigma^{2}_{#frac{q}{p_{T}}}^{low}}",
+										  500,-2.5,2.5));
+	      h_CurveUpperPulls[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveUpperPulls"),
+										  "#frac{#frac{q}{p_{T,low}}-#frac{q}{p_{T,up}}}{#sqrt{#sigma^{2}_{#frac{q}{p_{T}}}^{low}+#sigma^{2}_{#frac{q}{p_{T}}}^{up}}",
+										  500,-2.5,2.5));
+	      
+	      h_Dxy[leg][ch][ptb]      = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dxy"),     "D_{xy}",           100, -100., 100. ));
+	      h_Dz[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Dz"),      "D_{z}",            100, -250., 250. ));
+	      h_DxyError[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DxyError"),"#DeltaD_{xy}",     50,   0.,   150. ));
+	      h_DzError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_DzError"), "#DeltaD_{z}",      50,   0.,   150. ));
+	      h_Pt[leg][ch][ptb]       = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Pt"),      "p_{T}",            300,  0.,   3000.));
+	      h_TrackPt[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPt"), "p_{T}",            300,  0.,   3000.));
+	      h_PtError[leg][ch][ptb]  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PtError"), "#Deltap_{T}",      100,  0.,   500. ));
+	      h_PtRelErr[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PtRelErr"),"#Deltap_{T}/p_{T}",100,  0.,   1.   ));
+	      h_TrackEta[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackEta"),"#eta",             50,  -2.5,  2.5  ));
+	      h_TrackPhi[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TrackPhi"),"#phi",             40,  -4.,   4.   ));
 	    
 	      h_PixelHits[leg][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_PixelHits"),         "N_{pix. hits}",
-										       100, -0.5, 99.5 ));
+										       10, -0.5, 9.5 ));
 	      h_TkHits[leg][ch][ptb]                  = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TkHits"),            "N_{trk. hits}",
-										       100, -0.5, 99.5 ));
+										       50, -0.5, 49.5 ));
 	      h_MuonStationHits[leg][ch][ptb]         = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_MuonStationHits"),   "N_{station hits}",
-										       20,  -0.5, 19.5 ));
+										       10, -0.5, 9.5 ));
 	      h_ValidHits[leg][ch][ptb]               = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_ValidHits"),         "N_{hits}",
-										       200, -0.5, 199.5));
+										       75, -0.5, 74.5));
 	      h_MatchedMuonStations[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_MatchedMuonStation"),"N_{matched stations}",
-										       20,  -0.5, 19.5 ));
+										       10, -0.5, 9.5 ));
 	      h_TkLayersWithMeasurement[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_TkLayersWithMeas"),  "N_{trk. layer w/ meas.}",
-										       200, -0.5, 199.5));
+										       40, -0.5, 49.5));
 	    
 	      h_Chi2[leg][ch][ptb]    ->Sumw2();
 	      h_Ndof[leg][ch][ptb]    ->Sumw2();
 	      h_Chi2Ndof[leg][ch][ptb]->Sumw2();
 	      h_Charge[leg][ch][ptb]  ->Sumw2();
 	      h_Curve[leg][ch][ptb]   ->Sumw2();
+	      h_CurveLowerResidual[leg][ch][ptb]->Sumw2();
+	      h_CurveUpperResidual[leg][ch][ptb]->Sumw2();
+	      h_CurveLowerPulls[leg][ch][ptb]->Sumw2();
+	      h_CurveUpperPulls[leg][ch][ptb]->Sumw2();
 	      h_Dxy[leg][ch][ptb]     ->Sumw2();
 	      h_Dz[leg][ch][ptb]      ->Sumw2();
 	      h_DxyError[leg][ch][ptb]->Sumw2();
@@ -127,6 +148,7 @@ namespace wsu {
 	      h_Pt[leg][ch][ptb]      ->Sumw2();
 	      h_TrackPt[leg][ch][ptb] ->Sumw2();
 	      h_PtError[leg][ch][ptb] ->Sumw2();
+	      h_PtRelErr[leg][ch][ptb]->Sumw2();
 	      h_TrackEta[leg][ch][ptb]->Sumw2();
 	      h_TrackPhi[leg][ch][ptb]->Sumw2();
 	      
@@ -136,44 +158,47 @@ namespace wsu {
 	      h_ValidHits[leg][ch][ptb]              ->Sumw2();
 	      h_MatchedMuonStations[leg][ch][ptb]    ->Sumw2();
 	      h_TkLayersWithMeasurement[leg][ch][ptb]->Sumw2();
-	    
-	      for (int i = 0; i < m_nBiasBins; ++i) {
-		std::stringstream name;
-		double biasValue = (m_maxBias/m_nBiasBins)*(i+1);
-		name << std::setw(3) << std::setfill('0') << i + 1;
-
-		// inject positive bias
-		TString histname
-		  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurvePlusBias_"+name.str());
-		name.str("");
-		name.clear();
-		name << biasValue;
-		TString histtitle("#frac{q}{p_{T}}+#Delta#kappa("+name.str()+")");
-		if (m_debug > DebugLevel::BIASHISTOGRAMS)
-		  std::cout << "creating histogram " << histname << " " << histtitle
-			    << std::endl << std::flush;
-		h_CurvePlusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle, 2*500,
-										  -0.05, 0.05));
-		h_CurvePlusBias[leg][ch][ptb][i]->Sumw2();
-
-		// inject negative bias
-		name.str("");
-		name.clear();
-		name << std::setw(3) << std::setfill('0') << i + 1;
-		TString histname2
-		  = TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveMinusBias_"+name.str());
-		name.str("");
-		name.clear();
-		name << biasValue;
-		TString histtitle2 = TString("#frac{q}{p_{T}}-#Delta#kappa("+name.str()+")");
-		if (m_debug > DebugLevel::BIASHISTOGRAMS)
-		  std::cout << "trying to create problematic histogram " << histname2 << " " 
-			    << histtitle2 << std::endl << std::flush;
-		h_CurveMinusBias[leg][ch][ptb][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2,
-										   2*500, -0.05, 0.05));
-		h_CurveMinusBias[leg][ch][ptb][i]->Sumw2();
-	      }
 	    }// end loop on pt binnings
+	    
+	    // biasing in the curvature inclusive in pT
+	    for (int i = 0; i < m_nBiasBins; ++i) {
+	      std::stringstream name;
+	      double biasValue = (m_maxBias/m_nBiasBins)*(i+1);
+	      name << std::setw(3) << std::setfill('0') << i + 1;
+	      
+	      // inject positive bias
+	      TString histname = TString(charge[ch]+"_"+legs[leg]+"_CurvePlusBias_"+name.str());
+	      name.str("");
+	      name.clear();
+	      name << biasValue;
+	      TString histtitle("#frac{q}{p_{T}}+#Delta#kappa("+name.str()+")");
+	      if (m_debug > DebugLevel::BIASHISTOGRAMS)
+		std::cout << "creating histogram " << histname << " " << histtitle
+			  << std::endl << std::flush;
+	      h_CurvePlusBias[leg][ch][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle,
+									   5000,
+									   m_confParams.IsSymmetric?-0.01*factor_:0.,
+									   0.01*factor_));
+	      h_CurvePlusBias[leg][ch][i]->Sumw2();
+	      
+	      // inject negative bias
+	      name.str("");
+	      name.clear();
+	      name << std::setw(3) << std::setfill('0') << i + 1;
+	      TString histname2 = TString(charge[ch]+"_"+legs[leg]+"_CurveMinusBias_"+name.str());
+	      name.str("");
+	      name.clear();
+	      name << biasValue;
+	      TString histtitle2 = TString("#frac{q}{p_{T}}-#Delta#kappa("+name.str()+")");
+	      if (m_debug > DebugLevel::BIASHISTOGRAMS)
+		std::cout << "trying to create problematic histogram " << histname2 << " " 
+			  << histtitle2 << std::endl << std::flush;
+	      h_CurveMinusBias[leg][ch][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2,
+									    5000,
+									    m_confParams.IsSymmetric?-0.01*factor_:0.,
+									    0.01*factor_));
+	      h_CurveMinusBias[leg][ch][i]->Sumw2();
+	    }
 	  }// end loop on different charge histograms
 	}// end loop on different muon leg histograms
 	std::cout << "Ending the HistogramMaker constructor" << std::endl << std::flush;
@@ -586,8 +611,8 @@ namespace wsu {
 	      h_TkLayersWithMeasurement[combUp[fill]][(charge<0)?0:1][12]->Fill(*upTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < m_nBiasBins; ++i) {
-		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
-		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][i]->Fill(upperCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][i]->Fill(upperCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
 	      */
 	      charge = *lowTrackCharge;
@@ -624,8 +649,8 @@ namespace wsu {
 	      h_TkLayersWithMeasurement[combLow[fill]][(charge<0)?0:1][12]->Fill(*lowTrackTkLayersWithMeasurement);
 	      
 	      for (int i = 0; i < m_nBiasBins; ++i) {
-		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][12][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
-		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][12][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurvePlusBias[combLow[fill]][ (charge<0)?0:1][i]->Fill(lowerCpT+(i+1)*(m_maxBias/m_nBiasBins));
+		h_CurveMinusBias[combLow[fill]][(charge<0)?0:1][i]->Fill(lowerCpT-(i+1)*(m_maxBias/m_nBiasBins));
 	      }
 	      */
 	      if (fill == 0) {

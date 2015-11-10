@@ -52,8 +52,8 @@ namespace wsu {
 	  numMatchedStations = 1;
 	  numTkLayersWMeas   = 5;
 	  ptRelErr = 0.3;
-	  dBMax    = 0.2;
-	  dZMax    = 0.5;
+	  dBMax    = 0.2; /** don't apply for cosmics */
+	  dZMax    = 0.5; /** don't apply for cosmics */
 	  rMax     = 10.; /** only for super pointing selection */
 	  zMax     = 50.; /** only for super pointing selection */
 	};
@@ -62,6 +62,7 @@ namespace wsu {
       typedef struct ConfigurationParameters {
 	std::string PathPrefix;
 	int NBiasBins;
+	bool IsSymmetric;
 	double MaxKBias;
 	double MinPtCut;
 	std::string Arbitration; // plus(positive)/minus(negative) as reference
@@ -71,9 +72,10 @@ namespace wsu {
 	
 	ConfigurationParameters() {
 	  PathPrefix  = "root://cms-xrd-global.cern.ch//"; // different xrootd redirectors, or local file
-	  NBiasBins   = 100;
-	  MaxKBias    = 0.05;
-	  MinPtCut    = 100.;
+	  NBiasBins   = 1000;
+	  IsSymmetric = true;
+	  MaxKBias    = 0.0005;
+	  MinPtCut    = 50.;
 	  Arbitration = "positive"; // plus(positive)/minus(negative) as reference
 	  TrackAlgo   = "tunep"; // Tracker, TPFMS, DYT, Picky, TuneP
 	  MuonLeg     = "lower"; // upper, lower, combined
@@ -122,15 +124,18 @@ namespace wsu {
 	std::shared_ptr<TH1D> h_Chi2[3][2][13],   h_Ndof[3][2][13], h_Chi2Ndof[3][2][13];
 	std::shared_ptr<TH1D> h_Charge[3][2][13], h_Curve[3][2][13];
 	std::shared_ptr<TH1D> h_Dxy[3][2][13],    h_Dz[3][2][13],      h_DxyError[3][2][13], h_DzError [3][2][13];
-	std::shared_ptr<TH1D> h_Pt[3][2][13],     h_TrackPt[3][2][13], h_PtError[3][2][13];
+	std::shared_ptr<TH1D> h_Pt[3][2][13],     h_TrackPt[3][2][13], h_PtError[3][2][13],  h_PtRelErr[3][2][13];
 	std::shared_ptr<TH1D> h_TrackEta[3][2][13], h_TrackPhi[3][2][13];
 
 	std::shared_ptr<TH1D> h_TkHits[3][2][13], h_PixelHits[3][2][13], h_ValidHits[3][2][13];
 	std::shared_ptr<TH1D> h_MuonStationHits[3][2][13], h_MatchedMuonStations[3][2][13],
 	  h_TkLayersWithMeasurement[3][2][13];
+
+	std::shared_ptr<TH1D> h_CurveUpperResidual[3][2][13], h_CurveLowerResidual[3][2][13];
+	std::shared_ptr<TH1D> h_CurveUpperPulls[3][2][13],    h_CurveLowerPulls[3][2][13];
 	
-	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][13][100], h_CurveMinusBias[3][2][13][100];
-	// what to do when 100 is too many/few?
+	// doesn't make sense to bin these vs. pT
+	std::shared_ptr<TH1D> h_CurvePlusBias[3][2][1000], h_CurveMinusBias[3][2][1000];
 	
       }; // end class HistogramMaker
     } // end namespace wsu::dileptons::cosmics

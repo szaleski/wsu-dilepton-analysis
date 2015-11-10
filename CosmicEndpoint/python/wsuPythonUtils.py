@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,re
 
 def checkRequiredArguments(opts, parser):
     """From: http://stackoverflow.com/questions/4407539/python-how-to-make-an-option-to-be-required-in-optparse
