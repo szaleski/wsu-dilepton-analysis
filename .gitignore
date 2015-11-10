@@ -19,3 +19,7 @@ __init__.py
 !MuonAnalyzer/src
 !README.md
 !LICENSE
+CosmicEndpoint/test/CosmicPlot.cc
+CosmicEndpoint/test/checkjobs.py
+CosmicEndpoint/test/getLeaves.C
+CosmicEndpoint/test/testing.C

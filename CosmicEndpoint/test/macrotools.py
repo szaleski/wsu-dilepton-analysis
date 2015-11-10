@@ -100,13 +100,13 @@ kinit -R
 aklog
 klist
 
-echo "hostname is $HOSTNAME" #|& tee %s
+echo "hostname is $HOSTNAME"
 export JOBDIR=${PWD}
-echo "batch job directory is ${JOBDIR}" #| tee -a %s
+echo "batch job directory is ${JOBDIR}"
 export OUTPUTDIR=${JOBDIR}/output_b%.2f_pt%2.0f_n%d
-echo "output directory is ${OUTPUTDIR}" #| tee -a %s
+echo "output directory is ${OUTPUTDIR}"
 mkdir ${OUTPUTDIR}
-ls -tar #|tee -a %s
+ls -tar
 
 cd %s
 export AFSJOBDIR=${PWD}
@@ -114,23 +114,25 @@ eval `scramv1 runtime -sh`
 cp Plot* ${JOBDIR}/
 cp %s/%s ${JOBDIR}/
 cd ${JOBDIR}
-ls -tar #|tee -a %s
+ls -tar
 root -b -q -x %s
-tree #|tee -a %s
-echo "rsync \"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
-rsync "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
+tree
+echo "rsync \\"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
+rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
-     logfile,logfile,
+     #logfile,logfile,
      1000*maxBias,minPt,nBiasBins,
-     logfile,logfile,
+     #logfile,logfile,
      os.getcwd(),
-     rootScriptDir,pyCommand,logfile,
-     pyCommand,logfile,
+     rootScriptDir,pyCommand,#logfile,
+     pyCommand,#logfile,
+     socket.gethostname(),
      socket.gethostname()))
 	f.close()
 	os.chmod(subfile, 0777)
 	# cmd = "bsub -q test -W 0:20 %s/%s"%(subfile) #submit to the test queue if debug (only a single job though
-	cmd = "bsub -q 8nm -W 0:10 %s"%(subfile)
+	cmd = "bsub -q 8nh -W 240 %s"%(subfile)
+	#cmd = "bsub -q 1nh -W 0:30 %s"%(subfile)
 	print cmd
 	if not debug:
 		os.system(cmd)
