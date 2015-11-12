@@ -1,10 +1,13 @@
 #include "WSUDiLeptons/MuonAnalyzer/interface/MuonAnalyzer.h"
+#include "DataFormats/Math/interface/deltaPhi.h"
+#include "DataFormats/Math/interface/deltaR.h"
+
 // -*- C++ -*-
 //
-// Package:    CosmicStudies/MuonAnalyzer
+// Package:    WSUDiLeptons/MuonAnalyzer
 // Class:      MuonAnalyzer
 // 
-/**\class MuonAnalyzer MuonAnalyzer.cc CosmicStudies/MuonAnalyzer/plugins/MuonAnalyzer.cc
+/**\class MuonAnalyzer MuonAnalyzer.cc WSUDiLeptons/MuonAnalyzer/plugins/MuonAnalyzer.cc
 
    Description: [one line class summary]
 
@@ -22,8 +25,8 @@
 
 MuonAnalyzer::MuonAnalyzer(const edm::ParameterSet& pset)
 {
-  muonSrc_ = pset.getParameter<edm::InputTag>("muonSrc");
-  debug_ = pset.getParameter<int>("debug");
+  muonSrc_  = pset.getParameter<edm::InputTag>("muonSrc");
+  debug_    = pset.getParameter<int>("debug");
   algoType_ = pset.getParameter<int>("algoType");
   
   //now do what ever initialization is needed
@@ -60,98 +63,82 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   //edm::Handle<edm::View<reco::Muon> > muonColl;
   edm::Handle<reco::MuonCollection > muonColl;
   ev.getByLabel(muonSrc_, muonColl);
-
+  
   event = (ev.id()).event();  
   run   = (ev.id()).run();
   lumi  = ev.luminosityBlock();
   
   type = reco::Muon::SegmentAndTrackArbitration;
   
-  if ( muonColl->size() != 2) return;
+  if ( muonColl->size() < 2)
+    return;
 
-   upperMuon_P4.SetXYZT(0,0,0,-1);
-  lowerMuon_P4.SetXYZT( 0,0,0,-1);
-
-  upperMuon_chi2 = -1;
-  lowerMuon_chi2 = -1;
-
-  upperMuon_ndof = -1;
-  lowerMuon_ndof = -1;
-
-  upperMuon_charge = -1000;
-  lowerMuon_charge = -1000;
-
-  upperMuon_dxy = -1000;
-  lowerMuon_dxy = -1000;
-
-  upperMuon_dz = -1000;
-  lowerMuon_dz = -1000;
-
-  upperMuon_pixelHits = -1;
-  lowerMuon_pixelHits = -1;
-
-  upperMuon_trackerHits = -1;
-  lowerMuon_trackerHits = -1;
-
-  upperMuon_muonStationHits = -1;
-  lowerMuon_muonStationHits = -1;
-
-  upperMuon_numberOfValidHits = -1;
-  lowerMuon_numberOfValidHits = -1;
-
-  upperMuon_numberOfValidMuonHits = -1;
-  lowerMuon_numberOfValidMuonHits = -1;
-
-  upperMuon_numberOfMatchedStations = -1;
-  lowerMuon_numberOfMatchedStations = -1;
-
-  upperMuon_trackerLayersWithMeasurement = -1;
-  lowerMuon_trackerLayersWithMeasurement = -1;
-
-  upperMuon_ptError = -1;
-  lowerMuon_ptError = -1;
-
-  upperMuon_dxyError = -1000;
-  lowerMuon_dxyError = -1000;
-
-  upperMuon_dzError = -1000;
-  lowerMuon_dzError = -1000;
-
-  upperMuon_pT = -1;
-  lowerMuon_pT = -1;
- 
-  upperMuon_trackPt = -1;
-  lowerMuon_trackPt = -1;
-
-  upperMuon_trackVec.SetXYZ(0,0,0);
-  lowerMuon_trackVec.SetXYZ(0,0,0);
-
-  upperMuon_trackerLayersWithMeasurement = -1000;
-  lowerMuon_trackerLayersWithMeasurement = -1000;
+  /*
+    not doing this any more as we need to catch all the good cosmics
+    if ( muonColl->size() != 2)
+    return;
+  */
   
-  upperMuon_numberOfValidMuonHits = -1000;
-  lowerMuon_numberOfValidMuonHits = -1000;
+  upperMuon_P4.SetXYZT(0,0,0,-1); lowerMuon_P4.SetXYZT(0,0,0,-1);
+  upperMuon_pT = -1;              lowerMuon_pT = -1;
   
+  upperMuon_trackVec.SetXYZ(0,0,0); lowerMuon_trackVec.SetXYZ(0,0,0);
+  upperMuon_trackPt = -1;           lowerMuon_trackPt = -1;
+  upperMuon_ptError = -1;           lowerMuon_ptError = -1;
   
+  upperMuon_charge = -10; lowerMuon_charge = -10;
+  upperMuon_chi2   = -1;  lowerMuon_chi2   = -1;
+  upperMuon_ndof   = -1;  lowerMuon_ndof   = -1;
+  
+  upperMuon_dxy      = -1000; lowerMuon_dxy      = -1000;
+  upperMuon_dz       = -1000; lowerMuon_dz       = -1000;
+  upperMuon_dxyError = -1;    lowerMuon_dxyError = -1;
+  upperMuon_dzError  = -1;    lowerMuon_dzError  = -1;
+  
+  upperMuon_pixelHits                    = -1; lowerMuon_pixelHits                    = -1;
+  upperMuon_trackerHits                  = -1; lowerMuon_trackerHits                  = -1;
+  upperMuon_muonStationHits              = -1; lowerMuon_muonStationHits              = -1;
+  upperMuon_numberOfValidHits            = -1; lowerMuon_numberOfValidHits            = -1;
+  upperMuon_numberOfValidMuonHits        = -1; lowerMuon_numberOfValidMuonHits        = -1;
+  upperMuon_numberOfMatchedStations      = -1; lowerMuon_numberOfMatchedStations      = -1;
+  upperMuon_trackerLayersWithMeasurement = -1; lowerMuon_trackerLayersWithMeasurement = -1;
+
+  //int goodPairs[2] = [-1,-1];
+  double deta = 0.1;
+  double dphi = 0.05;
+  double dr   = 0.15;
+  reco::MuonCollection::const_iterator muon = muonColl->begin();
+  std::shared_ptr<reco::Muon> bestMatch = findBestMatch(muon, *muonColl, deta, dphi, dr);
+  std::pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> > bestPair;
+
+  while (bestMatch.get() == NULL && muon != muonColl->end())
+    bestMatch = findBestMatch(++muon, *muonColl, deta, dphi, dr);
+  
+  // have to ensure that we get a pair
+  if (bestMatch.get() == NULL) {
+    std::cout << "unable to match two legs using deta(" << deta
+	      << "), dphi(" << dphi
+	      << "), dr("   << dr
+	      << ")"        << std::endl;
+    return;
+  }
+  bestPair = std::make_pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> >(std::make_shared<reco::Muon>(*muon),
+										       std::make_shared<reco::Muon>(*bestMatch));
   //  reco::TrackHitPattern *upperMuon_numberOfValidHits, *lowerMuon_numberOfValidHits;
   int muIdx = 0;
-  for (reco::MuonCollection::const_iterator muon=muonColl->begin(), muonCollEnd=muonColl->end();muon!=muonCollEnd; ++muon) {
-    if(debug_ > 3){
+  muon = muonColl->begin();
+  for (; muon != muonColl->end(); ++muon) {
+    if (debug_ > 3) {
       std::cout << "globalMuon pt [GeV]: " << muon->pt() << 
 	"  eta : " << muon->eta() << 
 	"  phi : " << muon->phi() << 
 	std::endl;
-    }
-    
-    
-    if (debug_ > 3) {
+      
       if (muon->combinedMuon().isNonnull()) {
 	reco::TrackRef ref = muon->combinedMuon();
 	std::cout << "combinedMuon number of hits: " << ref->numberOfValidHits() << std::endl;
       }
-    }
-    
-    if ( debug_ > 3) {
+      
       if (muon->standAloneMuon().isNonnull()) {
 	reco::TrackRef ref = muon->standAloneMuon();
 	if (ref->innerOk())
@@ -162,21 +149,27 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		    << std::endl;
       }
     }
-      
-    if(debug_ > 1) std::cout << "\n\ncreating Track ref variable\n";
+    
+    if (debug_ > 1)
+      std::cout << "creating Track ref variable" << std::endl;
     
     reco::TrackRef ref;
     
-    if(debug_ > 1) std::cout << "\n variable createing. Calling GetTrackType\n";
+    if (debug_ > 1)
+      std::cout << " variable createing. Calling GetTrackType" << std::endl;
+    
     ref = GetTrackType(algoType_, muon);
     
-    if(debug_ > 1) std::cout << "\nFound Track Type. If NonNull Fill.\n";
+    if (debug_ > 1)
+      std::cout << "Found Track Type. If NonNull Fill." << std::endl;
     
-    if(ref.isNonnull()) TrackFill(ref, muon, type);
+    if (ref.isNonnull())
+      TrackFill(ref, muon, type);
     
-    if(debug_ > 1) std::cout << "\nFilled Histograms!\n" ;
+    if (debug_ > 1)
+      std::cout << "Filled Histograms!" << std::endl ;
     
-    if(debug_ > 3){
+    if (debug_ > 3) {
       if (muon->track().isNonnull()) {
 	reco::TrackRef ref = muon->track();
 	if (ref->outerOk())
@@ -187,18 +180,48 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
       }
     }
     ++muIdx;
-  }
+  } // end for (; muon != muonColl->end(); ++muon)
   cosmicTree->Fill();
+}
+  
+
+std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::const_iterator& mu1,
+							reco::MuonCollection const& muons,
+							double deta, double dphi, double dr)
+{
+  std::shared_ptr<reco::Muon> theBestMu;
+  
+  double bestDEta = 100.;
+  double bestDPhi = 100.;
+  double bestDR   = 100.;
+  for (auto mu = muons.begin(); mu != muons.end(); ++mu) {
+    if (mu == mu1)
+      continue;
+    double tmpDEta = mu->eta() - mu1->eta();
+    double tmpDPhi = reco::deltaPhi(mu->phi(),mu1->phi());
+    double tmpDR   = reco::deltaR(*mu,*mu1);
+    if (tmpDEta < deta && tmpDEta < bestDEta) {
+      bestDEta = tmpDEta;
+      if (tmpDPhi < dphi && tmpDPhi < bestDPhi) {
+	bestDPhi = tmpDPhi;
+	theBestMu = std::make_shared<reco::Muon>(*mu);
+	if (tmpDR < dr && tmpDR < bestDR) {
+	  bestDR = tmpDR;
+	  std::cout << "passes deltaR cut" << std::endl;
+	}
+      }
+    }
+  }
+  return theBestMu;
 }
 
 
-void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType){
+void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType)
+{
+  if (debug_ > 1)
+    std::cout << "Starting to Fill Histograms!" << std::endl;
 
-  if(debug_ > 1)std::cout << "\nStarting to Fill Histograms!\n";
-
-  if (ref->outerPosition().Y() > 0){
-    //	upperMuon =&(*muon);
-
+  if (ref->outerPosition().Y() > 0) {
     upperMuon_P4       = muon->p4();
     upperMuon_pT       = muon->pt();
     upperMuon_chi2     = ref->chi2();
@@ -220,7 +243,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     upperMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
     upperMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
 
-    if( debug_ > 3){
+    if ( debug_ > 3) {
       double relError = upperMuon_ptError/upperMuon_trackPt;
       std::cout << "Muon pT Error/pT is: " << relError       << std::endl
 		<< "Muon pT Error is: "    << ref->ptError() << std::endl
@@ -232,7 +255,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     } 
   }
   
-  else if (ref->outerPosition().Y() < 0){
+  else if (ref->outerPosition().Y() < 0) {
     lowerMuon_P4       = muon->p4();
     lowerMuon_pT       = muon->pt();
     lowerMuon_chi2     = ref->chi2();
@@ -254,7 +277,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
     lowerMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
     lowerMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
     
-    if( debug_ > 3){
+    if ( debug_ > 3) {
       double relError = lowerMuon_ptError/lowerMuon_trackPt;
       std::cout << "Muon pT Error/pT is: " << relError       << std::endl
 		<< "Muon pT Error is: "    << ref->ptError() << std::endl
@@ -265,26 +288,27 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
 		<< "Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
     } 
   }
-  if(debug_ > 1)
-    std::cout << "\nHistograms Filled!" << std::endl;
+  if (debug_ > 1)
+    std::cout << "Histograms Filled!" << std::endl;
 }
 
 
-reco::TrackRef MuonAnalyzer::GetTrackType(int algoType,reco::MuonCollection::const_iterator muon){
+reco::TrackRef MuonAnalyzer::GetTrackType(int algoType,reco::MuonCollection::const_iterator muon)
+{
   
-  if(debug_ > 1)
+  if (debug_ > 1)
     std::cout << "Started Finding Track Type!" << std::endl;
 
   reco::TrackRef ref;
   
-  if (algoType == 1) ref = muon->track();
+  if      (algoType == 1) ref = muon->track();
   else if (algoType == 2) ref = muon->tpfmsTrack();
   else if (algoType == 3) ref = muon->dytTrack();
   else if (algoType == 4) ref = muon->pickyTrack();
   else if (algoType == 5) ref = muon->tunePMuonBestTrack();
-  else ref = muon->track();
+  else                    ref = muon->track();
   
-  if(debug_ > 1)
+  if (debug_ > 1)
     std::cout << "Returning track type" << std::endl;
 
   return ref;
@@ -386,7 +410,8 @@ void MuonAnalyzer::endJob()
 */
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
-void MuonAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+void MuonAnalyzer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
+{
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
