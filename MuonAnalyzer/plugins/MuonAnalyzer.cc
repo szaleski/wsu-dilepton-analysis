@@ -112,19 +112,32 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   // keep the upper/lower legs as an std::pair<upper leg, lower leg>
   std::pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> > bestPair;
   std::vector<std::shared_ptr<reco::Muon> > muonPair;
-  while (bestMatch.get() == NULL && muon != muonColl->end())
-    bestMatch = findBestMatch(++muon, *muonColl, deta, dphi, dr);
+
+  // while (bestMatch.get() == NULL && ++muon != muonColl->end()) {
+  if (debug_ > 2)
+    std::cout << "before call: muon " << std::hex << *muon << std::endl;
+  while (!bestMatch && ++muon != muonColl->end()) {
+    bestMatch = findBestMatch(muon, *muonColl, deta, dphi, dr);
+    if (debug_ > 2)
+      std::cout << "after call: muon "  << std::hex << *muon << std::endl;
+  }
+  
+  if (muon == muonColl->end())
+    std::cout << "muon iterator is at the end of the collection" << std::endl;
   
   // have to ensure that we get a pair
-  if (bestMatch.get() == NULL) {
+  // if (bestMatch.get() == NULL) {
+  if (!bestMatch) {
     std::cout << "unable to match two legs using deta(" << deta
 	      << "), dphi(" << dphi
 	      << "), dr("   << dr
 	      << ")"        << std::endl;
     return;
   }
-  std::cout << "comparison " << std::hex << *muon
-	    << "comparison " << std::hex << *bestMatch << std::endl;
+  
+  if (debug_ > 2)
+    std::cout << "comparison " << std::hex << *muon
+	      << "comparison " << std::hex << *bestMatch << std::endl;
 
   // only keep going if we find global muons
   if (!muon->isGlobalMuon())
@@ -141,10 +154,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   
   muonPair.push_back(bestPair.first);
   muonPair.push_back(bestPair.second);
-  //  reco::TrackHitPattern *upperMuon_numberOfValidHits, *lowerMuon_numberOfValidHits;
   int muIdx = 0;
-  // muon = muonColl->begin();
-  // for (; muon != muonColl->end(); ++muon) {
   for (auto leg = muonPair.begin(); leg != muonPair.end(); ++leg) {
     if (debug_ > 3) {
       std::cout << "globalMuon pt [GeV]: " << leg->get()->pt() << 
@@ -199,7 +209,6 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     }
     ++muIdx;
   } // end for (auto leg = muonPair.begin(); leg != muonPair.end(); ++leg)
-    // } // end for (; muon != muonColl->end(); ++muon)
   cosmicTree->Fill();
 }
   
@@ -209,28 +218,52 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 							double deta, double dphi, double dr)
 {
   std::shared_ptr<reco::Muon> theBestMu;
-  
+  if (debug_ > 2)
+    std::cout << "starting theBestMu = " << std::hex << theBestMu.get() << std::endl;
   double bestDEta = 100.;
   double bestDPhi = 100.;
   double bestDR   = 100.;
   for (auto mu = muons.begin(); mu != muons.end(); ++mu) {
-    if (mu == mu1)
+    if (mu == mu1) {
+      if (debug_ > 2)
+	std::cout << "iterators matched, moving on" << std::endl;
       continue;
-    double tmpDEta = mu->eta() - mu1->eta();
-    double tmpDPhi = reco::deltaPhi(mu->phi(),mu1->phi());
+    }
+    if (debug_ > 2) {
+      std::cout << "mu "  << std::hex << *mu  << std::endl;
+      std::cout << "mu1 " << std::hex << *mu1 << std::endl;
+    }
+    double tmpDEta = fabs(mu->eta()-mu1->eta());
+    double tmpDPhi = fabs(reco::deltaPhi(mu->phi(),mu1->phi()));
     double tmpDR   = reco::deltaR(*mu,*mu1);
+
     if (tmpDEta < deta && tmpDEta < bestDEta) {
+      if (debug_ > 2)
+	std::cout << "tmpDEta < deta && tmpDEta < bestDEta" << std::endl;
       bestDEta = tmpDEta;
       if (tmpDPhi < dphi && tmpDPhi < bestDPhi) {
+	if (debug_ > 2)
+	  std::cout << "tmpDPhi < dphi && tmpDPhi < bestDPhi" << std::endl;
 	bestDPhi = tmpDPhi;
 	theBestMu = std::make_shared<reco::Muon>(*mu);
+	if (debug_ > 2)
+	  std::cout << "setting theBestMu = " << std::hex << theBestMu.get() << std::endl;
 	if (tmpDR < dr && tmpDR < bestDR) {
 	  bestDR = tmpDR;
-	  std::cout << "passes deltaR cut" << std::endl;
+	  if (debug_ > 2)
+	    std::cout << "passes deltaR cut" << std::endl;
 	}
       }
     }
+      std::cout << "tmpDEta = "   << tmpDEta
+		<< ", tmpDPhi = " << tmpDPhi
+		<< ", tmpDR = "   << tmpDR << std::endl
+		<< "bestDEta = "   << bestDEta
+		<< ", bestDPhi = " << bestDPhi
+		<< ", bestDR = "   << bestDR << std::endl;
   }
+  if (debug_ > 2)
+    std::cout << "returning theBestMu = " << std::hex << theBestMu.get() << std::endl;
   return theBestMu;
 }
 
@@ -264,13 +297,13 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 
     if ( debug_ > 3) {
       double relError = upperMuon_ptError/upperMuon_trackPt;
-      std::cout << "Muon pT Error/pT is: " << relError       << std::endl
-		<< "Muon pT Error is: "    << ref->ptError() << std::endl
-		<< "Muon pT is: "          << ref->pt()      << std::endl;
-      std::cout << "Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
-		<< "Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
-		<< "Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
-		<< "Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
+      std::cout << "Upper Muon pT Error/pT is: " << relError       << std::endl
+		<< "Upper Muon pT Error is: "    << ref->ptError() << std::endl
+		<< "Upper Muon pT is: "          << ref->pt()      << std::endl;
+      std::cout << "Upper Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
+		<< "Upper Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
+		<< "Upper Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
+		<< "Upper Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
     } 
   }
   
@@ -298,13 +331,13 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     
     if ( debug_ > 3) {
       double relError = lowerMuon_ptError/lowerMuon_trackPt;
-      std::cout << "Muon pT Error/pT is: " << relError       << std::endl
-		<< "Muon pT Error is: "    << ref->ptError() << std::endl
-		<< "Muon pT is: "          << ref->pt()      << std::endl;
-      std::cout << "Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
-		<< "Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
-		<< "Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
-		<< "Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
+      std::cout << "Lower Muon pT Error/pT is: " << relError       << std::endl
+		<< "Lower Muon pT Error is: "    << ref->ptError() << std::endl
+		<< "Lower Muon pT is: "          << ref->pt()      << std::endl;
+      std::cout << "Lower Number of Pixel hits are: "           << ref->hitPattern().numberOfValidPixelHits()    << std::endl
+		<< "Lower Number of Valid Tracker Hits are : "  << ref->hitPattern().numberOfValidTrackerHits()  << std::endl
+		<< "Lower Number of Valid Muon Hits are: "      << ref->hitPattern().muonStationsWithValidHits() << std::endl
+		<< "Lower Number of matched muon stations is: " << muon->numberOfMatchedStations(arbType)        << std::endl;
     } 
   }
   if (debug_ > 1)

@@ -100,7 +100,7 @@ process.analysisPickyMuons = muonAnalysis.clone(
 process.analysisTunePMuons = muonAnalysis.clone(
     muonSrc = cms.InputTag("muons"),
     algoType = cms.int32(5),
-    debug = cms.int32(0)
+    debug = cms.int32(3)
 )
 process.analysisT0Corr = muonAnalysis.clone(
     muonSrc = cms.InputTag("muonsWitht0Correction")
@@ -150,7 +150,7 @@ process.my_RawToDigi = cms.Sequence(
     +process.muonRPCDigis
     +process.castorDigis
     +process.scalersRawToDigi
-#    +process.tcdsDigis
+    +process.tcdsDigis
 )
 
 # Path and EndPath definitions
@@ -164,8 +164,8 @@ process.muonanalysis = cms.Path(
     #process.reconstructionCosmics
     #process.analysis1Leg
     #+process.analysisSplit
-    process.analysisLHC
-    +process.analysisTrackerMuons
+    #process.analysisLHC
+    process.analysisTrackerMuons
     +process.analysisTPFMSMuons
     +process.analysisDYTMuons
     +process.analysisPickyMuons
