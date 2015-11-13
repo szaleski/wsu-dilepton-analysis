@@ -109,8 +109,9 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   double dr   = 0.15;
   reco::MuonCollection::const_iterator muon = muonColl->begin();
   std::shared_ptr<reco::Muon> bestMatch = findBestMatch(muon, *muonColl, deta, dphi, dr);
+  // keep the upper/lower legs as an std::pair<upper leg, lower leg>
   std::pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> > bestPair;
-
+  std::vector<std::shared_ptr<reco::Muon> > muonPair;
   while (bestMatch.get() == NULL && muon != muonColl->end())
     bestMatch = findBestMatch(++muon, *muonColl, deta, dphi, dr);
   
@@ -122,25 +123,37 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	      << ")"        << std::endl;
     return;
   }
-  bestPair = std::make_pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> >(std::make_shared<reco::Muon>(*muon),
-										       std::make_shared<reco::Muon>(*bestMatch));
+  // only keep going if we find global muons
+  if (!muon->isGlobalMuon() || !bestMatch->isGlobalMuon())
+    return;
+  
+  if (muon->standAloneMuon()->innerPosition().Y() > 0)
+    bestPair = std::make_pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> >(std::make_shared<reco::Muon>(*muon),
+											 std::make_shared<reco::Muon>(*bestMatch));
+  else
+    bestPair = std::make_pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> >(std::make_shared<reco::Muon>(*bestMatch),
+											 std::make_shared<reco::Muon>(*muon));
+  
+  muonPair.push_back(bestPair.first);
+  muonPair.push_back(bestPair.second);
   //  reco::TrackHitPattern *upperMuon_numberOfValidHits, *lowerMuon_numberOfValidHits;
   int muIdx = 0;
-  muon = muonColl->begin();
-  for (; muon != muonColl->end(); ++muon) {
+  // muon = muonColl->begin();
+  // for (; muon != muonColl->end(); ++muon) {
+  for (auto leg = muonPair.begin(); leg != muonPair.end(); ++leg) {
     if (debug_ > 3) {
-      std::cout << "globalMuon pt [GeV]: " << muon->pt() << 
-	"  eta : " << muon->eta() << 
-	"  phi : " << muon->phi() << 
+      std::cout << "globalMuon pt [GeV]: " << leg->get()->pt() << 
+	"  eta : " << leg->get()->eta() << 
+	"  phi : " << leg->get()->phi() << 
 	std::endl;
       
-      if (muon->combinedMuon().isNonnull()) {
-	reco::TrackRef ref = muon->combinedMuon();
+      if (leg->get()->combinedMuon().isNonnull()) {
+	reco::TrackRef ref = leg->get()->combinedMuon();
 	std::cout << "combinedMuon number of hits: " << ref->numberOfValidHits() << std::endl;
       }
       
-      if (muon->standAloneMuon().isNonnull()) {
-	reco::TrackRef ref = muon->standAloneMuon();
+      if (leg->get()->standAloneMuon().isNonnull()) {
+	reco::TrackRef ref = leg->get()->standAloneMuon();
 	if (ref->innerOk())
 	  std::cout << "standAloneMuon inner x [cm]: " << ref->innerPosition().X()
 		    << "  outer x [cm]: "              << ref->outerPosition().X()
@@ -158,20 +171,20 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     if (debug_ > 1)
       std::cout << " variable createing. Calling GetTrackType" << std::endl;
     
-    ref = GetTrackType(algoType_, muon);
+    ref = GetTrackType(algoType_, leg->get());
     
     if (debug_ > 1)
       std::cout << "Found Track Type. If NonNull Fill." << std::endl;
     
     if (ref.isNonnull())
-      TrackFill(ref, muon, type);
+      TrackFill(ref, leg->get(), type);
     
     if (debug_ > 1)
       std::cout << "Filled Histograms!" << std::endl ;
     
     if (debug_ > 3) {
-      if (muon->track().isNonnull()) {
-	reco::TrackRef ref = muon->track();
+      if (leg->get()->track().isNonnull()) {
+	reco::TrackRef ref = leg->get()->track();
 	if (ref->outerOk())
 	  std::cout << "track outer pt [GeV]: " << ref->outerPt();
 	if (ref->innerOk())
@@ -180,7 +193,8 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
       }
     }
     ++muIdx;
-  } // end for (; muon != muonColl->end(); ++muon)
+  } // end for (auto leg = muonPair.begin(); leg != muonPair.end(); ++leg)
+    // } // end for (; muon != muonColl->end(); ++muon)
   cosmicTree->Fill();
 }
   
@@ -216,7 +230,7 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 }
 
 
-void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType)
+void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::Muon::ArbitrationType const& arbType)
 {
   if (debug_ > 1)
     std::cout << "Starting to Fill Histograms!" << std::endl;
@@ -293,7 +307,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::MuonCollection::const_ite
 }
 
 
-reco::TrackRef MuonAnalyzer::GetTrackType(int algoType,reco::MuonCollection::const_iterator muon)
+reco::TrackRef MuonAnalyzer::GetTrackType(int algoType, reco::Muon const* muon)
 {
   
   if (debug_ > 1)

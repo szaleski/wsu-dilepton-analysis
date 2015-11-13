@@ -2,16 +2,53 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("MuonAnalysis")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.load("Configuration.StandardSequences.ReconstructionCosmics_cff")
+
+# import of standard configurations
+process.load('Configuration.StandardSequences.Services_cff')
+process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+process.load('FWCore.MessageService.MessageLogger_cfi')
+process.load('Configuration.EventContent.EventContentCosmics_cff')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
+process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
+process.load('Configuration.StandardSequences.L1Reco_cff')
+process.load('Configuration.StandardSequences.ReconstructionCosmics_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+
+# Output definition
+
+process.RECOoutput = cms.OutputModule("PoolOutputModule",
+    dataset = cms.untracked.PSet(
+        dataTier = cms.untracked.string('RECO'),
+        filterName = cms.untracked.string('')
+    ),
+    eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
+    fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_ReReco.root'),
+    outputCommands = process.RECOEventContent.outputCommands,
+    splitLevel = cms.untracked.int32(0)
+)
+
+#process.load("Configuration.StandardSequences.ReconstructionCosmics_cff")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
+# choose GlobalTag among: 74X_CRAFTR_V1, 74X_CRAFTR_V2, 74X_CRAFTR_V3  (without Muon APE)
+#                         74X_CRAFT_V1A, 74X_CRAFT_V2A, 74X_CRAFT_V3A  (with Muon APE) 
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, '74X_CRAFTR_V1', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, '74X_CRAFT_V1A', '') #with APEs
+#
+# add a necessary condition for CMSSW release >= 7_4_8 
+process.GlobalTag.toGet = cms.VPSet(
+  cms.PSet(record = cms.string("HBHENegativeEFilterRcd"),
+           tag = cms.string("HBHENegativeEFilter_V00_data"),
+           connect = cms.untracked.string("frontier://FrontierProd/CMS_CONDITIONS")
+          )
+)
+
 # from Configuration.AlCa.GlobalTag import GlobalTag
 # process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc')
-process.load("Configuration.Geometry.GeometryRecoDB_cff")
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-process.load("Configuration.StandardSequences.MagneticField_cff")
-process.GlobalTag.globaltag = "74X_CRAFT_V1::All"
+#process.GlobalTag.globaltag = "74X_CRAFTR_V1::All"
 #if runningOnMC == False:
 #    process.GlobalTag.globaltag = "GR_R_52_V7::All"
 
@@ -29,7 +66,7 @@ process.source = cms.Source("PoolSource",
         #'file:///afs/cern.ch/work/s/szaleski/private/CMSSW_7_4_12/src/WSUCosmicAnalysis/MuonAnalyzer/test/crab_projects/crab_MuonAnalysis_Oct22_New_2015/results/CosmicMuonAnalysis_2015_4.root '
     )
 )
-from WSUCosmicAnalysis.MuonAnalyzer.wsuMuonAnalyzer_cfi import muonAnalysis
+from WSUDiLeptons.MuonAnalyzer.wsuMuonAnalyzer_cfi import muonAnalysis
 
 process.analysis1Leg = muonAnalysis.clone(
     muonSrc = cms.InputTag("muons1Leg")
@@ -79,11 +116,55 @@ process.analysisNoRPC = muonAnalysis.clone(
 process.TFileService = cms.Service("TFileService",
     fileName = cms.string('CosmicMuonAnalysis_2015.root')
 )
-process.p = cms.Path(
-    process.reconstructionCosmics
+
+# fix: remove some L1 modules (useless here)
+#process.my_RawToDigi = cms.Sequence(
+#    process.csctfDigis
+#    +process.dttfDigis
+#    +process.L1RawToDigiSeq
+#    +process.caloStage1Digis
+#    +process.caloStage1LegacyFormatDigis
+#    +process.gtDigis
+#    +process.siPixelDigis
+#    +process.siStripDigis
+#    +process.ecalDigis
+#    +process.ecalPreshowerDigis
+#    +process.hcalDigis
+#    +process.muonCSCDigis
+#    +process.muonDTDigis
+#    +process.muonRPCDigis
+#    +process.castorDigis
+#    +process.scalersRawToDigi
+#    +process.tcdsDigis
+#    )
+
+process.my_RawToDigi = cms.Sequence(
+    process.csctfDigis+process.dttfDigis
+    +process.gtDigis+process.siPixelDigis
+    +process.siStripDigis
+    +process.ecalDigis
+    +process.ecalPreshowerDigis
+    +process.hcalDigis
+    +process.muonCSCDigis
+    +process.muonDTDigis
+    +process.muonRPCDigis
+    +process.castorDigis
+    +process.scalersRawToDigi
+#    +process.tcdsDigis
+)
+
+# Path and EndPath definitions
+#process.raw2digi_step      = cms.Path(process.RawToDigi)
+process.raw2digi_step       = cms.Path(process.my_RawToDigi)
+process.L1Reco_step         = cms.Path(process.L1Reco)
+process.reconstruction_step = cms.Path(process.reconstructionCosmics)
+process.RECOoutput_step     = cms.EndPath(process.RECOoutput)
+
+process.muonanalysis = cms.Path(
+    #process.reconstructionCosmics
     #process.analysis1Leg
     #+process.analysisSplit
-    +process.analysisLHC
+    process.analysisLHC
     +process.analysisTrackerMuons
     +process.analysisTPFMSMuons
     +process.analysisDYTMuons
@@ -93,6 +174,26 @@ process.p = cms.Path(
     #+process.analysisBHECOnly
     #+process.analysisNoRPC
     )
+
+# Schedule definition
+process.schedule = cms.Schedule(
+    process.raw2digi_step,
+    process.L1Reco_step,
+    process.reconstruction_step,
+    process.muonanalysis,
+    process.RECOoutput_step
+)
+
+# customisation of the process.
+
+# Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
+from Configuration.DataProcessing.RecoTLR import customiseCosmicDataRun2 
+
+#call to customisation function customiseCosmicDataRun2 imported from Configuration.DataProcessing.RecoTLR
+process = customiseCosmicDataRun2(process)
+
+# End of customisation functions
+
 
 ################################################################
 ###algoType determines the track type that you are interested in

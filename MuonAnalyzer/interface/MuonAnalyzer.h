@@ -55,8 +55,8 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   virtual void beginJob() override;
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
-  void TrackFill(reco::TrackRef ref, reco::MuonCollection::const_iterator muon, reco::Muon::ArbitrationType const& arbType);
-  reco::TrackRef GetTrackType(int algoType,reco::MuonCollection::const_iterator muon);
+  void TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::Muon::ArbitrationType const& arbType);
+  reco::TrackRef GetTrackType(int algoType, reco::Muon const* muon);
   std::shared_ptr<reco::Muon> findBestMatch(reco::MuonCollection::const_iterator& mu1,
 					    reco::MuonCollection const& muons,
 					    double deta, double dphi, double dr);
