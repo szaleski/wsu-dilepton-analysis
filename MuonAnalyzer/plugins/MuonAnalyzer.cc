@@ -123,8 +123,13 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	      << ")"        << std::endl;
     return;
   }
+  std::cout << "comparison " << std::hex << *muon
+	    << "comparison " << std::hex << *bestMatch << std::endl;
+
   // only keep going if we find global muons
-  if (!muon->isGlobalMuon() || !bestMatch->isGlobalMuon())
+  if (!muon->isGlobalMuon())
+    return;
+  if (!bestMatch->isGlobalMuon())
     return;
   
   if (muon->standAloneMuon()->innerPosition().Y() > 0)
