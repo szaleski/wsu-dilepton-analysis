@@ -113,7 +113,6 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   std::pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> > bestPair;
   std::vector<std::shared_ptr<reco::Muon> > muonPair;
 
-  // while (bestMatch.get() == NULL && ++muon != muonColl->end()) {
   if (debug_ > 2)
     std::cout << "before call: muon " << std::hex << *muon << std::endl;
   while (!bestMatch && ++muon != muonColl->end()) {
@@ -126,7 +125,6 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     std::cout << "muon iterator is at the end of the collection" << std::endl;
   
   // have to ensure that we get a pair
-  // if (bestMatch.get() == NULL) {
   if (!bestMatch) {
     std::cout << "unable to match two legs using deta(" << deta
 	      << "), dphi(" << dphi
@@ -136,7 +134,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   }
   
   if (debug_ > 2)
-    std::cout << "comparison " << std::hex << *muon
+    std::cout << "comparison " << std::hex << *muon      << std::endl
 	      << "comparison " << std::hex << *bestMatch << std::endl;
 
   // only keep going if we find global muons

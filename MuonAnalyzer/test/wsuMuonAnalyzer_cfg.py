@@ -114,7 +114,7 @@ process.analysisNoRPC = muonAnalysis.clone(
 
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonAnalysis_2015.root')
+    fileName = cms.string('CosmicMuonAnalysis_2015_no-reRECO.root')
 )
 
 # fix: remove some L1 modules (useless here)
@@ -177,11 +177,11 @@ process.muonanalysis = cms.Path(
 
 # Schedule definition
 process.schedule = cms.Schedule(
-    process.raw2digi_step,
-    process.L1Reco_step,
-    process.reconstruction_step,
-    process.muonanalysis,
-    process.RECOoutput_step
+#    process.raw2digi_step,
+#    process.L1Reco_step,
+#    process.reconstruction_step,
+    process.muonanalysis
+#    process.RECOoutput_step
 )
 
 # customisation of the process.

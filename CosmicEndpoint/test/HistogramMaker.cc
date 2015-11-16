@@ -68,7 +68,7 @@ namespace wsu {
 	m_outFile = std::shared_ptr<TFile>(new TFile(TString(outFileName+".root"),"RECREATE"));
 	// m_outFileD = std::shared_ptr<TDirectoryFile>(new TDirectoryFile(TString(outFileName+".root"),"RECREATE"));
 	m_outFile->cd();
-	
+
 	for (int ptb = 0; ptb < 13; ++ptb) {
 	  std::stringstream ptbinlabel;
 	  if (ptb == 12)
@@ -84,15 +84,28 @@ namespace wsu {
 	  m_outFile->cd();
 	  m_ptBinDir[ptb] = std::shared_ptr<TDirectory>(m_outFile->mkdir(TString(ptbinlabel.str())));
 	  m_ptBinDir[ptb]->cd();
-	  
-	  for (int leg = 0; leg < 3; ++leg) {
-	    for (int ch = 0; ch < 2; ++ch) {
+	}	
+	
+	for (int leg = 0; leg < 3; ++leg) {
+	  for (int ch = 0; ch < 2; ++ch) {
+	    for (int ptb = 0; ptb < 13; ++ptb) {
+	      std::stringstream ptbinlabel;
+	      if (ptb == 12)
+		ptbinlabel << "inclusive";
+	      else if (ptb < 11)
+		ptbinlabel << ptBinMin[ptb] << "to" << ptBinMin[ptb+1];
+	      else
+		ptbinlabel << ptBinMin[ptb] << "toInf";
+	      
+	      m_outFile->cd();
+	      m_ptBinDir[ptb]->cd();
+	      
 	      h_Chi2[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2"),    "#Chi^{2}",         50,     0.,    150.));
 	      h_Ndof[leg][ch][ptb]     = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Ndof"),    "N d.o.f.",         100,   -0.5,   99.5));
 	      h_Chi2Ndof[leg][ch][ptb] = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Chi2Ndof"),"#Chi^{2}/N d.o.f.",100,    0.,    50. ));
 	      h_Charge[leg][ch][ptb]   = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Charge"),  "q",                3,     -1.5,   1.5 ));
 	      h_Curve[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_Curve"),   "#frac{q}{p_{T}}",
-									5000,m_confParams.IsSymmetric?-0.01*factor_:0.,0.01*factor_));
+									5000,m_confParams.IsSymmetric?-0.01*m_confParams.Factor:0.,0.01*m_confParams.Factor));
 	      
 	      h_CurveLowerResidual[leg][ch][ptb]    = std::shared_ptr<TH1D>(new TH1D(TString(charge[ch]+"_"+legs[leg]+"_"+ptbinlabel.str()+"_CurveLowerResidual"),
 										     "#frac{#frac{q}{p_{T,up}}-#frac{q}{p_{T,low}}}{#sqrt{2}#frac{q}{p_{T,low}}}",
@@ -177,8 +190,8 @@ namespace wsu {
 			  << std::endl << std::flush;
 	      h_CurvePlusBias[leg][ch][i] = std::shared_ptr<TH1D>(new TH1D(histname, histtitle,
 									   5000,
-									   m_confParams.IsSymmetric?-0.01*factor_:0.,
-									   0.01*factor_));
+									   m_confParams.IsSymmetric?-0.01*m_confParams.Factor:0.,
+									   0.01*m_confParams.Factor));
 	      h_CurvePlusBias[leg][ch][i]->Sumw2();
 	      
 	      // inject negative bias
@@ -195,8 +208,8 @@ namespace wsu {
 			  << histtitle2 << std::endl << std::flush;
 	      h_CurveMinusBias[leg][ch][i] = std::shared_ptr<TH1D>(new TH1D(histname2, histtitle2,
 									    5000,
-									    m_confParams.IsSymmetric?-0.01*factor_:0.,
-									    0.01*factor_));
+									    m_confParams.IsSymmetric?-0.01*m_confParams.Factor:0.,
+									    0.01*m_confParams.Factor));
 	      h_CurveMinusBias[leg][ch][i]->Sumw2();
 	    }
 	  }// end loop on different charge histograms
@@ -573,14 +586,14 @@ namespace wsu {
 		for (int i = 0; i < m_nBiasBins; ++i) {
 		  if (m_debug > DebugLevel::BIASHISTOGRAMS)
 		    std::cout 
-		      << "h_CurvePlusBias["  << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "]["
+		      << "h_CurvePlusBias["  << combUp[fill] << "][" << ((charge<0)?0:1) << "]["
 		      << i << "] "
-		      << std::hex << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i] << std::dec << " "
-		      << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][12][i]->GetName()  << std::endl
-		      << "h_CurveMinusBias[" << combUp[fill] << "][" << ((charge<0)?0:1) << "][" << 12 << "]["
+		      << std::hex << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][i] << std::dec << " "
+		      << h_CurvePlusBias[combUp[fill]][ (charge<0)?0:1][i]->GetName()  << std::endl
+		      << "h_CurveMinusBias[" << combUp[fill] << "][" << ((charge<0)?0:1) << "]["
 		      << i << "] "
-		      << std::hex << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i] << std::dec << " "
-		      << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][12][i]->GetName()  << std::endl;
+		      << std::hex << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][i] << std::dec << " "
+		      << h_CurveMinusBias[combUp[fill]][(charge<0)?0:1][i]->GetName()  << std::endl;
 		}
 	      }
 	      /*
