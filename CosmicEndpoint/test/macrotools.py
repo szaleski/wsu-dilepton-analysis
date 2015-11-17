@@ -130,8 +130,8 @@ rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -a
      socket.gethostname()))
 	f.close()
 	os.chmod(subfile, 0777)
-	#cmd = "bsub -q test -W 0:20 %s/%s"%(subfile) #submit to the test queue if debug (only a single job though
-	#cmd = "bsub -q 8nm -W 0:20 %s"%(subfile)
+	# cmd = "bsub -q test -W 0:20 %s/%s"%(subfile) #submit to the test queue if debug (only a single job though
+	cmd = "bsub -q 8nh -W 240 %s"%(subfile)
 	#cmd = "bsub -q 1nh -W 0:30 %s"%(subfile)
 	print cmd
 	if not debug:
