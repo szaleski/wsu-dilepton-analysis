@@ -13,8 +13,6 @@ class cosmicEndpointShort() :
                         "dxy":3,
                         "dz":3,
                         }
-    
-    
     """
     
     def __init__(self, infiledir, outfile, maxbias, nBiasBins=100, factor=1, rebins=1) :
@@ -162,7 +160,9 @@ class cosmicEndpointShort() :
         #self.outdirs["obs_%s"%(obsName)][trackName].Write()
 
         if (obs.Integral()>0):
-            obs.Scale(ref.Integral()/obs.Integral())
+            rescale = ref.Integral()/obs.Integral()
+            print "Rescaling with factor %f"%(rescale)
+            obs.Scale(rescale)
         
         myCan2 = r.TCanvas("%s_%s_scaled"%(histBaseName,trackName),
                            "%s_%s_scaled"%(histBaseName,trackName),
@@ -401,6 +401,9 @@ class cosmicEndpointShort() :
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
             
             if (obs_posBias.Integral()>0):
+                rescale_pos = ref_posBias.Integral()/obs_posBias.Integral()
+                rescale_neg = ref_negBias.Integral()/obs_negBias.Integral()
+                print "Rescaling with factor %f/%f"%(rescale_pos,rescale_neg)
                 obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
                 obs_negBias.Scale(ref_negBias.Integral()/obs_negBias.Integral())
             

@@ -80,8 +80,8 @@ class cosmicEndpoint() :
         nBiasBins = 100
         maxBias = 0.05 #0.005
         #need two arrays, length = (2*nBiasBins)+1
-        xVals = np.empty(nBiasBins)
-        yVals = np.empty(nBiasBins)
+        xVals = np.zeros(2*nBiasBins+1,np.dtype('float64'))
+        yVals = np.zeros(2*nBiasBins+1,np.dtype('float64'))
 
         obs = f.Get("%s%sCurve"%(histBaseName,obsName))
         obs = f.Get("%s%sCurve"%(histBaseName,obsName))
@@ -89,8 +89,8 @@ class cosmicEndpoint() :
         ref = f.Get("%s%sCurve"%(histBaseName,refName))
         ref = f.Get("%s%sCurve"%(histBaseName,refName))
         
-        xVals.at(nBiasBins+1) = 0
-        yVals.at(nBiasBins+1) = calculateChi2(obs,ref)
+        xVals[nBiasBins+1] = 0
+        yVals[nBiasBins+1] = calculateChi2(obs,ref)
 
         for i in range(nBiasBins):
             obs_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,obsName,i+1))
@@ -100,11 +100,11 @@ class cosmicEndpoint() :
             ref_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,refName,i+1))
 
             biasVal = (i+1)*(maxBias/nBiasBins)
-            xVals.at(nBiasBins+1+i) = biasVal
-            yVals.at(nBiasBins+1+i) = calculateChi2(obs_posBias,ref_posBias)
+            xVals[nBiasBins+1+i] = biasVal
+            yVals[nBiasBins+1+i] = calculateChi2(obs_posBias,ref_posBias)
 
-            xVals.at(i) = -1.*biasVal
-            yVals.at(i) = calculateChi2(obs_negBias,ref_negBias)
+            xVals[i] = -1.*biasVal
+            yVals[i] = calculateChi2(obs_negBias,ref_negBias)
             
         graph = r.TGraph(histBaseName,histBaseName,xVals,yVals)
         return graph
