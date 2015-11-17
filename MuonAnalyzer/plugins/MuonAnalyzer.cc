@@ -142,7 +142,14 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     return;
   if (!bestMatch->isGlobalMuon())
     return;
+
+  // make sure that we get at least one pixel hit on each leg
+  if (!(muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0))
+    return;
+  if (!(bestMatch->innerTrack()->hitPattern().numberOfValidPixelHits() > 0))
+    return;
   
+  // make the first in the vector bethe upper leg
   if (muon->standAloneMuon()->innerPosition().Y() > 0)
     bestPair = std::make_pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> >(std::make_shared<reco::Muon>(*muon),
 											 std::make_shared<reco::Muon>(*bestMatch));
