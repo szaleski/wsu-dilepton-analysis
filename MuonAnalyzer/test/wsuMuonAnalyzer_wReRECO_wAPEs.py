@@ -85,7 +85,7 @@ process.analysisPickyMuons = muonAnalysis.clone(
 process.analysisTunePMuons = muonAnalysis.clone(
     muonSrc = cms.InputTag("muons"),
     algoType = cms.int32(5),
-    debug = cms.int32(3)
+    debug = cms.int32(1)
 )
 process.analysisT0Corr = muonAnalysis.clone(
     muonSrc = cms.InputTag("muonsWitht0Correction")
@@ -99,7 +99,7 @@ process.analysisNoRPC = muonAnalysis.clone(
 
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonAnalysis_2015_no-reRECO.root')
+    fileName = cms.string('CosmicMuonAnalysis_2015_reRECO_APEs.root')
 )
 
 # fix: remove some L1 modules (useless here)
