@@ -51,7 +51,7 @@ if __name__ == "__main__":
         "PtRelErr",
         "Dz",
         "Dxy",
-        #"Curve",
+        "Curve",
         "ValidHits",
         "PixelHits",
         "TrackerHits",
@@ -71,9 +71,9 @@ if __name__ == "__main__":
         "tightMuMinus",
         ]
     
-    looseCanvas.Divide(4,4)
-    tightCanvas.Divide(4,4)
-    combinedCanvas.Divide(4,4)
+    looseCanvas.Divide(5,4)
+    tightCanvas.Divide(5,4)
+    combinedCanvas.Divide(5,4)
     inputfile = r.TFile(options.infile,"READ")
     if not inputfile.IsOpen() or inputfile.IsZombie():
         print "Unable to open %s"%(options.infile)
