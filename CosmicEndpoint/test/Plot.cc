@@ -250,6 +250,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_upperTrackerHits                  = new TH1F("upperTrackerHits",                 "upperTrackerHits",         50, -0.5, 49.5);
   TH1F *h_upperMuonStationHits              = new TH1F("upperMuonStationHits",             "upperMuonStationHits",     10, -0.5, 9.5 );
   TH1F *h_upperValidHits                    = new TH1F("upperValidHits",                   "upperValidHits",           75, -0.5, 74.5);
+  TH1F *h_upperValidMuonHits                = new TH1F("upperValidMuonHits",               "upperValidMuonHits",       35, -0.5, 34.5);
   TH1F *h_upperMatchedMuonStations          = new TH1F("upperMatchedMuonStations",         "upperMatchedMuonStations", 10, -0.5, 9.5 );
   TH1F *h_upperTrackerLayersWithMeasurement = new TH1F("upperTrackerLayersWithMeasurement","upperTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
@@ -284,6 +285,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_lowerTrackerHits         = new TH1F("lowerTrackerHits",        "lowerTrackerHits",         50, -0.5, 49.5);
   TH1F *h_lowerMuonStationHits     = new TH1F("lowerMuonStationHits",    "lowerMuonStationHits",     10, -0.5, 9.5 );
   TH1F *h_lowerValidHits           = new TH1F("lowerValidHits",          "lowerValidHits",           75, -0.5, 74.5);
+  TH1F *h_lowerValidMuonHits       = new TH1F("lowerValidMuonHits",      "lowerValidMuonHits",       35, -0.5, 34.5);
   TH1F *h_lowerMatchedMuonStations = new TH1F("lowerMatchedMuonStations","lowerMatchedMuonStations", 10, -0.5, 9.5 );
   TH1F *h_lowerTrackerLayersWithMeasurement = new TH1F("lowerTrackerLayersWithMeasurement","lowerTrackerLayersWithMeasurement", 40, -0.5, 39.5);
 
@@ -420,6 +422,12 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_muUpperPlusValidHits  = new TH1F("muUpperPlusValidHits", "muUpperPlusValidHits",  75, -0.5, 74.5);
   TH1F *h_muLowerMinusValidHits = new TH1F("muLowerMinusValidHits","muLowerMinusValidHits", 75, -0.5, 74.5);
   TH1F *h_muLowerPlusValidHits  = new TH1F("muLowerPlusValidHits", "muLowerPlusValidHits",  75, -0.5, 74.5);
+  TH1F *h_muMinusValidMuonHits      = new TH1F("muMinusValidMuonHits",     "muMinusValidMuonHits",      35, -0.5, 34.5);
+  TH1F *h_muUpperMinusValidMuonHits = new TH1F("muUpperMinusValidMuonHits","muUpperMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_muPlusValidMuonHits       = new TH1F("muPlusValidMuonHits",      "muPlusValidMuonHits",       35, -0.5, 34.5);
+  TH1F *h_muUpperPlusValidMuonHits  = new TH1F("muUpperPlusValidMuonHits", "muUpperPlusValidMuonHits",  35, -0.5, 34.5);
+  TH1F *h_muLowerMinusValidMuonHits = new TH1F("muLowerMinusValidMuonHits","muLowerMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_muLowerPlusValidMuonHits  = new TH1F("muLowerPlusValidMuonHits", "muLowerPlusValidMuonHits",  35, -0.5, 34.5);
   TH1F *h_muMinusMatchedMuonStations      = new TH1F("muMinusMatchedMuonStations",     "muMinusMatchedMuonStations",      10, -0.5, 9.5);
   TH1F *h_muUpperMinusMatchedMuonStations = new TH1F("muUpperMinusMatchedMuonStations","muUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_muPlusMatchedMuonStations       = new TH1F("muPlusMatchedMuonStations",      "muPlusMatchedMuonStations",       10, -0.5, 9.5);
@@ -611,6 +619,12 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_looseMuUpperPlusValidHits  = new TH1F("looseMuUpperPlusValidHits", "looseMuUpperPlusValidHits",  75, -0.5, 74.5);
   TH1F *h_looseMuLowerMinusValidHits = new TH1F("looseMuLowerMinusValidHits","looseMuLowerMinusValidHits", 75, -0.5, 74.5);
   TH1F *h_looseMuLowerPlusValidHits  = new TH1F("looseMuLowerPlusValidHits", "looseMuLowerPlusValidHits",  75, -0.5, 74.5);
+  TH1F *h_looseMuMinusValidMuonHits      = new TH1F("looseMuMinusValidMuonHits",     "looseMuMinusValidMuonHits",      35, -0.5, 34.5);
+  TH1F *h_looseMuUpperMinusValidMuonHits = new TH1F("looseMuUpperMinusValidMuonHits","looseMuUpperMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_looseMuPlusValidMuonHits       = new TH1F("looseMuPlusValidMuonHits",      "looseMuPlusValidMuonHits",       35, -0.5, 34.5);
+  TH1F *h_looseMuUpperPlusValidMuonHits  = new TH1F("looseMuUpperPlusValidMuonHits", "looseMuUpperPlusValidMuonHits",  35, -0.5, 34.5);
+  TH1F *h_looseMuLowerMinusValidMuonHits = new TH1F("looseMuLowerMinusValidMuonHits","looseMuLowerMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_looseMuLowerPlusValidMuonHits  = new TH1F("looseMuLowerPlusValidMuonHits", "looseMuLowerPlusValidMuonHits",  35, -0.5, 34.5);
   TH1F *h_looseMuMinusMatchedMuonStations      = new TH1F("looseMuMinusMatchedMuonStations",     "looseMuMinusMatchedMuonStations",      10, -0.5, 9.5);
   TH1F *h_looseMuUpperMinusMatchedMuonStations = new TH1F("looseMuUpperMinusMatchedMuonStations","looseMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_looseMuPlusMatchedMuonStations       = new TH1F("looseMuPlusMatchedMuonStations",      "looseMuPlusMatchedMuonStations",       10, -0.5, 9.5);
@@ -802,6 +816,12 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_tightMuUpperPlusValidHits  = new TH1F("tightMuUpperPlusValidHits", "tightMuUpperPlusValidHits",  75, -0.5, 74.5);
   TH1F *h_tightMuLowerMinusValidHits = new TH1F("tightMuLowerMinusValidHits","tightMuLowerMinusValidHits", 75, -0.5, 74.5);
   TH1F *h_tightMuLowerPlusValidHits  = new TH1F("tightMuLowerPlusValidHits", "tightMuLowerPlusValidHits",  75, -0.5, 74.5);
+  TH1F *h_tightMuMinusValidMuonHits      = new TH1F("tightMuMinusValidMuonHits",     "tightMuMinusValidMuonHits",      35, -0.5, 34.5);
+  TH1F *h_tightMuUpperMinusValidMuonHits = new TH1F("tightMuUpperMinusValidMuonHits","tightMuUpperMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_tightMuPlusValidMuonHits       = new TH1F("tightMuPlusValidMuonHits",      "tightMuPlusValidMuonHits",       35, -0.5, 34.5);
+  TH1F *h_tightMuUpperPlusValidMuonHits  = new TH1F("tightMuUpperPlusValidMuonHits", "tightMuUpperPlusValidMuonHits",  35, -0.5, 34.5);
+  TH1F *h_tightMuLowerMinusValidMuonHits = new TH1F("tightMuLowerMinusValidMuonHits","tightMuLowerMinusValidMuonHits", 35, -0.5, 34.5);
+  TH1F *h_tightMuLowerPlusValidMuonHits  = new TH1F("tightMuLowerPlusValidMuonHits", "tightMuLowerPlusValidMuonHits",  35, -0.5, 34.5);
   TH1F *h_tightMuMinusMatchedMuonStations      = new TH1F("tightMuMinusMatchedMuonStations",     "tightMuMinusMatchedMuonStations",      10, -0.5, 9.5);
   TH1F *h_tightMuUpperMinusMatchedMuonStations = new TH1F("tightMuUpperMinusMatchedMuonStations","tightMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_tightMuPlusMatchedMuonStations       = new TH1F("tightMuPlusMatchedMuonStations",      "tightMuPlusMatchedMuonStations",       10, -0.5, 9.5);
@@ -890,6 +910,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TTreeReaderValue<Int_t> upTrackerThits(                trackReader, "upperMuon_trackerHits"                 );
   TTreeReaderValue<Int_t> upTrackerMhits(                trackReader, "upperMuon_muonStationHits"             );
   TTreeReaderValue<Int_t> upTrackerValidHits(            trackReader, "upperMuon_numberOfValidHits"           );
+  TTreeReaderValue<Int_t> upTrackerValidMuonHits(        trackReader, "upperMuon_numberOfValidMuonHits"       );
   TTreeReaderValue<Int_t> upTrackerMatchedMuonStations(  trackReader, "upperMuon_numberOfMatchedStations"     );
   TTreeReaderValue<Int_t> upTrackerLayersWithMeasurement(trackReader, "upperMuon_trackerLayersWithMeasurement");
 
@@ -911,6 +932,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TTreeReaderValue<Int_t>    lowTrackerThits(                trackReader, "lowerMuon_trackerHits"                 );
   TTreeReaderValue<Int_t>    lowTrackerMhits(                trackReader, "lowerMuon_muonStationHits"             );
   TTreeReaderValue<Int_t>    lowTrackerValidHits(            trackReader, "lowerMuon_numberOfValidHits"           );
+  TTreeReaderValue<Int_t>    lowTrackerValidMuonHits(        trackReader, "lowerMuon_numberOfValidMuonHits"       );
   TTreeReaderValue<Int_t>    lowTrackerMatchedMuonStations(  trackReader, "lowerMuon_numberOfMatchedStations"     );
   TTreeReaderValue<Int_t>    lowTrackerLayersWithMeasurement(trackReader, "lowerMuon_trackerLayersWithMeasurement");
   
@@ -965,35 +987,35 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	bool up_superpointing = ((std::fabs(*upTrackerDxy) < 10) && (std::fabs(*upTrackerDz)  < 50))
 	  ? 1 : 0;
 	
-	bool up_n1dxymax      = ((*upTrackerMhits > 0  )             && 
+	bool up_n1dxymax      = ((*upTrackerValidMuonHits > 0  )             && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerPhits > 0  )             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1dzmax       = ((*upTrackerMhits > 0  )             && 
+	bool up_n1dzmax       = ((*upTrackerValidMuonHits > 0  )             && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerPhits > 0  )             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1ptrelerr    = ((*upTrackerMhits > 0)               && 
+	bool up_n1ptrelerr    = ((*upTrackerValidMuonHits > 0)               && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (*upTrackerPhits > 0)               && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1pt          = ((*upTrackerMhits > 0  )             && 
+	bool up_n1pt          = ((*upTrackerValidMuonHits > 0  )             && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerPhits > 0  )             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1trkhits     = ((*upTrackerMhits > 0  )             && 
+	bool up_n1trkhits     = ((*upTrackerValidMuonHits > 0  )             && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerPhits > 0 ))
 	  ? 1 : 0;
-	bool up_n1pixhits     = ((*upTrackerMhits > 0  )             && 
+	bool up_n1pixhits     = ((*upTrackerValidMuonHits > 0  )             && 
 				 (*upTrackerMatchedMuonStations > 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerLayersWithMeasurement > 5))
@@ -1003,7 +1025,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 				 (*upTrackerPhits > 0  )             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1mmustahits  = ((*upTrackerMhits > 0  ) && 
+	bool up_n1mmustahits  = ((*upTrackerValidMuonHits > 0  ) && 
 				 (upperRelPtErr   < 0.3) && 
 				 (*upTrackerPhits > 0  ) && 
 				 (*upTrackerLayersWithMeasurement > 5))
@@ -1049,6 +1071,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	h_upperPixelHits->Fill(*upTrackerPhits);
 	h_upperTrackerHits->Fill(*upTrackerThits);
 	h_upperValidHits->Fill(*upTrackerValidHits);
+	h_upperValidMuonHits->Fill(*upTrackerValidMuonHits);
 	h_upperMuonStationHits->Fill(*upTrackerMhits);
 	h_upperMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	h_upperTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
@@ -1207,6 +1230,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    h_muUpperMinusTrackerHits->Fill(*upTrackerThits);
 	    h_muMinusValidHits->Fill(*upTrackerValidHits);
 	    h_muUpperMinusValidHits->Fill(*upTrackerValidHits);
+	    h_muMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	    h_muUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	    h_muMinusMuonStationHits->Fill(*upTrackerMhits);
 	    h_muUpperMinusMuonStationHits->Fill(*upTrackerMhits);
 	    h_muMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
@@ -1263,6 +1288,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuUpperMinusTrackerHits->Fill(*upTrackerThits);
 	      h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
 	      h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
+	      h_looseMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 
 	      if (up_tightdxy) {
 		h_tightMuMinusDz->Fill(*upTrackerDz);
@@ -1332,11 +1359,15 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (up_n1vmuhits) {
 	      h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
 	      h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
+	      h_looseMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	      h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
 	      h_looseMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
 	      if (up_tightdxy && up_tightdz) {
 		h_tightMuMinusValidHits->Fill(*upTrackerValidHits);
 		h_tightMuUpperMinusValidHits->Fill(*upTrackerValidHits);
+		h_tightMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
+		h_tightMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 		h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
 		h_tightMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
 	      }
@@ -1414,6 +1445,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    h_muUpperPlusTrackerHits->Fill(*upTrackerThits);
 	    h_muPlusValidHits->Fill(*upTrackerValidHits);
 	    h_muUpperPlusValidHits->Fill(*upTrackerValidHits);
+	    h_muPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	    h_muUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	    h_muPlusMuonStationHits->Fill(*upTrackerMhits);
 	    h_muUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	    h_muPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
@@ -1532,11 +1565,15 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (up_n1vmuhits) {
 	      h_looseMuPlusValidHits->Fill(*upTrackerValidHits);
 	      h_looseMuUpperPlusValidHits->Fill(*upTrackerValidHits);
+	      h_looseMuPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	      h_looseMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	      h_looseMuPlusMuonStationHits->Fill(*upTrackerMhits);
 	      h_looseMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	      if (up_tightdxy && up_tightdz) {
 		h_tightMuPlusValidHits->Fill(*upTrackerValidHits);
 		h_tightMuUpperPlusValidHits->Fill(*upTrackerValidHits);
+		h_tightMuPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
+		h_tightMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
 		h_tightMuPlusMuonStationHits->Fill(*upTrackerMhits);
 		h_tightMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
 	      }
@@ -1613,35 +1650,35 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	bool low_superpointing = ((std::fabs(*lowTrackerDxy) < 10) && (std::fabs(*lowTrackerDz)  < 50))
 	  ? 1 : 0;
 	
-	bool low_n1dxymax      = ((*lowTrackerMhits > 0  )             && 
+	bool low_n1dxymax      = ((*lowTrackerValidMuonHits > 0  )             && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerPhits > 0  )             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1dzmax       = ((*lowTrackerMhits > 0  )             && 
+	bool low_n1dzmax       = ((*lowTrackerValidMuonHits > 0  )             && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerPhits > 0  )             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1ptrelerr    = ((*lowTrackerMhits > 0)               && 
+	bool low_n1ptrelerr    = ((*lowTrackerValidMuonHits > 0)               && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (*lowTrackerPhits > 0)               && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1pt          = ((*lowTrackerMhits > 0  )             && 
+	bool low_n1pt          = ((*lowTrackerValidMuonHits > 0  )             && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerPhits > 0  )             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1trkhits     = ((*lowTrackerMhits > 0  )             && 
+	bool low_n1trkhits     = ((*lowTrackerValidMuonHits > 0  )             && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerPhits > 0 ))
 	  ? 1 : 0;
-	bool low_n1pixhits     = ((*lowTrackerMhits > 0  )             && 
+	bool low_n1pixhits     = ((*lowTrackerValidMuonHits > 0  )             && 
 				  (*lowTrackerMatchedMuonStations > 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
@@ -1651,7 +1688,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 				  (*lowTrackerPhits > 0  )             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1mmustahits  = ((*lowTrackerMhits > 0  ) && 
+	bool low_n1mmustahits  = ((*lowTrackerValidMuonHits > 0  ) && 
 				  (lowerRelPtErr    < 0.3) && 
 				  (*lowTrackerPhits > 0  ) && 
 				  (*lowTrackerLayersWithMeasurement > 5))
@@ -1697,6 +1734,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	h_lowerPixelHits->Fill(*lowTrackerPhits);
 	h_lowerTrackerHits->Fill(*lowTrackerThits);
 	h_lowerValidHits->Fill(*lowTrackerValidHits);
+	h_lowerValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	h_lowerMuonStationHits->Fill(*lowTrackerMhits);
 	h_lowerMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	h_lowerTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
@@ -1855,6 +1893,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    h_muLowerMinusTrackerHits->Fill(*lowTrackerThits);
 	    h_muMinusValidHits->Fill(*lowTrackerValidHits);
 	    h_muLowerMinusValidHits->Fill(*lowTrackerValidHits);
+	    h_muMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+	    h_muLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	    h_muMinusMuonStationHits->Fill(*lowTrackerMhits);
 	    h_muLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
 	    h_muMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
@@ -1972,11 +2012,15 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (low_n1vmuhits) {
 	      h_looseMuMinusValidHits->Fill(*lowTrackerValidHits);
 	      h_looseMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
+	      h_looseMuMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+	      h_looseMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
 	      h_looseMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
 	      if (low_tightdxy && low_tightdz) {
 		h_tightMuMinusValidHits->Fill(*lowTrackerValidHits);
 		h_tightMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
+		h_tightMuMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+		h_tightMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 		h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
 		h_tightMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
 	      }
@@ -2058,6 +2102,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    h_muLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	    h_muPlusValidHits->Fill(*lowTrackerValidHits);
 	    h_muLowerPlusValidHits->Fill(*lowTrackerValidHits);
+	    h_muPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+	    h_muLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	    h_muPlusMuonStationHits->Fill(*lowTrackerMhits);
 	    h_muLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	    h_muPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
@@ -2114,6 +2160,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
 	      h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
 	      h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+	      h_looseMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+	      h_looseMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      h_looseMuPlusMuonStationHits->Fill(*lowTrackerMhits);
 	      h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 
@@ -2157,6 +2205,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
 		h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
 		h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+		h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+		h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 		h_tightMuPlusMuonStationHits->Fill(*lowTrackerMhits);
 		h_tightMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	      }
@@ -2189,9 +2239,13 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (low_n1vmuhits) {
 	      h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
 	      h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+	      h_looseMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+	      h_looseMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      if (low_tightdxy && low_tightdz) {
 		h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
 		h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
+		h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
+		h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      }
 	    }
 	    if (low_n1ptrelerr) {
