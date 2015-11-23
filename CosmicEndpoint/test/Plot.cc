@@ -57,11 +57,15 @@ void Plot(std::string const& filelist, std::string const& outFile,
   std::ofstream lumiFileOut400_tight;
   
   std::string outname;
-  
+
+  bool istrackerp = false;
+
   if (trackVal_== 1) {
     myChain   = new TChain(TString("analysisTrackerMuons/MuonTree"));
     outname   = "TrackerOnly";
     trackAlgo = "trackerOnly";
+    // if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+    istrackerp = true;
   }  
   else if (trackVal_== 2) {
     myChain   = new TChain(TString("analysisTPFMSMuons/MuonTree"));
@@ -82,6 +86,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
     myChain   = new TChain(TString("analysisTunePMuons/MuonTree"));
     outname   = "TuneP";
     trackAlgo = "tuneP";
+    // if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+    istrackerp = true;
   } 
   else {
     std::cout << "INVALID TRACK SPECIFIED! Choose a value between [1, 5]" << std::endl;
@@ -1020,12 +1026,14 @@ void Plot(std::string const& filelist, std::string const& outFile,
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1vmuhits     = ((*upTrackerMatchedMuonStations > 1) &&
+	// if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+	bool up_n1vmuhits     = ((istrackerp && sqrt(upTrackerTrack->perp2()) > 200 ? *upTrackerMatchedMuonStations > 1 : 1) &&
 				 (upperRelPtErr   < 0.3)             && 
 				 (*upTrackerPhits > 0  )             && 
 				 (*upTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool up_n1mmustahits  = ((*upTrackerValidMuonHits > 0  ) && 
+	// if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+	bool up_n1mmustahits  = ((istrackerp && sqrt(upTrackerTrack->perp2()) > 200 ? *upTrackerValidMuonHits > 0 : 1 ) && 
 				 (upperRelPtErr   < 0.3) && 
 				 (*upTrackerPhits > 0  ) && 
 				 (*upTrackerLayersWithMeasurement > 5))
@@ -1103,7 +1111,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    h_countersUpper->Fill(7);
 	  if (up_n1pt)
 	    h_countersUpper->Fill(8);
-	  
+
 	  if (up_tightdxy) {
 	    if (up_n1ptrelerr)
 	      h_countersUpper->Fill(11);
@@ -1330,13 +1338,11 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_tightMuMinusTrackerHits->Fill(*upTrackerThits);
 		h_tightMuUpperMinusTrackerHits->Fill(*upTrackerThits);
 	      }
-
 	      for (int i = 0; i < nBiasBins; ++i) {
 		h_looseMuMinusCurvePlusBias[i]->Fill( upperCpT+(i+1)*(factor_*maxBias/nBiasBins));
 		h_looseMuMinusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
 		h_looseMuUpperMinusCurvePlusBias[i]->Fill( upperCpT+(i+1)*(factor_*maxBias/nBiasBins));
 		h_looseMuUpperMinusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-	    
 		if (up_tightdxy && up_tightdz) {
 		  h_tightMuMinusCurvePlusBias[i]->Fill( upperCpT+(i+1)*(factor_*maxBias/nBiasBins));
 		  h_tightMuMinusCurveMinusBias[i]->Fill(upperCpT-(i+1)*(factor_*maxBias/nBiasBins));	
@@ -1683,12 +1689,14 @@ void Plot(std::string const& filelist, std::string const& outFile,
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1vmuhits     = ((*lowTrackerMatchedMuonStations > 1) &&
+	// if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+	bool low_n1vmuhits     = ((istrackerp && sqrt(lowTrackerTrack->perp2()) > 200 ? *lowTrackerMatchedMuonStations > 1 : 1) &&
 				  (lowerRelPtErr    < 0.3)             && 
 				  (*lowTrackerPhits > 0  )             && 
 				  (*lowTrackerLayersWithMeasurement > 5))
 	  ? 1 : 0;
-	bool low_n1mmustahits  = ((*lowTrackerValidMuonHits > 0  ) && 
+	// if using TuneP or TrackerOnly and pT < 200, should *not* apply muon system cuts
+	bool low_n1mmustahits  = ((istrackerp && sqrt(lowTrackerTrack->perp2()) > 200 ? *lowTrackerValidMuonHits > 0 : 1 ) && 
 				  (lowerRelPtErr    < 0.3) && 
 				  (*lowTrackerPhits > 0  ) && 
 				  (*lowTrackerLayersWithMeasurement > 5))
