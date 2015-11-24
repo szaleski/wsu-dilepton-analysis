@@ -292,13 +292,13 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     upperMuon_trackPt  = ref->pt();
     upperMuon_trackVec = ref->momentum();
 
-    upperMuon_pixelHits                    = ref->hitPattern().numberOfValidPixelHits();
-    upperMuon_trackerHits                  = ref->hitPattern().numberOfValidTrackerHits();
-    upperMuon_muonStationHits              = ref->hitPattern().muonStationsWithValidHits();
-    upperMuon_numberOfValidHits            = ref->hitPattern().numberOfValidHits();
-    upperMuon_numberOfValidMuonHits        = ref->hitPattern().numberOfValidMuonHits();
+    upperMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
+    upperMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
+    upperMuon_muonStationHits              = muon->globalTrack()->hitPattern().muonStationsWithValidHits();
+    upperMuon_numberOfValidHits            = muon->globalTrack()->hitPattern().numberOfValidHits();
+    upperMuon_numberOfValidMuonHits        = muon->globalTrack()->hitPattern().numberOfValidMuonHits();
     upperMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
-    upperMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
+    upperMuon_trackerLayersWithMeasurement = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement();
 
     if ( debug_ > 3) {
       double relError = upperMuon_ptError/upperMuon_trackPt;
@@ -326,6 +326,14 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     lowerMuon_trackPt  = ref->pt();
     lowerMuon_trackVec = ref->momentum();
     
+    lowerMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
+    lowerMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
+    lowerMuon_muonStationHits              = muon->globalTrack()->hitPattern().muonStationsWithValidHits();
+    lowerMuon_numberOfValidHits            = muon->globalTrack()->hitPattern().numberOfValidHits();
+    lowerMuon_numberOfValidMuonHits        = muon->globalTrack()->hitPattern().numberOfValidMuonHits();
+    lowerMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
+    lowerMuon_trackerLayersWithMeasurement = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement();
+    /* adapting for sensibility
     lowerMuon_pixelHits                    = ref->hitPattern().numberOfValidPixelHits();
     lowerMuon_trackerHits                  = ref->hitPattern().numberOfValidTrackerHits();
     lowerMuon_muonStationHits              = ref->hitPattern().muonStationsWithValidHits();
@@ -333,7 +341,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     lowerMuon_numberOfValidMuonHits        = ref->hitPattern().numberOfValidMuonHits();
     lowerMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
     lowerMuon_trackerLayersWithMeasurement = ref->hitPattern().trackerLayersWithMeasurement();
-    
+    */
     if ( debug_ > 3) {
       double relError = lowerMuon_ptError/lowerMuon_trackPt;
       std::cout << "Lower Muon pT Error/pT is: " << relError       << std::endl

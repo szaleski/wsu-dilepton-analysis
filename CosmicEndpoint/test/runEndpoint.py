@@ -12,6 +12,9 @@ if __name__ == "__main__":
     parser.add_option("-n", "--nbiasbins", type="int", dest="nbiasbins",
                       metavar="nbiasbins", default=1000,
                       help="[OPTIONAL] Number of steps used to bias the curvature (default is 1000)")
+    parser.add_option("-t", "--totalbins", type="int", dest="totalbins",
+                      metavar="totalbins", default=5000,
+                      help="[OPTIONAL] Total number of bins in the original curvature distribution (default is 5000)")
     parser.add_option("-r", "--rebins", type="int", dest="rebins",
                       metavar="rebins", default=1,
                       help="[OPTIONAL] Number of bins to merge into one in the input histograms (default is 1, no merging)")
@@ -47,7 +50,9 @@ if __name__ == "__main__":
 
     r.gROOT.SetBatch(True)
     myStudy = cosmicEndpointShort(options.infiledir,options.outfile,
-                                  options.maxbias,options.nbiasbins,options.factor,
+                                  options.maxbias,options.nbiasbins,
+                                  options.totalbins,
+                                  options.factor,
                                   options.rebins)
     if options.debug:
         print options
