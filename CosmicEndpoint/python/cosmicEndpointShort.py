@@ -15,7 +15,7 @@ class cosmicEndpointShort() :
                         }
     """
     
-    def __init__(self, infiledir, outfile, maxbias, nBiasBins=100, factor=1, rebins=1) :
+    def __init__(self, infiledir, outfile, maxbias, nBiasBins=1000, nTotalBins=5000, factor=1000, rebins=1) :
         import ROOT as r
         self.infiles = {}
         self.infiles["picky"] = r.TFile(infiledir+"/CosmicHistOut_Picky.root","r")
@@ -25,10 +25,11 @@ class cosmicEndpointShort() :
         self.outfile   = r.TFile(outfile,"recreate")
         self.outdirs   = {}
 
-        self.maxbias   = maxbias
-        self.nBiasBins = nBiasBins
-        self.factor    = factor
-        self.rebins    = rebins
+        self.maxbias    = maxbias
+        self.nBiasBins  = nBiasBins
+        self.nTotalBins = nTotalBins
+        self.factor     = factor
+        self.rebins     = rebins
 
         self.graphInfo = {}
         self.graphInfo["chi2"] = {"color":r.kBlue,   "marker":r.kFullTriangleUp,
@@ -147,9 +148,9 @@ class cosmicEndpointShort() :
 
         # set bin content to 0 for bins outside the min pT cut
         print "%s: raw: %d"%(trackName,obs.Integral())
-        obs = self.setMinPT(obs,5000,200./1000.)
+        obs = self.setMinPT(obs,self.nTotalBins,200./self.factor,needsFlip)
         print "%s: raw: %d"%(trackName,ref.Integral())
-        ref = self.setMinPT(ref,5000,200./1000.)
+        ref = self.setMinPT(ref,self.nTotalBins,200./self.factor,needsFlip)
         
         print "%s: raw: %d"%(trackName,obs.Integral())
         print "%s: raw: %d"%(trackName,ref.Integral())
@@ -236,7 +237,7 @@ class cosmicEndpointShort() :
 
         chi2opts = "PUUNORMCHI2/NDF"
         xVals["Chi2"][nBiasBins] = 0.
-        resids = np.zeros(5000,np.dtype('float64')) # pointer argument, one per bin, not quite working
+        resids = np.zeros(self.nTotalBins,np.dtype('float64')) # pointer argument, one per bin, not quite working
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,"PCHI2/NDF",resids)
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,chi2opts,resids)
         if getResiduals:
@@ -331,9 +332,9 @@ class cosmicEndpointShort() :
             obs_negBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
             # set bin content to 0 for bins outside the min pT cut
             print "%s%sCurvePlusBias%03d %d"%( histBaseName,obsName,i+1,obs_posBias.Integral())
-            obs_posBias = self.setMinPT(obs_posBias,5000,200./1000.)
+            obs_posBias = self.setMinPT(obs_posBias,self.nTotalBins,200./self.factor,needsFlip)
             print "%s%sCurveMinusBias%03d %d"%(histBaseName,obsName,i+1,obs_negBias.Integral())
-            obs_negBias = self.setMinPT(obs_negBias,5000,200./1000.)
+            obs_negBias = self.setMinPT(obs_negBias,self.nTotalBins,200./self.factor,needsFlip)
             obs_posBias.Rebin(self.rebins)
             obs_negBias.Rebin(self.rebins)
         
@@ -342,9 +343,9 @@ class cosmicEndpointShort() :
             ref_posBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
             ref_negBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
             print "%s%sCurvePlusBias%03d %d"%( histBaseName,refName,i+1,ref_posBias.Integral())
-            ref_posBias = self.setMinPT(ref_posBias,5000,200./1000.)
+            ref_posBias = self.setMinPT(ref_posBias,self.nTotalBins,200./self.factor,needsFlip)
             print "%s%sCurveMinusBias%03d %d"%(histBaseName,refName,i+1,ref_negBias.Integral())
-            ref_negBias = self.setMinPT(ref_negBias,5000,200./1000.)
+            ref_negBias = self.setMinPT(ref_negBias,self.nTotalBins,200./self.factor,needsFlip)
             ref_posBias.Rebin(self.rebins)
             ref_negBias.Rebin(self.rebins)
 
@@ -419,18 +420,18 @@ class cosmicEndpointShort() :
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
             
-            obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
-            obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
-            
-            for b in range(obs_posBias.GetNbinsX()):
-                obs_posBiasValsX[b] = b+1
-                obs_negBiasValsX[b] = b+1
-                obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
-                obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
-
             if (needsFlip):
+                obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+                obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+                obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+                obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            
+                for b in range(obs_posBias.GetNbinsX()):
+                    obs_posBiasValsX[b] = b+1
+                    obs_negBiasValsX[b] = b+1
+                    obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
+                    obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
+
                 obs_posBiasValsYRev = np.fliplr([obs_posBiasValsY])[0]
                 obs_negBiasValsYRev = np.fliplr([obs_negBiasValsY])[0]
                 # obs_posBias.SetContent(obs_posBiasValsYRev)
@@ -495,7 +496,7 @@ class cosmicEndpointShort() :
             chi2Val = r.Double(0.) # necessary for pass-by-reference in python
             chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
             igood   = r.Long(0)    # necessary for pass-by-reference in python
-            resids  = np.zeros(5000,np.dtype('float64'))
+            resids  = np.zeros(self.nTotalBins,np.dtype('float64'))
             prob = obs_posBias.Chi2TestX(ref_posBias,chi2Val,chi2ndf,igood,histopts,resids)
             print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
@@ -545,7 +546,7 @@ class cosmicEndpointShort() :
             chi2Val = r.Double(0.) # necessary for pass-by-reference in python
             chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
             igood   = r.Long(0)    # necessary for pass-by-reference in python
-            resids  = np.zeros(5000,np.dtype('float64'))
+            resids  = np.zeros(self.nTotalBins,np.dtype('float64'))
             prob = obs_negBias.Chi2TestX(ref_negBias,chi2Val,chi2ndf,igood,histopts,resids)
             print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
@@ -691,8 +692,8 @@ class cosmicEndpointShort() :
 
         if not Obs*Ref:
             errorCan = r.TCanvas("errorCan","errorCan",800,800)
-            obs.Draw("ep0")
-            ref.Draw("ep0sames")
+            hobs.Draw("ep0")
+            href.Draw("ep0sames")
             #raw_input("press enter to continue")
             return -1
                       
@@ -714,13 +715,22 @@ class cosmicEndpointShort() :
         """Takes an input histogram and sets the bin content to 
         0 if q/pT is outside the range
         """
-        print "lower cut off %2.2f, bin %d, integral (first,bin) %d"%(-1./minPt,
-                                                                       hist.FindBin(-1./minPt)-2,
-                                                                       hist.Integral(hist.GetXaxis().GetFirst(),
-                                                                                     hist.FindBin(-1./minPt)-2))
-        print "binup %f, binlow %f, binw %f:"%(hist.GetXaxis().GetBinUpEdge( hist.FindBin(-1./minPt)-2),
-                                               hist.GetXaxis().GetBinLowEdge(hist.FindBin(-1./minPt)-2),
-                                               hist.GetXaxis().GetBinWidth(  hist.FindBin(-1./minPt)-2))
+        if symmetric:
+            print "lower cut off %2.2f, bin %d, integral (first,bin) %d"%(-1./minPt,
+                                                                           hist.FindBin(-1./minPt)-2,
+                                                                           hist.Integral(hist.GetXaxis().GetFirst(),
+                                                                                         hist.FindBin(-1./minPt)-2))
+            print "binup %f, binlow %f, binw %f:"%(hist.GetXaxis().GetBinUpEdge( hist.FindBin(-1./minPt)-2),
+                                                   hist.GetXaxis().GetBinLowEdge(hist.FindBin(-1./minPt)-2),
+                                                   hist.GetXaxis().GetBinWidth(  hist.FindBin(-1./minPt)-2))
+            thebin = hist.FindBin(-1./minPt)
+            if not (hist.GetXaxis().GetBinLowEdge(thebin) < -1./minPt):
+                print thebin, hist.GetXaxis().GetBinUpEdge(thebin), hist.GetXaxis().GetBinLowEdge(thebin)
+                thebin -= 1
+                print thebin, hist.GetXaxis().GetBinUpEdge(thebin), hist.GetXaxis().GetBinLowEdge(thebin)
+            for binlow in range(0,thebin):
+                hist.SetBinContent(binlow,0)
+
         print "upper cut off %2.2f, bin %d, integral (first,bin) %d"%(1./minPt,
                                                                       hist.FindBin(1./minPt)+1,
                                                                       hist.Integral(hist.FindBin(1./minPt)+1,
@@ -728,10 +738,12 @@ class cosmicEndpointShort() :
         print "binup %f, binlow %f, binw %f:"%(hist.GetXaxis().GetBinUpEdge( hist.FindBin(1./minPt)+1),
                                                hist.GetXaxis().GetBinLowEdge(hist.FindBin(1./minPt)+1),
                                                hist.GetXaxis().GetBinWidth(  hist.FindBin(1./minPt)+1))
-        if symmetric:
-            for binlow in range(0,hist.FindBin(-1./minPt)-1):
-                hist.SetBinContent(binlow,0)
-        for binhigh in range(hist.FindBin(1./minPt)+1,nbins+1):
+        thebin = hist.FindBin(1./minPt)
+        if not (hist.GetXaxis().GetBinUpEdge(thebin) > 1./minPt):
+            print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+            thebin += 1
+            print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+        for binhigh in range(thebin,nbins+1):
             hist.SetBinContent(binhigh,0)
 
         return hist
