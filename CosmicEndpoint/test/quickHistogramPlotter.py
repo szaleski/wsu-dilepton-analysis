@@ -37,7 +37,7 @@ if __name__ == "__main__":
         debug = True
 
     looseCanvas    = r.TCanvas("loose",   "loose",   1600,900)
-    tightCanvas    = r.TCanvas("tight",   "tight",   1600,900)
+    #tightCanvas    = r.TCanvas("tight",   "tight",   1600,900)
     combinedCanvas = r.TCanvas("combined","combined",1600,900)
     counterCanvas  = r.TCanvas("counter", "counter", 1600,900)
     
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         ]
     
     looseCanvas.Divide(5,4)
-    tightCanvas.Divide(5,4)
+    #tightCanvas.Divide(5,4)
     combinedCanvas.Divide(5,4)
     inputfile = r.TFile(options.infile,"READ")
     if not inputfile.IsOpen() or inputfile.IsZombie():
@@ -93,8 +93,8 @@ if __name__ == "__main__":
         looseMuPlus  = inputfile.Get("%s%s"%(cutmuons[0],hist))
         looseMuMinus = inputfile.Get("%s%s"%(cutmuons[1],hist))
 
-        tightMuPlus  = inputfile.Get("%s%s"%(cutmuons[2],hist))
-        tightMuMinus = inputfile.Get("%s%s"%(cutmuons[3],hist))
+        #tightMuPlus  = inputfile.Get("%s%s"%(cutmuons[2],hist))
+        #tightMuMinus = inputfile.Get("%s%s"%(cutmuons[3],hist))
 
         if hist == "Curve":
             combinedMuUpper.Rebin(options.rebins)
@@ -103,8 +103,8 @@ if __name__ == "__main__":
             looseMuPlus.Rebin(options.rebins)
             looseMuMinus.Rebin(options.rebins)
 
-            tightMuPlus.Rebin(options.rebins)
-            tightMuMinus.Rebin(options.rebins)
+            #tightMuPlus.Rebin(options.rebins)
+            #tightMuMinus.Rebin(options.rebins)
             
         looseCanvas.cd(i+1)
         looseMax = max(looseMuMinus.GetMaximum(),looseMuPlus.GetMaximum())
@@ -116,15 +116,15 @@ if __name__ == "__main__":
         looseMuMinus = makeNicePlot(looseMuMinus,paramsM,debug)
         r.gPad.Update()
 
-        tightCanvas.cd(i+1)
-        tightMax = max(tightMuMinus.GetMaximum(),tightMuPlus.GetMaximum())
-        tightMuMinus.SetMaximum(tightMax*1.2)
-        tightMuMinus.Draw("ep0")
-        tightMuPlus.Draw("ep0sames")
-        r.gPad.Update()
-        tightMuPlus = makeNicePlot(tightMuPlus,paramsP,debug)
-        tightMuMinus = makeNicePlot(tightMuMinus,paramsM,debug)
-        r.gPad.Update()
+        #tightCanvas.cd(i+1)
+        #tightMax = max(tightMuMinus.GetMaximum(),tightMuPlus.GetMaximum())
+        #tightMuMinus.SetMaximum(tightMax*1.2)
+        #tightMuMinus.Draw("ep0")
+        #tightMuPlus.Draw("ep0sames")
+        #r.gPad.Update()
+        #tightMuPlus = makeNicePlot(tightMuPlus,paramsP,debug)
+        #tightMuMinus = makeNicePlot(tightMuMinus,paramsM,debug)
+        #r.gPad.Update()
 
         combinedCanvas.cd(i+1)
         combinedMax = max(combinedMuLower.GetMaximum(),combinedMuUpper.GetMaximum())
@@ -155,14 +155,14 @@ if __name__ == "__main__":
     r.gPad.Update()
     
     looseCanvas.Update()
-    tightCanvas.Update()
+    #tightCanvas.Update()
     combinedCanvas.Update()
     counterCanvas.Update()
     if options.debug:
         raw_input("enter to end")
     output = r.TFile(options.outfile,"RECREATE")
     looseCanvas.Write()
-    tightCanvas.Write()
+    #tightCanvas.Write()
     combinedCanvas.Write()
     counterCanvas.Write()
     output.Write()
