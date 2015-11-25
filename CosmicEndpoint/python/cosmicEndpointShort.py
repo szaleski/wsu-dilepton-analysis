@@ -678,7 +678,10 @@ class cosmicEndpointShort() :
                 D_term3 = 1-(obs+ref)/(Obs+Ref)
                 D_res = math.sqrt(D_term1*D_term2*D_term3)
                 if not D_res or not Obs*Ref:
-                    print "N_res(%f-(%f*%f)) = %f, D_term1 = %f, D_term2 = %f, D_term3 = %f"%(obs,Obs,piest,N_res,D_term1,D_term2,D_term3)
+                    print "N_res(%f-(%f*%f)) = %f, D_term1 = %f, D_term2 = %f, D_term3 = %f"%(obs,Obs,
+                                                                                              piest,
+                                                                                              N_res,
+                                                                                              D_term1,D_term2,D_term3)
                 else:
                     residual = N_res/D_res
                     residuals.Fill(residual)
@@ -715,35 +718,40 @@ class cosmicEndpointShort() :
         """Takes an input histogram and sets the bin content to 
         0 if q/pT is outside the range
         """
+        print "nBinsX %d"%(hist.GetNbinsX())
         if symmetric:
-            print "lower cut off %2.2f, bin %d, integral (first,bin) %d"%(-1./minPt,
-                                                                           hist.FindBin(-1./minPt)-2,
-                                                                           hist.Integral(hist.GetXaxis().GetFirst(),
-                                                                                         hist.FindBin(-1./minPt)-2))
-            print "binup %f, binlow %f, binw %f:"%(hist.GetXaxis().GetBinUpEdge( hist.FindBin(-1./minPt)-2),
-                                                   hist.GetXaxis().GetBinLowEdge(hist.FindBin(-1./minPt)-2),
-                                                   hist.GetXaxis().GetBinWidth(  hist.FindBin(-1./minPt)-2))
             thebin = hist.FindBin(-1./minPt)
-            if not (hist.GetXaxis().GetBinLowEdge(thebin) < -1./minPt):
-                print thebin, hist.GetXaxis().GetBinUpEdge(thebin), hist.GetXaxis().GetBinLowEdge(thebin)
+            while not (hist.GetXaxis().GetBinLowEdge(thebin) < -1./minPt):
+                print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
                 thebin -= 1
-                print thebin, hist.GetXaxis().GetBinUpEdge(thebin), hist.GetXaxis().GetBinLowEdge(thebin)
-            for binlow in range(0,thebin):
+                print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+            print "lower cut off %2.2f, bin %d, integral (first,bin) %d"%(-1./minPt,
+                                                                           hist.FindBin(-1./minPt),
+                                                                           hist.Integral(hist.GetXaxis().GetFirst(),
+                                                                                         thebin))
+            print "binlow %f, binup %f, binw %f:"%(hist.GetXaxis().GetBinLowEdge(thebin),
+                                                   hist.GetXaxis().GetBinUpEdge( thebin),
+                                                   hist.GetXaxis().GetBinWidth(  thebin))
+            for binlow in range(0,thebin+1):
                 hist.SetBinContent(binlow,0)
 
-        print "upper cut off %2.2f, bin %d, integral (first,bin) %d"%(1./minPt,
-                                                                      hist.FindBin(1./minPt)+1,
-                                                                      hist.Integral(hist.FindBin(1./minPt)+1,
-                                                                                    hist.GetXaxis().GetLast()))
-        print "binup %f, binlow %f, binw %f:"%(hist.GetXaxis().GetBinUpEdge( hist.FindBin(1./minPt)+1),
-                                               hist.GetXaxis().GetBinLowEdge(hist.FindBin(1./minPt)+1),
-                                               hist.GetXaxis().GetBinWidth(  hist.FindBin(1./minPt)+1))
         thebin = hist.FindBin(1./minPt)
-        if not (hist.GetXaxis().GetBinUpEdge(thebin) > 1./minPt):
+        while not (hist.GetXaxis().GetBinUpEdge(thebin) > 1./minPt):
             print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
             thebin += 1
             print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
-        for binhigh in range(thebin,nbins+1):
+        print "upper cut off %2.2f, bin %d, integral (first,bin) %d"%(1./minPt,
+                                                                      hist.FindBin(1./minPt),
+                                                                      hist.Integral(thebin,
+                                                                                    hist.GetXaxis().GetLast()))
+        print "binlow %f, binup %f, binw %f:"%(hist.GetXaxis().GetBinLowEdge(thebin),
+                                               hist.GetXaxis().GetBinUpEdge( thebin),
+                                               hist.GetXaxis().GetBinWidth(  thebin))
+        print "nbins+1 content %d"%(hist.GetBinContent(nbins+1))
+        print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
+        for binhigh in range(thebin,nbins+2):
             hist.SetBinContent(binhigh,0)
+        print "nbins+1 content %d"%(hist.GetBinContent(nbins+1))
+        print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
 
         return hist
