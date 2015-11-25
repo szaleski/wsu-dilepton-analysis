@@ -1774,8 +1774,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	for (int i = 0; i < nBiasBins; ++i) {
 	  double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	  double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	  h_lowerCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	  h_lowerCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	  h_lowerCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	  h_lowerCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 	  if (debug)
 	    std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	}
@@ -1939,10 +1939,10 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    for (int i = 0; i < nBiasBins; ++i) {
 	      double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	      double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	      h_muMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-	      h_muLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	      h_muMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
+	      h_muLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 
 	      if (debug)
 		std::cout << "Made it through the lower bias loop " << i << std::endl; 
@@ -2023,16 +2023,16 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		h_looseMuLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		h_looseMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+		h_looseMuLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
 		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //  h_tightMuLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+		// remove tight info //  h_tightMuLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		// remove tight info //  h_tightMuLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
@@ -2152,10 +2152,10 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    for (int i = 0; i < nBiasBins; ++i) {
 	      double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	      double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	      h_muPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-	      h_muLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	      h_muPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+	      h_muLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
 	      if (debug)
 		std::cout << "Made it through the lower bias loop " << i << std::endl; 
@@ -2254,16 +2254,16 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		h_looseMuLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		h_looseMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+		h_looseMuLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
 		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //  h_tightMuLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+		// remove tight info //  h_tightMuLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		// remove tight info //  h_tightMuLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
