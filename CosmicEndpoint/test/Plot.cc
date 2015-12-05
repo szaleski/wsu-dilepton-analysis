@@ -734,207 +734,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
   }
 
-// remove tight info //  // histograms for tight cuts
-// remove tight info //  TH1F *h_tightMuMinusPt      = new TH1F("tightMuMinusPt",     "tightMuMinusPt",      300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPt = new TH1F("tightMuUpperMinusPt","tightMuUpperMinusPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuPlusPt       = new TH1F("tightMuPlusPt",      "tightMuPlusPt",       300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPt  = new TH1F("tightMuUpperPlusPt", "tightMuUpperPlusPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPt = new TH1F("tightMuLowerMinusPt","tightMuLowerMinusPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPt  = new TH1F("tightMuLowerPlusPt", "tightMuLowerPlusPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuMinusEta      = new TH1F("tightMuMinusEta",     "tightMuMinusEta",      40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperMinusEta = new TH1F("tightMuUpperMinusEta","tightMuUpperMinusEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuPlusEta       = new TH1F("tightMuPlusEta",      "tightMuPlusEta",       40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperPlusEta  = new TH1F("tightMuUpperPlusEta", "tightMuUpperPlusEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerMinusEta = new TH1F("tightMuLowerMinusEta","tightMuLowerMinusEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerPlusEta  = new TH1F("tightMuLowerPlusEta", "tightMuLowerPlusEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuMinusPhi      = new TH1F("tightMuMinusPhi",     "tightMuMinusPhi",      40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPhi = new TH1F("tightMuUpperMinusPhi","tightMuUpperMinusPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuPlusPhi       = new TH1F("tightMuPlusPhi",      "tightMuPlusPhi",       40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPhi  = new TH1F("tightMuUpperPlusPhi", "tightMuUpperPlusPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPhi = new TH1F("tightMuLowerMinusPhi","tightMuLowerMinusPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPhi  = new TH1F("tightMuLowerPlusPhi", "tightMuLowerPlusPhi",  40, -4., 4.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusChi2      = new TH1F("tightMuMinusChi2",     "tightMuMinusChi2",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusChi2 = new TH1F("tightMuUpperMinusChi2","tightMuUpperMinusChi2", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusChi2       = new TH1F("tightMuPlusChi2",      "tightMuPlusChi2",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusChi2  = new TH1F("tightMuUpperPlusChi2", "tightMuUpperPlusChi2",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusChi2 = new TH1F("tightMuLowerMinusChi2","tightMuLowerMinusChi2", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusChi2  = new TH1F("tightMuLowerPlusChi2", "tightMuLowerPlusChi2",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuMinusNdof      = new TH1F("tightMuMinusNdof",     "tightMuMinusNdof",      100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusNdof = new TH1F("tightMuUpperMinusNdof","tightMuUpperMinusNdof", 100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuPlusNdof       = new TH1F("tightMuPlusNdof",      "tightMuPlusNdof",       100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusNdof  = new TH1F("tightMuUpperPlusNdof", "tightMuUpperPlusNdof",  100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusNdof = new TH1F("tightMuLowerMinusNdof","tightMuLowerMinusNdof", 100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusNdof  = new TH1F("tightMuLowerPlusNdof", "tightMuLowerPlusNdof",  100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuMinusCharge      = new TH1F("tightMuMinusCharge",     "tightMuMinusCharge",      3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusCharge = new TH1F("tightMuUpperMinusCharge","tightMuUpperMinusCharge", 3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuPlusCharge       = new TH1F("tightMuPlusCharge",      "tightMuPlusCharge",       3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusCharge  = new TH1F("tightMuUpperPlusCharge", "tightMuUpperPlusCharge",  3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusCharge = new TH1F("tightMuLowerMinusCharge","tightMuLowerMinusCharge", 3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusCharge  = new TH1F("tightMuLowerPlusCharge", "tightMuLowerPlusCharge",  3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuMinusCurve      = new TH1F("tightMuMinusCurve",     "tightMuMinusCurve",      7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuUpperMinusCurve = new TH1F("tightMuUpperMinusCurve","tightMuUpperMinusCurve", 7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuPlusCurve       = new TH1F("tightMuPlusCurve",      "tightMuPlusCurve",       7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuUpperPlusCurve  = new TH1F("tightMuUpperPlusCurve", "tightMuUpperPlusCurve",  7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuLowerMinusCurve = new TH1F("tightMuLowerMinusCurve","tightMuLowerMinusCurve", 7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuLowerPlusCurve  = new TH1F("tightMuLowerPlusCurve", "tightMuLowerPlusCurve",  7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuMinusDxy      = new TH1F("tightMuMinusDxy",     "tightMuMinusDxy",      100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDxy = new TH1F("tightMuUpperMinusDxy","tightMuUpperMinusDxy", 100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuPlusDxy       = new TH1F("tightMuPlusDxy",      "tightMuPlusDxy",       100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDxy  = new TH1F("tightMuUpperPlusDxy", "tightMuUpperPlusDxy",  100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDxy = new TH1F("tightMuLowerMinusDxy","tightMuLowerMinusDxy", 100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDxy  = new TH1F("tightMuLowerPlusDxy", "tightMuLowerPlusDxy",  100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuMinusDz       = new TH1F("tightMuMinusDz",     "tightMuMinusDz",        100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDz  = new TH1F("tightMuUpperMinusDz","tightMuUpperMinusDz",   100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuPlusDz        = new TH1F("tightMuPlusDz",      "tightMuPlusDz",         100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDz   = new TH1F("tightMuUpperPlusDz", "tightMuUpperPlusDz",    100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDz  = new TH1F("tightMuLowerMinusDz","tightMuLowerMinusDz",   100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDz   = new TH1F("tightMuLowerPlusDz", "tightMuLowerPlusDz",    100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuMinusDxyError      = new TH1F("tightMuMinusDxyError",     "tightMuMinusDxyError",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDxyError = new TH1F("tightMuUpperMinusDxyError","tightMuUpperMinusDxyError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusDxyError       = new TH1F("tightMuPlusDxyError",      "tightMuPlusDxyError",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDxyError  = new TH1F("tightMuUpperPlusDxyError", "tightMuUpperPlusDxyError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDxyError = new TH1F("tightMuLowerMinusDxyError","tightMuLowerMinusDxyError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDxyError  = new TH1F("tightMuLowerPlusDxyError", "tightMuLowerPlusDxyError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuMinusDzError      = new TH1F("tightMuMinusDzError",     "tightMuMinusDzError",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDzError = new TH1F("tightMuUpperMinusDzError","tightMuUpperMinusDzError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusDzError       = new TH1F("tightMuPlusDzError",      "tightMuPlusDzError",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDzError  = new TH1F("tightMuUpperPlusDzError", "tightMuUpperPlusDzError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDzError = new TH1F("tightMuLowerMinusDzError","tightMuLowerMinusDzError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDzError  = new TH1F("tightMuLowerPlusDzError", "tightMuLowerPlusDzError",  50, 0., 150.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusTrackPt      = new TH1F("tightMuMinusTrackPt",     "tightMuMinusTrackPt",      300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackPt = new TH1F("tightMuUpperMinusTrackPt","tightMuUpperMinusTrackPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuPlusTrackPt       = new TH1F("tightMuPlusTrackPt",      "tightMuPlusTrackPt",       300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackPt  = new TH1F("tightMuUpperPlusTrackPt", "tightMuUpperPlusTrackPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackPt = new TH1F("tightMuLowerMinusTrackPt","tightMuLowerMinusTrackPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackPt  = new TH1F("tightMuLowerPlusTrackPt", "tightMuLowerPlusTrackPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuMinusTrackEta      = new TH1F("tightMuMinusTrackEta",   "tightMuMinusTrackEta",        40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackEta = new TH1F("tightMuUpperMinusTrackEta","tightMuUpperMinusTrackEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuPlusTrackEta       = new TH1F("tightMuPlusTrackEta",      "tightMuPlusTrackEta",       40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackEta  = new TH1F("tightMuUpperPlusTrackEta", "tightMuUpperPlusTrackEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackEta = new TH1F("tightMuLowerMinusTrackEta","tightMuLowerMinusTrackEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackEta  = new TH1F("tightMuLowerPlusTrackEta", "tightMuLowerPlusTrackEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuMinusTrackPhi      = new TH1F("tightMuMinusTrackPhi",     "tightMuMinusTrackPhi",      40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackPhi = new TH1F("tightMuUpperMinusTrackPhi","tightMuUpperMinusTrackPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuPlusTrackPhi       = new TH1F("tightMuPlusTrackPhi",      "tightMuPlusTrackPhi",       40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackPhi  = new TH1F("tightMuUpperPlusTrackPhi", "tightMuUpperPlusTrackPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackPhi = new TH1F("tightMuLowerMinusTrackPhi","tightMuLowerMinusTrackPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackPhi  = new TH1F("tightMuLowerPlusTrackPhi", "tightMuLowerPlusTrackPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuMinusPtError      = new TH1F("tightMuMinusPtError",     "tightMuMinusPtError",      100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPtError = new TH1F("tightMuUpperMinusPtError","tightMuUpperMinusPtError", 100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuPlusPtError       = new TH1F("tightMuPlusPtError",      "tightMuPlusPtError",       100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPtError  = new TH1F("tightMuUpperPlusPtError", "tightMuUpperPlusPtError",  100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPtError = new TH1F("tightMuLowerMinusPtError","tightMuLowerMinusPtError", 100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPtError  = new TH1F("tightMuLowerPlusPtError", "tightMuLowerPlusPtError",  100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuMinusPtRelErr      = new TH1F("tightMuMinusPtRelErr",     "tightMuMinusPtRelErr",      100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPtRelErr = new TH1F("tightMuUpperMinusPtRelErr","tightMuUpperMinusPtRelErr", 100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuPlusPtRelErr       = new TH1F("tightMuPlusPtRelErr",      "tightMuPlusPtRelErr",       100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPtRelErr  = new TH1F("tightMuUpperPlusPtRelErr", "tightMuUpperPlusPtRelErr",  100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPtRelErr = new TH1F("tightMuLowerMinusPtRelErr","tightMuLowerMinusPtRelErr", 100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPtRelErr  = new TH1F("tightMuLowerPlusPtRelErr","tightMuLowerPlusPtRelErr",   100, 0., 1.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusPixelHits      = new TH1F("tightMuMinusPixelHits",     "tightMuMinusPixelHits",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusPixelHits = new TH1F("tightMuUpperMinusPixelHits","tightMuUpperMinusPixelHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusPixelHits       = new TH1F("tightMuPlusPixelHits",      "tightMuPlusPixelHits",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusPixelHits  = new TH1F("tightMuUpperPlusPixelHits", "tightMuUpperPlusPixelHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusPixelHits = new TH1F("tightMuLowerMinusPixelHits","tightMuLowerMinusPixelHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusPixelHits  = new TH1F("tightMuLowerPlusPixelHits", "tightMuLowerPlusPixelHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusTrackerHits      = new TH1F("tightMuMinusTrackerHits",     "tightMuMinusTrackerHits",      35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackerHits = new TH1F("tightMuUpperMinusTrackerHits","tightMuUpperMinusTrackerHits", 35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuPlusTrackerHits       = new TH1F("tightMuPlusTrackerHits",      "tightMuPlusTrackerHits",       35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackerHits  = new TH1F("tightMuUpperPlusTrackerHits", "tightMuUpperPlusTrackerHits",  35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackerHits = new TH1F("tightMuLowerMinusTrackerHits","tightMuLowerMinusTrackerHits", 35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackerHits  = new TH1F("tightMuLowerPlusTrackerHits", "tightMuLowerPlusTrackerHits",  35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuMinusMuonStationHits      = new TH1F("tightMuMinusMuonStationHits",     "tightMuMinusMuonStationHits",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusMuonStationHits = new TH1F("tightMuUpperMinusMuonStationHits","tightMuUpperMinusMuonStationHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusMuonStationHits       = new TH1F("tightMuPlusMuonStationHits",      "tightMuPlusMuonStationHits",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusMuonStationHits  = new TH1F("tightMuUpperPlusMuonStationHits", "tightMuUpperPlusMuonStationHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusMuonStationHits = new TH1F("tightMuLowerMinusMuonStationHits","tightMuLowerMinusMuonStationHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusMuonStationHits  = new TH1F("tightMuLowerPlusMuonStationHits", "tightMuLowerPlusMuonStationHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusValidHits      = new TH1F("tightMuMinusValidHits",     "tightMuMinusValidHits",      100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusValidHits = new TH1F("tightMuUpperMinusValidHits","tightMuUpperMinusValidHits", 100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuPlusValidHits       = new TH1F("tightMuPlusValidHits",      "tightMuPlusValidHits",       100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusValidHits  = new TH1F("tightMuUpperPlusValidHits", "tightMuUpperPlusValidHits",  100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusValidHits = new TH1F("tightMuLowerMinusValidHits","tightMuLowerMinusValidHits", 100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusValidHits  = new TH1F("tightMuLowerPlusValidHits", "tightMuLowerPlusValidHits",  100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuMinusValidMuonHits      = new TH1F("tightMuMinusValidMuonHits",     "tightMuMinusValidMuonHits",      75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusValidMuonHits = new TH1F("tightMuUpperMinusValidMuonHits","tightMuUpperMinusValidMuonHits", 75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuPlusValidMuonHits       = new TH1F("tightMuPlusValidMuonHits",      "tightMuPlusValidMuonHits",       75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusValidMuonHits  = new TH1F("tightMuUpperPlusValidMuonHits", "tightMuUpperPlusValidMuonHits",  75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusValidMuonHits = new TH1F("tightMuLowerMinusValidMuonHits","tightMuLowerMinusValidMuonHits", 75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusValidMuonHits  = new TH1F("tightMuLowerPlusValidMuonHits", "tightMuLowerPlusValidMuonHits",  75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuMinusMatchedMuonStations      = new TH1F("tightMuMinusMatchedMuonStations",     "tightMuMinusMatchedMuonStations",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusMatchedMuonStations = new TH1F("tightMuUpperMinusMatchedMuonStations","tightMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusMatchedMuonStations       = new TH1F("tightMuPlusMatchedMuonStations",      "tightMuPlusMatchedMuonStations",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusMatchedMuonStations  = new TH1F("tightMuUpperPlusMatchedMuonStations", "tightMuUpperPlusMatchedMuonStations",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusMatchedMuonStations = new TH1F("tightMuLowerMinusMatchedMuonStations","tightMuLowerMinusMatchedMuonStations", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusMatchedMuonStations  = new TH1F("tightMuLowerPlusMatchedMuonStations", "tightMuLowerPlusMatchedMuonStations",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusTrackerLayersWithMeasurement      = new TH1F("tightMuMinusTrackerLayersWithMeasurement",     "tightMuMinusTrackerLayersWithMeasurement",      20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackerLayersWithMeasurement = new TH1F("tightMuUpperMinusTrackerLayersWithMeasurement","tightMuUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuPlusTrackerLayersWithMeasurement       = new TH1F("tightMuPlusTrackerLayersWithMeasurement",      "tightMuPlusTrackerLayersWithMeasurement",       20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackerLayersWithMeasurement  = new TH1F("tightMuUpperPlusTrackerLayersWithMeasurement", "tightMuUpperPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackerLayersWithMeasurement = new TH1F("tightMuLowerMinusTrackerLayersWithMeasurement","tightMuLowerMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackerLayersWithMeasurement  = new TH1F("tightMuLowerPlusTrackerLayersWithMeasurement", "tightMuLowerPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusCurvePlusBias[      nBiasBins];
-// remove tight info //  TH1F *h_tightMuMinusCurveMinusBias[     nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperMinusCurvePlusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperMinusCurveMinusBias[nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerMinusCurvePlusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerMinusCurveMinusBias[nBiasBins];
-// remove tight info //  TH1F *h_tightMuPlusCurvePlusBias[       nBiasBins];
-// remove tight info //  TH1F *h_tightMuPlusCurveMinusBias[      nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperPlusCurvePlusBias[  nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperPlusCurveMinusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerPlusCurvePlusBias[  nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerPlusCurveMinusBias[ nBiasBins];
-// remove tight info //
-// remove tight info //  for (int i =0; i < nBiasBins; ++i) {
-// remove tight info //    std::stringstream name;
-// remove tight info //    name << std::setw(3) << std::setfill('0') << i + 1;
-// remove tight info //    std::stringstream ptitle;
-// remove tight info //    ptitle << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
-// remove tight info //    std::stringstream mtitle;
-// remove tight info //    mtitle << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
-// remove tight info //    h_tightMuMinusCurvePlusBias[i]       = new TH1F(TString("tightMuMinusCurvePlusBias"       + name.str()),
-// remove tight info //						    TString("tightMuMinusCurvePlusBias"       + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuMinusCurveMinusBias[i]      = new TH1F(TString("tightMuMinusCurveMinusBias"      + name.str()),
-// remove tight info //						    TString("tightMuMinusCurveMinusBias"      + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),
-// remove tight info //						    TString("tightMuUpperMinusCurveMinusBias" + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),
-// remove tight info //						    TString("tightMuLowerMinusCurveMinusBias" + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuPlusCurvePlusBias[i]        = new TH1F(TString("tightMuPlusCurvePlusBias"        + name.str()),
-// remove tight info //						    TString("tightMuPlusCurvePlusBias"        + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuPlusCurveMinusBias[i]       = new TH1F(TString("tightMuPlusCurveMinusBias"       + name.str()),
-// remove tight info //						    TString("tightMuPlusCurveMinusBias"       + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    7500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //  }
-
   std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
   TTreeReaderValue<Int_t>    lumi( trackReader, "muonLumiBlock"  );
@@ -1349,45 +1148,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 
-	      // remove tight info //if (up_tightdxy) {
-	      // remove tight info //	h_tightMuMinusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuUpperMinusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuMinusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //	h_tightMuUpperMinusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdz) {
-	      // remove tight info //	h_tightMuMinusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuUpperMinusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuMinusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //	h_tightMuUpperMinusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuUpperMinusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuMinusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuUpperMinusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuMinusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuUpperMinusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //	h_tightMuUpperMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuUpperMinusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuMinusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuUpperMinusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuMinusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuUpperMinusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuUpperMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuMinusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //	h_tightMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuUpperMinusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //}
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = upperCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = upperCpT-(i+1)*(factor_*maxBias/nBiasBins);
@@ -1395,12 +1155,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_looseMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 		h_looseMuUpperMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuUpperMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //if (up_tightdxy && up_tightdz) {
-		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //  h_tightMuUpperMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuUpperMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	      }
@@ -1409,10 +1163,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (up_n1pixhits) {
 	      h_looseMuMinusPixelHits->Fill(*upTrackerPhits);
 	      h_looseMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //	h_tightMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1vmuhits) {
 	      h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
@@ -1421,42 +1171,20 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	      h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
 	      h_looseMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //	h_tightMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1ptrelerr) {
 	      h_looseMuMinusPtError->Fill(*upTrackerPtError);
 	      h_looseMuUpperMinusPtError->Fill(*upTrackerPtError);
 	      h_looseMuMinusPtRelErr->Fill(upperRelPtErr);
 	      h_looseMuUpperMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuUpperMinusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //	h_tightMuUpperMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (up_n1trkhits) {
 	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	      h_looseMuUpperMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuUpperMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (up_n1mmustahits) {
 	      h_looseMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	      h_looseMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end if (charge < 0)
 
@@ -1559,43 +1287,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuPlusTrackPhi->Fill(upTrackerTrack->phi());
 	      h_looseMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
 
-	      // remove tight info //if (up_tightdxy) {
-	      // remove tight info //	h_tightMuPlusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuUpperPlusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuPlusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //	h_tightMuUpperPlusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdz) {
-	      // remove tight info //	h_tightMuPlusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuUpperPlusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuPlusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //	h_tightMuUpperPlusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuUpperPlusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuPlusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuUpperPlusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuPlusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuUpperPlusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //	h_tightMuUpperPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuUpperPlusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuPlusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuUpperPlusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuPlusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuUpperPlusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuUpperPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuPlusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //	h_tightMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //}
-
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = upperCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = upperCpT-(i+1)*(factor_*maxBias/nBiasBins);
@@ -1604,12 +1295,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_looseMuUpperPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuUpperPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 	    
-		// remove tight info //if (up_tightdxy && up_tightdz) {
-		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
-		// remove tight info //  h_tightMuUpperPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuUpperPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	      }
@@ -1619,10 +1304,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (up_n1pixhits) {
 	      h_looseMuPlusPixelHits->Fill(*upTrackerPhits);
 	      h_looseMuUpperPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //	h_tightMuUpperPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1vmuhits) {
 	      h_looseMuPlusValidHits->Fill(*upTrackerValidHits);
@@ -1631,46 +1312,22 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
 	      h_looseMuPlusMuonStationHits->Fill(*upTrackerMhits);
 	      h_looseMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuUpperPlusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //	h_tightMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1ptrelerr) {
 	      h_looseMuPlusPtError->Fill(*upTrackerPtError);
 	      h_looseMuUpperPlusPtError->Fill(*upTrackerPtError);
 	      h_looseMuPlusPtRelErr->Fill(upperRelPtErr);
 	      h_looseMuUpperPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuUpperPlusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //	h_tightMuUpperPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (up_n1trkhits) {
 	      h_looseMuPlusTrackerHits->Fill(*upTrackerThits);
 	      h_looseMuUpperPlusTrackerHits->Fill(*upTrackerThits);
 	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 	      h_looseMuUpperPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuUpperPlusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuUpperPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (up_n1mmustahits) {
 	      h_looseMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
 	      h_looseMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end else { // charge > 0
 
@@ -2021,43 +1678,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
 	      h_looseMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
 
-	      // remove tight info //if (low_tightdxy) {
-	      // remove tight info //	h_tightMuMinusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuLowerMinusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuMinusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //	h_tightMuLowerMinusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdz) {
-	      // remove tight info //	h_tightMuMinusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuLowerMinusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuMinusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //	h_tightMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuLowerMinusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuMinusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuLowerMinusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuMinusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuLowerMinusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //	h_tightMuLowerMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuLowerMinusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuMinusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuLowerMinusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuMinusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuLowerMinusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuLowerMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //	h_tightMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //}
-
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
@@ -2066,12 +1686,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_looseMuLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
-		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //  h_tightMuLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	      }
@@ -2080,10 +1694,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (low_n1pixhits) {
 	      h_looseMuMinusPixelHits->Fill(*lowTrackerPhits);
 	      h_looseMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //	h_tightMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1vmuhits) {
 	      h_looseMuMinusValidHits->Fill(*lowTrackerValidHits);
@@ -2092,46 +1702,22 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
 	      h_looseMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //	h_tightMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1ptrelerr) {
 	      h_looseMuMinusPtError->Fill(*lowTrackerPtError);
 	      h_looseMuLowerMinusPtError->Fill(*lowTrackerPtError);
 	      h_looseMuMinusPtRelErr->Fill(lowerRelPtErr);
 	      h_looseMuLowerMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuLowerMinusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //	h_tightMuLowerMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (low_n1trkhits) {
 	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	      h_looseMuLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	      h_looseMuMinusTrackerHits->Fill(*lowTrackerThits);
 	      h_looseMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //}
 	    }
 	    if (low_n1mmustahits) {
 	      h_looseMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	      h_looseMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end if charge < 0
 
@@ -2243,52 +1829,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      h_looseMuPlusMuonStationHits->Fill(*lowTrackerMhits);
 	      h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 
-	      // remove tight info //if (low_tightdxy) {
-	      // remove tight info //	h_tightMuPlusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuLowerPlusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuPlusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //	h_tightMuLowerPlusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdz) {
-	      // remove tight info //	h_tightMuPlusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuLowerPlusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuPlusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //	h_tightMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuLowerPlusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuPlusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuLowerPlusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuPlusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuLowerPlusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //	h_tightMuLowerPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuLowerPlusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuPlusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuLowerPlusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuPlusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuLowerPlusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuLowerPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuPlusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //	h_tightMuLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuPlusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //	h_tightMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //}
-
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
@@ -2297,12 +1837,6 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		h_looseMuLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
-		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //  h_tightMuLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	      }
@@ -2311,50 +1845,26 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	    if (low_n1pixhits) {
 	      h_looseMuPlusPixelHits->Fill(*lowTrackerPhits);
 	      h_looseMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //	h_tightMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1vmuhits) {
 	      h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
 	      h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
 	      h_looseMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
 	      h_looseMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //}
 	    }
 	    if (low_n1ptrelerr) {
 	      h_looseMuPlusPtError->Fill(*lowTrackerPtError);
 	      h_looseMuLowerPlusPtError->Fill(*lowTrackerPtError);
 	      h_looseMuPlusPtRelErr->Fill(lowerRelPtErr);
 	      h_looseMuLowerPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuLowerPlusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //	h_tightMuLowerPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (low_n1trkhits) {
 	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	      h_looseMuLowerPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuLowerPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (low_n1mmustahits) {
 	      h_looseMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
 	      h_looseMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end else { // charge > 0
 	  if (low_n1pt) {
