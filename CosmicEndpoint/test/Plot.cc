@@ -311,12 +311,12 @@ void Plot(std::string const& filelist, std::string const& outFile,
     name << std::setw(3) << std::setfill('0') << i + 1;
     std::stringstream title;
     title << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
-    h_lowerCurvePlusBias[i]  = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + titlestr()),
+    h_lowerCurvePlusBias[i]  = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + title.str()),
 					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     title.str("");
     title.clear();
     title << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
-    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + titlestr()),
+    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + title.str()),
 					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
   }
   
