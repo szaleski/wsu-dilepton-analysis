@@ -20,8 +20,8 @@ parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   metavar="debug",
                   help="[OPTIONAL] Run in debug mode, i.e., don't submit jobs, just create them")
 parser.add_option("-m", "--maxbias", type="float", dest="maxbias",
-                  metavar="maxbias", default=0.001,
-                  help="[OPTIONAL] Maximum bias in the curvature to inject (default = 0.001)")
+                  metavar="maxbias", default=0.0001,
+                  help="[OPTIONAL] Maximum bias in the curvature to inject (default = 0.0001)")
 parser.add_option("-a", "--asymmetric", action="store_true", dest="asymmetric",
                   metavar="asymmetric", default=False,
                   help="[OPTIONAL] Specify whether to create asymmetric (absolute value) curvature (default = False)")
@@ -29,8 +29,8 @@ parser.add_option("-p", "--minpt", type="float", dest="minpt",
                   metavar="minpt", default=50.,
                   help="[OPTIONAL] Minimum pT cut to apply to the muons (default = 50.)")
 parser.add_option("-b", "--nbiasbins", type="int", dest="nbiasbins",
-                  metavar="nbiasbins", default=1000,
-                  help="[OPTIONAL] Number of steps to vary the injected bias by (default = 1000)")
+                  metavar="nbiasbins", default=2500,
+                  help="[OPTIONAL] Number of steps to vary the injected bias by (default = 2500)")
 
 (options, args) = parser.parse_args()
 if options.gridproxy:
