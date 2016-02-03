@@ -64,6 +64,11 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   int algoType_;
   int debug_;
 
+  double maxDR_;
+  double maxDPhi_;
+  double maxDEta_;
+  double minPt_;
+
   
   //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
   //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
@@ -78,12 +83,14 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   //}
   
   // ----------member data ---------------------------
-  edm::InputTag muonSrc_;
+  edm::EDGetTokenT<reco::MuonCollection > muonToken_, tagLegToken_, probeLegToken_;
+  edm::InputTag muonSrc_, tagLegSrc_, probeLegSrc_;
   edm::Service<TFileService> fs;
   TTree *cosmicTree;
 
-  int event, run, lumi;
-
+  int event, run, lumi, nMuons, nTags, nProbes, foundMatch;
+  double matchDR, matchDEta, matchDPhi;
+  
   reco::Muon::ArbitrationType type;
  
   reco::Candidate::LorentzVector lowerMuon_P4;
@@ -91,7 +98,8 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   double lowerMuon_chi2, lowerMuon_dxy, lowerMuon_dz, lowerMuon_pT;
   double lowerMuon_ptError, lowerMuon_dxyError, lowerMuon_dzError;
   double lowerMuon_trackPt;
-  int lowerMuon_ndof, lowerMuon_charge;
+  int lowerMuon_ndof, lowerMuon_charge,
+    lowerMuon_isGlobal, lowerMuon_isTracker, lowerMuon_isStandAlone;
   int lowerMuon_pixelHits,
     lowerMuon_trackerHits,
     lowerMuon_muonStationHits,
@@ -105,7 +113,8 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   double upperMuon_chi2, upperMuon_dz, upperMuon_dxy, upperMuon_pT;
   double upperMuon_ptError, upperMuon_dxyError, upperMuon_dzError;
   double upperMuon_trackPt;
-  int upperMuon_ndof, upperMuon_charge;
+  int upperMuon_ndof, upperMuon_charge,
+    upperMuon_isGlobal, upperMuon_isTracker, upperMuon_isStandAlone;
   int upperMuon_pixelHits,
     upperMuon_trackerHits,
     upperMuon_muonStationHits,

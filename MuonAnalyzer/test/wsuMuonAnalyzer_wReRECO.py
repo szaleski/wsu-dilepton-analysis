@@ -42,7 +42,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '74X_CRAFTR_V1', '')
 process.GlobalTag.toGet = cms.VPSet(
   cms.PSet(record = cms.string("HBHENegativeEFilterRcd"),
            tag = cms.string("HBHENegativeEFilter_V00_data"),
-           connect = cms.untracked.string("frontier://FrontierProd/CMS_CONDITIONS")
+           connect = cms.string("frontier://FrontierProd/CMS_CONDITIONS")
           )
 )
 
