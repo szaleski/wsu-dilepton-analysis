@@ -2,6 +2,8 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("MuonAnalysis")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -126,7 +128,7 @@ process.analysisPickyMuons = muonAnalysis.clone(
 process.analysisTunePMuons = muonAnalysis.clone(
     muonSrc = cms.InputTag("betterMuons"),
     algoType = cms.int32(5),
-    debug = cms.int32(3)
+    debug = cms.int32(1)
 )
 process.analysisT0Corr = muonAnalysis.clone(
     muonSrc = cms.InputTag("muonsWitht0Correction")

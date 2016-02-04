@@ -78,6 +78,7 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   //}
   
   // ----------member data ---------------------------
+  edm::EDGetTokenT<reco::MuonCollection > muonToken_;
   edm::InputTag muonSrc_;
   edm::Service<TFileService> fs;
   TTree *cosmicTree;

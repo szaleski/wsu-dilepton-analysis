@@ -30,7 +30,7 @@ MuonAnalyzer::MuonAnalyzer(const edm::ParameterSet& pset)
   algoType_ = pset.getParameter<int>("algoType");
   
   //now do what ever initialization is needed
- 
+  muonToken_ = consumes<reco::MuonCollection>(muonSrc_);
 }
 
 
@@ -62,7 +62,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   using namespace ROOT::Math;
   //edm::Handle<edm::View<reco::Muon> > muonColl;
   edm::Handle<reco::MuonCollection > muonColl;
-  ev.getByLabel(muonSrc_, muonColl);
+  ev.getByToken(muonToken_, muonColl);
   
   event = (ev.id()).event();  
   run   = (ev.id()).run();
