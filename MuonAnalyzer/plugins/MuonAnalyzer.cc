@@ -73,6 +73,25 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   if ( muonColl->size() < 2)
     return;
 
+  if (debug_ > 0)
+    std::cout << std::endl
+	      << "found "     << muonColl->size()  << " muons "  << std::endl
+	      << "trackAlgo " << algoType_ << std::endl;
+  if (debug_ > -1) {
+    std::cout << "run/lumi/event " << run  << "/" << lumi << "/" << event << std::endl;
+    std::cout << " muons: " << std::endl;
+    for (auto muon = muonColl->begin(); muon != muonColl->end(); ++muon)
+      std::cout << std::setw(5) << *muon << " ("
+		<< muon->isTrackerMuon()            << "t"
+		<< "/"  << muon->isGlobalMuon()     << "g"
+		<< "/"  << muon->isStandAloneMuon() << "sa"
+		<< ") y "  << std::setw(8) << muon->muonBestTrack()->innerPosition().Y()
+		<< " dxy " << std::setw(8) << muon->muonBestTrack()->dxy()
+		<< " dz "  << std::setw(8) << muon->muonBestTrack()->dz()
+		<< std::endl;
+  }
+  std::cout.flush();  
+
   /*
     not doing this any more as we need to catch all the good cosmics
     if ( muonColl->size() != 2)
