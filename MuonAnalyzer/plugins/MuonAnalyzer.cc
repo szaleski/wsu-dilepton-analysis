@@ -135,16 +135,18 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     std::cout << " muons: " << std::endl;
     for (reco::MuonCollection::const_iterator muon = muonColl->begin();
 	 muon != muonColl->end(); ++muon)
-      std::cout << *muon << " ("
+      std::cout << std::setw(5) << *muon << " ("
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
-		<< ") " << muon->muonBestTrack()->innerPosition().Y()
+		<< ") y "  << std::setw(8) << muon->muonBestTrack()->innerPosition().Y()
+		<< " dxy " << std::setw(8) << muon->muonBestTrack()->dxy()
+		<< " dz "  << std::setw(8) << muon->muonBestTrack()->dz()
 		<< std::endl;
     std::cout << " tag legs: " << std::endl;
     for (reco::MuonCollection::const_iterator muon = tagLegColl->begin();
 	 muon != tagLegColl->end(); ++muon)
-      std::cout << *muon << " ("
+      std::cout << std::setw(5) << *muon << " ("
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
@@ -153,7 +155,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     std::cout << " probe legs: " << std::endl;
     for (reco::MuonCollection::const_iterator muon = probeLegColl->begin();
 	 muon != probeLegColl->end(); ++muon)
-      std::cout << *muon << " ("
+      std::cout << std::setw(5) << *muon << " ("
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
