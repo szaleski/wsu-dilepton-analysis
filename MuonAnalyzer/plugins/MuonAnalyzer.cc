@@ -30,7 +30,7 @@ MuonAnalyzer::MuonAnalyzer(const edm::ParameterSet& pset)
   algoType_ = pset.getParameter<int>("algoType");
   
   //now do what ever initialization is needed
- 
+  muonToken_ = consumes<reco::MuonCollection>(muonSrc_);
 }
 
 
@@ -62,7 +62,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   using namespace ROOT::Math;
   //edm::Handle<edm::View<reco::Muon> > muonColl;
   edm::Handle<reco::MuonCollection > muonColl;
-  ev.getByLabel(muonSrc_, muonColl);
+  ev.getByToken(muonToken_, muonColl);
   
   event = (ev.id()).event();  
   run   = (ev.id()).run();
@@ -72,6 +72,25 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   
   if ( muonColl->size() < 2)
     return;
+
+  if (debug_ > 0)
+    std::cout << std::endl
+	      << "found "     << muonColl->size()  << " muons "  << std::endl
+	      << "trackAlgo " << algoType_ << std::endl;
+  if (debug_ > -1) {
+    std::cout << "run/lumi/event " << run  << "/" << lumi << "/" << event << std::endl;
+    std::cout << " muons: " << std::endl;
+    for (auto muon = muonColl->begin(); muon != muonColl->end(); ++muon)
+      std::cout << std::setw(5) << *muon << " ("
+		<< muon->isTrackerMuon()            << "t"
+		<< "/"  << muon->isGlobalMuon()     << "g"
+		<< "/"  << muon->isStandAloneMuon() << "sa"
+		<< ") y "  << std::setw(8) << muon->muonBestTrack()->innerPosition().Y()
+		<< " dxy " << std::setw(8) << muon->muonBestTrack()->dxy()
+		<< " dz "  << std::setw(8) << muon->muonBestTrack()->dz()
+		<< std::endl;
+  }
+  std::cout.flush();  
 
   /*
     not doing this any more as we need to catch all the good cosmics
@@ -260,6 +279,8 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 	}
       }
     }
+
+    if (debug_ > 2)
       std::cout << "tmpDEta = "   << tmpDEta
 		<< ", tmpDPhi = " << tmpDPhi
 		<< ", tmpDR = "   << tmpDR << std::endl
