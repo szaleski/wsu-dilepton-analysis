@@ -243,7 +243,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_upperChi2     = new TH1F("upperChi2",  "upperChi2",   50,  0.,  150.);
   TH1F *h_upperNdof     = new TH1F("upperNdof",  "upperNdof",   100, -0.5, 99.5);
   TH1F *h_upperCharge   = new TH1F("upperCharge","upperCharge", 3, -1.5, 1.5);
-  TH1F *h_upperCurve    = new TH1F("upperCurve", "upperCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_upperCurve    = new TH1F("upperCurve", "upperCurve",  1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
   TH1F *h_upperDxy      = new TH1F("upperDxy",   "upperDxy",    100, -100., 100.);
   TH1F *h_upperDz       = new TH1F("upperDz",    "upperDz",     100, -250., 250.);
   TH1F *h_upperDxyError = new TH1F("upperDxyError","upperDxyError", 50, 0., 150.);
@@ -267,8 +267,17 @@ void Plot(std::string const& filelist, std::string const& outFile,
   for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_upperCurvePlusBias[i]  = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + name.str()),  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-    h_upperCurveMinusBias[i] = new TH1F(TString("upperCurveMinusBias" + name.str()),TString("upperCurveMinusBias" + name.str()), 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+
+    std::stringstream title;
+    title << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
+    h_upperCurvePlusBias[i]  = new TH1F(TString("upperCurvePlusBias" + name.str()), TString("upperCurvePlusBias" + title.str()),
+					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+    title.str("");
+    title.clear();
+    title << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
+    h_upperCurveMinusBias[i] = new TH1F(TString("upperCurveMinusBias" + name.str()),TString("upperCurveMinusBias" + title.str()),
+					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+
   }
 
   // histograms for lower leg muons, inclusive
@@ -278,7 +287,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_lowerChi2     = new TH1F("lowerChi2",  "lowerChi2",   50,   0.,  150.);
   TH1F *h_lowerNdof     = new TH1F("lowerNdof",  "lowerNdof",   100, -0.5, 99.5);
   TH1F *h_lowerCharge   = new TH1F("lowerCharge","lowerCharge", 3,   -1.5, 1.5 );
-  TH1F *h_lowerCurve    = new TH1F("lowerCurve", "lowerCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_lowerCurve    = new TH1F("lowerCurve", "lowerCurve",  1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
   TH1F *h_lowerDxy      = new TH1F("lowerDxy",   "lowerDxy",    100, -100., 100.);
   TH1F *h_lowerDz       = new TH1F("lowerDz",    "lowerDz",     100, -250., 250.);
   TH1F *h_lowerDxyError = new TH1F("lowerDxyError","lowerDxyError", 50, 0., 150.);
@@ -302,8 +311,17 @@ void Plot(std::string const& filelist, std::string const& outFile,
   for (int i = 0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
-    h_lowerCurvePlusBias[i]  = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + name.str()),  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + name.str()), 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+
+    std::stringstream title;
+    title << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
+    h_lowerCurvePlusBias[i]  = new TH1F(TString("lowerCurvePlusBias" + name.str()), TString("lowerCurvePlusBias" + title.str()),
+					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+    title.str("");
+    title.clear();
+    title << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
+    h_lowerCurveMinusBias[i] = new TH1F(TString("lowerCurveMinusBias" + name.str()),TString("lowerCurveMinusBias" + title.str()),
+					1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+
   }
   
   // histograms for no cuts
@@ -344,12 +362,19 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_muUpperPlusCharge  = new TH1F("muUpperPlusCharge", "muUpperPlusCharge",  3, -1.5, 1.5);
   TH1F *h_muLowerMinusCharge = new TH1F("muLowerMinusCharge","muLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_muLowerPlusCharge  = new TH1F("muLowerPlusCharge", "muLowerPlusCharge",  3, -1.5, 1.5);
-  TH1F *h_muMinusCurve      = new TH1F("muMinusCurve",     "muMinusCurve",      15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_muUpperMinusCurve = new TH1F("muUpperMinusCurve","muUpperMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_muPlusCurve       = new TH1F("muPlusCurve",      "muPlusCurve",       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_muUpperPlusCurve  = new TH1F("muUpperPlusCurve", "muUpperPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_muLowerMinusCurve = new TH1F("muLowerMinusCurve","muLowerMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_muLowerPlusCurve  = new TH1F("muLowerPlusCurve", "muLowerPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muMinusCurve      = new TH1F("muMinusCurve",     "muMinusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muUpperMinusCurve = new TH1F("muUpperMinusCurve","muUpperMinusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muPlusCurve       = new TH1F("muPlusCurve",      "muPlusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muUpperPlusCurve  = new TH1F("muUpperPlusCurve", "muUpperPlusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muLowerMinusCurve = new TH1F("muLowerMinusCurve","muLowerMinusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_muLowerPlusCurve  = new TH1F("muLowerPlusCurve", "muLowerPlusCurve",
+				       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+
   TH1F *h_muMinusDxy      = new TH1F("muMinusDxy",     "muMinusDxy",      100, -100., 100.);
   TH1F *h_muUpperMinusDxy = new TH1F("muUpperMinusDxy","muUpperMinusDxy", 100, -100., 100.);
   TH1F *h_muPlusDxy       = new TH1F("muPlusDxy",      "muPlusDxy",       100, -100., 100.);
@@ -465,42 +490,47 @@ void Plot(std::string const& filelist, std::string const& outFile,
   for (int i =0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
+    std::stringstream ptitle;
+    ptitle << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
+    std::stringstream mtitle;
+    mtitle << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
     h_muMinusCurvePlusBias[i]       = new TH1F(TString("muMinusCurvePlusBias"       + name.str()),
-					       TString("muMinusCurvePlusBias"       + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muMinusCurvePlusBias"       + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muMinusCurveMinusBias[i]      = new TH1F(TString("muMinusCurveMinusBias"      + name.str()),
-					       TString("muMinusCurveMinusBias"      + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muMinusCurveMinusBias"      + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias"  + name.str()),
-					       TString("muUpperMinusCurvePlusBias"  + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muUpperMinusCurvePlusBias"  + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),
-					       TString("muUpperMinusCurveMinusBias" + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muUpperMinusCurveMinusBias" + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias"  + name.str()),
-					       TString("muLowerMinusCurvePlusBias"  + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muLowerMinusCurvePlusBias"  + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),
-					       TString("muLowerMinusCurveMinusBias" + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muLowerMinusCurveMinusBias" + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_muPlusCurvePlusBias[i]        = new TH1F(TString("muPlusCurvePlusBias"        + name.str()),
-					       TString("muPlusCurvePlusBias"        + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muPlusCurvePlusBias"        + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muPlusCurveMinusBias[i]       = new TH1F(TString("muPlusCurveMinusBias"       + name.str()),
-					       TString("muPlusCurveMinusBias"       + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muPlusCurveMinusBias"       + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_muUpperPlusCurvePlusBias[i]   = new TH1F(TString("muUpperPlusCurvePlusBias"   + name.str()),
-					       TString("muUpperPlusCurvePlusBias"   + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muUpperPlusCurvePlusBias"   + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muUpperPlusCurveMinusBias[i]  = new TH1F(TString("muUpperPlusCurveMinusBias"  + name.str()),
-					       TString("muUpperPlusCurveMinusBias"  + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muUpperPlusCurveMinusBias"  + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_muLowerPlusCurvePlusBias[i]   = new TH1F(TString("muLowerPlusCurvePlusBias"   + name.str()),
-					       TString("muLowerPlusCurvePlusBias"   + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       TString("muLowerPlusCurvePlusBias"   + ptitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_muLowerPlusCurveMinusBias[i]  = new TH1F(TString("muLowerPlusCurveMinusBias"  + name.str()),
-					       TString("muLowerPlusCurveMinusBias"  + name.str()),
-					       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       TString("muLowerPlusCurveMinusBias"  + mtitle.str()),
+					       1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+
   }
 
   // histograms for loose cuts (not applying the Dxy/Dz cuts)
@@ -541,12 +571,19 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_looseMuUpperPlusCharge  = new TH1F("looseMuUpperPlusCharge", "looseMuUpperPlusCharge",  3, -1.5, 1.5);
   TH1F *h_looseMuLowerMinusCharge = new TH1F("looseMuLowerMinusCharge","looseMuLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuLowerPlusCharge  = new TH1F("looseMuLowerPlusCharge", "looseMuLowerPlusCharge",  3, -1.5, 1.5);
-  TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve",     "looseMuMinusCurve",      15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve",      "looseMuPlusCurve",       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve", "looseMuUpperPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_looseMuLowerMinusCurve = new TH1F("looseMuLowerMinusCurve","looseMuLowerMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-  TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve", "looseMuLowerPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve",     "looseMuMinusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve",      "looseMuPlusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve", "looseMuUpperPlusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuLowerMinusCurve = new TH1F("looseMuLowerMinusCurve","looseMuLowerMinusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+  TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve", "looseMuLowerPlusCurve",
+					    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+
   TH1F *h_looseMuMinusDxy      = new TH1F("looseMuMinusDxy",     "looseMuMinusDxy",      100, -100., 100.);
   TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuPlusDxy       = new TH1F("looseMuPlusDxy",      "looseMuPlusDxy",       100, -100., 100.);
@@ -662,240 +699,48 @@ void Plot(std::string const& filelist, std::string const& outFile,
   for (int i =0; i < nBiasBins; ++i) {
     std::stringstream name;
     name << std::setw(3) << std::setfill('0') << i + 1;
+    std::stringstream ptitle;
+    ptitle << "#Delta#kappa = +" << (i+1)*(factor_*maxBias/nBiasBins);
+    std::stringstream mtitle;
+    mtitle << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
     h_looseMuMinusCurvePlusBias[i]       = new TH1F(TString("looseMuMinusCurvePlusBias"       + name.str()),
-						    TString("looseMuMinusCurvePlusBias"       + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuMinusCurvePlusBias"       + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuMinusCurveMinusBias[i]      = new TH1F(TString("looseMuMinusCurveMinusBias"      + name.str()),
-						    TString("looseMuMinusCurveMinusBias"      + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuMinusCurveMinusBias"      + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
-						    TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuUpperMinusCurvePlusBias"  + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),
-						    TString("looseMuUpperMinusCurveMinusBias" + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuUpperMinusCurveMinusBias" + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
-						    TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuLowerMinusCurvePlusBias"  + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),
-						    TString("looseMuLowerMinusCurveMinusBias" + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuLowerMinusCurveMinusBias" + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_looseMuPlusCurvePlusBias[i]        = new TH1F(TString("looseMuPlusCurvePlusBias"        + name.str()),
-						    TString("looseMuPlusCurvePlusBias"        + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuPlusCurvePlusBias"        + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuPlusCurveMinusBias[i]       = new TH1F(TString("looseMuPlusCurveMinusBias"       + name.str()),
-						    TString("looseMuPlusCurveMinusBias"       + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuPlusCurveMinusBias"       + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_looseMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
-						    TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuUpperPlusCurvePlusBias"   + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
-						    TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuUpperPlusCurveMinusBias"  + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
     h_looseMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
-						    TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    TString("looseMuLowerPlusCurvePlusBias"   + ptitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
     h_looseMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
-						    TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
-						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    TString("looseMuLowerPlusCurveMinusBias"  + mtitle.str()),
+						    1500, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
   }
 
-// remove tight info //  // histograms for tight cuts
-// remove tight info //  TH1F *h_tightMuMinusPt      = new TH1F("tightMuMinusPt",     "tightMuMinusPt",      300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPt = new TH1F("tightMuUpperMinusPt","tightMuUpperMinusPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuPlusPt       = new TH1F("tightMuPlusPt",      "tightMuPlusPt",       300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPt  = new TH1F("tightMuUpperPlusPt", "tightMuUpperPlusPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPt = new TH1F("tightMuLowerMinusPt","tightMuLowerMinusPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPt  = new TH1F("tightMuLowerPlusPt", "tightMuLowerPlusPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuMinusEta      = new TH1F("tightMuMinusEta",     "tightMuMinusEta",      40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperMinusEta = new TH1F("tightMuUpperMinusEta","tightMuUpperMinusEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuPlusEta       = new TH1F("tightMuPlusEta",      "tightMuPlusEta",       40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperPlusEta  = new TH1F("tightMuUpperPlusEta", "tightMuUpperPlusEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerMinusEta = new TH1F("tightMuLowerMinusEta","tightMuLowerMinusEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerPlusEta  = new TH1F("tightMuLowerPlusEta", "tightMuLowerPlusEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuMinusPhi      = new TH1F("tightMuMinusPhi",     "tightMuMinusPhi",      40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPhi = new TH1F("tightMuUpperMinusPhi","tightMuUpperMinusPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuPlusPhi       = new TH1F("tightMuPlusPhi",      "tightMuPlusPhi",       40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPhi  = new TH1F("tightMuUpperPlusPhi", "tightMuUpperPlusPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPhi = new TH1F("tightMuLowerMinusPhi","tightMuLowerMinusPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPhi  = new TH1F("tightMuLowerPlusPhi", "tightMuLowerPlusPhi",  40, -4., 4.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusChi2      = new TH1F("tightMuMinusChi2",     "tightMuMinusChi2",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusChi2 = new TH1F("tightMuUpperMinusChi2","tightMuUpperMinusChi2", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusChi2       = new TH1F("tightMuPlusChi2",      "tightMuPlusChi2",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusChi2  = new TH1F("tightMuUpperPlusChi2", "tightMuUpperPlusChi2",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusChi2 = new TH1F("tightMuLowerMinusChi2","tightMuLowerMinusChi2", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusChi2  = new TH1F("tightMuLowerPlusChi2", "tightMuLowerPlusChi2",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuMinusNdof      = new TH1F("tightMuMinusNdof",     "tightMuMinusNdof",      100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusNdof = new TH1F("tightMuUpperMinusNdof","tightMuUpperMinusNdof", 100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuPlusNdof       = new TH1F("tightMuPlusNdof",      "tightMuPlusNdof",       100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusNdof  = new TH1F("tightMuUpperPlusNdof", "tightMuUpperPlusNdof",  100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusNdof = new TH1F("tightMuLowerMinusNdof","tightMuLowerMinusNdof", 100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusNdof  = new TH1F("tightMuLowerPlusNdof", "tightMuLowerPlusNdof",  100, -0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuMinusCharge      = new TH1F("tightMuMinusCharge",     "tightMuMinusCharge",      3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusCharge = new TH1F("tightMuUpperMinusCharge","tightMuUpperMinusCharge", 3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuPlusCharge       = new TH1F("tightMuPlusCharge",      "tightMuPlusCharge",       3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusCharge  = new TH1F("tightMuUpperPlusCharge", "tightMuUpperPlusCharge",  3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusCharge = new TH1F("tightMuLowerMinusCharge","tightMuLowerMinusCharge", 3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusCharge  = new TH1F("tightMuLowerPlusCharge", "tightMuLowerPlusCharge",  3, -1.5, 1.5);
-// remove tight info //  TH1F *h_tightMuMinusCurve      = new TH1F("tightMuMinusCurve",     "tightMuMinusCurve",      15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuUpperMinusCurve = new TH1F("tightMuUpperMinusCurve","tightMuUpperMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuPlusCurve       = new TH1F("tightMuPlusCurve",      "tightMuPlusCurve",       15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuUpperPlusCurve  = new TH1F("tightMuUpperPlusCurve", "tightMuUpperPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuLowerMinusCurve = new TH1F("tightMuLowerMinusCurve","tightMuLowerMinusCurve", 15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuLowerPlusCurve  = new TH1F("tightMuLowerPlusCurve", "tightMuLowerPlusCurve",  15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //  TH1F *h_tightMuMinusDxy      = new TH1F("tightMuMinusDxy",     "tightMuMinusDxy",      100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDxy = new TH1F("tightMuUpperMinusDxy","tightMuUpperMinusDxy", 100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuPlusDxy       = new TH1F("tightMuPlusDxy",      "tightMuPlusDxy",       100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDxy  = new TH1F("tightMuUpperPlusDxy", "tightMuUpperPlusDxy",  100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDxy = new TH1F("tightMuLowerMinusDxy","tightMuLowerMinusDxy", 100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDxy  = new TH1F("tightMuLowerPlusDxy", "tightMuLowerPlusDxy",  100, -100., 100.);
-// remove tight info //  TH1F *h_tightMuMinusDz       = new TH1F("tightMuMinusDz",     "tightMuMinusDz",        100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDz  = new TH1F("tightMuUpperMinusDz","tightMuUpperMinusDz",   100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuPlusDz        = new TH1F("tightMuPlusDz",      "tightMuPlusDz",         100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDz   = new TH1F("tightMuUpperPlusDz", "tightMuUpperPlusDz",    100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDz  = new TH1F("tightMuLowerMinusDz","tightMuLowerMinusDz",   100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDz   = new TH1F("tightMuLowerPlusDz", "tightMuLowerPlusDz",    100, -250., 250.);
-// remove tight info //  TH1F *h_tightMuMinusDxyError      = new TH1F("tightMuMinusDxyError",     "tightMuMinusDxyError",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDxyError = new TH1F("tightMuUpperMinusDxyError","tightMuUpperMinusDxyError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusDxyError       = new TH1F("tightMuPlusDxyError",      "tightMuPlusDxyError",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDxyError  = new TH1F("tightMuUpperPlusDxyError", "tightMuUpperPlusDxyError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDxyError = new TH1F("tightMuLowerMinusDxyError","tightMuLowerMinusDxyError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDxyError  = new TH1F("tightMuLowerPlusDxyError", "tightMuLowerPlusDxyError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuMinusDzError      = new TH1F("tightMuMinusDzError",     "tightMuMinusDzError",      50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperMinusDzError = new TH1F("tightMuUpperMinusDzError","tightMuUpperMinusDzError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuPlusDzError       = new TH1F("tightMuPlusDzError",      "tightMuPlusDzError",       50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuUpperPlusDzError  = new TH1F("tightMuUpperPlusDzError", "tightMuUpperPlusDzError",  50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerMinusDzError = new TH1F("tightMuLowerMinusDzError","tightMuLowerMinusDzError", 50, 0., 150.);
-// remove tight info //  TH1F *h_tightMuLowerPlusDzError  = new TH1F("tightMuLowerPlusDzError", "tightMuLowerPlusDzError",  50, 0., 150.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusTrackPt      = new TH1F("tightMuMinusTrackPt",     "tightMuMinusTrackPt",      300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackPt = new TH1F("tightMuUpperMinusTrackPt","tightMuUpperMinusTrackPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuPlusTrackPt       = new TH1F("tightMuPlusTrackPt",      "tightMuPlusTrackPt",       300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackPt  = new TH1F("tightMuUpperPlusTrackPt", "tightMuUpperPlusTrackPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackPt = new TH1F("tightMuLowerMinusTrackPt","tightMuLowerMinusTrackPt", 300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackPt  = new TH1F("tightMuLowerPlusTrackPt", "tightMuLowerPlusTrackPt",  300, 0., 3000.);
-// remove tight info //  TH1F *h_tightMuMinusTrackEta      = new TH1F("tightMuMinusTrackEta",   "tightMuMinusTrackEta",        40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackEta = new TH1F("tightMuUpperMinusTrackEta","tightMuUpperMinusTrackEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuPlusTrackEta       = new TH1F("tightMuPlusTrackEta",      "tightMuPlusTrackEta",       40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackEta  = new TH1F("tightMuUpperPlusTrackEta", "tightMuUpperPlusTrackEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackEta = new TH1F("tightMuLowerMinusTrackEta","tightMuLowerMinusTrackEta", 40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackEta  = new TH1F("tightMuLowerPlusTrackEta", "tightMuLowerPlusTrackEta",  40, -2., 2.);
-// remove tight info //  TH1F *h_tightMuMinusTrackPhi      = new TH1F("tightMuMinusTrackPhi",     "tightMuMinusTrackPhi",      40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackPhi = new TH1F("tightMuUpperMinusTrackPhi","tightMuUpperMinusTrackPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuPlusTrackPhi       = new TH1F("tightMuPlusTrackPhi",      "tightMuPlusTrackPhi",       40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackPhi  = new TH1F("tightMuUpperPlusTrackPhi", "tightMuUpperPlusTrackPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackPhi = new TH1F("tightMuLowerMinusTrackPhi","tightMuLowerMinusTrackPhi", 40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackPhi  = new TH1F("tightMuLowerPlusTrackPhi", "tightMuLowerPlusTrackPhi",  40, -4., 4.);
-// remove tight info //  TH1F *h_tightMuMinusPtError      = new TH1F("tightMuMinusPtError",     "tightMuMinusPtError",      100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPtError = new TH1F("tightMuUpperMinusPtError","tightMuUpperMinusPtError", 100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuPlusPtError       = new TH1F("tightMuPlusPtError",      "tightMuPlusPtError",       100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPtError  = new TH1F("tightMuUpperPlusPtError", "tightMuUpperPlusPtError",  100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPtError = new TH1F("tightMuLowerMinusPtError","tightMuLowerMinusPtError", 100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPtError  = new TH1F("tightMuLowerPlusPtError", "tightMuLowerPlusPtError",  100, 0., 600.);
-// remove tight info //  TH1F *h_tightMuMinusPtRelErr      = new TH1F("tightMuMinusPtRelErr",     "tightMuMinusPtRelErr",      100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuUpperMinusPtRelErr = new TH1F("tightMuUpperMinusPtRelErr","tightMuUpperMinusPtRelErr", 100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuPlusPtRelErr       = new TH1F("tightMuPlusPtRelErr",      "tightMuPlusPtRelErr",       100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuUpperPlusPtRelErr  = new TH1F("tightMuUpperPlusPtRelErr", "tightMuUpperPlusPtRelErr",  100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuLowerMinusPtRelErr = new TH1F("tightMuLowerMinusPtRelErr","tightMuLowerMinusPtRelErr", 100, 0., 1.);
-// remove tight info //  TH1F *h_tightMuLowerPlusPtRelErr  = new TH1F("tightMuLowerPlusPtRelErr","tightMuLowerPlusPtRelErr",   100, 0., 1.);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusPixelHits      = new TH1F("tightMuMinusPixelHits",     "tightMuMinusPixelHits",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusPixelHits = new TH1F("tightMuUpperMinusPixelHits","tightMuUpperMinusPixelHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusPixelHits       = new TH1F("tightMuPlusPixelHits",      "tightMuPlusPixelHits",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusPixelHits  = new TH1F("tightMuUpperPlusPixelHits", "tightMuUpperPlusPixelHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusPixelHits = new TH1F("tightMuLowerMinusPixelHits","tightMuLowerMinusPixelHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusPixelHits  = new TH1F("tightMuLowerPlusPixelHits", "tightMuLowerPlusPixelHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusTrackerHits      = new TH1F("tightMuMinusTrackerHits",     "tightMuMinusTrackerHits",      35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackerHits = new TH1F("tightMuUpperMinusTrackerHits","tightMuUpperMinusTrackerHits", 35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuPlusTrackerHits       = new TH1F("tightMuPlusTrackerHits",      "tightMuPlusTrackerHits",       35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackerHits  = new TH1F("tightMuUpperPlusTrackerHits", "tightMuUpperPlusTrackerHits",  35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackerHits = new TH1F("tightMuLowerMinusTrackerHits","tightMuLowerMinusTrackerHits", 35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackerHits  = new TH1F("tightMuLowerPlusTrackerHits", "tightMuLowerPlusTrackerHits",  35, -0.5, 34.5);
-// remove tight info //  TH1F *h_tightMuMinusMuonStationHits      = new TH1F("tightMuMinusMuonStationHits",     "tightMuMinusMuonStationHits",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusMuonStationHits = new TH1F("tightMuUpperMinusMuonStationHits","tightMuUpperMinusMuonStationHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusMuonStationHits       = new TH1F("tightMuPlusMuonStationHits",      "tightMuPlusMuonStationHits",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusMuonStationHits  = new TH1F("tightMuUpperPlusMuonStationHits", "tightMuUpperPlusMuonStationHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusMuonStationHits = new TH1F("tightMuLowerMinusMuonStationHits","tightMuLowerMinusMuonStationHits", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusMuonStationHits  = new TH1F("tightMuLowerPlusMuonStationHits", "tightMuLowerPlusMuonStationHits",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusValidHits      = new TH1F("tightMuMinusValidHits",     "tightMuMinusValidHits",      100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusValidHits = new TH1F("tightMuUpperMinusValidHits","tightMuUpperMinusValidHits", 100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuPlusValidHits       = new TH1F("tightMuPlusValidHits",      "tightMuPlusValidHits",       100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusValidHits  = new TH1F("tightMuUpperPlusValidHits", "tightMuUpperPlusValidHits",  100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusValidHits = new TH1F("tightMuLowerMinusValidHits","tightMuLowerMinusValidHits", 100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusValidHits  = new TH1F("tightMuLowerPlusValidHits", "tightMuLowerPlusValidHits",  100,-0.5, 99.5);
-// remove tight info //  TH1F *h_tightMuMinusValidMuonHits      = new TH1F("tightMuMinusValidMuonHits",     "tightMuMinusValidMuonHits",      75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusValidMuonHits = new TH1F("tightMuUpperMinusValidMuonHits","tightMuUpperMinusValidMuonHits", 75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuPlusValidMuonHits       = new TH1F("tightMuPlusValidMuonHits",      "tightMuPlusValidMuonHits",       75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusValidMuonHits  = new TH1F("tightMuUpperPlusValidMuonHits", "tightMuUpperPlusValidMuonHits",  75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusValidMuonHits = new TH1F("tightMuLowerMinusValidMuonHits","tightMuLowerMinusValidMuonHits", 75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusValidMuonHits  = new TH1F("tightMuLowerPlusValidMuonHits", "tightMuLowerPlusValidMuonHits",  75, -0.5, 74.5);
-// remove tight info //  TH1F *h_tightMuMinusMatchedMuonStations      = new TH1F("tightMuMinusMatchedMuonStations",     "tightMuMinusMatchedMuonStations",      10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusMatchedMuonStations = new TH1F("tightMuUpperMinusMatchedMuonStations","tightMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuPlusMatchedMuonStations       = new TH1F("tightMuPlusMatchedMuonStations",      "tightMuPlusMatchedMuonStations",       10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusMatchedMuonStations  = new TH1F("tightMuUpperPlusMatchedMuonStations", "tightMuUpperPlusMatchedMuonStations",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusMatchedMuonStations = new TH1F("tightMuLowerMinusMatchedMuonStations","tightMuLowerMinusMatchedMuonStations", 10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusMatchedMuonStations  = new TH1F("tightMuLowerPlusMatchedMuonStations", "tightMuLowerPlusMatchedMuonStations",  10, -0.5, 9.5);
-// remove tight info //  TH1F *h_tightMuMinusTrackerLayersWithMeasurement      = new TH1F("tightMuMinusTrackerLayersWithMeasurement",     "tightMuMinusTrackerLayersWithMeasurement",      20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuUpperMinusTrackerLayersWithMeasurement = new TH1F("tightMuUpperMinusTrackerLayersWithMeasurement","tightMuUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuPlusTrackerLayersWithMeasurement       = new TH1F("tightMuPlusTrackerLayersWithMeasurement",      "tightMuPlusTrackerLayersWithMeasurement",       20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuUpperPlusTrackerLayersWithMeasurement  = new TH1F("tightMuUpperPlusTrackerLayersWithMeasurement", "tightMuUpperPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuLowerMinusTrackerLayersWithMeasurement = new TH1F("tightMuLowerMinusTrackerLayersWithMeasurement","tightMuLowerMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
-// remove tight info //  TH1F *h_tightMuLowerPlusTrackerLayersWithMeasurement  = new TH1F("tightMuLowerPlusTrackerLayersWithMeasurement", "tightMuLowerPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
-// remove tight info //
-// remove tight info //  TH1F *h_tightMuMinusCurvePlusBias[      nBiasBins];
-// remove tight info //  TH1F *h_tightMuMinusCurveMinusBias[     nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperMinusCurvePlusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperMinusCurveMinusBias[nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerMinusCurvePlusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerMinusCurveMinusBias[nBiasBins];
-// remove tight info //  TH1F *h_tightMuPlusCurvePlusBias[       nBiasBins];
-// remove tight info //  TH1F *h_tightMuPlusCurveMinusBias[      nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperPlusCurvePlusBias[  nBiasBins];
-// remove tight info //  TH1F *h_tightMuUpperPlusCurveMinusBias[ nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerPlusCurvePlusBias[  nBiasBins];
-// remove tight info //  TH1F *h_tightMuLowerPlusCurveMinusBias[ nBiasBins];
-// remove tight info //
-// remove tight info //  for (int i =0; i < nBiasBins; ++i) {
-// remove tight info //    std::stringstream name;
-// remove tight info //    name << std::setw(3) << std::setfill('0') << i + 1;
-// remove tight info //    h_tightMuMinusCurvePlusBias[i]       = new TH1F(TString("tightMuMinusCurvePlusBias"       + name.str()),
-// remove tight info //						    TString("tightMuMinusCurvePlusBias"       + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuMinusCurveMinusBias[i]      = new TH1F(TString("tightMuMinusCurveMinusBias"      + name.str()),
-// remove tight info //						    TString("tightMuMinusCurveMinusBias"      + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    TString("tightMuUpperMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuUpperMinusCurveMinusBias[i] = new TH1F(TString("tightMuUpperMinusCurveMinusBias" + name.str()),
-// remove tight info //						    TString("tightMuUpperMinusCurveMinusBias" + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    TString("tightMuLowerMinusCurvePlusBias"  + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuLowerMinusCurveMinusBias[i] = new TH1F(TString("tightMuLowerMinusCurveMinusBias" + name.str()),
-// remove tight info //						    TString("tightMuLowerMinusCurveMinusBias" + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuPlusCurvePlusBias[i]        = new TH1F(TString("tightMuPlusCurvePlusBias"        + name.str()),
-// remove tight info //						    TString("tightMuPlusCurvePlusBias"        + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuPlusCurveMinusBias[i]       = new TH1F(TString("tightMuPlusCurveMinusBias"       + name.str()),
-// remove tight info //						    TString("tightMuPlusCurveMinusBias"       + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    TString("tightMuUpperPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    TString("tightMuUpperPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //    h_tightMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    TString("tightMuLowerPlusCurvePlusBias"   + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
-// remove tight info //    h_tightMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    TString("tightMuLowerPlusCurveMinusBias"  + name.str()),
-// remove tight info //						    15000, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
-// remove tight info //  }
 
   std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
@@ -1059,37 +904,37 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		    << " - phi = " << std::setw(6) << std::setprecision(2) << std::fixed << upTrackerTrack->phi()
 		    << std::endl;
 	
-	h_upperChi2->Fill(*upTrackerChi2);
-	h_upperNdof->Fill(*upTrackerNdof);
+	h_upperChi2->Fill(  *upTrackerChi2);
+	h_upperNdof->Fill(  *upTrackerNdof);
 	h_upperCharge->Fill(*upTrackerCharge);
-	h_upperCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
+	h_upperCurve->Fill(  symmetric_?upperCpT:fabs(upperCpT));
 
-	h_upperDxy->Fill(*upTrackerDxy);
-	h_upperDz->Fill(*upTrackerDz);
+	h_upperDxy->Fill(     *upTrackerDxy);
+	h_upperDz->Fill(      *upTrackerDz);
 	h_upperDxyError->Fill(*upTrackerDxyError);
-	h_upperDzError->Fill(*upTrackerDzError);
+	h_upperDzError->Fill( *upTrackerDzError);
 
-	h_upperPt->Fill(upTrackerMuonP4->pt());
+	h_upperPt->Fill( upTrackerMuonP4->pt());
 	h_upperEta->Fill(upTrackerMuonP4->eta());
 	h_upperPhi->Fill(upTrackerMuonP4->phi());
 	
-	h_upperPtError->Fill(*upTrackerPtError);
-	h_upperPtRelErr->Fill(upperRelPtErr);
-	h_upperTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	h_upperTrackEta->Fill(upTrackerTrack->eta());
-	h_upperTrackPhi->Fill(upTrackerTrack->phi());
+	h_upperPtError->Fill( *upTrackerPtError);
+	h_upperPtRelErr->Fill( upperRelPtErr);
+	h_upperTrackPt->Fill(  sqrt(upTrackerTrack->perp2()));
+	h_upperTrackEta->Fill( upTrackerTrack->eta());
+	h_upperTrackPhi->Fill( upTrackerTrack->phi());
 
 	upperstring << "pt="      << sqrt(upTrackerTrack->perp2())
 		    << ",eta="    << upTrackerTrack->eta()
 		    << ",phi="    << upTrackerTrack->phi()
 		    << ",charge=" << *upTrackerCharge;
 
-	h_upperPixelHits->Fill(*upTrackerPhits);
-	h_upperTrackerHits->Fill(*upTrackerThits);
-	h_upperValidHits->Fill(*upTrackerValidHits);
-	h_upperValidMuonHits->Fill(*upTrackerValidMuonHits);
-	h_upperMuonStationHits->Fill(*upTrackerMhits);
-	h_upperMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	h_upperPixelHits->Fill(                   *upTrackerPhits);
+	h_upperTrackerHits->Fill(                 *upTrackerThits);
+	h_upperValidHits->Fill(                   *upTrackerValidHits);
+	h_upperValidMuonHits->Fill(               *upTrackerValidMuonHits);
+	h_upperMuonStationHits->Fill(             *upTrackerMhits);
+	h_upperMatchedMuonStations->Fill(         *upTrackerMatchedMuonStations);
 	h_upperTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 
 	for (int i = 0; i < nBiasBins; ++i) {
@@ -1206,62 +1051,62 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  }
 
 	  if (*upTrackerCharge < 0) {
-	    h_muMinusChi2->Fill(*upTrackerChi2);
-	    h_muUpperMinusChi2->Fill(*upTrackerChi2);
-	    h_muMinusNdof->Fill(*upTrackerNdof);
-	    h_muUpperMinusNdof->Fill(*upTrackerNdof);
-	    h_muMinusCharge->Fill(*upTrackerCharge);
+	    h_muMinusChi2->Fill(       *upTrackerChi2);
+	    h_muUpperMinusChi2->Fill(  *upTrackerChi2);
+	    h_muMinusNdof->Fill(       *upTrackerNdof);
+	    h_muUpperMinusNdof->Fill(  *upTrackerNdof);
+	    h_muMinusCharge->Fill(     *upTrackerCharge);
 	    h_muUpperMinusCharge->Fill(*upTrackerCharge);
-	    h_muMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
+	    h_muMinusCurve->Fill(     symmetric_?upperCpT:fabs(upperCpT));
 	    h_muUpperMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
 
-	    h_muMinusDxy->Fill(*upTrackerDxy);
+	    h_muMinusDxy->Fill(     *upTrackerDxy);
 	    h_muUpperMinusDxy->Fill(*upTrackerDxy);
-	    h_muMinusDz->Fill(*upTrackerDz);
-	    h_muUpperMinusDz->Fill(*upTrackerDz);
+	    h_muMinusDz->Fill(      *upTrackerDz);
+	    h_muUpperMinusDz->Fill( *upTrackerDz);
 	    h_muMinusDxyError->Fill(*upTrackerDxyError);
 	    h_muUpperMinusDxyError->Fill(*upTrackerDxyError);
-	    h_muMinusDzError->Fill(*upTrackerDzError);
-	    h_muUpperMinusDzError->Fill(*upTrackerDzError);
+	    h_muMinusDzError->Fill(      *upTrackerDzError);
+	    h_muUpperMinusDzError->Fill( *upTrackerDzError);
 
-	    h_muMinusPt->Fill(upTrackerMuonP4->pt());
-	    h_muUpperMinusPt->Fill(upTrackerMuonP4->pt());
-	    h_muMinusEta->Fill(upTrackerMuonP4->eta());
+	    h_muMinusPt->Fill(      upTrackerMuonP4->pt());
+	    h_muUpperMinusPt->Fill( upTrackerMuonP4->pt());
+	    h_muMinusEta->Fill(     upTrackerMuonP4->eta());
 	    h_muUpperMinusEta->Fill(upTrackerMuonP4->eta());
-	    h_muMinusPhi->Fill(upTrackerMuonP4->phi());
+	    h_muMinusPhi->Fill(     upTrackerMuonP4->phi());
 	    h_muUpperMinusPhi->Fill(upTrackerMuonP4->phi());
 
-	    h_muMinusPtError->Fill(*upTrackerPtError);
+	    h_muMinusPtError->Fill(     *upTrackerPtError);
 	    h_muUpperMinusPtError->Fill(*upTrackerPtError);
-	    h_muMinusPtRelErr->Fill(upperRelPtErr);
+	    h_muMinusPtRelErr->Fill(     upperRelPtErr);
 	    h_muUpperMinusPtRelErr->Fill(upperRelPtErr);
-	    h_muMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
+	    h_muMinusTrackPt->Fill(     sqrt(upTrackerTrack->perp2()));
 	    h_muUpperMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	    h_muMinusTrackEta->Fill(upTrackerTrack->eta());
+	    h_muMinusTrackEta->Fill(     upTrackerTrack->eta());
 	    h_muUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	    h_muMinusTrackPhi->Fill(upTrackerTrack->phi());
+	    h_muMinusTrackPhi->Fill(     upTrackerTrack->phi());
 	    h_muUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
 
-	    h_muMinusPixelHits->Fill(*upTrackerPhits);
-	    h_muUpperMinusPixelHits->Fill(*upTrackerPhits);
-	    h_muMinusTrackerHits->Fill(*upTrackerThits);
-	    h_muUpperMinusTrackerHits->Fill(*upTrackerThits);
-	    h_muMinusValidHits->Fill(*upTrackerValidHits);
-	    h_muUpperMinusValidHits->Fill(*upTrackerValidHits);
-	    h_muMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	    h_muUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	    h_muMinusMuonStationHits->Fill(*upTrackerMhits);
-	    h_muUpperMinusMuonStationHits->Fill(*upTrackerMhits);
-	    h_muMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	    h_muUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	    h_muMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	    h_muMinusPixelHits->Fill(                        *upTrackerPhits);
+	    h_muUpperMinusPixelHits->Fill(                   *upTrackerPhits);
+	    h_muMinusTrackerHits->Fill(                      *upTrackerThits);
+	    h_muUpperMinusTrackerHits->Fill(                 *upTrackerThits);
+	    h_muMinusValidHits->Fill(                        *upTrackerValidHits);
+	    h_muUpperMinusValidHits->Fill(                   *upTrackerValidHits);
+	    h_muMinusValidMuonHits->Fill(                    *upTrackerValidMuonHits);
+	    h_muUpperMinusValidMuonHits->Fill(               *upTrackerValidMuonHits);
+	    h_muMinusMuonStationHits->Fill(                  *upTrackerMhits);
+	    h_muUpperMinusMuonStationHits->Fill(             *upTrackerMhits);
+	    h_muMinusMatchedMuonStations->Fill(              *upTrackerMatchedMuonStations);
+	    h_muUpperMinusMatchedMuonStations->Fill(         *upTrackerMatchedMuonStations);
+	    h_muMinusTrackerLayersWithMeasurement->Fill(     *upTrackerLayersWithMeasurement);
 	    h_muUpperMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 
 	    for (int i = 0; i < nBiasBins; ++i) {
 	      double posBias = upperCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	      double negBias = upperCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	      h_muMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-	      h_muMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+	      h_muMinusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+	      h_muMinusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));	
 	      h_muUpperMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 	      h_muUpperMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 	  
@@ -1271,207 +1116,133 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	
 	    // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
 	    if (up_n1pt) {
-	      h_looseMuMinusChi2->Fill(*upTrackerChi2);
-	      h_looseMuUpperMinusChi2->Fill(*upTrackerChi2);
-	      h_looseMuMinusNdof->Fill(*upTrackerNdof);
-	      h_looseMuUpperMinusNdof->Fill(*upTrackerNdof);
-	      h_looseMuMinusCharge->Fill(*upTrackerCharge);
+	      h_looseMuMinusChi2->Fill(       *upTrackerChi2);
+	      h_looseMuUpperMinusChi2->Fill(  *upTrackerChi2);
+	      h_looseMuMinusNdof->Fill(       *upTrackerNdof);
+	      h_looseMuUpperMinusNdof->Fill(  *upTrackerNdof);
+	      h_looseMuMinusCharge->Fill(     *upTrackerCharge);
 	      h_looseMuUpperMinusCharge->Fill(*upTrackerCharge);
-	      h_looseMuMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
+	      h_looseMuMinusCurve->Fill(     symmetric_?upperCpT:fabs(upperCpT));
 	      h_looseMuUpperMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
 
 	      // loose doesn't include the dxy/dz cuts
-	      h_looseMuMinusDxy->Fill(*upTrackerDxy);
+	      h_looseMuMinusDxy->Fill(     *upTrackerDxy);
 	      h_looseMuUpperMinusDxy->Fill(*upTrackerDxy);
-	      h_looseMuMinusDz->Fill(*upTrackerDz);
-	      h_looseMuUpperMinusDz->Fill(*upTrackerDz);
+	      h_looseMuMinusDz->Fill(      *upTrackerDz);
+	      h_looseMuUpperMinusDz->Fill( *upTrackerDz);
 	      h_looseMuMinusDxyError->Fill(*upTrackerDxyError);
 	      h_looseMuUpperMinusDxyError->Fill(*upTrackerDxyError);
-	      h_looseMuMinusDzError->Fill(*upTrackerDzError);
-	      h_looseMuUpperMinusDzError->Fill(*upTrackerDzError);
+	      h_looseMuMinusDzError->Fill(      *upTrackerDzError);
+	      h_looseMuUpperMinusDzError->Fill( *upTrackerDzError);
 
-	      h_looseMuMinusPt->Fill(upTrackerMuonP4->pt());
-	      h_looseMuUpperMinusPt->Fill(upTrackerMuonP4->pt());
-	      h_looseMuMinusEta->Fill(upTrackerMuonP4->eta());
+	      h_looseMuMinusPt->Fill(      upTrackerMuonP4->pt());
+	      h_looseMuUpperMinusPt->Fill( upTrackerMuonP4->pt());
+	      h_looseMuMinusEta->Fill(     upTrackerMuonP4->eta());
 	      h_looseMuUpperMinusEta->Fill(upTrackerMuonP4->eta());
-	      h_looseMuMinusPhi->Fill(upTrackerMuonP4->phi());
+	      h_looseMuMinusPhi->Fill(     upTrackerMuonP4->phi());
 	      h_looseMuUpperMinusPhi->Fill(upTrackerMuonP4->phi());
 
-	      h_looseMuMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
+	      h_looseMuMinusTrackPt->Fill(     sqrt(upTrackerTrack->perp2()));
 	      h_looseMuUpperMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      h_looseMuMinusTrackEta->Fill(upTrackerTrack->eta());
-	      h_looseMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	      h_looseMuMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      h_looseMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_looseMuMinusTrackEta->Fill(         upTrackerTrack->eta());
+	      h_looseMuUpperMinusTrackEta->Fill(    upTrackerTrack->eta());
+	      h_looseMuMinusTrackPhi->Fill(         upTrackerTrack->phi());
+	      h_looseMuUpperMinusTrackPhi->Fill(    upTrackerTrack->phi());
 
-	      h_looseMuMinusTrackerHits->Fill(*upTrackerThits);
-	      h_looseMuUpperMinusTrackerHits->Fill(*upTrackerThits);
-	      h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
+	      h_looseMuMinusValidHits->Fill(         *upTrackerValidHits);
+	      h_looseMuUpperMinusValidHits->Fill(    *upTrackerValidHits);
 
-	      // remove tight info //if (up_tightdxy) {
-	      // remove tight info //	h_tightMuMinusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuUpperMinusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuMinusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //	h_tightMuUpperMinusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdz) {
-	      // remove tight info //	h_tightMuMinusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuUpperMinusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuMinusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //	h_tightMuUpperMinusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuUpperMinusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuMinusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuUpperMinusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuMinusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuUpperMinusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //	h_tightMuUpperMinusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuUpperMinusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuMinusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuUpperMinusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuMinusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuUpperMinusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuUpperMinusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuMinusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuUpperMinusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //	h_tightMuUpperMinusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuUpperMinusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //}
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = upperCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = upperCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		h_looseMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
+		h_looseMuMinusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+		h_looseMuMinusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));	
 		h_looseMuUpperMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuUpperMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //if (up_tightdxy && up_tightdz) {
-		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //  h_tightMuUpperMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuUpperMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
-		// remove tight info //}
+
 		if (debug)
 		  std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	      }
 	    } // end if (up_n1pt)
 
 	    if (up_n1pixhits) {
-	      h_looseMuMinusPixelHits->Fill(*upTrackerPhits);
+	      h_looseMuMinusPixelHits->Fill(     *upTrackerPhits);
 	      h_looseMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //	h_tightMuUpperMinusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1vmuhits) {
-	      h_looseMuMinusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      h_looseMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      h_looseMuMinusMuonStationHits->Fill(*upTrackerMhits);
+	      h_looseMuMinusValidMuonHits->Fill(       *upTrackerValidMuonHits);
+	      h_looseMuUpperMinusValidMuonHits->Fill(  *upTrackerValidMuonHits);
+	      h_looseMuMinusMuonStationHits->Fill(     *upTrackerMhits);
 	      h_looseMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuUpperMinusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuUpperMinusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //	h_tightMuUpperMinusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1ptrelerr) {
-	      h_looseMuMinusPtError->Fill(*upTrackerPtError);
+	      h_looseMuMinusPtError->Fill(     *upTrackerPtError);
 	      h_looseMuUpperMinusPtError->Fill(*upTrackerPtError);
-	      h_looseMuMinusPtRelErr->Fill(upperRelPtErr);
+	      h_looseMuMinusPtRelErr->Fill(     upperRelPtErr);
 	      h_looseMuUpperMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuUpperMinusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //	h_tightMuUpperMinusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (up_n1trkhits) {
-	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	      h_looseMuMinusTrackerHits->Fill(       *upTrackerThits);
+	      h_looseMuUpperMinusTrackerHits->Fill(  *upTrackerThits);
+	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(     *upTrackerLayersWithMeasurement);
 	      h_looseMuUpperMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuUpperMinusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (up_n1mmustahits) {
-	      h_looseMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	      h_looseMuMinusMatchedMuonStations->Fill(     *upTrackerMatchedMuonStations);
 	      h_looseMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuUpperMinusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end if (charge < 0)
 
 	  else { // charge > 0
-	    h_muPlusChi2->Fill(*upTrackerChi2);
-	    h_muUpperPlusChi2->Fill(*upTrackerChi2);
-	    h_muPlusNdof->Fill(*upTrackerNdof);
-	    h_muUpperPlusNdof->Fill(*upTrackerNdof);
-	    h_muPlusCharge->Fill(*upTrackerCharge);
+	    h_muPlusChi2->Fill(       *upTrackerChi2);
+	    h_muUpperPlusChi2->Fill(  *upTrackerChi2);
+	    h_muPlusNdof->Fill(       *upTrackerNdof);
+	    h_muUpperPlusNdof->Fill(  *upTrackerNdof);
+	    h_muPlusCharge->Fill(     *upTrackerCharge);
 	    h_muUpperPlusCharge->Fill(*upTrackerCharge);
-	    h_muPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
+	    h_muPlusCurve->Fill(     symmetric_?upperCpT:fabs(upperCpT));
 	    h_muUpperPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
 
-	    h_muPlusDxy->Fill(*upTrackerDxy);
+	    h_muPlusDxy->Fill(     *upTrackerDxy);
 	    h_muUpperPlusDxy->Fill(*upTrackerDxy);
-	    h_muPlusDz->Fill(*upTrackerDz);
-	    h_muUpperPlusDz->Fill(*upTrackerDz);
+	    h_muPlusDz->Fill(      *upTrackerDz);
+	    h_muUpperPlusDz->Fill( *upTrackerDz);
 	    h_muPlusDxyError->Fill(*upTrackerDxyError);
 	    h_muUpperPlusDxyError->Fill(*upTrackerDxyError);
-	    h_muPlusDzError->Fill(*upTrackerDzError);
-	    h_muUpperPlusDzError->Fill(*upTrackerDzError);
+	    h_muPlusDzError->Fill(      *upTrackerDzError);
+	    h_muUpperPlusDzError->Fill( *upTrackerDzError);
 
-	    h_muPlusPt->Fill(upTrackerMuonP4->pt());
-	    h_muUpperPlusPt->Fill(upTrackerMuonP4->pt());
-	    h_muPlusEta->Fill(upTrackerMuonP4->eta());
+	    h_muPlusPt->Fill(      upTrackerMuonP4->pt());
+	    h_muUpperPlusPt->Fill( upTrackerMuonP4->pt());
+	    h_muPlusEta->Fill(     upTrackerMuonP4->eta());
 	    h_muUpperPlusEta->Fill(upTrackerMuonP4->eta());
-	    h_muPlusPhi->Fill(upTrackerMuonP4->phi());
+	    h_muPlusPhi->Fill(     upTrackerMuonP4->phi());
 	    h_muUpperPlusPhi->Fill(upTrackerMuonP4->phi());
 
-	    h_muPlusPtError->Fill(*upTrackerPtError);
+	    h_muPlusPtError->Fill(     *upTrackerPtError);
 	    h_muUpperPlusPtError->Fill(*upTrackerPtError);
-	    h_muPlusPtRelErr->Fill(upperRelPtErr);
+	    h_muPlusPtRelErr->Fill(     upperRelPtErr);
 	    h_muUpperPlusPtRelErr->Fill(upperRelPtErr);
-	    h_muPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
+	    h_muPlusTrackPt->Fill(     sqrt(upTrackerTrack->perp2()));
 	    h_muUpperPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	    h_muPlusTrackEta->Fill(upTrackerTrack->eta());
+	    h_muPlusTrackEta->Fill(     upTrackerTrack->eta());
 	    h_muUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	    h_muPlusTrackPhi->Fill(upTrackerTrack->phi());
+	    h_muPlusTrackPhi->Fill(     upTrackerTrack->phi());
 	    h_muUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
 
-	    h_muPlusPixelHits->Fill(*upTrackerPhits);
-	    h_muUpperPlusPixelHits->Fill(*upTrackerPhits);
-	    h_muPlusTrackerHits->Fill(*upTrackerThits);
-	    h_muUpperPlusTrackerHits->Fill(*upTrackerThits);
-	    h_muPlusValidHits->Fill(*upTrackerValidHits);
-	    h_muUpperPlusValidHits->Fill(*upTrackerValidHits);
-	    h_muPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	    h_muUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	    h_muPlusMuonStationHits->Fill(*upTrackerMhits);
-	    h_muUpperPlusMuonStationHits->Fill(*upTrackerMhits);
-	    h_muPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	    h_muUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	    h_muPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	    h_muPlusPixelHits->Fill(                        *upTrackerPhits);
+	    h_muUpperPlusPixelHits->Fill(                   *upTrackerPhits);
+	    h_muPlusTrackerHits->Fill(                      *upTrackerThits);
+	    h_muUpperPlusTrackerHits->Fill(                 *upTrackerThits);
+	    h_muPlusValidHits->Fill(                        *upTrackerValidHits);
+	    h_muUpperPlusValidHits->Fill(                   *upTrackerValidHits);
+	    h_muPlusValidMuonHits->Fill(                    *upTrackerValidMuonHits);
+	    h_muUpperPlusValidMuonHits->Fill(               *upTrackerValidMuonHits);
+	    h_muPlusMuonStationHits->Fill(                  *upTrackerMhits);
+	    h_muUpperPlusMuonStationHits->Fill(             *upTrackerMhits);
+	    h_muPlusMatchedMuonStations->Fill(              *upTrackerMatchedMuonStations);
+	    h_muUpperPlusMatchedMuonStations->Fill(         *upTrackerMatchedMuonStations);
+	    h_muPlusTrackerLayersWithMeasurement->Fill(     *upTrackerLayersWithMeasurement);
 	    h_muUpperPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
 
 	    for (int i = 0; i < nBiasBins; ++i) {
@@ -1488,151 +1259,80 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	
 	    // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
 	    if (up_n1pt) {
-	      h_looseMuPlusChi2->Fill(*upTrackerChi2);
-	      h_looseMuUpperPlusChi2->Fill(*upTrackerChi2);
-	      h_looseMuPlusNdof->Fill(*upTrackerNdof);
-	      h_looseMuUpperPlusNdof->Fill(*upTrackerNdof);
-	      h_looseMuPlusCharge->Fill(*upTrackerCharge);
+	      h_looseMuPlusChi2->Fill(       *upTrackerChi2);
+	      h_looseMuUpperPlusChi2->Fill(  *upTrackerChi2);
+	      h_looseMuPlusNdof->Fill(       *upTrackerNdof);
+	      h_looseMuUpperPlusNdof->Fill(  *upTrackerNdof);
+	      h_looseMuPlusCharge->Fill(     *upTrackerCharge);
 	      h_looseMuUpperPlusCharge->Fill(*upTrackerCharge);
-	      h_looseMuPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
+	      h_looseMuPlusCurve->Fill(     symmetric_?upperCpT:fabs(upperCpT));
 	      h_looseMuUpperPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
 
 	      // loose doesn't include the dxy/dz cuts
-	      h_looseMuPlusDxy->Fill(*upTrackerDxy);
+	      h_looseMuPlusDxy->Fill(     *upTrackerDxy);
 	      h_looseMuUpperPlusDxy->Fill(*upTrackerDxy);
-	      h_looseMuPlusDz->Fill(*upTrackerDz);
-	      h_looseMuUpperPlusDz->Fill(*upTrackerDz);
+	      h_looseMuPlusDz->Fill(      *upTrackerDz);
+	      h_looseMuUpperPlusDz->Fill( *upTrackerDz);
 	      h_looseMuPlusDxyError->Fill(*upTrackerDxyError);
 	      h_looseMuUpperPlusDxyError->Fill(*upTrackerDxyError);
-	      h_looseMuPlusDzError->Fill(*upTrackerDzError);
-	      h_looseMuUpperPlusDzError->Fill(*upTrackerDzError);
+	      h_looseMuPlusDzError->Fill(      *upTrackerDzError);
+	      h_looseMuUpperPlusDzError->Fill( *upTrackerDzError);
 
-	      h_looseMuPlusPt->Fill(upTrackerMuonP4->pt());
-	      h_looseMuUpperPlusPt->Fill(upTrackerMuonP4->pt());
-	      h_looseMuPlusEta->Fill(upTrackerMuonP4->eta());
+	      h_looseMuPlusPt->Fill(      upTrackerMuonP4->pt());
+	      h_looseMuUpperPlusPt->Fill( upTrackerMuonP4->pt());
+	      h_looseMuPlusEta->Fill(     upTrackerMuonP4->eta());
 	      h_looseMuUpperPlusEta->Fill(upTrackerMuonP4->eta());
-	      h_looseMuPlusPhi->Fill(upTrackerMuonP4->phi());
+	      h_looseMuPlusPhi->Fill(     upTrackerMuonP4->phi());
 	      h_looseMuUpperPlusPhi->Fill(upTrackerMuonP4->phi());
 
-	      h_looseMuPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
+	      h_looseMuPlusTrackPt->Fill(     sqrt(upTrackerTrack->perp2()));
 	      h_looseMuUpperPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      h_looseMuPlusTrackEta->Fill(upTrackerTrack->eta());
-	      h_looseMuUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	      h_looseMuPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      h_looseMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
+	      h_looseMuPlusTrackEta->Fill(         upTrackerTrack->eta());
+	      h_looseMuUpperPlusTrackEta->Fill(    upTrackerTrack->eta());
+	      h_looseMuPlusTrackPhi->Fill(         upTrackerTrack->phi());
+	      h_looseMuUpperPlusTrackPhi->Fill(    upTrackerTrack->phi());
 
-	      // remove tight info //if (up_tightdxy) {
-	      // remove tight info //	h_tightMuPlusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuUpperPlusDz->Fill(*upTrackerDz);
-	      // remove tight info //	h_tightMuPlusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //	h_tightMuUpperPlusDzError->Fill(*upTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdz) {
-	      // remove tight info //	h_tightMuPlusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuUpperPlusDxy->Fill(*upTrackerDxy);
-	      // remove tight info //	h_tightMuPlusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //	h_tightMuUpperPlusDxyError->Fill(*upTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuUpperPlusChi2->Fill(*upTrackerChi2);
-	      // remove tight info //	h_tightMuPlusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuUpperPlusNdof->Fill(*upTrackerNdof);
-	      // remove tight info //	h_tightMuPlusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuUpperPlusCharge->Fill(*upTrackerCharge);
-	      // remove tight info //	h_tightMuPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //	h_tightMuUpperPlusCurve->Fill(symmetric_?upperCpT:fabs(upperCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuUpperPlusPt->Fill(upTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuPlusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuUpperPlusEta->Fill(upTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuPlusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuUpperPlusPhi->Fill(upTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuUpperPlusTrackPt->Fill(sqrt(upTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuPlusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuUpperPlusTrackEta->Fill(upTrackerTrack->eta());
-	      // remove tight info //	h_tightMuPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //	h_tightMuUpperPlusTrackPhi->Fill(upTrackerTrack->phi());
-	      // remove tight info //}
+	      h_looseMuPlusValidHits->Fill(     *upTrackerValidHits);
+	      h_looseMuUpperPlusValidHits->Fill(*upTrackerValidHits);
 
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = upperCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = upperCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		h_looseMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
+		h_looseMuPlusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+		h_looseMuPlusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));
 		h_looseMuUpperPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
 		h_looseMuUpperPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 	    
-		// remove tight info //if (up_tightdxy && up_tightdz) {
-		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
-		// remove tight info //  h_tightMuUpperPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-		// remove tight info //  h_tightMuUpperPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the upper bias loop " << i << std::endl; 
 	      }
-	      // end if (up_n1pt)
-	    }
+	    } // end if (up_n1pt)
 	
 	    if (up_n1pixhits) {
-	      h_looseMuPlusPixelHits->Fill(*upTrackerPhits);
+	      h_looseMuPlusPixelHits->Fill(     *upTrackerPhits);
 	      h_looseMuUpperPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //	h_tightMuUpperPlusPixelHits->Fill(*upTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1vmuhits) {
-	      h_looseMuPlusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuUpperPlusValidHits->Fill(*upTrackerValidHits);
-	      h_looseMuPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      h_looseMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      h_looseMuPlusMuonStationHits->Fill(*upTrackerMhits);
+	      h_looseMuPlusValidMuonHits->Fill(       *upTrackerValidMuonHits);
+	      h_looseMuUpperPlusValidMuonHits->Fill(  *upTrackerValidMuonHits);
+	      h_looseMuPlusMuonStationHits->Fill(     *upTrackerMhits);
 	      h_looseMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuUpperPlusValidHits->Fill(*upTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuUpperPlusValidMuonHits->Fill(*upTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //	h_tightMuUpperPlusMuonStationHits->Fill(*upTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (up_n1ptrelerr) {
-	      h_looseMuPlusPtError->Fill(*upTrackerPtError);
+	      h_looseMuPlusPtError->Fill(     *upTrackerPtError);
 	      h_looseMuUpperPlusPtError->Fill(*upTrackerPtError);
-	      h_looseMuPlusPtRelErr->Fill(upperRelPtErr);
+	      h_looseMuPlusPtRelErr->Fill(     upperRelPtErr);
 	      h_looseMuUpperPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuUpperPlusPtError->Fill(*upTrackerPtError);
-	      // remove tight info //	h_tightMuPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //	h_tightMuUpperPlusPtRelErr->Fill(upperRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (up_n1trkhits) {
-	      h_looseMuPlusTrackerHits->Fill(*upTrackerThits);
+	      h_looseMuPlusTrackerHits->Fill(     *upTrackerThits);
 	      h_looseMuUpperPlusTrackerHits->Fill(*upTrackerThits);
-	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
+	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(     *upTrackerLayersWithMeasurement);
 	      h_looseMuUpperPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuUpperPlusTrackerHits->Fill(*upTrackerThits);
-	      // remove tight info //	h_tightMuPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuUpperPlusTrackerLayersWithMeasurement->Fill(*upTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (up_n1mmustahits) {
-	      h_looseMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
+	      h_looseMuPlusMatchedMuonStations->Fill(     *upTrackerMatchedMuonStations);
 	      h_looseMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //if (up_tightdxy && up_tightdz) {
-	      // remove tight info //	h_tightMuPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuUpperPlusMatchedMuonStations->Fill(*upTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end else { // charge > 0
 
@@ -1738,44 +1438,44 @@ void Plot(std::string const& filelist, std::string const& outFile,
 		    << " - phi = " << std::setw(6) << std::setprecision(2) << std::fixed << lowTrackerTrack->phi()
 		    << std::endl;
 
-	h_lowerChi2->Fill(*lowTrackerChi2);
-	h_lowerNdof->Fill(*lowTrackerNdof);
+	h_lowerChi2->Fill(  *lowTrackerChi2);
+	h_lowerNdof->Fill(  *lowTrackerNdof);
 	h_lowerCharge->Fill(*lowTrackerCharge);
-	h_lowerCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
+	h_lowerCurve->Fill(  symmetric_?lowerCpT:fabs(lowerCpT));
 
-	h_lowerDxy->Fill(*lowTrackerDxy);
-	h_lowerDz->Fill(*lowTrackerDz);
+	h_lowerDxy->Fill(     *lowTrackerDxy);
+	h_lowerDz->Fill(      *lowTrackerDz);
 	h_lowerDxyError->Fill(*lowTrackerDxyError);
-	h_lowerDzError->Fill(*lowTrackerDzError);
+	h_lowerDzError->Fill( *lowTrackerDzError);
 
-	h_lowerPt->Fill(lowTrackerMuonP4->pt());
+	h_lowerPt->Fill( lowTrackerMuonP4->pt());
 	h_lowerEta->Fill(lowTrackerMuonP4->eta());
 	h_lowerPhi->Fill(lowTrackerMuonP4->phi());
 
-	h_lowerPtError->Fill(*lowTrackerPtError);
-	h_lowerPtRelErr->Fill(lowerRelPtErr);
-	h_lowerTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	h_lowerTrackEta->Fill(lowTrackerTrack->eta());
-	h_lowerTrackPhi->Fill(lowTrackerTrack->phi());
+	h_lowerPtError->Fill( *lowTrackerPtError);
+	h_lowerPtRelErr->Fill( lowerRelPtErr);
+	h_lowerTrackPt->Fill(  sqrt(lowTrackerTrack->perp2()));
+	h_lowerTrackEta->Fill( lowTrackerTrack->eta());
+	h_lowerTrackPhi->Fill( lowTrackerTrack->phi());
 
 	lowerstring << "pt="      << sqrt(lowTrackerTrack->perp2())
 		    << ",eta="    << lowTrackerTrack->eta()
 		    << ",phi="    << lowTrackerTrack->phi()
 		    << ",charge=" << *lowTrackerCharge;
 
-	h_lowerPixelHits->Fill(*lowTrackerPhits);
-	h_lowerTrackerHits->Fill(*lowTrackerThits);
-	h_lowerValidHits->Fill(*lowTrackerValidHits);
-	h_lowerValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	h_lowerMuonStationHits->Fill(*lowTrackerMhits);
-	h_lowerMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	h_lowerPixelHits->Fill(                   *lowTrackerPhits);
+	h_lowerTrackerHits->Fill(                 *lowTrackerThits);
+	h_lowerValidHits->Fill(                   *lowTrackerValidHits);
+	h_lowerValidMuonHits->Fill(               *lowTrackerValidMuonHits);
+	h_lowerMuonStationHits->Fill(             *lowTrackerMhits);
+	h_lowerMatchedMuonStations->Fill(         *lowTrackerMatchedMuonStations);
 	h_lowerTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
 	for (int i = 0; i < nBiasBins; ++i) {
 	  double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	  double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	  h_lowerCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	  h_lowerCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	  h_lowerCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	  h_lowerCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 	  if (debug)
 	    std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	}
@@ -1885,64 +1585,64 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	  }
 	
 	  if (*lowTrackerCharge < 0) {
-	    h_muMinusChi2->Fill(*lowTrackerChi2);
-	    h_muLowerMinusChi2->Fill(*lowTrackerChi2);
-	    h_muMinusNdof->Fill(*lowTrackerNdof);
-	    h_muLowerMinusNdof->Fill(*lowTrackerNdof);
-	    h_muMinusCharge->Fill(*lowTrackerCharge);
+	    h_muMinusChi2->Fill(       *lowTrackerChi2);
+	    h_muLowerMinusChi2->Fill(  *lowTrackerChi2);
+	    h_muMinusNdof->Fill(       *lowTrackerNdof);
+	    h_muLowerMinusNdof->Fill(  *lowTrackerNdof);
+	    h_muMinusCharge->Fill(     *lowTrackerCharge);
 	    h_muLowerMinusCharge->Fill(*lowTrackerCharge);
-	    h_muMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
+	    h_muMinusCurve->Fill(     symmetric_?lowerCpT:fabs(lowerCpT));
 	    h_muLowerMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
 
-	    h_muMinusDxy->Fill(*lowTrackerDxy);
+	    h_muMinusDxy->Fill(     *lowTrackerDxy);
 	    h_muLowerMinusDxy->Fill(*lowTrackerDxy);
-	    h_muMinusDz->Fill(*lowTrackerDz);
-	    h_muLowerMinusDz->Fill(*lowTrackerDz);
+	    h_muMinusDz->Fill(      *lowTrackerDz);
+	    h_muLowerMinusDz->Fill( *lowTrackerDz);
 	    h_muMinusDxyError->Fill(*lowTrackerDxyError);
 	    h_muLowerMinusDxyError->Fill(*lowTrackerDxyError);
-	    h_muMinusDzError->Fill(*lowTrackerDzError);
-	    h_muLowerMinusDzError->Fill(*lowTrackerDzError);
+	    h_muMinusDzError->Fill(      *lowTrackerDzError);
+	    h_muLowerMinusDzError->Fill( *lowTrackerDzError);
 
-	    h_muMinusPt->Fill(lowTrackerMuonP4->pt());
-	    h_muLowerMinusPt->Fill(lowTrackerMuonP4->pt());
-	    h_muMinusEta->Fill(lowTrackerMuonP4->eta());
+	    h_muMinusPt->Fill(      lowTrackerMuonP4->pt());
+	    h_muLowerMinusPt->Fill( lowTrackerMuonP4->pt());
+	    h_muMinusEta->Fill(     lowTrackerMuonP4->eta());
 	    h_muLowerMinusEta->Fill(lowTrackerMuonP4->eta());
-	    h_muMinusPhi->Fill(lowTrackerMuonP4->phi());
+	    h_muMinusPhi->Fill(     lowTrackerMuonP4->phi());
 	    h_muLowerMinusPhi->Fill(lowTrackerMuonP4->phi());
 
-	    h_muMinusPtError->Fill(*lowTrackerPtError);
+	    h_muMinusPtError->Fill(     *lowTrackerPtError);
 	    h_muLowerMinusPtError->Fill(*lowTrackerPtError);
-	    h_muMinusPtRelErr->Fill(lowerRelPtErr);
+	    h_muMinusPtRelErr->Fill(     lowerRelPtErr);
 	    h_muLowerMinusPtRelErr->Fill(lowerRelPtErr);
-	    h_muMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
+	    h_muMinusTrackPt->Fill(     sqrt(lowTrackerTrack->perp2()));
 	    h_muLowerMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	    h_muMinusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_muMinusTrackEta->Fill(     lowTrackerTrack->eta());
 	    h_muLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
-	    h_muMinusTrackPhi->Fill(lowTrackerTrack->phi());
+	    h_muMinusTrackPhi->Fill(     lowTrackerTrack->phi());
 	    h_muLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
 
-	    h_muMinusPixelHits->Fill(*lowTrackerPhits);
-	    h_muLowerMinusPixelHits->Fill(*lowTrackerPhits);
-	    h_muMinusTrackerHits->Fill(*lowTrackerThits);
-	    h_muLowerMinusTrackerHits->Fill(*lowTrackerThits);
-	    h_muMinusValidHits->Fill(*lowTrackerValidHits);
-	    h_muLowerMinusValidHits->Fill(*lowTrackerValidHits);
-	    h_muMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	    h_muLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	    h_muMinusMuonStationHits->Fill(*lowTrackerMhits);
-	    h_muLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-	    h_muMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	    h_muLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	    h_muMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	    h_muMinusPixelHits->Fill(                        *lowTrackerPhits);
+	    h_muLowerMinusPixelHits->Fill(                   *lowTrackerPhits);
+	    h_muMinusTrackerHits->Fill(                      *lowTrackerThits);
+	    h_muLowerMinusTrackerHits->Fill(                 *lowTrackerThits);
+	    h_muMinusValidHits->Fill(                        *lowTrackerValidHits);
+	    h_muLowerMinusValidHits->Fill(                   *lowTrackerValidHits);
+	    h_muMinusValidMuonHits->Fill(                    *lowTrackerValidMuonHits);
+	    h_muLowerMinusValidMuonHits->Fill(               *lowTrackerValidMuonHits);
+	    h_muMinusMuonStationHits->Fill(                  *lowTrackerMhits);
+	    h_muLowerMinusMuonStationHits->Fill(             *lowTrackerMhits);
+	    h_muMinusMatchedMuonStations->Fill(              *lowTrackerMatchedMuonStations);
+	    h_muLowerMinusMatchedMuonStations->Fill(         *lowTrackerMatchedMuonStations);
+	    h_muMinusTrackerLayersWithMeasurement->Fill(     *lowTrackerLayersWithMeasurement);
 	    h_muLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
 	    for (int i = 0; i < nBiasBins; ++i) {
 	      double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	      double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	      h_muMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-	      h_muLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	      h_muMinusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+	      h_muMinusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));
+	      h_muLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 
 	      if (debug)
 		std::cout << "Made it through the lower bias loop " << i << std::endl; 
@@ -1950,212 +1650,142 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	
 	    // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
 	    if (low_n1pt) {
-	      h_looseMuMinusChi2->Fill(*lowTrackerChi2);
-	      h_looseMuLowerMinusChi2->Fill(*lowTrackerChi2);
-	      h_looseMuMinusNdof->Fill(*lowTrackerNdof);
-	      h_looseMuLowerMinusNdof->Fill(*lowTrackerNdof);
-	      h_looseMuMinusCharge->Fill(*lowTrackerCharge);
+	      h_looseMuMinusChi2->Fill(       *lowTrackerChi2);
+	      h_looseMuLowerMinusChi2->Fill(  *lowTrackerChi2);
+	      h_looseMuMinusNdof->Fill(       *lowTrackerNdof);
+	      h_looseMuLowerMinusNdof->Fill(  *lowTrackerNdof);
+	      h_looseMuMinusCharge->Fill(     *lowTrackerCharge);
 	      h_looseMuLowerMinusCharge->Fill(*lowTrackerCharge);
-	      h_looseMuMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
+	      h_looseMuMinusCurve->Fill(     symmetric_?lowerCpT:fabs(lowerCpT));
 	      h_looseMuLowerMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
 
 	      // loose doesn't include the dxy/dz cuts
-	      h_looseMuMinusDxy->Fill(*lowTrackerDxy);
+	      h_looseMuMinusDxy->Fill(     *lowTrackerDxy);
 	      h_looseMuLowerMinusDxy->Fill(*lowTrackerDxy);
-	      h_looseMuMinusDz->Fill(*lowTrackerDz);
-	      h_looseMuLowerMinusDz->Fill(*lowTrackerDz);
+	      h_looseMuMinusDz->Fill(      *lowTrackerDz);
+	      h_looseMuLowerMinusDz->Fill( *lowTrackerDz);
 	      h_looseMuMinusDxyError->Fill(*lowTrackerDxyError);
 	      h_looseMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
-	      h_looseMuMinusDzError->Fill(*lowTrackerDzError);
-	      h_looseMuLowerMinusDzError->Fill(*lowTrackerDzError);
+	      h_looseMuMinusDzError->Fill(      *lowTrackerDzError);
+	      h_looseMuLowerMinusDzError->Fill( *lowTrackerDzError);
 
-	      h_looseMuMinusPt->Fill(lowTrackerMuonP4->pt());
-	      h_looseMuLowerMinusPt->Fill(lowTrackerMuonP4->pt());
-	      h_looseMuMinusEta->Fill(lowTrackerMuonP4->eta());
+	      h_looseMuMinusPt->Fill(      lowTrackerMuonP4->pt());
+	      h_looseMuLowerMinusPt->Fill( lowTrackerMuonP4->pt());
+	      h_looseMuMinusEta->Fill(     lowTrackerMuonP4->eta());
 	      h_looseMuLowerMinusEta->Fill(lowTrackerMuonP4->eta());
-	      h_looseMuMinusPhi->Fill(lowTrackerMuonP4->phi());
+	      h_looseMuMinusPhi->Fill(     lowTrackerMuonP4->phi());
 	      h_looseMuLowerMinusPhi->Fill(lowTrackerMuonP4->phi());
 
-	      h_looseMuMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
+	      h_looseMuMinusTrackPt->Fill(     sqrt(lowTrackerTrack->perp2()));
 	      h_looseMuLowerMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      h_looseMuMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      h_looseMuLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      h_looseMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
-	      h_looseMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
+	      h_looseMuMinusTrackEta->Fill(         lowTrackerTrack->eta());
+	      h_looseMuLowerMinusTrackEta->Fill(    lowTrackerTrack->eta());
+	      h_looseMuMinusTrackPhi->Fill(         lowTrackerTrack->phi());
+	      h_looseMuLowerMinusTrackPhi->Fill(    lowTrackerTrack->phi());
 
-	      // remove tight info //if (low_tightdxy) {
-	      // remove tight info //	h_tightMuMinusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuLowerMinusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuMinusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //	h_tightMuLowerMinusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdz) {
-	      // remove tight info //	h_tightMuMinusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuLowerMinusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuMinusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //	h_tightMuLowerMinusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuLowerMinusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuMinusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuLowerMinusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuMinusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuLowerMinusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //	h_tightMuLowerMinusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuLowerMinusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuMinusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuLowerMinusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuMinusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuLowerMinusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuLowerMinusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuLowerMinusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuMinusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //	h_tightMuLowerMinusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //}
+	      h_looseMuMinusValidHits->Fill(     *lowTrackerValidHits);
+	      h_looseMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
 
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		h_looseMuLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		h_looseMuMinusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+		h_looseMuMinusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));	
+		h_looseMuLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
-		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //  h_tightMuLowerMinusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuLowerMinusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	      }
 	    } // end if (low_n1pt)
 
 	    if (low_n1pixhits) {
-	      h_looseMuMinusPixelHits->Fill(*lowTrackerPhits);
+	      h_looseMuMinusPixelHits->Fill(     *lowTrackerPhits);
 	      h_looseMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //	h_tightMuLowerMinusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1vmuhits) {
-	      h_looseMuMinusValidHits->Fill(*lowTrackerValidHits);
-	      h_looseMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
-	      h_looseMuMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      h_looseMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      h_looseMuMinusMuonStationHits->Fill(*lowTrackerMhits);
+	      h_looseMuMinusValidMuonHits->Fill(       *lowTrackerValidMuonHits);
+	      h_looseMuLowerMinusValidMuonHits->Fill(  *lowTrackerValidMuonHits);
+	      h_looseMuMinusMuonStationHits->Fill(     *lowTrackerMhits);
 	      h_looseMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerMinusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerMinusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //	h_tightMuLowerMinusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1ptrelerr) {
-	      h_looseMuMinusPtError->Fill(*lowTrackerPtError);
+	      h_looseMuMinusPtError->Fill(     *lowTrackerPtError);
 	      h_looseMuLowerMinusPtError->Fill(*lowTrackerPtError);
-	      h_looseMuMinusPtRelErr->Fill(lowerRelPtErr);
+	      h_looseMuMinusPtRelErr->Fill(     lowerRelPtErr);
 	      h_looseMuLowerMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuLowerMinusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //	h_tightMuLowerMinusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (low_n1trkhits) {
-	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      h_looseMuLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      h_looseMuMinusTrackerHits->Fill(*lowTrackerThits);
+	      h_looseMuMinusTrackerHits->Fill(     *lowTrackerThits);
 	      h_looseMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuLowerMinusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //}
+	      h_looseMuMinusTrackerLayersWithMeasurement->Fill(     *lowTrackerLayersWithMeasurement);
+	      h_looseMuLowerMinusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 	    }
 	    if (low_n1mmustahits) {
-	      h_looseMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	      h_looseMuMinusMatchedMuonStations->Fill(     *lowTrackerMatchedMuonStations);
 	      h_looseMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuLowerMinusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end if charge < 0
 
 	  else { // charge > 0
-	    h_muPlusChi2->Fill(*lowTrackerChi2);
-	    h_muLowerPlusChi2->Fill(*lowTrackerChi2);
-	    h_muPlusNdof->Fill(*lowTrackerNdof);
-	    h_muLowerPlusNdof->Fill(*lowTrackerNdof);
-	    h_muPlusCharge->Fill(*lowTrackerCharge);
+	    h_muPlusChi2->Fill(       *lowTrackerChi2);
+	    h_muLowerPlusChi2->Fill(  *lowTrackerChi2);
+	    h_muPlusNdof->Fill(       *lowTrackerNdof);
+	    h_muLowerPlusNdof->Fill(  *lowTrackerNdof);
+	    h_muPlusCharge->Fill(     *lowTrackerCharge);
 	    h_muLowerPlusCharge->Fill(*lowTrackerCharge);
-	    h_muPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
+	    h_muPlusCurve->Fill(     symmetric_?lowerCpT:fabs(lowerCpT));
 	    h_muLowerPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
 
-	    h_muPlusDxy->Fill(*lowTrackerDxy);
+	    h_muPlusDxy->Fill(     *lowTrackerDxy);
 	    h_muLowerPlusDxy->Fill(*lowTrackerDxy);
-	    h_muPlusDz->Fill(*lowTrackerDz);
-	    h_muLowerPlusDz->Fill(*lowTrackerDz);
+	    h_muPlusDz->Fill(      *lowTrackerDz);
+	    h_muLowerPlusDz->Fill( *lowTrackerDz);
 	    h_muPlusDxyError->Fill(*lowTrackerDxyError);
 	    h_muLowerPlusDxyError->Fill(*lowTrackerDxyError);
-	    h_muPlusDzError->Fill(*lowTrackerDzError);
+	    h_muPlusDzError->Fill(      *lowTrackerDzError);
 	    h_muLowerPlusDzError->Fill(*lowTrackerDzError);
 
-	    h_muPlusPt->Fill(lowTrackerMuonP4->pt());
-	    h_muLowerPlusPt->Fill(lowTrackerMuonP4->pt());
-	    h_muPlusEta->Fill(lowTrackerMuonP4->eta());
+	    h_muPlusPt->Fill(      lowTrackerMuonP4->pt());
+	    h_muLowerPlusPt->Fill( lowTrackerMuonP4->pt());
+	    h_muPlusEta->Fill(     lowTrackerMuonP4->eta());
 	    h_muLowerPlusEta->Fill(lowTrackerMuonP4->eta());
-	    h_muPlusPhi->Fill(lowTrackerMuonP4->phi());
+	    h_muPlusPhi->Fill(     lowTrackerMuonP4->phi());
 	    h_muLowerPlusPhi->Fill(lowTrackerMuonP4->phi());
 
-	    h_muPlusPtError->Fill(*lowTrackerPtError);
+	    h_muPlusPtError->Fill(     *lowTrackerPtError);
 	    h_muLowerPlusPtError->Fill(*lowTrackerPtError);
-	    h_muPlusPtRelErr->Fill(lowerRelPtErr);
+	    h_muPlusPtRelErr->Fill(     lowerRelPtErr);
 	    h_muLowerPlusPtRelErr->Fill(lowerRelPtErr);
-	    h_muPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
+	    h_muPlusTrackPt->Fill(     sqrt(lowTrackerTrack->perp2()));
 	    h_muLowerPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	    h_muPlusTrackEta->Fill(lowTrackerTrack->eta());
+	    h_muPlusTrackEta->Fill(     lowTrackerTrack->eta());
 	    h_muLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
-	    h_muPlusTrackPhi->Fill(lowTrackerTrack->phi());
+	    h_muPlusTrackPhi->Fill(     lowTrackerTrack->phi());
 	    h_muLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
 
-	    h_muPlusPixelHits->Fill(*lowTrackerPhits);
-	    h_muLowerPlusPixelHits->Fill(*lowTrackerPhits);
-	    h_muPlusTrackerHits->Fill(*lowTrackerThits);
-	    h_muLowerPlusTrackerHits->Fill(*lowTrackerThits);
-	    h_muPlusValidHits->Fill(*lowTrackerValidHits);
-	    h_muLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	    h_muPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	    h_muLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	    h_muPlusMuonStationHits->Fill(*lowTrackerMhits);
-	    h_muLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
-	    h_muPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	    h_muLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	    h_muPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	    h_muPlusPixelHits->Fill(                        *lowTrackerPhits);
+	    h_muLowerPlusPixelHits->Fill(                   *lowTrackerPhits);
+	    h_muPlusTrackerHits->Fill(                      *lowTrackerThits);
+	    h_muLowerPlusTrackerHits->Fill(                 *lowTrackerThits);
+	    h_muPlusValidHits->Fill(                        *lowTrackerValidHits);
+	    h_muLowerPlusValidHits->Fill(                   *lowTrackerValidHits);
+	    h_muPlusValidMuonHits->Fill(                    *lowTrackerValidMuonHits);
+	    h_muLowerPlusValidMuonHits->Fill(               *lowTrackerValidMuonHits);
+	    h_muPlusMuonStationHits->Fill(                  *lowTrackerMhits);
+	    h_muLowerPlusMuonStationHits->Fill(             *lowTrackerMhits);
+	    h_muPlusMatchedMuonStations->Fill(              *lowTrackerMatchedMuonStations);
+	    h_muLowerPlusMatchedMuonStations->Fill(         *lowTrackerMatchedMuonStations);
+	    h_muPlusTrackerLayersWithMeasurement->Fill(     *lowTrackerLayersWithMeasurement);
 	    h_muLowerPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
 
 	    for (int i = 0; i < nBiasBins; ++i) {
 	      double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 	      double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-	      h_muPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-	      h_muLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-	      h_muLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+	      h_muPlusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+	      h_muPlusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));	
+	      h_muLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
 	      if (debug)
 		std::cout << "Made it through the lower bias loop " << i << std::endl; 
@@ -2163,162 +1793,83 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	
 	    // if a variable doesn't appear in the High-pT muon selection, then apply all the cuts
 	    if (low_n1pt) {
-	      h_looseMuPlusChi2->Fill(*lowTrackerChi2);
-	      h_looseMuLowerPlusChi2->Fill(*lowTrackerChi2);
-	      h_looseMuPlusNdof->Fill(*lowTrackerNdof);
-	      h_looseMuLowerPlusNdof->Fill(*lowTrackerNdof);
-	      h_looseMuPlusCharge->Fill(*lowTrackerCharge);
+	      h_looseMuPlusChi2->Fill(       *lowTrackerChi2);
+	      h_looseMuLowerPlusChi2->Fill(  *lowTrackerChi2);
+	      h_looseMuPlusNdof->Fill(       *lowTrackerNdof);
+	      h_looseMuLowerPlusNdof->Fill(  *lowTrackerNdof);
+	      h_looseMuPlusCharge->Fill(     *lowTrackerCharge);
 	      h_looseMuLowerPlusCharge->Fill(*lowTrackerCharge);
-	      h_looseMuPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
+	      h_looseMuPlusCurve->Fill(     symmetric_?lowerCpT:fabs(lowerCpT));
 	      h_looseMuLowerPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
 
 	      // loose doesn't include the dxy/dz cuts
-	      h_looseMuPlusDxy->Fill(*lowTrackerDxy);
+	      h_looseMuPlusDxy->Fill(     *lowTrackerDxy);
 	      h_looseMuLowerPlusDxy->Fill(*lowTrackerDxy);
-	      h_looseMuPlusDz->Fill(*lowTrackerDz);
-	      h_looseMuLowerPlusDz->Fill(*lowTrackerDz);
+	      h_looseMuPlusDz->Fill(      *lowTrackerDz);
+	      h_looseMuLowerPlusDz->Fill( *lowTrackerDz);
 	      h_looseMuPlusDxyError->Fill(*lowTrackerDxyError);
 	      h_looseMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
-	      h_looseMuPlusDzError->Fill(*lowTrackerDzError);
-	      h_looseMuLowerPlusDzError->Fill(*lowTrackerDzError);
+	      h_looseMuPlusDzError->Fill(      *lowTrackerDzError);
+	      h_looseMuLowerPlusDzError->Fill( *lowTrackerDzError);
 
-	      h_looseMuPlusPt->Fill(lowTrackerMuonP4->pt());
-	      h_looseMuLowerPlusPt->Fill(lowTrackerMuonP4->pt());
-	      h_looseMuPlusEta->Fill(lowTrackerMuonP4->eta());
+	      h_looseMuPlusPt->Fill(      lowTrackerMuonP4->pt());
+	      h_looseMuLowerPlusPt->Fill( lowTrackerMuonP4->pt());
+	      h_looseMuPlusEta->Fill(     lowTrackerMuonP4->eta());
 	      h_looseMuLowerPlusEta->Fill(lowTrackerMuonP4->eta());
-	      h_looseMuPlusPhi->Fill(lowTrackerMuonP4->phi());
+	      h_looseMuPlusPhi->Fill(     lowTrackerMuonP4->phi());
 	      h_looseMuLowerPlusPhi->Fill(lowTrackerMuonP4->phi());
 
-	      h_looseMuPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
+	      h_looseMuPlusTrackPt->Fill(     sqrt(lowTrackerTrack->perp2()));
 	      h_looseMuLowerPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      h_looseMuPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      h_looseMuLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      h_looseMuPlusTrackPhi->Fill(lowTrackerTrack->phi());
-	      h_looseMuLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
+	      h_looseMuPlusTrackEta->Fill(         lowTrackerTrack->eta());
+	      h_looseMuLowerPlusTrackEta->Fill(    lowTrackerTrack->eta());
+	      h_looseMuPlusTrackPhi->Fill(         lowTrackerTrack->phi());
+	      h_looseMuLowerPlusTrackPhi->Fill(    lowTrackerTrack->phi());
 
-	      h_looseMuPlusTrackerHits->Fill(*lowTrackerThits);
-	      h_looseMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
-	      h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
+	      h_looseMuPlusValidHits->Fill(     *lowTrackerValidHits);
 	      h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      h_looseMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      h_looseMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      h_looseMuPlusMuonStationHits->Fill(*lowTrackerMhits);
-	      h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
-
-	      // remove tight info //if (low_tightdxy) {
-	      // remove tight info //	h_tightMuPlusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuLowerPlusDz->Fill(*lowTrackerDz);
-	      // remove tight info //	h_tightMuPlusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //	h_tightMuLowerPlusDzError->Fill(*lowTrackerDzError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdz) {
-	      // remove tight info //	h_tightMuPlusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuLowerPlusDxy->Fill(*lowTrackerDxy);
-	      // remove tight info //	h_tightMuPlusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //	h_tightMuLowerPlusDxyError->Fill(*lowTrackerDxyError);
-	      // remove tight info //}
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuLowerPlusChi2->Fill(*lowTrackerChi2);
-	      // remove tight info //	h_tightMuPlusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuLowerPlusNdof->Fill(*lowTrackerNdof);
-	      // remove tight info //	h_tightMuPlusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuLowerPlusCharge->Fill(*lowTrackerCharge);
-	      // remove tight info //	h_tightMuPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //	h_tightMuLowerPlusCurve->Fill(symmetric_?lowerCpT:fabs(lowerCpT));
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuLowerPlusPt->Fill(lowTrackerMuonP4->pt());
-	      // remove tight info //	h_tightMuPlusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuLowerPlusEta->Fill(lowTrackerMuonP4->eta());
-	      // remove tight info //	h_tightMuPlusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //	h_tightMuLowerPlusPhi->Fill(lowTrackerMuonP4->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuLowerPlusTrackPt->Fill(sqrt(lowTrackerTrack->perp2()));
-	      // remove tight info //	h_tightMuPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuLowerPlusTrackEta->Fill(lowTrackerTrack->eta());
-	      // remove tight info //	h_tightMuPlusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //	h_tightMuLowerPlusTrackPhi->Fill(lowTrackerTrack->phi());
-	      // remove tight info //
-	      // remove tight info //	h_tightMuPlusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuPlusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //	h_tightMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
-	      // remove tight info //}
 
 	      for (int i = 0; i < nBiasBins; ++i) {
 		double posBias = lowerCpT+(i+1)*(factor_*maxBias/nBiasBins);
 		double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
-		h_looseMuPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		h_looseMuLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		h_looseMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
+		h_looseMuPlusCurvePlusBias[i]->Fill(      symmetric_?posBias:fabs(posBias));
+		h_looseMuPlusCurveMinusBias[i]->Fill(     symmetric_?negBias:fabs(negBias));	
+		h_looseMuLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+		h_looseMuLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));	
 
-		// remove tight info //if (low_tightdxy && low_tightdz) {
-		// remove tight info //  h_tightMuPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //  h_tightMuLowerPlusCurvePlusBias[i]->Fill( lowerCpT+(i+1)*(factor_*maxBias/nBiasBins));
-		// remove tight info //  h_tightMuLowerPlusCurveMinusBias[i]->Fill(lowerCpT-(i+1)*(factor_*maxBias/nBiasBins));	
-		// remove tight info //}
 		if (debug)
 		  std::cout << "Made it through the lower bias loop " << i << std::endl; 
 	      }
-	    }
+	    } // end if (low_n1pt)
 
 	    if (low_n1pixhits) {
-	      h_looseMuPlusPixelHits->Fill(*lowTrackerPhits);
+	      h_looseMuPlusPixelHits->Fill(     *lowTrackerPhits);
 	      h_looseMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //	h_tightMuLowerPlusPixelHits->Fill(*lowTrackerPhits);
-	      // remove tight info //}
 	    }
 	    if (low_n1vmuhits) {
-	      h_looseMuPlusValidHits->Fill(*lowTrackerValidHits);
-	      h_looseMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      h_looseMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      h_looseMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuLowerPlusValidHits->Fill(*lowTrackerValidHits);
-	      // remove tight info //	h_tightMuPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //	h_tightMuLowerPlusValidMuonHits->Fill(*lowTrackerValidMuonHits);
-	      // remove tight info //}
+	      h_looseMuPlusValidMuonHits->Fill(       *lowTrackerValidMuonHits);
+	      h_looseMuLowerPlusValidMuonHits->Fill(  *lowTrackerValidMuonHits);
+	      h_looseMuPlusMuonStationHits->Fill(     *lowTrackerMhits);
+	      h_looseMuLowerPlusMuonStationHits->Fill(*lowTrackerMhits);
 	    }
 	    if (low_n1ptrelerr) {
-	      h_looseMuPlusPtError->Fill(*lowTrackerPtError);
+	      h_looseMuPlusPtError->Fill(     *lowTrackerPtError);
 	      h_looseMuLowerPlusPtError->Fill(*lowTrackerPtError);
-	      h_looseMuPlusPtRelErr->Fill(lowerRelPtErr);
+	      h_looseMuPlusPtRelErr->Fill(     lowerRelPtErr);
 	      h_looseMuLowerPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuLowerPlusPtError->Fill(*lowTrackerPtError);
-	      // remove tight info //	h_tightMuPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //	h_tightMuLowerPlusPtRelErr->Fill(lowerRelPtErr);
-	      // remove tight info //}
 	    }
 	    if (low_n1trkhits) {
-	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
+	      h_looseMuPlusTrackerHits->Fill(     *lowTrackerThits);
+	      h_looseMuLowerPlusTrackerHits->Fill(*lowTrackerThits);
+	      h_looseMuPlusTrackerLayersWithMeasurement->Fill(     *lowTrackerLayersWithMeasurement);
 	      h_looseMuLowerPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //	h_tightMuLowerPlusTrackerLayersWithMeasurement->Fill(*lowTrackerLayersWithMeasurement);
-	      // remove tight info //}
 	    }
 	    if (low_n1mmustahits) {
-	      h_looseMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
+	      h_looseMuPlusMatchedMuonStations->Fill(     *lowTrackerMatchedMuonStations);
 	      h_looseMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //if (low_tightdxy && low_tightdz) {
-	      // remove tight info //	h_tightMuPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //	h_tightMuLowerPlusMatchedMuonStations->Fill(*lowTrackerMatchedMuonStations);
-	      // remove tight info //}
 	    }
 	  } // end else { // charge > 0
+
 	  if (low_n1pt) {
 	    if (sqrt(lowTrackerTrack->perp2()) > 100) {
 	      hasPt100Loose = true;

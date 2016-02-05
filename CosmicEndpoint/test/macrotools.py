@@ -47,8 +47,10 @@ def bSubSplitJobs(pyScriptName,outputFile,inputFile,proxyPath,numberOfJobs,
 
 	samplesListsDir="samplesLists_data"
 
-	if not os.path.exists("/tmp/%s/output_b%.2f_pt%2.0f_n%d_%s"%(os.getlogin(),1000*maxBias,minPt,nBiasBins,symasym)):
-		os.makedirs("/tmp/%s/output_b%.2f_pt%2.0f_n%d_%s"%(  os.getlogin(),1000*maxBias,minPt,nBiasBins,symasym))
+	if not os.path.exists("/tmp/%s/output_%s_b%.2f_pt%2.0f_n%d_%s"%(os.getlogin(),pyScriptName,
+									1000*maxBias,minPt,nBiasBins,symasym)):
+		os.makedirs("/tmp/%s/output_%s_b%.2f_pt%2.0f_n%d_%s"%(  os.getlogin(),pyScriptName,
+									1000*maxBias,minPt,nBiasBins,symasym))
 
 	rootScriptDir = "bsubs_b%.2f_pt%2.0f_n%d/roots"%(1000*maxBias,minPt,nBiasBins)
 	if not os.path.exists(rootScriptDir):
@@ -103,7 +105,7 @@ klist
 echo "hostname is $HOSTNAME"
 export JOBDIR=${PWD}
 echo "batch job directory is ${JOBDIR}"
-export OUTPUTDIR=${JOBDIR}/output_b%.2f_pt%2.0f_n%d_%s
+export OUTPUTDIR=${JOBDIR}/output_%s_b%.2f_pt%2.0f_n%d_%s
 echo "output directory is ${OUTPUTDIR}"
 mkdir ${OUTPUTDIR}
 ls -tar
@@ -121,6 +123,7 @@ echo "rsync \\"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/nul
 rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
      #logfile,logfile,
+     pyScriptName,
      1000*maxBias,minPt,nBiasBins,symasym,
      #logfile,logfile,
      os.getcwd(),

@@ -13,8 +13,8 @@ def makeBiasPlot(inputfile,canvasName,plusHist,minusHist,outName,biasBin,posneg,
     negativeo = r.TH1F(inputfile.Get("obs_Minus/%s_original"%(canvasName)).GetPrimitive("%s"%(minusHist)))
     positivea = r.TH1F(inputfile.Get("obs_Minus/%s_analyzed"%(canvasName)).GetPrimitive("%s"%(plusHist)))
     negativea = r.TH1F(inputfile.Get("obs_Minus/%s_analyzed"%(canvasName)).GetPrimitive("%s"%(minusHist)))
-    print "raw: %d, analyzed: %d"%(positiveo.Integral(),positivea.Integral())
-    print "raw: %d, analyzed: %d"%(negativeo.Integral(),negativea.Integral())
+    print "raw: %d, analyzed: %d bins: %d"%(positiveo.Integral(),positivea.Integral(),positivea.GetNbinsX())
+    print "raw: %d, analyzed: %d bins: %d"%(negativeo.Integral(),negativea.Integral(),negativea.GetNbinsX())
 
     resultsCanvas = r.TCanvas("results%s"%(outName),"results%s"%(outName),800,800)
     resultsCanvas.cd()
@@ -22,7 +22,8 @@ def makeBiasPlot(inputfile,canvasName,plusHist,minusHist,outName,biasBin,posneg,
     chi2ndf  = r.Long(0)    # necessary for pass-by-reference in python
     igood    = r.Long(0)    # necessary for pass-by-reference in python
     histopts = "UUNORM" # unweighted/weighted, normalized
-    resids = np.zeros(5000/100,np.dtype('float64')) # pointer argument, one per bin, not quite working
+    resids = np.zeros(positivea.GetNbinsX(),np.dtype('float64')) # pointer argument, one per bin, not quite working
+    print "getting the probability"
     prob = positivea.Chi2TestX(negativea,chi2Val,chi2ndf,igood,histopts,resids)
     print positivea
     print negativea
@@ -132,30 +133,35 @@ if __name__ == "__main__":
     resultsCanvas.SaveAs("cosmics_scale_minimization_%s_maxbias%.1f.png"%(options.outfile,options.maxbias))
     resultsCanvas.SaveAs("cosmics_scale_minimization_%s_maxbias%.1f.C"%(  options.outfile,options.maxbias))
 
+    print "tunep"
     makeBiasPlot(inputfile,"looseMu%s_tunep"%(options.outfile),
                  "looseMu%sPlusCurve" %(options.outfile),
                  "looseMu%sMinusCurve"%(options.outfile),
                  options.outfile,
                  0,"",options.maxbias,1000)
     
+    print "tunep pos_bias300"
     makeBiasPlot(inputfile,"looseMu%s_tunep_pos_bias300"%(options.outfile),
                  "looseMu%sPlusCurvePlusBias301" %(options.outfile),
                  "looseMu%sMinusCurvePlusBias301"%(options.outfile),
                  options.outfile,
                  300,"p",options.maxbias,1000)
 
+    print "tunep pos_bias500"
     makeBiasPlot(inputfile,"looseMu%s_tunep_pos_bias500"%(options.outfile),
                  "looseMu%sPlusCurvePlusBias501" %(options.outfile),
                  "looseMu%sMinusCurvePlusBias501"%(options.outfile),
                  options.outfile,
                  500,"p",options.maxbias,1000)
     
+    print "tunep neg_bias300"
     makeBiasPlot(inputfile,"looseMu%s_tunep_neg_bias300"%(options.outfile),
                  "looseMu%sPlusCurveMinusBias301" %(options.outfile),
                  "looseMu%sMinusCurveMinusBias301"%(options.outfile),
                  options.outfile,
                  300,"n",options.maxbias,1000)
 
+    print "tunep neg_bias500"
     makeBiasPlot(inputfile,"looseMu%s_tunep_neg_bias500"%(options.outfile),
                  "looseMu%sPlusCurveMinusBias501" %(options.outfile),
                  "looseMu%sMinusCurveMinusBias501"%(options.outfile),
