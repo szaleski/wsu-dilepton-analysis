@@ -279,6 +279,8 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 	}
       }
     }
+
+    if (debug_ > 2)
       std::cout << "tmpDEta = "   << tmpDEta
 		<< ", tmpDPhi = " << tmpDPhi
 		<< ", tmpDR = "   << tmpDR << std::endl
