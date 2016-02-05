@@ -13,11 +13,9 @@ class cosmicEndpointShort() :
                         "dxy":3,
                         "dz":3,
                         }
-    
-    
     """
     
-    def __init__(self, infiledir, outfile, maxbias, nBiasBins=100, factor=1, rebins=1) :
+    def __init__(self, infiledir, outfile, maxbias, nBiasBins=1000, nTotalBins=5000, factor=1000, rebins=1) :
         import ROOT as r
         self.infiles = {}
         self.infiles["picky"] = r.TFile(infiledir+"/CosmicHistOut_Picky.root","r")
@@ -27,20 +25,21 @@ class cosmicEndpointShort() :
         self.outfile   = r.TFile(outfile,"recreate")
         self.outdirs   = {}
 
-        self.maxbias   = maxbias
-        self.nBiasBins = nBiasBins
-        self.factor    = factor
-        self.rebins    = rebins
+        self.maxbias    = maxbias
+        self.nBiasBins  = nBiasBins
+        self.nTotalBins = nTotalBins
+        self.factor     = factor
+        self.rebins     = rebins
 
         self.graphInfo = {}
         self.graphInfo["chi2"] = {"color":r.kBlue,   "marker":r.kFullTriangleUp,
-                                  "title":"Calculated #chi^{2}",             "yaxis":""}
+                                  "title":"Calculated #chi^{2}/ndf",         "yaxis":""}
         self.graphInfo["KS"]   = {"color":r.kGreen-2,"marker":r.kFullDiamond,
                                   "title":"Kolmogorov test statistic",       "yaxis":""}
         self.graphInfo["AD"]   = {"color":r.kRed+2,  "marker":r.kFullCross,
                                   "title":"Anderson-Darling test statistic", "yaxis":""}
         self.graphInfo["Chi2"] = {"color":r.kCyan+3, "marker":r.kFullTriangleDown,
-                                  "title":"ROOT #chi^{2}",                   "yaxis":""}
+                                  "title":"ROOT #chi^{2}/ndf",               "yaxis":""}
         return
 
     def runMinimization(self, histBaseName, obsName, refName, needsFlip, getResiduals=False):
@@ -59,33 +58,41 @@ class cosmicEndpointShort() :
         self.outdirs["obs_%s"%(obsName)]["tunepresiduals"] = self.outfile.mkdir("obs_%s/tunep/residuals"%(obsName))
         self.outdirs["obs_%s"%(obsName)]["tpfmsresiduals"] = self.outfile.mkdir("obs_%s/tpfms/residuals"%(obsName))
         
-        picky = self.makeGraph(self.infiles["picky"],histBaseName, obsName, refName, "picky", needsFlip, getResiduals)
-        dyt   = self.makeGraph(self.infiles["dyt"  ],histBaseName, obsName, refName, "dyt"  , needsFlip, getResiduals)
-        tunep = self.makeGraph(self.infiles["tunep"],histBaseName, obsName, refName, "tunep", needsFlip, getResiduals)
-        tpfms = self.makeGraph(self.infiles["tpfms"],histBaseName, obsName, refName, "tpfms", needsFlip, getResiduals)
+        picky = self.makeGraph(self.infiles["picky"],histBaseName, obsName, refName, "picky",
+                               needsFlip, getResiduals)
+        dyt   = self.makeGraph(self.infiles["dyt"  ],histBaseName, obsName, refName, "dyt",
+                               needsFlip, getResiduals)
+        tunep = self.makeGraph(self.infiles["tunep"],histBaseName, obsName, refName, "tunep",
+                               needsFlip, getResiduals)
+        tpfms = self.makeGraph(self.infiles["tpfms"],histBaseName, obsName, refName, "tpfms",
+                               needsFlip, getResiduals)
 
         self.outfile.cd()
         self.outdirs["obs_%s"%(obsName)]["results"].cd()
         for test in ["chi2","KS","AD","Chi2"]:
             pickyCanvas = r.TCanvas("picky_%s"%(test),"picky_%s"%(test),800,800)
+            #pickyCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)]["results"])
             picky[test].SetName("graph_picky_%s"%(test))
             picky[test].Draw("AP")
             pickyCanvas.Write("picky_%s"%(test))
             picky[test].Write("graph_picky_%s"%(test))
 
             dytCanvas = r.TCanvas("dyt_%s"%(test),"dyt_%s"%(test),800,800)
+            #dytCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)]["results"])
             dyt[test].SetName("graph_dyt_%s"%(test))
             dyt[test].Draw("AP")
             dytCanvas.Write("dyt_%s"%(test))
             dyt[test].Write("graph_dyt_%s"%(test))
 
             tunepCanvas = r.TCanvas("tunep_%s"%(test),"tunep_%s"%(test),800,800)
+            #tunepCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)]["results"])
             tunep[test].SetName("graph_tunep_%s"%(test))
             tunep[test].Draw("AP")
             tunepCanvas.Write("tunep_%s"%(test))
             tunep[test].Write("graph_tunep_%s"%(test))
 
             tpfmsCanvas = r.TCanvas("tpfms_%s"%(test),"tpfms_%s"%(test),800,800)
+            #tpfmsCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)]["results"])
             tpfms[test].SetName("graph_tpfms_%s"%(test))
             tpfms[test].Draw("AP")
             tpfmsCanvas.Write("tpfms_%s"%(test))
@@ -99,9 +106,12 @@ class cosmicEndpointShort() :
             self.outfile.cd()
             self.outdirs["obs_%s"%(obsName)][track].cd()
             CounterCanvas = r.TCanvas("%sCounterCan"%track,"%sCounterCan"%track,800,800)
+            #CounterCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)][track])
             CounterCanvas.cd()
             UpperCounters = self.infiles[track].Get("upperCounters")
             LowerCounters = self.infiles[track].Get("lowerCounters")
+            UpperCounters.SetDirectory(self.outdirs["obs_%s"%(obsName)][track])
+            LowerCounters.SetDirectory(self.outdirs["obs_%s"%(obsName)][track])
             UpperCounters.SetLineColor(r.kRed)
             UpperCounters.SetLineWidth(2)
             UpperCounters.SetMarkerStyle(r.kFullDiamond)
@@ -137,17 +147,25 @@ class cosmicEndpointShort() :
 
         obs = f.Get("%s%sCurve"%(histBaseName,obsName))
         ref = f.Get("%s%sCurve"%(histBaseName,refName))
+        obs.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+        ref.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
 
         # set bin content to 0 for bins outside the min pT cut
-        obs = self.setMinPT(obs,5000,200./1000.)
-        ref = self.setMinPT(ref,5000,200./1000.)
+        print "%s: raw: %d"%(trackName,obs.Integral())
+        obs = self.setMinPT(obs,self.nTotalBins,200./self.factor,needsFlip)
+        print "%s: raw: %d"%(trackName,ref.Integral())
+        ref = self.setMinPT(ref,self.nTotalBins,200./self.factor,needsFlip)
         
+        print "%s: raw: %d"%(trackName,obs.Integral())
+        print "%s: raw: %d"%(trackName,ref.Integral())
+
         obs = obs.Rebin(self.rebins)
         ref = ref.Rebin(self.rebins)
 
         myCan1 = r.TCanvas("%s_%s_original"%(histBaseName,trackName),
                            "%s_%s_original"%(histBaseName,trackName),
                            800,800)
+        #myCan1.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
         obs.SetLineColor(r.kRed)
         obs.SetLineWidth(2)
         ref.SetLineColor(r.kBlue)
@@ -161,11 +179,14 @@ class cosmicEndpointShort() :
         #self.outdirs["obs_%s"%(obsName)][trackName].Write()
 
         if (obs.Integral()>0):
-            obs.Scale(ref.Integral()/obs.Integral())
+            rescale = ref.Integral()/obs.Integral()
+            print "Rescaling with factor %f"%(rescale)
+            obs.Scale(rescale)
         
         myCan2 = r.TCanvas("%s_%s_scaled"%(histBaseName,trackName),
                            "%s_%s_scaled"%(histBaseName,trackName),
                            800,800)
+        #myCan2.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
         obs.SetLineColor(r.kRed)
         obs.SetLineWidth(2)
         ref.SetLineColor(r.kBlue)
@@ -220,7 +241,7 @@ class cosmicEndpointShort() :
 
         chi2opts = "PUUNORMCHI2/NDF"
         xVals["Chi2"][nBiasBins] = 0.
-        resids = np.zeros(5000,np.dtype('float64')) # pointer argument, one per bin, not quite working
+        resids = np.zeros(self.nTotalBins,np.dtype('float64')) # pointer argument, one per bin, not quite working
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,"PCHI2/NDF",resids)
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,chi2opts,resids)
         if getResiduals:
@@ -229,12 +250,14 @@ class cosmicEndpointShort() :
             residuals0 = r.TH1D("%s_%s_residuals0"%(histBaseName,trackName),
                                 "%s_%s_residuals0"%(histBaseName,trackName),
                                100,-5.,5.)
+            residuals0.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
             for val in resids:
                 residuals0.Fill(val)
             residualCanvas = r.TCanvas("%s_%s_residual0"%(histBaseName,trackName),
                                        "%s_%s_residual0"%(histBaseName,trackName),
                                        800,800)
             
+            #residualsCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
             residuals0.Draw()
             residuals0.Write("%s_%s_residuals0"%(histBaseName,trackName))
             residualCanvas.Write("%s_%s_residual0"%(histBaseName,trackName))
@@ -267,12 +290,14 @@ class cosmicEndpointShort() :
             residuals = r.TH1D("%s_%s_residuals"%(histBaseName,trackName),
                                "%s_%s_residuals"%(histBaseName,trackName),
                                100,-5.,5.)
+            residuals.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
             for val in resids:
                 residuals.Fill(val)
             residualCanvas = r.TCanvas("%s_%s_residual"%(histBaseName,trackName),
                                        "%s_%s_residual"%(histBaseName,trackName),
                                        800,800)
             
+            #residualsCanvas.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
             residuals.Draw()
             residuals.Write("%s_%s_residuals"%(histBaseName,trackName))
             residualCanvas.Write("%s_%s_residual"%(histBaseName,trackName))
@@ -282,6 +307,7 @@ class cosmicEndpointShort() :
         myCan3 = r.TCanvas("%s_%s_analyzed"%(histBaseName,trackName),
                            "%s_%s_analyzed"%(histBaseName,trackName),
                            800,800)
+        #myCan3.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
         obs.SetLineColor(r.kRed)
         obs.SetLineWidth(2)
         ref.SetLineColor(r.kBlue)
@@ -306,24 +332,33 @@ class cosmicEndpointShort() :
         for i in range(nBiasBins):
             obs_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,obsName,i+1))
             obs_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,obsName,i+1))
+            obs_posBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+            obs_negBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
             # set bin content to 0 for bins outside the min pT cut
-            obs_posBias = self.setMinPT(obs_posBias,5000,200./1000.)
-            obs_negBias = self.setMinPT(obs_negBias,5000,200./1000.)
+            print "%s%sCurvePlusBias%03d %d"%( histBaseName,obsName,i+1,obs_posBias.Integral())
+            obs_posBias = self.setMinPT(obs_posBias,self.nTotalBins,200./self.factor,needsFlip)
+            print "%s%sCurveMinusBias%03d %d"%(histBaseName,obsName,i+1,obs_negBias.Integral())
+            obs_negBias = self.setMinPT(obs_negBias,self.nTotalBins,200./self.factor,needsFlip)
             obs_posBias.Rebin(self.rebins)
             obs_negBias.Rebin(self.rebins)
         
             ref_posBias = f.Get("%s%sCurvePlusBias%03d"%( histBaseName,refName,i+1))
             ref_negBias = f.Get("%s%sCurveMinusBias%03d"%(histBaseName,refName,i+1))
-            ref_posBias = self.setMinPT(ref_posBias,5000,200./1000.)
-            ref_negBias = self.setMinPT(ref_negBias,5000,200./1000.)
+            ref_posBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+            ref_negBias.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+            print "%s%sCurvePlusBias%03d %d"%( histBaseName,refName,i+1,ref_posBias.Integral())
+            ref_posBias = self.setMinPT(ref_posBias,self.nTotalBins,200./self.factor,needsFlip)
+            print "%s%sCurveMinusBias%03d %d"%(histBaseName,refName,i+1,ref_negBias.Integral())
+            ref_negBias = self.setMinPT(ref_negBias,self.nTotalBins,200./self.factor,needsFlip)
             ref_posBias.Rebin(self.rebins)
             ref_negBias.Rebin(self.rebins)
 
             if (i%100 == 0):
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
-                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i),
-                                       "%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i),
+                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i+1),
+                                       "%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i+1),
                                        800,800)
+                #posBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
                 obs_posBias.SetLineColor(r.kRed)
                 obs_posBias.SetLineWidth(2)
                 ref_posBias.SetLineColor(r.kBlue)
@@ -331,11 +366,12 @@ class cosmicEndpointShort() :
                 
                 obs_posBias.Draw("ep0")
                 ref_posBias.Draw("ep0sames")
-                posBiasCan.Write("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i))
+                posBiasCan.Write("%s_%s_pos_bias%03d_original"%(histBaseName,trackName,i+1))
 
-                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i),
-                                       "%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i),
+                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i+1),
+                                       "%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i+1),
                                        800,800)
+                #negBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
                 obs_negBias.SetLineColor(r.kRed)
                 obs_negBias.SetLineWidth(2)
                 ref_negBias.SetLineColor(r.kBlue)
@@ -344,23 +380,62 @@ class cosmicEndpointShort() :
                 obs_negBias.Draw("ep0")
                 ref_negBias.Draw("ep0sames")
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
-                negBiasCan.Write("%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i))
+                negBiasCan.Write("%s_%s_neg_bias%03d_original"%(histBaseName,trackName,i+1))
 
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
 
-            obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
-            obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
-            obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            if (obs_posBias.Integral()>0):
+                rescale_pos = ref_posBias.Integral()/obs_posBias.Integral()
+                rescale_neg = ref_negBias.Integral()/obs_negBias.Integral()
+                print "Rescaling with factor %f/%f"%(rescale_pos,rescale_neg)
+                obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
+                obs_negBias.Scale(ref_negBias.Integral()/obs_negBias.Integral())
             
-            for b in range(obs_posBias.GetNbinsX()):
-                obs_posBiasValsX[b] = b+1
-                obs_negBiasValsX[b] = b+1
-                obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
-                obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
+            if (i%100 == 0):
+                self.outdirs["obs_%s"%(obsName)][trackName].cd()
+                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_scaled"%(histBaseName,trackName,i+1),
+                                       "%s_%s_pos_bias%03d_scaled"%(histBaseName,trackName,i+1),
+                                       800,800)
+                #posBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+                obs_posBias.SetLineColor(r.kRed)
+                obs_posBias.SetLineWidth(2)
+                ref_posBias.SetLineColor(r.kBlue)
+                ref_posBias.SetLineWidth(2)
+                
+                obs_posBias.Draw("ep0")
+                ref_posBias.Draw("ep0sames")
+                posBiasCan.Write("%s_%s_pos_bias%03d_scaled"%(histBaseName,trackName,i+1))
 
+                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_scaled"%(histBaseName,trackName,i+1),
+                                       "%s_%s_neg_bias%03d_scaled"%(histBaseName,trackName,i+1),
+                                       800,800)
+                #negBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
+                obs_negBias.SetLineColor(r.kRed)
+                obs_negBias.SetLineWidth(2)
+                ref_negBias.SetLineColor(r.kBlue)
+                ref_negBias.SetLineWidth(2)
+                
+                obs_negBias.Draw("ep0")
+                ref_negBias.Draw("ep0sames")
+                self.outdirs["obs_%s"%(obsName)][trackName].cd()
+                negBiasCan.Write("%s_%s_neg_bias%03d_scaled"%(histBaseName,trackName,i+1))
+
+                #self.outfile.cd()
+                #self.outdirs["obs_%s"%(obsName)][trackName].Write()
+            
             if (needsFlip):
+                obs_posBiasValsX = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+                obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+                obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+                obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+            
+                for b in range(obs_posBias.GetNbinsX()):
+                    obs_posBiasValsX[b] = b+1
+                    obs_negBiasValsX[b] = b+1
+                    obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
+                    obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
+
                 obs_posBiasValsYRev = np.fliplr([obs_posBiasValsY])[0]
                 obs_negBiasValsYRev = np.fliplr([obs_negBiasValsY])[0]
                 # obs_posBias.SetContent(obs_posBiasValsYRev)
@@ -371,9 +446,10 @@ class cosmicEndpointShort() :
                 
             if (i%100 == 0):
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
-                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i),
-                                       "%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i),
+                posBiasCan = r.TCanvas("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i+1),
+                                       "%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i+1),
                                        800,800)
+                #posBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
                 obs_posBias.SetLineColor(r.kRed)
                 obs_posBias.SetLineWidth(2)
                 ref_posBias.SetLineColor(r.kBlue)
@@ -381,11 +457,12 @@ class cosmicEndpointShort() :
                 
                 obs_posBias.Draw("ep0")
                 ref_posBias.Draw("ep0sames")
-                posBiasCan.Write("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i))
+                posBiasCan.Write("%s_%s_pos_bias%03d_analyzed"%(histBaseName,trackName,i+1))
 
-                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i),
-                                       "%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i),
+                negBiasCan = r.TCanvas("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i+1),
+                                       "%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i+1),
                                        800,800)
+                #negBiasCan.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName])
                 obs_negBias.SetLineColor(r.kRed)
                 obs_negBias.SetLineWidth(2)
                 ref_negBias.SetLineColor(r.kBlue)
@@ -394,22 +471,18 @@ class cosmicEndpointShort() :
                 obs_negBias.Draw("ep0")
                 ref_negBias.Draw("ep0sames")
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
-                negBiasCan.Write("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i))
+                negBiasCan.Write("%s_%s_neg_bias%03d_analyzed"%(histBaseName,trackName,i+1))
 
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
-            
-            if (obs_posBias.Integral()>0):
-                obs_posBias.Scale(ref_posBias.Integral()/obs_posBias.Integral())
-                obs_negBias.Scale(ref_negBias.Integral()/obs_negBias.Integral())
             
             biasVal = (i+1)*(factor*maxBias/nBiasBins)
             xVals["chi2"][nBiasBins+1+i] = biasVal
             positiveBias = self.calculateChi2(obs_posBias,ref_posBias,mode)
             yVals["chi2"][nBiasBins+1+i] = positiveBias[1]
             #if getResiduals:
-            #    residualCan = r.TCanvas("%s_%s_bin%03d_residual"%(histBaseName,trackName,i),
-            #                            "%s_%s_bin%03d_residual"%(histBaseName,trackName,i),
+            #    residualCan = r.TCanvas("%s_%s_bin%03d_residual"%(histBaseName,trackName,i+1),
+            #                            "%s_%s_bin%03d_residual"%(histBaseName,trackName,i+1),
             #                            800,800)
             #    positiveBias[0].SetLineColor(r.kRed)
             #    positiveBias[0].SetLineWidth(2)
@@ -427,7 +500,7 @@ class cosmicEndpointShort() :
             chi2Val = r.Double(0.) # necessary for pass-by-reference in python
             chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
             igood   = r.Long(0)    # necessary for pass-by-reference in python
-            resids  = np.zeros(5000,np.dtype('float64'))
+            resids  = np.zeros(self.nTotalBins,np.dtype('float64'))
             prob = obs_posBias.Chi2TestX(ref_posBias,chi2Val,chi2ndf,igood,histopts,resids)
             print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
@@ -439,16 +512,17 @@ class cosmicEndpointShort() :
 
             if getResiduals:
                 self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].cd()
-                plusResiduals = r.TH1D("%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i),
-                                       "%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i),
+                plusResiduals = r.TH1D("%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i+1),
+                                       "%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i+1),
                                        100,-5.,5.)
+                plusResiduals.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
                 for val in resids:
                     plusResiduals.Fill(val)
                 #residualCanvas = r.TCanvas("%s_%s_residual"%(histBaseName,trackName),
                 #                           "%s_%s_residual"%(histBaseName,trackName),
                 #                           800,800)
 
-                plusResiduals.Write("%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i))
+                plusResiduals.Write("%s_%s_plus_bin_%03d_residuals"%(histBaseName,trackName,i+1))
                 #plusResidualCan.Write("%s_%s_residual"%(histBaseName,trackName))
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].Write()
@@ -476,7 +550,7 @@ class cosmicEndpointShort() :
             chi2Val = r.Double(0.) # necessary for pass-by-reference in python
             chi2ndf = r.Long(0)    # necessary for pass-by-reference in python
             igood   = r.Long(0)    # necessary for pass-by-reference in python
-            resids  = np.zeros(5000,np.dtype('float64'))
+            resids  = np.zeros(self.nTotalBins,np.dtype('float64'))
             prob = obs_negBias.Chi2TestX(ref_negBias,chi2Val,chi2ndf,igood,histopts,resids)
             print "Chi2TestX: prob=%f, chi2=%f, chi2ndf=%d, igood=%d"%(prob,chi2Val,chi2ndf,igood)
             if chi2ndf > 0:
@@ -488,16 +562,17 @@ class cosmicEndpointShort() :
                 
             if getResiduals:
                 self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].cd()
-                minusResiduals = r.TH1D("%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i),
-                                        "%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i),
+                minusResiduals = r.TH1D("%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i+1),
+                                        "%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i+1),
                                         100,-5.,5.)
+                minusResiduals.SetDirectory(self.outdirs["obs_%s"%(obsName)][trackName+"residuals"])
                 for val in resids:
                     minusResiduals.Fill(val)
                 #residualCanvas = r.TCanvas("%s_%s_residual"%(histBaseName,trackName),
                 #                           "%s_%s_residual"%(histBaseName,trackName),
                 #                           800,800)
 
-                minusResiduals.Write("%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i))
+                minusResiduals.Write("%s_%s_minus_bin_%03d_residuals"%(histBaseName,trackName,i+1))
                 #minusResidualCan.Write("%s_%s_residual"%(histBaseName,trackName))
                 #self.outfile.cd()
                 #self.outdirs["obs_%s"%(obsName)][trackName+"residuals"].Write()
@@ -607,7 +682,10 @@ class cosmicEndpointShort() :
                 D_term3 = 1-(obs+ref)/(Obs+Ref)
                 D_res = math.sqrt(D_term1*D_term2*D_term3)
                 if not D_res or not Obs*Ref:
-                    print "N_res(%f-(%f*%f)) = %f, D_term1 = %f, D_term2 = %f, D_term3 = %f"%(obs,Obs,piest,N_res,D_term1,D_term2,D_term3)
+                    print "N_res(%f-(%f*%f)) = %f, D_term1 = %f, D_term2 = %f, D_term3 = %f"%(obs,Obs,
+                                                                                              piest,
+                                                                                              N_res,
+                                                                                              D_term1,D_term2,D_term3)
                 else:
                     residual = N_res/D_res
                     residuals.Fill(residual)
@@ -621,8 +699,8 @@ class cosmicEndpointShort() :
 
         if not Obs*Ref:
             errorCan = r.TCanvas("errorCan","errorCan",800,800)
-            obs.Draw("ep0")
-            ref.Draw("ep0sames")
+            hobs.Draw("ep0")
+            href.Draw("ep0sames")
             #raw_input("press enter to continue")
             return -1
                       
@@ -644,11 +722,40 @@ class cosmicEndpointShort() :
         """Takes an input histogram and sets the bin content to 
         0 if q/pT is outside the range
         """
-        print hist
+        print "nBinsX %d"%(hist.GetNbinsX())
         if symmetric:
-            for binlow in range(0,hist.FindBin(-1./minPt)-1):
+            thebin = hist.FindBin(-1./minPt)
+            while not (hist.GetXaxis().GetBinLowEdge(thebin) < -1./minPt):
+                print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+                thebin -= 1
+                print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+            print "lower cut off %2.2f, bin %d, integral (first,bin) %d"%(-1./minPt,
+                                                                           hist.FindBin(-1./minPt),
+                                                                           hist.Integral(hist.GetXaxis().GetFirst(),
+                                                                                         thebin))
+            print "binlow %f, binup %f, binw %f:"%(hist.GetXaxis().GetBinLowEdge(thebin),
+                                                   hist.GetXaxis().GetBinUpEdge( thebin),
+                                                   hist.GetXaxis().GetBinWidth(  thebin))
+            for binlow in range(0,thebin+1):
                 hist.SetBinContent(binlow,0)
-        for binhigh in range(hist.FindBin(1./minPt)+1,nbins+1):
+
+        thebin = hist.FindBin(1./minPt)
+        while not (hist.GetXaxis().GetBinUpEdge(thebin) > 1./minPt):
+            print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+            thebin += 1
+            print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
+        print "upper cut off %2.2f, bin %d, integral (first,bin) %d"%(1./minPt,
+                                                                      hist.FindBin(1./minPt),
+                                                                      hist.Integral(thebin,
+                                                                                    hist.GetXaxis().GetLast()))
+        print "binlow %f, binup %f, binw %f:"%(hist.GetXaxis().GetBinLowEdge(thebin),
+                                               hist.GetXaxis().GetBinUpEdge( thebin),
+                                               hist.GetXaxis().GetBinWidth(  thebin))
+        print "nbins+1 content %d"%(hist.GetBinContent(nbins+1))
+        print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
+        for binhigh in range(thebin,nbins+2):
             hist.SetBinContent(binhigh,0)
+        print "nbins+1 content %d"%(hist.GetBinContent(nbins+1))
+        print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
 
         return hist

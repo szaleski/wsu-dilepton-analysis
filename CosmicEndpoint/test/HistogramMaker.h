@@ -65,6 +65,7 @@ namespace wsu {
 	bool IsSymmetric;
 	double MaxKBias;
 	double MinPtCut;
+	double Factor;
 	std::string Arbitration; // plus(positive)/minus(negative) as reference
 	std::string TrackAlgo;   // Tracker, TPFMS, DYT, Picky, TuneP
 	std::string MuonLeg;     // upper, lower, combined
