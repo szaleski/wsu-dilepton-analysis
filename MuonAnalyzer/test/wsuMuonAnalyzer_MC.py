@@ -25,7 +25,7 @@ process.RECOoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_ReReco.root'),
+    fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco.root'),
     outputCommands = process.RECOEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
@@ -58,37 +58,31 @@ process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(
         #'file:///afs/cern.ch/user/s/sturdy/work/public/WSUAnalysis/DiLeptons/CosmicSP_2012Av1RECO.root'
-        #'file:///afs/cern.ch/user/s/sturdy/work/public/WSUAnalysis/DiLeptons/CosmicSP_2012Bv1RECO.root'
-        #'file:///afs/cern.ch/user/s/sturdy/work/public/WSUAnalysis/DiLeptons/CosmicSP_2012Cv1RECO.root'
-        #'file:///afs/cern.ch/user/s/sturdy/work/public/WSUAnalysis/DiLeptons/CosmicSP_2012Dv1RECO.root'
-        #'file:///afs/cern.ch/user/s/sturdy/work/public/WSUAnalysis/DiLeptons/CosmicSP_2015v1RECO.root'
         #'/store/data/Commissioning2015/Cosmics/RECO/PromptReco-v1/000/232/928/00000/94B73492-63A8-E411-A07B-02163E01054C.root'
         #'/store/data/Commissioning2015/Cosmics/AOD/PromptReco-v1/000/232/928/00000/E64DC997-63A8-E411-BB15-02163E0124F8.root',
         #'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/48E03A75-FB0D-E511-AE49-0025905B85AE.root'
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/48E03A75-FB0D-E511-AE49-0025905B85AE.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/4A2DF4C9-E90D-E511-8039-0025905B85D6.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/4CFD7F03-D40E-E511-8F22-0025905A60E0.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/F4CE8C38-F10D-E511-ACB9-002590593872.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/00000/FCA74C01-0A0E-E511-AAD1-0025905B8582.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/02DFAB4A-E80D-E511-8215-0025905A6068.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/1451FDD0-270E-E511-9EDA-0025905A60CA.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/161342C3-180E-E511-B412-0025905B85B2.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/38AB2B41-290E-E511-A046-0025905A6134.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/44252F6B-F30D-E511-A672-0025905A6070.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/4A95CCFD-330E-E511-9FB8-0025905B8596.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/522451C1-180E-E511-963A-0025905A60CA.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/56012F9E-180E-E511-8CE2-002618FDA208.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/58CE13FC-1A0E-E511-B47E-002590593920.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/6C2DBB20-1D0E-E511-A089-0025905AA9CC.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/744E19F8-2C0E-E511-8775-0025905A60AA.root',
-        'root://cms-xrd-global.cern.ch///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-04Jun2015-v1/10000/7CA6B1B4-180E-E511-B4B2-003048FFD7D4.root',
-
-        #'file:///afs/cern.ch/work/s/szaleski/private/CMSSW_7_4_12/src/WSUCosmicAnalysis/MuonAnalyzer/test/crab_projects/crab_MuonAnalysis_Oct22_New_2015/results/CosmicMuonAnalysis_2015_4.root '
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/02D2E238-63C5-E511-AAAA-BC305B3909F1.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/3ED5EB45-63C5-E511-A125-003048F2E8C2.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/703EE012-43C5-E511-8067-003048F2E64E.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/7CF947E3-39C5-E511-B505-782BCB54BAAE.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/B278C22A-63C5-E511-9B8A-782BCB54BA75.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/E286F1AF-2AC5-E511-BC8D-0023AEEEB6CD.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/007BE3C4-89C5-E511-8CA8-0022195578C8.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/009A91F8-88C5-E511-ACCE-001EC9ADF941.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/00AA48F0-88C5-E511-8150-901B0E5427A4.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/02574473-5FC6-E511-86BD-0090FAA58204.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/04AB0F56-89C5-E511-8A4C-00259021A53E.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/06522118-8AC5-E511-90FF-20CF305B050E.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/085542FD-88C5-E511-8815-001E6757CD34.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/08EC153C-8AC5-E511-B96F-901B0E5427B0.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/0A5C03C4-89C5-E511-A573-00259021A4B2.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/0CDD0D0E-8AC5-E511-AEBB-001EC9ADC726.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/163BFE7E-89C5-E511-AEFE-00259021A39E.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/165F29F4-88C5-E511-9D0A-20CF3019DEEF.root',
+        '/store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/1890F42B-8AC5-E511-A6E3-20CF3027A592.root',
     )
 )
 basic_cut  = "pt > 45"
-#basic_cut += " && (abs(muonBestTrack.dxy) < 50.)"
-#basic_cut += " && (abs(muonBestTrack.dz)  < 100.)"
 process.betterMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("muons"),
     cut = cms.string(basic_cut),
@@ -96,6 +90,18 @@ process.betterMuons = cms.EDFilter("MuonSelector",
 
 process.globalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterMuons"),
+    cut = cms.string("isGlobalMuon"),
+)
+
+dxy_cut = "(abs(muonBestTrack.dxy) < 50.)"
+dz_cut  = " && (abs(muonBestTrack.dz)  < 100.)"
+process.betterSPMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("betterMuons"),
+    cut = cms.string(dxy_cut+dz_cut),
+)
+
+process.globalSPMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("betterSPMuons"),
     cut = cms.string("isGlobalMuon"),
 )
 
@@ -132,6 +138,35 @@ process.analysisLHC = muonAnalysis.clone(
 process.analysisSplit = muonAnalysis.clone(
     muonSrc = cms.InputTag("splitMuons")
 )
+
+process.analysisMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("betterMuons"),
+    tagLegSrc   = cms.InputTag("betterMuons"),
+    probeLegSrc = cms.InputTag("betterMuons"),
+    algoType    = cms.int32(1),
+    debug       = cms.int32(2)
+)
+process.analysisGlobalMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalMuons"),
+    tagLegSrc   = cms.InputTag("globalMuons"),
+    probeLegSrc = cms.InputTag("globalMuons"),
+    algoType    = cms.int32(1),
+    debug       = cms.int32(-1)
+)
+process.analysisSPMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("betterSPMuons"),
+    tagLegSrc   = cms.InputTag("betterSPMuons"),
+    probeLegSrc = cms.InputTag("betterSPMuons"),
+    algoType    = cms.int32(1),
+    debug       = cms.int32(-1)
+)
+process.analysisGlobalSPMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("globalSPMuons"),
+    probeLegSrc = cms.InputTag("globalSPMuons"),
+    algoType    = cms.int32(1),
+    debug       = cms.int32(-1)
+)
 process.analysisLowerTagTrackerMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("betterMuons"),
     tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
@@ -165,7 +200,7 @@ process.analysisLowerTagTunePMuons = muonAnalysis.clone(
     tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
     probeLegSrc = cms.InputTag("upperMuons"),
     algoType    = cms.int32(5),
-    debug       = cms.int32(2)
+    debug       = cms.int32(-1)
 )
 
 process.analysisUpperTagTrackerMuons = muonAnalysis.clone(
@@ -201,7 +236,7 @@ process.analysisUpperTagTunePMuons = muonAnalysis.clone(
     tagLegSrc   = cms.InputTag("upperGlobalMuons"),
     probeLegSrc = cms.InputTag("lowerMuons"),
     algoType    = cms.int32(5),
-    debug       = cms.int32(2)
+    debug       = cms.int32(-1)
 )
 process.analysisT0Corr = muonAnalysis.clone(
     muonSrc = cms.InputTag("muonsWitht0Correction")
@@ -215,7 +250,7 @@ process.analysisNoRPC = muonAnalysis.clone(
 
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonAnalysis_2015_no-reRECO_nodxydz.root')
+    fileName = cms.string('CosmicMuonAnalysis_2015_deco_p100_nodxydz_new.root')
 )
 
 # fix: remove some L1 modules (useless here)
@@ -262,15 +297,19 @@ process.reconstruction_step = cms.Path(process.reconstructionCosmics)
 process.RECOoutput_step     = cms.EndPath(process.RECOoutput)
 
 process.muonanalysis = cms.Path(
+    #process.reconstructionCosmics
     process.betterMuons
+    +process.globalMuons
+    +process.betterSPMuons
+    +process.globalSPMuons
     +process.upperMuons
     +process.lowerMuons
     +process.upperGlobalMuons
     +process.lowerGlobalMuons
-    #process.reconstructionCosmics
-    #process.analysis1Leg
-    #+process.analysisSplit
-    #process.analysisLHC
+    +process.analysisMuons
+    +process.analysisGlobalMuons
+    +process.analysisSPMuons
+    +process.analysisGlobalSPMuons
     +process.analysisLowerTagTrackerMuons
     +process.analysisLowerTagTPFMSMuons
     +process.analysisLowerTagDYTMuons
@@ -281,9 +320,6 @@ process.muonanalysis = cms.Path(
     +process.analysisUpperTagDYTMuons
     +process.analysisUpperTagPickyMuons
     +process.analysisUpperTagTunePMuons
-    #+process.analysisT0Corr
-    #+process.analysisBHECOnly
-    #+process.analysisNoRPC
     )
 
 # Schedule definition
