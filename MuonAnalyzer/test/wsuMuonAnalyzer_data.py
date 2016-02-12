@@ -32,7 +32,7 @@ process.RECOoutput = cms.OutputModule("PoolOutputModule",
 
 #process.load("Configuration.StandardSequences.ReconstructionCosmics_cff")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(15000) )
 
 # choose GlobalTag among: 74X_CRAFTR_V1, 74X_CRAFTR_V2, 74X_CRAFTR_V3  (without Muon APE)
 #                         74X_CRAFT_V1A, 74X_CRAFT_V2A, 74X_CRAFT_V3A  (with Muon APE) 
@@ -87,8 +87,8 @@ process.source = cms.Source("PoolSource",
     )
 )
 basic_cut  = "pt > 45"
-#basic_cut += " && (abs(muonBestTrack.dxy) < 50.)"
-#basic_cut += " && (abs(muonBestTrack.dz)  < 100.)"
+basic_cut += " && (abs(muonBestTrack.dxy) < 50.)"
+basic_cut += " && (abs(muonBestTrack.dz)  < 100.)"
 process.betterMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("muons"),
     cut = cms.string(basic_cut),
