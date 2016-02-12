@@ -5,59 +5,6 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
-# EDM Output definition
-process.RECOoutput = cms.OutputModule("PoolOutputModule",
-    dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('RECO'),
-        filterName = cms.untracked.string('muonanalysis')
-    ),
-    eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco_outer_new_changed.root'),
-    outputCommands = cms.untracked.vstring('drop *',
-                                           'keep *_muons_*_*',
-                                           'keep *_betterMuons_*_*',
-                                           'keep *_globalMuons_*_*',
-                                           'keep *_betterSPMuons_*_*',
-                                           'keep *_globalSPMuons_*_*',
-                                           'keep *_lowerMuons_*_*',
-                                           'keep *_lowerGlobalMuons_*_*',
-                                           'keep *_upperMuons_*_*',
-                                           'keep *_upperGlobalMuons_*_*',
-                                           "keep *_tevMuons_*_*",
-                                           "keep *_beamhaloTracks_*_*",
-                                           "keep *_ckfInOutTracksFromConversions_*_*",
-                                           "keep *_ckfOutInTracksFromConversions_*_*",
-                                           "keep *_cosmicMuons_*_*",
-                                           "keep *_cosmicMuons1Leg_*_*",
-                                           "keep *_cosmicMuonsEndCapsOnly_*_*",
-                                           "keep *_cosmicMuonsNoRPC_*_*",
-                                           "keep *_cosmicMuonsWitht0Correction_*_*",
-                                           "keep *_cosmictrackfinderP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5LHCNavigation_*_*",
-                                           "keep *_globalBeamHaloMuonEndCapslOnly_*_*",
-                                           "keep *_globalCosmicMuons_*_*",
-                                           "keep *_globalCosmicMuons1Leg_*_*",
-                                           "keep *_globalCosmicMuonsNoRPC_*_*",
-                                           "keep *_globalCosmicMuonsWitht0Correction_*_*",
-                                           "keep *_globalCosmicSplitMuons_*_*",
-                                           "keep *_regionalCosmicTracks_*_*",
-                                           "keep *_splittedTracksP5_*_*",
-                                           "keep *_standAloneMuons_*_*",
-                                           "keep *_beamhaloTracks_*_*",
-                                           "keep *_ckfInOutTracksFromConversions_*_*",
-                                           "keep *_ckfOutInTracksFromConversions_*_*",
-                                           "keep *_cosmicMuons_*_*",
-                                           "keep *_cosmicMuons1Leg_*_*",
-                                           "keep *_cosmicMuonsEndCapsOnly_*_*",
-                                           "keep *_cosmicMuonsNoRPC_*_*",
-                                           "keep *_cosmicMuonsWitht0Correction_*_*",
-                                           "keep *_cosmictrackfinderP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5_*_*",
-    ),
-    splitLevel = cms.untracked.int32(0)
-)
-
 from WSUDiLeptons.MuonAnalyzer.inputfiles import *
 
 process.source = cms.Source("PoolSource",
@@ -69,6 +16,7 @@ process.source = cms.Source("PoolSource",
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
+process.COSMICoutput.fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco_outer_new_changed.root')
 
 from WSUDiLeptons.MuonAnalyzer.wsuMuonAnalyzer_cfi import *
 
@@ -204,10 +152,10 @@ process.muonanalysis = cms.Path(
     )
 
 # generate EDM output
-process.RECOoutput_step = cms.EndPath(process.RECOoutput)
+process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-    ,process.RECOoutput_step
+#    ,process.COSMICoutput_step
 )
