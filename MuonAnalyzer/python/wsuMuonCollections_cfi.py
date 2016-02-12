@@ -64,6 +64,11 @@ lowerGlobalMuons = cms.EDFilter("MuonSelector",
 #)
 
 
+muonSPFilter = cms.EDFilter("MuonCountFilter",
+    src = cms.InputTag("betterSPMuons"),
+    minNumber = cms.uint32(1)
+)
+
 # EDM Output definition
 COSMICoutput = cms.OutputModule("PoolOutputModule",
     dataset = cms.untracked.PSet(
