@@ -135,7 +135,7 @@ process.muonanalysis = cms.Path(
     +process.lowerMuons
     +process.upperGlobalMuons
     +process.lowerGlobalMuons
-    +process.muonSPFilter
+    +process.globalMuonSPFilter
     +process.analysisMuons
     +process.analysisGlobalMuons
     +process.analysisSPMuons
