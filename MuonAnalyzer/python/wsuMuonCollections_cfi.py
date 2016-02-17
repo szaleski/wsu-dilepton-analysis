@@ -22,7 +22,7 @@ betterSPMuons = cms.EDFilter("MuonSelector",
 
 globalSPMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("isGlobalMuon"),
+    cut = cms.string("isGlobalMuon && (innerTrack.hitPattern.numberOfValidPixelHits > 0)"),
 )
 
 # how do we ensure upper/lower for cosmic reconstruction

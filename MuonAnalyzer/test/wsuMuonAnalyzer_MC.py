@@ -121,6 +121,43 @@ process.analysisUpperTagTunePMuons = muonAnalysis.clone(
     debug       = cms.int32(2)
 )
 
+process.analysisTrackerMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
+    algoType    = cms.int32(1),
+    debug       = cms.int32(-1)
+)
+process.analysisTPFMSMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
+    algoType    = cms.int32(2),
+    debug       = cms.int32(-1)
+)
+process.analysisDYTMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
+    algoType    = cms.int32(3),
+    debug       = cms.int32(-1)
+)
+process.analysisPickyMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
+    algoType    = cms.int32(4),
+    debug       = cms.int32(-1)
+)
+
+process.analysisTunePMuons = muonAnalysis.clone(
+    muonSrc     = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
+    algoType    = cms.int32(5),
+    debug       = cms.int32(2)
+)
+
 process.TFileService = cms.Service("TFileService",
     fileName = cms.string('CosmicMuonAnalysis_2015_deco_p100_new_outer.root')
 )
@@ -136,20 +173,25 @@ process.muonanalysis = cms.Path(
     +process.upperGlobalMuons
     +process.lowerGlobalMuons
     +process.globalMuonSPFilter
-    +process.analysisMuons
-    +process.analysisGlobalMuons
-    +process.analysisSPMuons
-    +process.analysisGlobalSPMuons
-    +process.analysisLowerTagTrackerMuons
-    +process.analysisLowerTagTPFMSMuons
-    +process.analysisLowerTagDYTMuons
-    +process.analysisLowerTagPickyMuons
-    +process.analysisLowerTagTunePMuons
-    +process.analysisUpperTagTrackerMuons
-    +process.analysisUpperTagTPFMSMuons
-    +process.analysisUpperTagDYTMuons
-    +process.analysisUpperTagPickyMuons
-    +process.analysisUpperTagTunePMuons
+    #+process.analysisMuons
+    #+process.analysisGlobalMuons
+    #+process.analysisSPMuons
+    #+process.analysisGlobalSPMuons
+    #+process.analysisLowerTagTrackerMuons
+    #+process.analysisLowerTagTPFMSMuons
+    #+process.analysisLowerTagDYTMuons
+    #+process.analysisLowerTagPickyMuons
+    #+process.analysisLowerTagTunePMuons
+    #+process.analysisUpperTagTrackerMuons
+    #+process.analysisUpperTagTPFMSMuons
+    #+process.analysisUpperTagDYTMuons
+    #+process.analysisUpperTagPickyMuons
+    #+process.analysisUpperTagTunePMuons
+    +process.analysisTrackerMuons
+    +process.analysisTPFMSMuons
+    +process.analysisDYTMuons
+    +process.analysisPickyMuons
+    +process.analysisTunePMuons
     )
 
 # generate EDM output
