@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("MuonAnalysis")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
 from WSUDiLeptons.MuonAnalyzer.inputfiles import *
@@ -13,10 +13,10 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
-process.COSMICoutput.fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_ReReco_outer_new_changed.root')
+process.COSMICoutput.fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_76X_reReco_outer_new_final.root')
 
 from WSUDiLeptons.MuonAnalyzer.wsuMuonAnalyzer_cfi import muonAnalysis
 
@@ -25,7 +25,7 @@ process.analysisMuons = muonAnalysis.clone(
     tagLegSrc   = cms.InputTag("betterMuons"),
     probeLegSrc = cms.InputTag("betterMuons"),
     algoType    = cms.int32(1),
-    debug       = cms.int32(2)
+    debug       = cms.int32(-1)
 )
 process.analysisGlobalMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("globalMuons"),
@@ -43,10 +43,10 @@ process.analysisSPMuons = muonAnalysis.clone(
 )
 process.analysisGlobalSPMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("globalSPMuons"),
-    tagLegSrc   = cms.InputTag("globalSPMuons"),
-    probeLegSrc = cms.InputTag("globalSPMuons"),
+    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
     algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
+    debug       = cms.int32(2)
 )
 process.analysisLowerTagTrackerMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("betterMuons"),
@@ -77,9 +77,9 @@ process.analysisLowerTagPickyMuons = muonAnalysis.clone(
     debug       = cms.int32(-1)
 )
 process.analysisLowerTagTunePMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
+    muonSrc     = cms.InputTag("globalSPMuons"),
     tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperMuons"),
+    probeLegSrc = cms.InputTag("upperGlobalMuons"),
     algoType    = cms.int32(5),
     debug       = cms.int32(2)
 )
@@ -114,15 +114,15 @@ process.analysisUpperTagPickyMuons = muonAnalysis.clone(
 )
 
 process.analysisUpperTagTunePMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
+    muonSrc     = cms.InputTag("globalSPMuons"),
     tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerMuons"),
+    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
     algoType    = cms.int32(5),
     debug       = cms.int32(2)
 )
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonAnalysis_2015_no-reRECO_nodxydz.root')
+    fileName = cms.string('CosmicMuonAnalysis_2015_76X_reRECO.root')
 )
 
 process.muonanalysis = cms.Path(
@@ -158,5 +158,5 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-#    ,process.COSMICoutput_step
+    ,process.COSMICoutput_step
 )
