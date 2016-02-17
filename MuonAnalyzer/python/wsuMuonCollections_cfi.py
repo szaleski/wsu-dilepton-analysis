@@ -22,7 +22,7 @@ betterSPMuons = cms.EDFilter("MuonSelector",
 
 globalSPMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("isGlobalMuon"),
+    cut = cms.string("isGlobalMuon && (innerTrack.hitPattern.numberOfValidPixelHits > 0)"),
 )
 
 # how do we ensure upper/lower for cosmic reconstruction
@@ -30,25 +30,33 @@ globalSPMuons = cms.EDFilter("MuonSelector",
 #  - time information: also reliability issues
 upperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
+    cut = cms.string("abs(muonBestTrack.innerPosition.Y) > abs(muonBestTrack.outerPosition.Y)"),
+    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
     #cut = cms.string("((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
 )
 
 upperGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
+    cut = cms.string("abs(muonBestTrack.innerPosition.Y) > abs(muonBestTrack.outerPosition.Y)"),
     #cut = cms.string("((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
 )
 
 lowerMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
+    cut = cms.string("abs(muonBestTrack.innerPosition.Y) < abs(muonBestTrack.outerPosition.Y)"),
     #cut = cms.string("((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
 )
 
 lowerGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string("(muonBestTrack.innerPosition.Y < 0) || (muonBestTrack.innerPosition.Y > 0 && muonBestTrack.outerPosition.Y < 0)"),
+    cut = cms.string("abs(muonBestTrack.innerPosition.Y) < abs(muonBestTrack.outerPosition.Y)"),
     #cut = cms.string("((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
 )
 
@@ -69,12 +77,18 @@ muonSPFilter = cms.EDFilter("MuonCountFilter",
     minNumber = cms.uint32(1)
 )
 
+globalMuonSPFilter = cms.EDFilter("MuonCountFilter",
+    src = cms.InputTag("globalSPMuons"),
+    minNumber = cms.uint32(2)
+)
+
 # EDM Output definition
 COSMICoutput = cms.OutputModule("PoolOutputModule",
     dataset = cms.untracked.PSet(
         dataTier = cms.untracked.string('RECO'),
         filterName = cms.untracked.string('muonanalysis')
     ),
+    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('muonanalysis')),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
     fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco_outer_new_changed.root'),
     outputCommands = cms.untracked.vstring('drop *',
@@ -91,33 +105,15 @@ COSMICoutput = cms.OutputModule("PoolOutputModule",
                                            "keep *_beamhaloTracks_*_*",
                                            "keep *_ckfInOutTracksFromConversions_*_*",
                                            "keep *_ckfOutInTracksFromConversions_*_*",
-                                           "keep *_cosmicMuons_*_*",
-                                           "keep *_cosmicMuons1Leg_*_*",
-                                           "keep *_cosmicMuonsEndCapsOnly_*_*",
-                                           "keep *_cosmicMuonsNoRPC_*_*",
-                                           "keep *_cosmicMuonsWitht0Correction_*_*",
+                                           "keep *_cosmicMuons*_*_*",
                                            "keep *_cosmictrackfinderP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5LHCNavigation_*_*",
+                                           "keep *_ctfWithMaterialTracksP5*_*_*",
                                            "keep *_globalBeamHaloMuonEndCapslOnly_*_*",
-                                           "keep *_globalCosmicMuons_*_*",
-                                           "keep *_globalCosmicMuons1Leg_*_*",
-                                           "keep *_globalCosmicMuonsNoRPC_*_*",
-                                           "keep *_globalCosmicMuonsWitht0Correction_*_*",
-                                           "keep *_globalCosmicSplitMuons_*_*",
+                                           "keep *_globalCosmic*_*_*",
                                            "keep *_regionalCosmicTracks_*_*",
                                            "keep *_splittedTracksP5_*_*",
                                            "keep *_standAloneMuons_*_*",
                                            "keep *_beamhaloTracks_*_*",
-                                           "keep *_ckfInOutTracksFromConversions_*_*",
-                                           "keep *_ckfOutInTracksFromConversions_*_*",
-                                           "keep *_cosmicMuons_*_*",
-                                           "keep *_cosmicMuons1Leg_*_*",
-                                           "keep *_cosmicMuonsEndCapsOnly_*_*",
-                                           "keep *_cosmicMuonsNoRPC_*_*",
-                                           "keep *_cosmicMuonsWitht0Correction_*_*",
-                                           "keep *_cosmictrackfinderP5_*_*",
-                                           "keep *_ctfWithMaterialTracksP5_*_*",
     ),
     splitLevel = cms.untracked.int32(0)
 )
