@@ -139,7 +139,10 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
-		<< ") " << std::setw(10) << "y:"     << muon->muonBestTrack()->innerPosition().Y()
+		<< ") " << std::setw(10) << "y:"
+		<< muon->muonBestTrack()->innerPosition().Y()
+		<< "/"
+		<< muon->muonBestTrack()->outerPosition().Y()
 		<< " "  << std::setw(10) << "dxy:"   << muon->muonBestTrack()->dxy()
 		<< " "  << std::setw(10) << "dz:"    << muon->muonBestTrack()->dz()
 		<< " "  << std::setw(10) << "tpin:"  << muon->time().timeAtIpInOut
@@ -339,23 +342,23 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
       }
     }
     std::cout.flush();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "creating track ref variable" << std::endl;
     
     reco::TrackRef ref;
     
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "Calling GetTrackType(" << algoType_ << "," << leg->get() << ")" << std::endl;
     
     ref = GetTrackType(algoType_, leg->get());
     
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "Found track type for leg " << muIdx << ". If NonNull fill." << std::endl;
     
     if (ref.isNonnull())
       TrackFill(ref, leg->get(), type);
     
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "Filled histograms!" << std::endl ;
     
     if (debug_ > 3) {
@@ -433,7 +436,7 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 	}
       }
     }
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "tmpDEta  = "   << tmpDEta
 		<< ", tmpDPhi  = " << tmpDPhi
 		<< ", tmpDR  = "   << tmpDR << std::endl
@@ -457,23 +460,23 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 
 void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::Muon::ArbitrationType const& arbType)
 {
-  if (debug_ > 1)
+  if (debug_ > 2)
     std::cout << "Starting to Fill Histograms!" << std::endl;
 
   if (muon->muonBestTrack()->innerPosition().Y() > 0) {
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "upper muon, check on tracker" << std::endl;
     upperMuon_isTracker    = muon->isTrackerMuon();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "upper muon, check on global" << std::endl;
     upperMuon_isGlobal     = muon->isGlobalMuon();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "upper muon, check on standalone" << std::endl;
     upperMuon_isStandAlone = muon->isStandAloneMuon();
 
     upperMuon_P4       = muon->p4();
     upperMuon_pT       = muon->pt();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "upper muon, ref variables" << std::endl;
     upperMuon_chi2     = ref->chi2();
     upperMuon_ndof     = ref->ndof();
@@ -494,7 +497,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 		<< std::endl;
 
     if (upperMuon_isGlobal) {
-      if (debug_ > 1)
+      if (debug_ > 2)
 	std::cout << "upper muon, global track hit pattern variables" << std::endl;
       upperMuon_pixelHits                    = muon->globalTrack()->hitPattern().numberOfValidPixelHits();
       upperMuon_trackerHits                  = muon->globalTrack()->hitPattern().numberOfValidTrackerHits();
@@ -504,7 +507,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
       upperMuon_numberOfValidMuonHits        = muon->globalTrack()->hitPattern().numberOfValidMuonHits();
     } else { // use the variables from the inner/outer track if available
       if (upperMuon_isTracker) {
-	if (debug_ > 1)
+	if (debug_ > 2)
 	  std::cout << "upper muon, inner track hit pattern variables" << std::endl;
 	upperMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
 	upperMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
@@ -514,7 +517,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 	//upperMuon_numberOfValidMuonHits        = muon->innerTrack()->hitPattern().numberOfValidMuonHits();
       }
       if (upperMuon_isStandAlone) {
-	if (debug_ > 1)
+	if (debug_ > 2)
 	  std::cout << "upper muon, outer track hit pattern variables" << std::endl;
 	//upperMuon_pixelHits                    = muon->outerTrack()->hitPattern().numberOfValidPixelHits();
 	//upperMuon_trackerHits                  = muon->outerTrack()->hitPattern().numberOfValidTrackerHits();
@@ -524,7 +527,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 	upperMuon_numberOfValidMuonHits        = muon->outerTrack()->hitPattern().numberOfValidMuonHits();
       }
     }
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "upper muon, matched stations" << std::endl;
     upperMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
 
@@ -589,19 +592,19 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
   }
   
   else if (muon->muonBestTrack()->innerPosition().Y() < 0) {
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "lower muon, check on global" << std::endl;
     lowerMuon_isTracker    = muon->isTrackerMuon();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "lower muon, check on global" << std::endl;
     lowerMuon_isGlobal     = muon->isGlobalMuon();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "lower muon, check on standalone" << std::endl;
     lowerMuon_isStandAlone = muon->isStandAloneMuon();
 
     lowerMuon_P4       = muon->p4();
     lowerMuon_pT       = muon->pt();
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "lower muon, ref variables" << std::endl;
     lowerMuon_chi2     = ref->chi2();
     lowerMuon_ndof     = ref->ndof();
@@ -622,7 +625,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 		<< std::endl;
 
     if (lowerMuon_isGlobal) {
-      if (debug_ > 1)
+      if (debug_ > 2)
 	std::cout << "lower muon, inner track hit pattern variables" << std::endl;
       lowerMuon_pixelHits                    = muon->globalTrack()->hitPattern().numberOfValidPixelHits();
       lowerMuon_trackerHits                  = muon->globalTrack()->hitPattern().numberOfValidTrackerHits();
@@ -632,7 +635,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
       lowerMuon_numberOfValidMuonHits        = muon->globalTrack()->hitPattern().numberOfValidMuonHits();
     } else { // use the variables from the inner/outer track if available
       if (lowerMuon_isTracker) {
-	if (debug_ > 1)
+	if (debug_ > 2)
 	  std::cout << "lower muon, inner track hit pattern variables" << std::endl;
 	lowerMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
 	lowerMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
@@ -642,7 +645,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 	//lowerMuon_numberOfValidMuonHits        = muon->innerTrack()->hitPattern().numberOfValidMuonHits();
       }
       if (lowerMuon_isStandAlone) {
-	if (debug_ > 1)
+	if (debug_ > 2)
 	  std::cout << "lower muon, outer track hit pattern variables" << std::endl;
 	//lowerMuon_pixelHits                    = muon->outerTrack()->hitPattern().numberOfValidPixelHits();
 	//lowerMuon_trackerHits                  = muon->outerTrack()->hitPattern().numberOfValidTrackerHits();
@@ -652,7 +655,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 	lowerMuon_numberOfValidMuonHits        = muon->outerTrack()->hitPattern().numberOfValidMuonHits();
       }
     }
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "lower muon, number of matched stations" << std::endl;
     lowerMuon_numberOfMatchedStations      = muon->numberOfMatchedStations(arbType);
 
@@ -724,7 +727,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
       std::cout << std::endl;
     } 
   }
-  if (debug_ > 1)
+  if (debug_ > 2)
     std::cout << "Histograms Filled!" << std::endl;
 }
 
@@ -732,7 +735,7 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
 reco::TrackRef MuonAnalyzer::GetTrackType(int algoType, reco::Muon const* muon)
 {
   
-  if (debug_ > 1)
+  if (debug_ > 2)
     std::cout << "Started finding track type!" << std::endl;
 
   reco::TrackRef ref;
@@ -744,7 +747,7 @@ reco::TrackRef MuonAnalyzer::GetTrackType(int algoType, reco::Muon const* muon)
   else if (algoType == 5) ref = muon->tunePMuonBestTrack();
   else                    ref = muon->track();
   
-  if (debug_ > 1)
+  if (debug_ > 2)
     std::cout << "Returning track ref " << ref.isNonnull() << std::endl;
 
   return ref;
