@@ -139,9 +139,11 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
-		<< ") y "  << std::setw(8) << muon->muonBestTrack()->innerPosition().Y()
-		<< " dxy " << std::setw(8) << muon->muonBestTrack()->dxy()
-		<< " dz "  << std::setw(8) << muon->muonBestTrack()->dz()
+		<< ") " << std::setw(10) << "y:"     << muon->muonBestTrack()->innerPosition().Y()
+		<< " "  << std::setw(10) << "dxy:"   << muon->muonBestTrack()->dxy()
+		<< " "  << std::setw(10) << "dz:"    << muon->muonBestTrack()->dz()
+		<< " "  << std::setw(10) << "tpin:"  << muon->time().timeAtIpInOut
+		<< " "  << std::setw(10) << "tpout:" << muon->time().timeAtIpOutIn
 		<< std::endl;
     std::cout << " tag legs: " << std::endl;
     for (reco::MuonCollection::const_iterator muon = tagLegColl->begin();
@@ -224,7 +226,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     }
   }
   std::cout.flush();
-  if (debug_ > 0)
+  if (debug_ > 2)
     if (muon == tagLegColl->end())
       std::cout << "muon iterator is at the end of the collection" << std::endl;
   
@@ -237,6 +239,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   // for the generic study, what to do when more than one muon and no match?
   // have to ensure that we get a pair
   if (!bestMatch) {
+    foundMatch = 0;
     if (debug_ > 0)
       std::cout << "unable to match two legs using deta(" << matchDEta
 		<< "), dphi(" << matchDPhi
@@ -256,7 +259,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     //return;
   }
 
-  if (debug_ > -1)
+  if (debug_ > 2)
     std::cout << "have passed the matching portion, now filling variables " << std::endl;
 
   if (debug_ > -1)
