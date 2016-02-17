@@ -199,14 +199,14 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   // 
   //int goodPairs[2] = [-1,-1];
   // this will treat each time through the collection as a new matching
-  //double deta = maxDEta_;
-  //double dphi = maxDPhi_;
-  //double dr   = maxDR_;
+  double deta = maxDEta_;
+  double dphi = maxDPhi_;
+  double dr   = maxDR_;
   // this will ensure that the next match will be closer than the previous best,
   // even if using a new muon in the collection as the reference, is this desired?
-  double deta = matchDEta;
-  double dphi = matchDPhi;
-  double dr   = matchDR;
+  //double deta = matchDEta;
+  //double dphi = matchDPhi;
+  //double dr   = matchDR;
   reco::MuonCollection::const_iterator muon = tagLegColl->begin();
 
   std::shared_ptr<reco::Muon> bestMatch = findBestMatch(muon, *probeLegColl, deta, dphi, dr);
@@ -399,6 +399,7 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 	std::cout << "iterators matched, moving on" << std::endl;
       continue;
     }
+    /*
     if (((mu->muonBestTrack()->innerPosition().Y() > 0) &&
 	 (mu1->muonBestTrack()->innerPosition().Y() > 0)) ||
 	((mu->muonBestTrack()->innerPosition().Y() < 0) &&
@@ -407,6 +408,7 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 	std::cout << "both muons in same half, moving on" << std::endl;
       continue;
     }
+    */
     if (debug_ > 5) {
       std::cout << "comparing " << std::hex << *mu1 << std::dec << std::endl;
       std::cout << "with      " << std::hex << *mu  << std::dec << std::endl;
@@ -444,14 +446,15 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
 		<< ", bestDPhi = " << bestDPhi
 		<< ", bestDR = "   << bestDR << std::endl;
   }
-  
-  if (bestDEta < matchDEta)
-    matchDEta = bestDEta;
-  if (bestDPhi < matchDPhi)
-    matchDPhi = bestDPhi;
-  if (bestDR < matchDR)
-    matchDR = bestDR;
-  
+  // update variables if best match is found
+  if (theBestMu) {
+    if (bestDEta < matchDEta)
+      matchDEta = bestDEta;
+    if (bestDPhi < matchDPhi)
+      matchDPhi = bestDPhi;
+    if (bestDR < matchDR)
+      matchDR = bestDR;
+  }
   if (debug_ > 2)
     std::cout << "returning theBestMu = " << std::hex << theBestMu.get() << std::dec << std::endl;
   return theBestMu;
@@ -463,7 +466,8 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
   if (debug_ > 2)
     std::cout << "Starting to Fill Histograms!" << std::endl;
 
-  if (muon->muonBestTrack()->innerPosition().Y() > 0) {
+  //if (muon->muonBestTrack()->innerPosition().Y() > 0) {
+  if (fabs(muon->muonBestTrack()->innerPosition().Y()) > fabs(muon->muonBestTrack()->outerPosition().Y())) {
     if (debug_ > 2)
       std::cout << "upper muon, check on tracker" << std::endl;
     upperMuon_isTracker    = muon->isTrackerMuon();
@@ -591,9 +595,10 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     }
   }
   
-  else if (muon->muonBestTrack()->innerPosition().Y() < 0) {
+  //else if (muon->muonBestTrack()->innerPosition().Y() < 0) {
+  else if (fabs(muon->muonBestTrack()->innerPosition().Y()) < fabs(muon->muonBestTrack()->outerPosition().Y())) {
     if (debug_ > 2)
-      std::cout << "lower muon, check on global" << std::endl;
+      std::cout << "lower muon, check on tracker" << std::endl;
     lowerMuon_isTracker    = muon->isTrackerMuon();
     if (debug_ > 2)
       std::cout << "lower muon, check on global" << std::endl;
