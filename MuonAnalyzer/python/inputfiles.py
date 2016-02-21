@@ -3,22 +3,22 @@ datafiles = [
     #'root://xrootd.unl.edu// #alternate redirector
     #'root://cmssrv32.fnal.gov// #alternate redirector
     #'root://// #alternate redirector
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/04D80F2D-84D0-E511-8816-00266CFAE074.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/24A57E51-31D0-E511-93BA-0025904C4E2A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/340C8AE7-C8CF-E511-97FB-008CFA197D38.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/74C802EA-23D0-E511-ACFB-008CFA0A5A10.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/8034E2A8-30D0-E511-BEC6-0025905C3D6A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B01B232A-84D0-E511-9692-7845C4FC3653.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B0B9053D-C9CF-E511-82A6-0025905C9740.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/C8CA6E2B-84D0-E511-91DD-7845C4FC346A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/D222FD2B-84D0-E511-A1D7-848F69FD2D6F.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/DEA204B0-30D0-E511-8C67-0025904C637A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/02E95119-73CC-E511-838D-0CC47A4D767E.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/18134830-8EC8-E511-B04C-0CC47A1DF64A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/1A9368F1-22CB-E511-8087-0025905A606A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/20AE4631-7FCB-E511-BE42-0CC47A4C8F18.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/2A42C2B4-66C9-E511-B5B5-0025904C67B8.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/347B7EAD-36CA-E511-A446-C4346BC8D390.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/04D80F2D-84D0-E511-8816-00266CFAE074.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/24A57E51-31D0-E511-93BA-0025904C4E2A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/340C8AE7-C8CF-E511-97FB-008CFA197D38.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/74C802EA-23D0-E511-ACFB-008CFA0A5A10.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/8034E2A8-30D0-E511-BEC6-0025905C3D6A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B01B232A-84D0-E511-9692-7845C4FC3653.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B0B9053D-C9CF-E511-82A6-0025905C9740.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/C8CA6E2B-84D0-E511-91DD-7845C4FC346A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/D222FD2B-84D0-E511-A1D7-848F69FD2D6F.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/DEA204B0-30D0-E511-8C67-0025904C637A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/02E95119-73CC-E511-838D-0CC47A4D767E.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/18134830-8EC8-E511-B04C-0CC47A1DF64A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/1A9368F1-22CB-E511-8087-0025905A606A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/20AE4631-7FCB-E511-BE42-0CC47A4C8F18.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/2A42C2B4-66C9-E511-B5B5-0025904C67B8.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/347B7EAD-36CA-E511-A446-C4346BC8D390.root',
 ]
 
 mcfiles = [

@@ -2,7 +2,7 @@ from CRABClient.UserUtilities import config, getUserNameFromSiteDB
 
 config = config()
 
-config.General.requestName = 'MuonAnalysis_Oct21_2015'
+config.General.requestName = 'MuonEfficiencyTree_CRAFT15'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False

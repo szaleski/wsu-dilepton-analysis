@@ -1,4 +1,5 @@
 #include "WSUDiLeptons/MuonAnalyzer/interface/MuonAnalyzer.h"
+//#include "WSUDiLeptons/MuonAnalyzer/interface/MuonHelpers.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
@@ -143,6 +144,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< muon->muonBestTrack()->innerPosition().Y()
 		<< "/"
 		<< muon->muonBestTrack()->outerPosition().Y()
+		<< " "  << std::setw(10) << "chi2:"  << muon->muonBestTrack()->chi2()
 		<< " "  << std::setw(10) << "dxy:"   << muon->muonBestTrack()->dxy()
 		<< " "  << std::setw(10) << "dz:"    << muon->muonBestTrack()->dz()
 		<< " "  << std::setw(10) << "tpin:"  << muon->time().timeAtIpInOut
@@ -350,6 +352,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     if (debug_ > 2)
       std::cout << "Calling GetTrackType(" << algoType_ << "," << leg->get() << ")" << std::endl;
     
+    //ref = wsu::dileptons::MuonHelpers::GetTrackType(algoType_, leg->get());
     ref = GetTrackType(algoType_, leg->get());
     
     if (debug_ > 2)
@@ -736,7 +739,6 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     std::cout << "Histograms Filled!" << std::endl;
 }
 
-
 reco::TrackRef MuonAnalyzer::GetTrackType(int algoType, reco::Muon const* muon)
 {
   
@@ -757,7 +759,6 @@ reco::TrackRef MuonAnalyzer::GetTrackType(int algoType, reco::Muon const* muon)
 
   return ref;
 }
-
 
 
 // ------------ method called once each job just before starting event loop  ------------

@@ -1,5 +1,5 @@
-#ifndef WSUDILEPTONS_MUONANALYZER_H
-#define WSUDILEPTONS_MUONANALYZER_H
+#ifndef WSUDILEPTONS_MUONTREE_H
+#define WSUDILEPTONS_MUONTREE_H
 
 
 // system include files
@@ -18,6 +18,7 @@
 #include <DataFormats/MuonReco/interface/MuonCocktails.h>
 #include <DataFormats/MuonReco/interface/MuonFwd.h>
 #include "DataFormats/MuonReco/interface/Muon.h"
+#include "DataFormats/MuonReco/src/Muon.cc"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
 
@@ -41,11 +42,11 @@
 // class declaration
 //
 
-class MuonAnalyzer : public edm::EDAnalyzer {
+class MuonTree : public edm::EDAnalyzer {
 
  public:
-  explicit MuonAnalyzer(const edm::ParameterSet&);
-  ~MuonAnalyzer();
+  explicit MuonTree(const edm::ParameterSet&);
+  ~MuonTree();
   
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
   
@@ -54,11 +55,7 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   virtual void beginJob() override;
   virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
-  void TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::Muon::ArbitrationType const& arbType);
   reco::TrackRef GetTrackType(int algoType, reco::Muon const* muon);
-  std::shared_ptr<reco::Muon> findBestMatch(reco::MuonCollection::const_iterator& mu1,
-					    reco::MuonCollection const& muons,
-					    double deta, double dphi, double dr);
   
   int algoType_;
   int debug_;
@@ -68,7 +65,6 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   double maxDEta_;
   double minPt_;
 
-  
   //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
   //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
   //virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
@@ -82,46 +78,25 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   //}
   
   // ----------member data ---------------------------
-  edm::EDGetTokenT<reco::MuonCollection > muonToken_, tagLegToken_, probeLegToken_;
-  edm::InputTag muonSrc_, tagLegSrc_, probeLegSrc_;
+  edm::EDGetTokenT<reco::MuonCollection > muonToken_, upperLegToken_, lowerLegToken_;
+  edm::InputTag muonSrc_, upperLegSrc_, lowerLegSrc_;
   edm::Service<TFileService> fs;
-  TTree *cosmicTree;
+  TTree *muonTree;
 
-  int event, run, lumi, nMuons, nTags, nProbes, foundMatch;
+  int event, run, lumi, nMuons, nUpperLegs, nLowerLegs, foundMatch;
   double matchDR, matchDEta, matchDPhi;
   
-  reco::Muon::ArbitrationType type;
+  //reco::Muon::ArbitrationType type;
  
-  reco::Candidate::LorentzVector lowerMuon_P4;
-  math::XYZVector lowerMuon_trackVec;
-  double lowerMuon_chi2, lowerMuon_dxy, lowerMuon_dz, lowerMuon_pT;
-  double lowerMuon_ptError, lowerMuon_dxyError, lowerMuon_dzError;
-  double lowerMuon_trackPt;
-  int lowerMuon_ndof, lowerMuon_charge,
-    lowerMuon_isGlobal, lowerMuon_isTracker, lowerMuon_isStandAlone;
-  int lowerMuon_pixelHits,
-    lowerMuon_trackerHits,
-    lowerMuon_muonStationHits,
-    lowerMuon_numberOfValidHits,
-    lowerMuon_numberOfValidMuonHits,
-    lowerMuon_numberOfMatchedStations,
-    lowerMuon_trackerLayersWithMeasurement;
-
-  reco::Candidate::LorentzVector upperMuon_P4;
-  math::XYZVector upperMuon_trackVec;
-  double upperMuon_chi2, upperMuon_dz, upperMuon_dxy, upperMuon_pT;
-  double upperMuon_ptError, upperMuon_dxyError, upperMuon_dzError;
-  double upperMuon_trackPt;
-  int upperMuon_ndof, upperMuon_charge,
-    upperMuon_isGlobal, upperMuon_isTracker, upperMuon_isStandAlone;
-  int upperMuon_pixelHits,
-    upperMuon_trackerHits,
-    upperMuon_muonStationHits,
-    upperMuon_numberOfValidHits,
-    upperMuon_numberOfValidMuonHits,
-    upperMuon_numberOfMatchedStations,
-    upperMuon_trackerLayersWithMeasurement;
-
+  reco::Candidate::LorentzVector muonP4[10];
+  math::XYZVector muon_trackVec[10];
+  double muon_innerY[10], muon_outerY[10], muon_tpin[10], muon_tpout[10];
+  double muon_chi2[10], muon_dxy[10], muon_dz[10], muon_pT[10];
+  double muon_ptError[10], muon_dxyError[10], muon_dzError[10];
+  double muon_trackPt[10];
+  int muon_ndof[10], muon_charge[10], muon_isGlobal[10], muon_isTracker[10], muon_isStandAlone[10];
+  int muon_pixHits[10],muon_tkHits[10],muon_muonStaHits[10],
+    muon_nVHits[10],muon_nVMuHits[10],muon_nMatSta[10],muon_tkLayWMeas[10];
 };
 
 
