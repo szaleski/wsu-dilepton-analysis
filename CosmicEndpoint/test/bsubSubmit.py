@@ -16,12 +16,15 @@ parser.add_option("-g", "--gridproxy", action="store_true", dest="gridproxy",
 parser.add_option("-i", "--infiles", type="string", dest="infiles",
                   metavar="infiles",
                   help="[REQUIRED] Text file with list of input files to process ")
+parser.add_option("-t", "--title", type="string", dest="title",
+                  metavar="title",
+                  help="[REQUIRED] Task title ")
 parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   metavar="debug",
                   help="[OPTIONAL] Run in debug mode, i.e., don't submit jobs, just create them")
 parser.add_option("-m", "--maxbias", type="float", dest="maxbias",
                   metavar="maxbias", default=0.0001,
-                  help="[OPTIONAL] Maximum bias in the curvature to inject (default = 0.0001)")
+                  help="[OPTIONAL] Maximum bias in the curvature to inject in units of c/GeV (default = 0.0001)")
 parser.add_option("-a", "--asymmetric", action="store_true", dest="asymmetric",
                   metavar="asymmetric", default=False,
                   help="[OPTIONAL] Specify whether to create asymmetric (absolute value) curvature (default = False)")
@@ -47,8 +50,8 @@ cmd = "cp /tmp/x509up_u%s  %s"%(userkey,proxyPath)
 print cmd
 os.system(cmd)
 if options.asymmetric:
-    bSubSplitJobs("craft15-%s"%(options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
+    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
                   options.maxbias, options.minpt, options.nbiasbins, False, debug)
 else:
-    bSubSplitJobs("craft15-%s"%(options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
+    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
                   options.maxbias, options.minpt, options.nbiasbins, True, debug)

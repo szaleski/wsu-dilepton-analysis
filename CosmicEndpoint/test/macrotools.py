@@ -56,7 +56,7 @@ def bSubSplitJobs(pyScriptName,outputFile,inputFile,proxyPath,numberOfJobs,
 	if not os.path.exists(rootScriptDir):
 		os.makedirs(rootScriptDir)
 
-	clearSplitLists(maxBias,minPt,nBiasBins,symasym)
+	clearSplitLists(maxBias,minPt,nBiasBins,symasym,inputFile)
 	clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym)
 	nJobs = splitJobsForBsub(inputFile,numberOfJobs,maxBias,minPt,nBiasBins,symasym)
 	print "Prepared %i jobs ready to be submitted to bsub." % nJobs
@@ -140,7 +140,7 @@ rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -a
 	if not debug:
 		os.system(cmd)
 
-def clearSplitLists(maxBias,minPt,nBiasBins,symasym):
+def clearSplitLists(maxBias,minPt,nBiasBins,symasym,title):
 	samplesListsDir="samplesLists_data"
 	splitListsDir=samplesListsDir+"/splitLists_b%.2f_pt%2.0f_n%d/"%(1000*maxBias,minPt,nBiasBins)
 
@@ -149,7 +149,7 @@ def clearSplitLists(maxBias,minPt,nBiasBins,symasym):
 
 	for the_file in os.listdir(splitListsDir):
 		file_path = os.path.join(splitListsDir,the_file)
-		if (file_path.find("_"+symasym+"_") > 0):
+		if ((file_path.find("_"+symasym+"_") > 0) and (file_path.find(title) > 0)):
 			try:
 				if os.path.isfile(file_path):
 					os.unlink(file_path)

@@ -20,7 +20,7 @@ config.Data.unitsPerJob = 200
 config.Data.lumiMask = 'http://cmsdoc.cern.ch/~sturdy/Cosmics/JSON/cosmics_CRAFT15_pix_strip_DT_RPC_complete.json'
 config.Data.allowNonValidInputDataset = True
 #config.Data.publication = True
-config.Data.outLFNDirBase = '/store/user/sturdy07/MuonEfficiency'
+config.Data.outLFNDirBase = '/store/user/sturdy/MuonEfficiency'
 config.Data.outputDatasetTag = 'MuonEfficiencyTree_CRAFT15_Feb21'
 
 config.section_('Site')
