@@ -19,6 +19,9 @@ parser.add_option("-i", "--infiles", type="string", dest="infiles",
 parser.add_option("-t", "--title", type="string", dest="title",
                   metavar="title",
                   help="[REQUIRED] Task title ")
+parser.add_option("-x", "--tool", type="string", dest="tool",
+                  metavar="tool", default="Plot",
+                  help="[REQUIRED] Tool name (default is Plot)")
 parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   metavar="debug",
                   help="[OPTIONAL] Run in debug mode, i.e., don't submit jobs, just create them")
@@ -50,8 +53,8 @@ cmd = "cp /tmp/x509up_u%s  %s"%(userkey,proxyPath)
 print cmd
 os.system(cmd)
 if options.asymmetric:
-    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
+    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]),options.tool, "histograms", options.infiles, proxyPath, options.njobs,
                   options.maxbias, options.minpt, options.nbiasbins, False, debug)
 else:
-    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]), "histograms", options.infiles, proxyPath, options.njobs,
+    bSubSplitJobs("%s-%s"%(options.title,options.infiles[:-4]),options.tool, "histograms", options.infiles, proxyPath, options.njobs,
                   options.maxbias, options.minpt, options.nbiasbins, True, debug)
