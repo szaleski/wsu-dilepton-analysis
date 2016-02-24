@@ -171,28 +171,9 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   }
   std::cout.flush();  
 
-  // forthe efficiency study, this needs to be removed, to be able to probe the upper/lower reco eff
-  /*
-  if ( muonColl->size() < 2)
+  // reject events without tags or probes
+  if ( tagLegColl->size() < 1 && probeLegColl->size() < 1)
     return;
-  */
-  // reject events without tags
-  if ( tagLegColl->size() < 1)
-    return;
-  
-  //can we check on (*muonColl)[0].pt() > minPt_ here?, basically, is the collection pT ordered
-  /*
-  if ( (*muonColl)[0].pt() < minPt_) {
-    if (debug_ > 2)
-      std::cout << "leading muon pT too low, returning " << (*muonColl)[0].pt() << std::endl;
-    return;
-  }
-  */
-  /*
-    not doing this any more as we need to catch all the good cosmics
-    if ( muonColl->size() != 2)
-    return;
-  */
   
   // what sort of matching should be done?
   // require opposite halves
@@ -209,30 +190,34 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   //double deta = matchDEta;
   //double dphi = matchDPhi;
   //double dr   = matchDR;
-  reco::MuonCollection::const_iterator muon = tagLegColl->begin();
 
-  std::shared_ptr<reco::Muon> bestMatch = findBestMatch(muon, *probeLegColl, deta, dphi, dr);
+  // if we have tags but no probes then what?
+  // if we have probes but no tags then what?
+  reco::MuonCollection::const_iterator muon  = tagLegColl->size() > 0 ? tagLegColl->begin() : probeLegColl->begin();
+  reco::MuonCollection::const_iterator muend = tagLegColl->size() > 0 ? tagLegColl->end()   : probeLegColl->end();
+  
+  std::shared_ptr<reco::Muon> bestMatch = findBestMatch(muon, tagLegColl->size() > 0 ? *probeLegColl:*tagLegColl, deta, dphi, dr);
   // keep the upper/lower legs as an std::pair<tag leg, probe leg>
   std::pair<std::shared_ptr<reco::Muon>, std::shared_ptr<reco::Muon> > bestPair;
   std::vector<std::shared_ptr<reco::Muon> > muonPair;
 
-  if (nTags > 1) {
+  if ((tagLegColl->size() > 0 && nTags > 1) || (probeLegColl->size() > 0 && nProbes > 1)) {
     if (debug_ > 2)
       std::cout << "before call: muon " << std::hex << *muon << std::dec << std::endl;
     // stop looping when we have a match, or reach the end of the collection
     // if mu(0) doesn't have a "best match" go to mu(1)
     // what if mu(2) and mu(4) were the best actual match, but mu(0) and mu(3) matched?
-    while (!bestMatch && ++muon != tagLegColl->end()) {
+    while (!bestMatch && ++muon != muend) {
       if (muon->pt() < minPt_)
 	continue;
-      bestMatch = findBestMatch(muon, *probeLegColl, deta, dphi, dr);
+      bestMatch = findBestMatch(muon, tagLegColl->size() > 0 ? *probeLegColl :  *tagLegColl, deta, dphi, dr);
       if (debug_ > 2)
 	std::cout << "after call: muon " << std::hex << *muon << std::dec << std::endl;
     }
   }
   std::cout.flush();
   if (debug_ > 0)
-    if (muon == tagLegColl->end())
+    if (muon == muend)
       std::cout << "muon iterator is at the end of the collection" << std::endl;
   
   if (muon->pt() < minPt_) {
@@ -252,7 +237,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< ")"        << std::endl;
 
     // here need to select which muon to use?
-    muon = tagLegColl->begin();
+    muon = tagLegColl->size() > 0 ? tagLegColl->begin() : probeLegColl->begin();
     //return;
   } else {
     foundMatch = 1;
@@ -281,33 +266,9 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	      << ") " << bestMatch->muonBestTrack()->innerPosition().Y() << std::endl;
   std::cout.flush();
 
-  // only keep going if we find global muons, exclude this for generic study
-  /*
-  if (!muon->isGlobalMuon())
-    return;
-  if (!bestMatch->isGlobalMuon())
-    return;
-
-  // make sure that we get at least one pixel hit on each leg
-  if (!(muon->innerTrack()->hitPattern().numberOfValidPixelHits() > 0))
-    return;
-  if (!(bestMatch->innerTrack()->hitPattern().numberOfValidPixelHits() > 0))
-    return;
-  */
-
   // this still segfaults on occasion...
   bestPair = std::make_pair(std::make_shared<reco::Muon>(*muon),bestMatch);
-  /*
-  // make the first in the vector be the upper leg
-  if (muon->muonBestTrack()->innerPosition().Y() > 0)
-    bestPair = std::make_pair(std::make_shared<reco::Muon>(*muon),
-			      bestMatch);
-  //std::make_shared<reco::Muon>(*bestMatch));
-  else
-    bestPair = std::make_pair(bestMatch,
-			      std::make_shared<reco::Muon>(*muon));
-  //std::make_shared<reco::Muon>(*muon));
-  */
+
   muonPair.push_back(bestPair.first);
   muonPair.push_back(bestPair.second);
   if (debug_ > 3)
