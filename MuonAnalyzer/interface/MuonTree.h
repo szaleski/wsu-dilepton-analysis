@@ -87,13 +87,15 @@ class MuonTree : public edm::EDAnalyzer {
   double matchDR, matchDEta, matchDPhi;
   
   //reco::Muon::ArbitrationType type;
- 
+
   reco::Candidate::LorentzVector muonP4[10];
   math::XYZVector muon_trackVec[10];
+ 
   double muon_innerY[10], muon_outerY[10], muon_tpin[10], muon_tpout[10];
   double muon_chi2[10], muon_dxy[10], muon_dz[10], muon_pT[10];
   double muon_ptError[10], muon_dxyError[10], muon_dzError[10];
-  double muon_trackPt[10];
+  double muon_Pt[10], muon_Eta[10], muon_Phi[10];
+  double muon_trackPt[10], muon_trackEta[10], muon_trackPhi[10];
   int muon_ndof[10], muon_charge[10], muon_isGlobal[10], muon_isTracker[10], muon_isStandAlone[10];
   int muon_pixHits[10],muon_tkHits[10],muon_muonStaHits[10],
     muon_nVHits[10],muon_nVMuHits[10],muon_nMatSta[10],muon_tkLayWMeas[10];

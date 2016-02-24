@@ -93,7 +93,9 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     muon_isStandAlone[idx] = -1;
     
     muonP4[idx].SetXYZT(0,0,0,-1);
-    muon_pT[idx] = -1;
+    muon_pT[idx]  = -1;
+    muon_Eta[idx] = -10;
+    muon_Phi[idx] = -10;
 
     muon_innerY[idx] = 0; // what's a good nonsense value for this?
     muon_outerY[idx] = 0; // what's a good nonsense value for this?
@@ -101,8 +103,10 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     muon_tpout[idx]  = 0; // what's a good nonsense value for this?
     
     muon_trackVec[idx].SetXYZ(0,0,0);
-    muon_trackPt[idx] = -1;
-    muon_ptError[idx] = -1;
+    muon_trackPt[idx]  = -1;
+    muon_trackEta[idx] = -10;
+    muon_trackPhi[idx] = -10;
+    muon_ptError[idx]  = -1;
     
     muon_charge[idx] = -10;
     muon_chi2  [idx] = -1;
@@ -188,6 +192,8 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 
     muonP4       [muIdx] = mu->p4();
     muon_pT      [muIdx] = mu->pt();
+    muon_Eta     [muIdx] = mu->eta();
+    muon_Phi     [muIdx] = mu->phi();
     if (ref.isNonnull()) { // can't dereference if the desired track ref is null
       // selections are done on "best track" what should we do for study?
       muon_chi2    [muIdx] = ref->chi2();
@@ -199,6 +205,8 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
       muon_dxyError[muIdx] = ref->dxyError();
       muon_dzError [muIdx] = ref->dzError();
       muon_trackPt [muIdx] = ref->pt();
+      muon_trackEta[muIdx] = ref->eta();
+      muon_trackPhi[muIdx] = ref->phi();
       muon_trackVec[muIdx] = ref->momentum();
       // take hit pattern from associated TrackRef? why or why not?
       muon_pixHits    [muIdx] = ref->hitPattern().numberOfValidPixelHits();
@@ -323,7 +331,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     }
     */
     muon_nMatSta[muIdx] = mu->numberOfMatchedStations(reco::Muon::SegmentAndTrackArbitration);
-
+    ++muIdx;
   } // end loop over muons
   
   muonTree->Fill();
@@ -358,44 +366,53 @@ void MuonTree::beginJob()
   
   muonTree = fs->make<TTree>( "MuonTree", "Muon variables" );
 
-  muonTree->Branch("nMuons",     &nMuons,     10000, 1);
-  muonTree->Branch("nUpperLegs", &nUpperLegs, 10000, 1);
-  muonTree->Branch("nLowerLegs", &nLowerLegs, 10000, 1);
-  muonTree->Branch("event",      &event,      10000, 1);
-  muonTree->Branch("run",        &run,        10000, 1);
-  muonTree->Branch("lumi",       &lumi,       10000, 1);
+  muonTree->Branch("nMuons",     &nMuons,     "nMuons/I"    );
+  muonTree->Branch("nUpperLegs", &nUpperLegs, "nUpperLegs/I");
+  muonTree->Branch("nLowerLegs", &nLowerLegs, "nLowerLegs/I");
+  muonTree->Branch("event",      &event,      "event/I"     );
+  muonTree->Branch("run",        &run,        "run/I"       );
+  muonTree->Branch("lumi",       &lumi,       "lumi/I"      );
 
-  muonTree->Branch("matchDR",    &matchDR,    10000, 1);
-  muonTree->Branch("matchDPhi",  &matchDPhi,  10000, 1);
-  muonTree->Branch("matchDEta",  &matchDEta,  10000, 1);
-  muonTree->Branch("foundMatch", &foundMatch, 10000, 1);
+  muonTree->Branch("matchDR",    &matchDR,    "matchDR/D"   );
+  muonTree->Branch("matchDPhi",  &matchDPhi,  "matchDPhi/D" );
+  muonTree->Branch("matchDEta",  &matchDEta,  "matchDEta/D" );
+  muonTree->Branch("foundMatch", &foundMatch, "foundMatch/I");
 
-  // variables per muon ([10] indexed)
-  muonTree->Branch("globalpT", muon_pT, 10000, 1);
-  muonTree->Branch("muonP4",   muonP4,  10000, 1);
+  // variables per muon ([nMuons] indexed)
+  muonTree->Branch("globalpT",  muon_pT,  "globalpT[nMuons]/D" );
+  muonTree->Branch("globalEta", muon_Eta, "globalEta[nMuons]/D");
+  muonTree->Branch("globalPhi", muon_Phi, "globalPhi[nMuons]/D");
+  muonTree->Branch("muonP4",    muonP4,   10000, 99            );
 
-  muonTree->Branch("isGlobal",     muon_isGlobal,     10000, 1);
-  muonTree->Branch("isTracker",    muon_isTracker,    10000, 1);
-  muonTree->Branch("isStandAlone", muon_isStandAlone, 10000, 1);
+  muonTree->Branch("isGlobal",     muon_isGlobal,     "isGlobal[nMuons]/I"    );
+  muonTree->Branch("isTracker",    muon_isTracker,    "isTracker[nMuons]/I"   );
+  muonTree->Branch("isStandAlone", muon_isStandAlone, "isStandAlone[nMuons]/I");
 
-  muonTree->Branch("trackpT",  muon_trackPt,  10000, 1);
-  muonTree->Branch("trackVec", muon_trackVec, 10000, 1);
-  muonTree->Branch("chi2",     muon_chi2,     10000, 1);
-  muonTree->Branch("ndof",     muon_ndof,     10000, 1);
-  muonTree->Branch("charge",   muon_charge,   10000, 1);
-  muonTree->Branch("dxy",      muon_dxy,      10000, 1);
-  muonTree->Branch("dz",       muon_dz,       10000, 1);
-  muonTree->Branch("ptError",  muon_ptError,  10000, 1);
-  muonTree->Branch("dxyError", muon_dxyError, 10000, 1);
-  muonTree->Branch("dzError",  muon_dzError,  10000, 1);
+  muonTree->Branch("innerY",    muon_innerY, "innerY[nMuons]/D");
+  muonTree->Branch("outerY",    muon_outerY, "outerY[nMuons]/D");
+  muonTree->Branch("tpin",      muon_tpin,   "tpin[nMuons]/D"  );
+  muonTree->Branch("tpout",     muon_tpout,  "tpout[nMuons]/D" );
 
-  muonTree->Branch("pixelHits",        muon_pixHits,    10000, 1);
-  muonTree->Branch("trackerHits",      muon_tkHits,     10000, 1);
-  muonTree->Branch("muonStationHits",  muon_muonStaHits,10000, 1);
-  muonTree->Branch("nValidHits",       muon_nVHits,     10000, 1);
-  muonTree->Branch("nValidMuonHits",   muon_nVMuHits,   10000, 1);
-  muonTree->Branch("nMatchedStations", muon_nMatSta,    10000, 1);
-  muonTree->Branch("tkLayersWMeas",    muon_tkLayWMeas, 10000, 1);
+  muonTree->Branch("trackpT",  muon_trackPt,  "trackpT[nMuons]/D" );
+  muonTree->Branch("trackEta", muon_trackEta, "trackEta[nMuons]/D");
+  muonTree->Branch("trackPhi", muon_trackPhi, "trackPhi[nMuons]/D");
+  muonTree->Branch("trackVec", muon_trackVec, 10000, 99           );
+  muonTree->Branch("chi2",     muon_chi2,     "chi2[nMuons]/D"    );
+  muonTree->Branch("ndof",     muon_ndof,     "ndof[nMuons]/I"    );
+  muonTree->Branch("charge",   muon_charge,   "charge[nMuons]/I"  );
+  muonTree->Branch("dxy",      muon_dxy,      "dxy[nMuons]/D"     );
+  muonTree->Branch("dz",       muon_dz,       "dz[nMuons]/D"      );
+  muonTree->Branch("ptError",  muon_ptError,  "ptError[nMuons]/D" );
+  muonTree->Branch("dxyError", muon_dxyError, "dxyError[nMuons]/D");
+  muonTree->Branch("dzError",  muon_dzError,  "dzError[nMuons]/D" );
+
+  muonTree->Branch("pixelHits",        muon_pixHits,     "pixelHits[nMuons]/I"       );
+  muonTree->Branch("trackerHits",      muon_tkHits,      "trackerHits[nMuons]/I"     );
+  muonTree->Branch("muonStationHits",  muon_muonStaHits, "muonStationHits[nMuons]/I" );
+  muonTree->Branch("nValidHits",       muon_nVHits,      "nValidHits[nMuons]/I"      );
+  muonTree->Branch("nValidMuonHits",   muon_nVMuHits,    "nValidMuonHits[nMuons]/I"  );
+  muonTree->Branch("nMatchedStations", muon_nMatSta,     "nMatchedStations[nMuons]/I");
+  muonTree->Branch("tkLayersWMeas",    muon_tkLayWMeas,  "tkLayersWMeas[nMuons]/I"   );
 }
 
 
