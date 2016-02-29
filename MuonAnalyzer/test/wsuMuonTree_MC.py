@@ -119,7 +119,7 @@ process.muonanalysis = cms.Path(
     +process.cosmicSPMuonTracks
     +process.globalSPMuonTracks
     +process.trackerSPMuonTracks
-    +process.muonSPFilter
+    #+process.muonSPFilter
     #+process.globalMuonSPFilter
     #+process.analysisMuons
     #+process.analysisGlobalMuons

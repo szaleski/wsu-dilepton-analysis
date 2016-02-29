@@ -29,7 +29,7 @@ muonTree = cms.EDAnalyzer('MuonTree',
 
     debug       = cms.int32(0),
     maxDR       = cms.double(0.15), # not currently used, but to match upper/lower legs
-    maxDPhi     = cms.double(0.1),  # match requirement between upper/lower legs
+    maxDPhi     = cms.double(0.10), # match requirement between upper/lower legs
     maxDEta     = cms.double(0.05), # match requirement between upper/lower legs
     minPt       = cms.double(45.0), # minimum pT to consider the muon
 )

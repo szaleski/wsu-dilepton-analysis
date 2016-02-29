@@ -48,15 +48,15 @@ process.analysisSPMuons = muonTree.clone(
     muonSrc     = cms.InputTag("betterSPMuons"),
     upperLegSrc = cms.InputTag("upperMuons"),
     lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(1),
-    debug       = cms.int32(5)
+    algoType    = cms.int32(5),
+    debug       = cms.int32(2)
 )
 process.analysisGlobalSPMuons = muonTree.clone(
     muonSrc     = cms.InputTag("globalSPMuons"),
     upperLegSrc = cms.InputTag("upperGlobalMuons"),
     lowerLegSrc = cms.InputTag("lowerGlobalMuons"),
     algoType    = cms.int32(5),
-    debug       = cms.int32(5)
+    debug       = cms.int32(2)
 )
 process.analysisTrackerMuons = muonTree.clone(
     muonSrc     = cms.InputTag("betterSPMuons"),
@@ -115,7 +115,7 @@ process.muonanalysis = cms.Path(
     +process.cosmicSPMuonTracks
     +process.globalSPMuonTracks
     +process.trackerSPMuonTracks
-    +process.muonSPFilter
+    #+process.muonSPFilter
     #+process.globalMuonSPFilter
     #+process.analysisMuons
     #+process.analysisGlobalMuons
