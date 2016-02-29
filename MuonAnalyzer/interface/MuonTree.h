@@ -85,8 +85,9 @@ class MuonTree : public edm::EDAnalyzer {
   edm::Service<TFileService> fs;
   TTree *muonTree;
 
-  int event, run, lumi, nMuons, nUpperLegs, nLowerLegs, foundMatch, nGlobalTracks, nCosmicTracks, nTrackerTracks;
-  double matchDR, matchDEta, matchDPhi;
+  int event, run, lumi,
+    nMuons, nUpperLegs, nLowerLegs,
+    nGlobalTracks, nCosmicTracks, nTrackerTracks;
   
   //reco::Muon::ArbitrationType type;
 

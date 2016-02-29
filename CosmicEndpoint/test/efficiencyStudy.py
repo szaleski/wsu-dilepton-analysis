@@ -1,9 +1,10 @@
+import sys,os
 import ROOT as r
 import numpy as np
 
 r.gROOT.SetBatch(True)
 def passMuDen(ev,idx):
-    return ev.trackpT[idx] > 53 and ev.isTracker[idx]
+    return ev.trackpT[idx] > 53. and ev.isTracker[idx]
 
 def passMuID(ev,idx):
     passNVMuHits     = (ev.nValidMuonHits[idx] > 0)
@@ -21,14 +22,18 @@ def passMuIDTrk(ev,idx):
 def passTrkDen(ev,idx):
     muonMatch = ev.trk_matchedMuIdx[idx]
     if (muonMatch < 0):
+        print "passTrkDen: unable to find a matched muon %d"%(muonMatch)
+        sys.stdout.flush()
         return False
-    return ev.trk_trackpT[idx] > 53 and ev.isTracker[muonMatch]
+    return ev.trk_trackpT[idx] > 53. and ev.isTracker[muonMatch]
 
 def passTrkID(ev,idx):
     passNVMuHits     = (ev.trk_nValidMuonHits[idx] > 0)
     passNMMuStations = (ev.trk_nMatchedStations[idx] > 1)
     muonMatch = ev.trk_matchedMuIdx[idx]
     if (muonMatch < 0):
+        print "passTrkID: unable to find a matched muon %d"%(muonMatch)
+        sys.stdout.flush()
         return False
     passRelPtErr     = ((ev.ptError[muonMatch]/ev.trackpT[muonMatch]) < 0.3)
     result = passNVMuHits and passNMMuStations and passRelPtErr and ev.isGlobal[muonMatch]
@@ -37,6 +42,8 @@ def passTrkID(ev,idx):
 def passTrkIDTrk(ev,idx):
     muonMatch = ev.trk_matchedMuIdx[idx]
     if (muonMatch < 0):
+        print "passTrkIDTrk: unable to find a matched muon %d"%(muonMatch)
+        sys.stdout.flush()
         return False
     # for track, we want to preliminarily match to the global track tracker information, though we could match to the tracker track
     passNPHits = (ev.pixelHits[muonMatch] > 0)
@@ -84,37 +91,43 @@ for event in mytree:
             if (passMuIDTrk(event,mu)):
                 muNum2PtHisto.Fill(event.trackpT[mu])
 
-    for tk in range(event.nCosmicTracks):
+    for tk in range(nTracks[1]):
         if (passTrkDen(event,10+tk)):
             trkDenPtHisto.Fill(event.trk_trackpT[10+tk])
             if (passTrkID(event,10+tk)):
                 trkNum1PtHisto.Fill(event.trk_trackpT[10+tk])
             if (passTrkIDTrk(event,10+tk)):
                 trkNum2PtHisto.Fill(event.trk_trackpT[10+tk])
+        else:
+            sys.stdout.flush()
+            print "failed track denominator cut"
+            print "track = %d"%(tk)
+            print "track   pt %3.2f, eta %2.2f, phi %2.2f, y %4.2f/%4.2f, matched %d"%(event.trk_trackpT[10+tk],
+                                                                                       event.trk_trackEta[10+tk],
+                                                                                       event.trk_trackPhi[10+tk],
+                                                                                       event.trk_innerY[10+tk],
+                                                                                       event.trk_outerY[10+tk],
+                                                                                       event.trk_matchedMuIdx[10+tk])
+            if (event.trk_matchedMuIdx[10+tk] > -1):
+                print "matched pt %3.2f, eta %2.2f, phi %2.2f, y %4.2f/%4.2f %dt/%dg/%dsa"%(
+                    event.trackpT[event.trk_matchedMuIdx[10+tk]],
+                    event.trackEta[event.trk_matchedMuIdx[10+tk]],
+                    event.trackPhi[event.trk_matchedMuIdx[10+tk]],
+                    event.innerY[event.trk_matchedMuIdx[10+tk]],
+                    event.outerY[event.trk_matchedMuIdx[10+tk]],
+                    event.isTracker[event.trk_matchedMuIdx[10+tk]],
+                    event.isGlobal[event.trk_matchedMuIdx[10+tk]],
+                    event.isStandAlone[event.trk_matchedMuIdx[10+tk]])
                 
-#    for track in range(nTracks[tk]):
-#        print "track = %d"%track
-#        print "track   pt %3.2f, eta %2.2f, phi %2.2f, y %4.2f/%4.2f, matched %d"%(event.trk_trackpT[tk*10+track],
-#                                                                                   event.trk_trackEta[tk*10+track],
-#                                                                                   event.trk_trackPhi[tk*10+track],
-#                                                                                   event.trk_innerY[tk*10+track],
-#                                                                                   event.trk_outerY[tk*10+track],
-#                                                                                   event.trk_matchedMuIdx[tk*10+track])
-#        if (event.trk_matchedMuIdx[tk*10+track] > -1):
-#            print "matched pt %3.2f, eta %2.2f, phi %2.2f, y %4.2f/%4.2f"%(event.trackpT[event.trk_matchedMuIdx[tk*10+track]],
-#                                                                           event.trackEta[event.trk_matchedMuIdx[tk*10+track]],
-#                                                                           event.trackPhi[event.trk_matchedMuIdx[tk*10+track]],
-#                                                                           event.innerY[event.trk_matchedMuIdx[tk*10+track]],
-#                                                                           event.outerY[event.trk_matchedMuIdx[tk*10+track]])
-#            
-#        print "p %d, tk %d, mSH %d, nVH %d, nVMH %d, nMS %d, nTLM %d"%(event.trk_pixelHits[tk*10+track],
-#                                                                       event.trk_trackerHits[tk*10+track],
-#                                                                       event.trk_muonStationHits[tk*10+track],
-#                                                                       event.trk_nValidHits[tk*10+track],
-#                                                                       event.trk_nValidMuonHits[tk*10+track],
-#                                                                       event.trk_nMatchedStations[tk*10+track],
-#                                                                       event.trk_tkLayersWMeas[tk*10+track])
+            print "p %d, tk %d, mSH %d, nVH %d, nVMH %d, nMS %d, nTLM %d"%(event.trk_pixelHits[10+tk],
+                                                                           event.trk_trackerHits[10+tk],
+                                                                           event.trk_muonStationHits[10+tk],
+                                                                           event.trk_nValidHits[10+tk],
+                                                                           event.trk_nValidMuonHits[10+tk],
+                                                                           event.trk_nMatchedStations[10+tk],
+                                                                           event.trk_tkLayersWMeas[10+tk])
 
+            sys.stdout.flush()
 outfile.cd()
 muDenPtHisto.Write()
 muNum1PtHisto.Write()

@@ -101,9 +101,6 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
   nCosmicTracks  = cosmicTrackColl->size();
   nTrackerTracks = trackerTrackColl->size();
     
-  matchDR = 100.;  matchDEta = 100.;  matchDPhi = 100.;
-  foundMatch = -1;
-    
   for (int idx = 0; idx < 10; ++idx) {
     muon_isGlobal    [idx] = -1;
     muon_isTracker   [idx] = -1;
@@ -467,11 +464,6 @@ void MuonTree::beginJob()
   muonTree->Branch("event",      &event,      "event/I"     );
   muonTree->Branch("run",        &run,        "run/I"       );
   muonTree->Branch("lumi",       &lumi,       "lumi/I"      );
-
-  muonTree->Branch("matchDR",    &matchDR,    "matchDR/D"   );
-  muonTree->Branch("matchDPhi",  &matchDPhi,  "matchDPhi/D" );
-  muonTree->Branch("matchDEta",  &matchDEta,  "matchDEta/D" );
-  muonTree->Branch("foundMatch", &foundMatch, "foundMatch/I");
 
   // variables per muon ([nMuons] indexed)
   muonTree->Branch("globalpT",  muon_pT,  "globalpT[nMuons]/D" );
