@@ -16,16 +16,26 @@ process.source = cms.Source("PoolSource",
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
-process.COSMICoutput.fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_76X_generic.root')
+process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
+process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_CRAFT15_CosmicSP_76X.root')
 
-from WSUDiLeptons.MuonAnalyzer.wsuMuonTree_cfi import muonTree
+from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
+process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
+
+from WSUDiLeptons.MuonAnalyzer.wsuMuonTree_cfi import *
+
+## for comparing with standard collision data/MC
+# can't get y position from AOD/AODSIM, lives in TrackExtra not stored in AOD
+#process.cosmicMuonTracks.src  = cms.InputTag("standAloneMuons")
+#process.globalMuonTracks.src  = cms.InputTag("globalMuons")
+#process.trackerMuonTracks.src = cms.InputTag("generalTracks")
 
 process.analysisMuons = muonTree.clone(
     muonSrc     = cms.InputTag("betterMuons"),
     upperLegSrc = cms.InputTag("betterMuons"),
     lowerLegSrc = cms.InputTag("betterMuons"),
     algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
+    debug       = cms.int32(2)
 )
 process.analysisGlobalMuons = muonTree.clone(
     muonSrc     = cms.InputTag("globalMuons"),
@@ -99,17 +109,23 @@ process.muonanalysis = cms.Path(
     +process.lowerMuons
     +process.upperGlobalMuons
     +process.lowerGlobalMuons
+    +process.cosmicMuonTracks
+    +process.globalMuonTracks
+    +process.trackerMuonTracks
+    +process.cosmicSPMuonTracks
+    +process.globalSPMuonTracks
+    +process.trackerSPMuonTracks
     +process.muonSPFilter
     #+process.globalMuonSPFilter
     #+process.analysisMuons
     #+process.analysisGlobalMuons
-    #+process.analysisSPMuons
+    +process.analysisSPMuons
     #+process.analysisGlobalSPMuons
-    +process.analysisTrackerMuons
-    +process.analysisTPFMSMuons
-    +process.analysisDYTMuons
-    +process.analysisPickyMuons
-    +process.analysisTunePMuons
+    #+process.analysisTrackerMuons
+    #+process.analysisTPFMSMuons
+    #+process.analysisDYTMuons
+    #+process.analysisPickyMuons
+    #+process.analysisTunePMuons
     )
 
 # generate EDM output
@@ -118,5 +134,5 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-#    ,process.COSMICoutput_step
+    ,process.COSMICoutput_step
 )

@@ -3,25 +3,24 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_('General')
-config.General.requestName = 'MuonEfficiencyTree_CRAFT15_Feb23'
+config.General.requestName = 'MuonEfficiencyTree_startup_peak_p500_Feb25'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'wsuMuonTree_data.py'
+config.JobType.psetName = 'wsuMuonTree_MC.py'
 
 config.section_('Data')
-config.Data.inputDataset = '/Cosmics/Commissioning2015-CosmicSP-20Jan2016-v1/RAW-RECO'
+config.Data.inputDataset = '/SPLooseMuCosmic_38T_p500/CosmicWinter15DR-startupPEAK_76X_mcRun2cosmics_startup_peak_v0-v1/GEN-SIM-RECO'
 config.Data.inputDBS = 'global'
-config.Data.splitting = 'LumiBased'
-config.Data.unitsPerJob = 200
-config.Data.lumiMask = 'http://cmsdoc.cern.ch/~sturdy/Cosmics/JSON/cosmics_CRAFT15_pix_strip_DT_RPC_complete.json'
+config.Data.splitting = 'FileBased'
+config.Data.unitsPerJob = 5
 config.Data.allowNonValidInputDataset = True
 #config.Data.publication = True
 config.Data.outLFNDirBase = '/store/user/sturdy/MuonEfficiency'
-config.Data.outputDatasetTag = 'MuonEfficiencyTree_CRAFT15_Feb23'
+config.Data.outputDatasetTag = 'MuonEfficiencyTree_startup_peak_p500_Feb25'
 
 config.section_('Site')
 config.Site.storageSite = 'T3_US_FNALLPC'

@@ -228,6 +228,9 @@ void Plot(std::string const& filelist, std::string const& outFile,
     "54"
   };
   
+  // turn on Sumw2 by default
+  TH1::SetDefaultSumw2();
+  
   TH1I *h_countersUpper = new TH1I("upperCounters","upperCounters",55, -0.5, 54.5);
   TH1I *h_countersLower = new TH1I("lowerCounters","lowerCounters",55, -0.5, 54.5);
   

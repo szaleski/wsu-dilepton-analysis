@@ -37,26 +37,21 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   bool debug = debug_;
   
   if (debug) {
-    std::cout<<"arg 1 is:  " << filelist   << std::endl;
-    std::cout<<"arg 2 is:  " << outFile    << std::endl;
-    std::cout<<"arg 3 is:  " << trackVal_  << std::endl;
-    std::cout<<"arg 4 is:  " << minPt_     << std::endl;
-    std::cout<<"arg 5 is:  " << maxBias_   << std::endl;
-    std::cout<<"arg 6 is:  " << nBiasBins_ << std::endl;
-    std::cout<<"arg 7 is:  " << factor_    << std::endl;
-    std::cout<<"arg 8 is:  " << symmetric_ << std::endl;
+    std::cout << "arg 1 is:  " << filelist   << std::endl;
+    std::cout << "arg 2 is:  " << outFile    << std::endl;
+    std::cout << "arg 3 is:  " << trackVal_  << std::endl;
+    std::cout << "arg 4 is:  " << minPt_     << std::endl;
+    std::cout << "arg 5 is:  " << maxBias_   << std::endl;
+    std::cout << "arg 6 is:  " << nBiasBins_ << std::endl;
+    std::cout << "arg 7 is:  " << factor_    << std::endl;
+    std::cout << "arg 8 is:  " << symmetric_ << std::endl;
+    std::cout << "arg 9 is:  " << debug_     << std::endl;
   }
   
   TFile *g;
   TChain *myChain;
 
   std::string trackAlgo;
-  std::ofstream lumiFileOut100_loose;
-  std::ofstream lumiFileOut200_loose;
-  std::ofstream lumiFileOut400_loose;
-  std::ofstream lumiFileOut100_tight;
-  std::ofstream lumiFileOut200_tight;
-  std::ofstream lumiFileOut400_tight;
   
   std::string outname;
 
@@ -139,7 +134,7 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   
   std::ifstream file(inputfiles.str());
   std:: cout << "opening input file list "
-	     << inputfiles.str() << std::hex << "  " << file << std::endl;
+	     << inputfiles.str() << std::hex << "  " << file << std::dec << std::endl;
 
   while (std::getline(file,name)) {
     std::stringstream newString;
@@ -192,32 +187,16 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<int>    run(  trackReader, "run"  );
   TTreeReaderValue<int>    lumi( trackReader, "lumi"  );
-  if (lumi.GetSetupStatus() < 0) {
-    std::cerr << "Error " << lumi.GetSetupStatus()
-	      << "setting up reader for " << lumi.GetBranchName() << '\n';
-  }
   TTreeReaderValue<int>    event(trackReader, "event");
-  if (event.GetSetupStatus() < 0) {
-    std::cerr << "Error " << event.GetSetupStatus()
-	      << "setting up reader for " << event.GetBranchName() << '\n';
-  }
   
   TTreeReaderValue<int> nMuons(    trackReader, "nMuons"    );
   TTreeReaderValue<int> nUpperLegs(trackReader, "nUpperLegs");
   TTreeReaderValue<int> nLowerLegs(trackReader, "nLowerLegs");
 
-  TTreeReaderArray<math::XYZTLorentzVector> MuonP4(trackReader,"muonP4"  );
-  TTreeReaderArray<math::XYZVector>         Track( trackReader,"trackVec");
-  if (Track.GetSetupStatus() < 0) {
-    std::cerr << "Error " << Track.GetSetupStatus()
-	      << "setting up reader for " << Track.GetBranchName() << '\n';
-  }
+  //TTreeReaderArray<math::XYZTLorentzVector> MuonP4(trackReader,"muonP4"  );
+  //TTreeReaderArray<math::XYZVector>         Track( trackReader,"trackVec");
   
   TTreeReaderArray<int>    isGlobal(    trackReader, "isGlobal"    );
-  if (isGlobal.GetSetupStatus() < 0) {
-    std::cerr << "Error " << isGlobal.GetSetupStatus()
-	      << "setting up reader for " << isGlobal.GetBranchName() << '\n';
-  }
   TTreeReaderArray<int>    isTracker(   trackReader, "isTracker"   );
   TTreeReaderArray<int>    isStandAlone(trackReader, "isStandAlone");
 
@@ -244,15 +223,38 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TTreeReaderArray<int> ValidMuonHits(        trackReader, "nValidMuonHits"  );
   TTreeReaderArray<int> MatchedMuonStations(  trackReader, "nMatchedStations");
   TTreeReaderArray<int> LayersWithMeasurement(trackReader, "tkLayersWMeas"   );
+
+  // track variables [3][10]
+  TTreeReaderArray<double> trk_trackPt( trackReader, "trk_trackpT" );
+  TTreeReaderArray<double> trk_trackEta(trackReader, "trk_trackEta");
+  TTreeReaderArray<double> trk_trackPhi(trackReader, "trk_trackPhi");
+  TTreeReaderArray<int>    trk_Charge(  trackReader, "trk_charge"  );
+  TTreeReaderArray<double> trk_Chi2(    trackReader, "trk_chi2"    );
+  TTreeReaderArray<int>    trk_Ndof(    trackReader, "trk_ndof"    );
+  TTreeReaderArray<double> trk_Dxy(     trackReader, "trk_dxy"     );
+  TTreeReaderArray<double> trk_Dz(      trackReader, "trk_dz"      );
+  TTreeReaderArray<double> trk_DxyError(trackReader, "trk_dxyError");
+  TTreeReaderArray<double> trk_DzError( trackReader, "trk_dzError" );
+  TTreeReaderArray<double> trk_PtError( trackReader, "trk_ptError" );
+
+  TTreeReaderArray<int> trk_matchedMuIdx(         trackReader, "trk_matchedMuIdx"    );
+
+  TTreeReaderArray<int> trk_Phits(                trackReader, "trk_pixelHits"       );
+  TTreeReaderArray<int> trk_Thits(                trackReader, "trk_trackerHits"     );
+  TTreeReaderArray<int> trk_Mhits(                trackReader, "trk_muonStationHits" );
+  TTreeReaderArray<int> trk_ValidHits(            trackReader, "trk_nValidHits"      );
+  TTreeReaderArray<int> trk_ValidMuonHits(        trackReader, "trk_nValidMuonHits"  );
+  TTreeReaderArray<int> trk_MatchedMuonStations(  trackReader, "trk_nMatchedStations");
+  TTreeReaderArray<int> trk_LayersWithMeasurement(trackReader, "trk_tkLayersWMeas"   );
   
   if (debug)
     std::cout << "Made it to Histogramming!" << std::endl;
   int j = 0;
   double maxDR = 0.15; // what is reasonable here? Aachen did dPhi < 0.1, dTheta (eta?) < 0.05
+  g->cd();
   while (trackReader.Next()) {
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
-    g->cd();
     
     // only consider events with at most one upper/lower leg for now
     if (*nUpperLegs > 1 && *nLowerLegs > 1)
@@ -263,67 +265,67 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
       if (debug)
 	std::cout << "looping over muons on index " << muIdx 
 		  << ", chi2=" << Chi2[muIdx] << std::endl;
-      //if (Chi2[muIdx] > -1) {
-	if (!(trackPt[muIdx] > 0))
-	  continue;
+      if (!(trackPt[muIdx] > 0))
+	continue;
 	
-	double RelPtErr = PtError[muIdx]/(trackPt[muIdx]);
+      double RelPtErr = PtError[muIdx]/(trackPt[muIdx]);
       
-	bool MuStationHits = MatchedMuonStations[muIdx] > 1;
-	bool ValidMuHits   = (!istrackerp || (istunep && trackPt[muIdx] > 200)) ? ValidMuonHits[muIdx] > 0 : 1;
+      bool MuStationHits = MatchedMuonStations[muIdx] > 1;
+      //bool ValidMuHits   = (!istrackerp || (istunep && trackPt[muIdx] > 200)) ? ValidMuonHits[muIdx] > 0 : 1;
+      bool ValidMuHits   = ValidMuonHits[muIdx] > 0;
 
-	bool passRECO = ((RelPtErr   < 0.3) && (Phits[muIdx] > 0  ) && (LayersWithMeasurement[muIdx] > 5)) ? 1 : 0;
-	bool passID   = (ValidMuHits && MuStationHits) ? 1 : 0;
+      bool passRECO = ((RelPtErr   < 0.3) && (Phits[muIdx] > 0  ) && (LayersWithMeasurement[muIdx] > 5)) ? 1 : 0;
+      bool passID   = (ValidMuHits && MuStationHits) ? 1 : 0;
 
-	h_Pt->Fill( globalPt[muIdx] );
-	h_Eta->Fill(globalEta[muIdx]);
-	h_Phi->Fill(globalPhi[muIdx]);
+      h_Pt->Fill( globalPt[muIdx] );
+      h_Eta->Fill(globalEta[muIdx]);
+      h_Phi->Fill(globalPhi[muIdx]);
 	
-	h_TrackPt->Fill(  trackPt[muIdx] );
-	h_TrackEta->Fill( trackEta[muIdx]);
-	h_TrackPhi->Fill( trackPhi[muIdx]);
+      h_TrackPt->Fill(  trackPt[muIdx] );
+      h_TrackEta->Fill( trackEta[muIdx]);
+      h_TrackPhi->Fill( trackPhi[muIdx]);
 
-	if (passRECO) {
-	  h_passRECOPt->Fill( globalPt[muIdx] );
-	  h_passRECOEta->Fill(globalEta[muIdx]);
-	  h_passRECOPhi->Fill(globalPhi[muIdx]);
+      if (passRECO) {
+	h_passRECOPt->Fill( globalPt[muIdx] );
+	h_passRECOEta->Fill(globalEta[muIdx]);
+	h_passRECOPhi->Fill(globalPhi[muIdx]);
 	  
-	  h_passRECOTrackPt->Fill(  trackPt[muIdx] );
-	  h_passRECOTrackEta->Fill( trackEta[muIdx]);
-	  h_passRECOTrackPhi->Fill( trackPhi[muIdx]);
-	}
+	h_passRECOTrackPt->Fill(  trackPt[muIdx] );
+	h_passRECOTrackEta->Fill( trackEta[muIdx]);
+	h_passRECOTrackPhi->Fill( trackPhi[muIdx]);
+      }
 
-	if (passID) {
-	  h_passIDPt->Fill( globalPt[muIdx] );
-	  h_passIDEta->Fill(globalEta[muIdx]);
-	  h_passIDPhi->Fill(globalPhi[muIdx]);
+      if (passID) {
+	h_passIDPt->Fill( globalPt[muIdx] );
+	h_passIDEta->Fill(globalEta[muIdx]);
+	h_passIDPhi->Fill(globalPhi[muIdx]);
 	  
-	  h_passIDTrackPt->Fill( trackPt[muIdx] );
-	  h_passIDTrackEta->Fill(trackEta[muIdx]);
-	  h_passIDTrackPhi->Fill(trackPhi[muIdx]);
-	}
+	h_passIDTrackPt->Fill( trackPt[muIdx] );
+	h_passIDTrackEta->Fill(trackEta[muIdx]);
+	h_passIDTrackPhi->Fill(trackPhi[muIdx]);
+      }
 	
-	if (passRECO && passID) {
-	  h_passRECOIDPt->Fill( globalPt[muIdx] );
-	  h_passRECOIDEta->Fill(globalEta[muIdx]);
-	  h_passRECOIDPhi->Fill(globalPhi[muIdx]);
+      if (passRECO && passID) {
+	h_passRECOIDPt->Fill( globalPt[muIdx] );
+	h_passRECOIDEta->Fill(globalEta[muIdx]);
+	h_passRECOIDPhi->Fill(globalPhi[muIdx]);
 	  
-	  h_passRECOIDTrackPt->Fill( trackPt[muIdx] );
-	  h_passRECOIDTrackEta->Fill(trackEta[muIdx]);
-	  h_passRECOIDTrackPhi->Fill(trackPhi[muIdx]);
-	}
-	
+	h_passRECOIDTrackPt->Fill( trackPt[muIdx] );
+	h_passRECOIDTrackEta->Fill(trackEta[muIdx]);
+	h_passRECOIDTrackPhi->Fill(trackPhi[muIdx]);
+      }
+
+      if (debug)
 	std::cout << "pt="      << trackPt[muIdx]
 		  << ",eta="    << trackEta[muIdx]
 		  << ",phi="    << trackPhi[muIdx]
 		  << ",charge=" << (int)Charge[muIdx]
-		  << std::endl
 		  << std::endl;
 	
-	//} // closing if (Chi2[muIdx] > -1)
     } // end for loop
   } // end while loop
-  
+
+  std::cout << "end of the routine" << std::endl;
   g->Write();
   g->Close();
   

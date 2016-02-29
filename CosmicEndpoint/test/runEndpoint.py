@@ -10,11 +10,11 @@ from cosmicEndpointShort import cosmicEndpointShort
 if __name__ == "__main__":
     parser = OptionParser()
     parser.add_option("-n", "--nbiasbins", type="int", dest="nbiasbins",
-                      metavar="nbiasbins", default=1000,
-                      help="[OPTIONAL] Number of steps used to bias the curvature (default is 1000)")
+                      metavar="nbiasbins", default=2500,
+                      help="[OPTIONAL] Number of steps used to bias the curvature (default is 2500)")
     parser.add_option("-t", "--totalbins", type="int", dest="totalbins",
-                      metavar="totalbins", default=5000,
-                      help="[OPTIONAL] Total number of bins in the original curvature distribution (default is 5000)")
+                      metavar="totalbins", default=1500,
+                      help="[OPTIONAL] Total number of bins in the original curvature distribution (default is 1500)")
     parser.add_option("-r", "--rebins", type="int", dest="rebins",
                       metavar="rebins", default=1,
                       help="[OPTIONAL] Number of bins to merge into one in the input histograms (default is 1, no merging)")
@@ -22,8 +22,8 @@ if __name__ == "__main__":
                       metavar="factor", default=1000,
                       help="[OPTIONAL] Multiplicative factor on the curvature (default is 1000)")
     parser.add_option("-b", "--maxbias", type="float", dest="maxbias",
-                      metavar="maxbias", default=0.005,
-                      help="[] Maximum bias that was injected into the curvature")
+                      metavar="maxbias", default=0.0005,
+                      help="[] Maximum bias that was injected into the curvature (default is 0.0005/GeV")
     parser.add_option("-i", "--infiledir", type="string", dest="infiledir",
                       metavar="infiledir",
                       help="[REQUIRED] Location of the input ROOT files")
