@@ -158,7 +158,6 @@ process.analysisTunePMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("globalSPMuons"),
     tagLegSrc   = cms.InputTag("upperGlobalMuons"),
     probeLegSrc = cms.InputTag("lowerGlobalMuons"),
->>>>>>> 41dbb30cefaa8e0ae726405a379693766cd61c48
     algoType    = cms.int32(5),
     debug       = cms.int32(1)
 )

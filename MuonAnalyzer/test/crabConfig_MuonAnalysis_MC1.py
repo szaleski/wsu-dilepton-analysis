@@ -12,7 +12,7 @@ config.JobType.psetName = 'wsuMuonAnalyzer_MC.py'
 #config.JobType.outputFiles = ['Commisioning2015.root']
 #config.JobType.pyCfgParams = []
 config.section_('Data')
-config.Data.inputDataset = ''
+config.Data.inputDataset = '/SPLooseMuCosmic_38T_p100/CosmicWinter15DR-DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/GEN-SIM-RECO'
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 200
