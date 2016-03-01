@@ -3,22 +3,22 @@ datafiles = [
     #'root://xrootd.unl.edu// #alternate redirector
     #'root://cmssrv32.fnal.gov// #alternate redirector
     #'root://// #alternate redirector
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/04D80F2D-84D0-E511-8816-00266CFAE074.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/24A57E51-31D0-E511-93BA-0025904C4E2A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/340C8AE7-C8CF-E511-97FB-008CFA197D38.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/74C802EA-23D0-E511-ACFB-008CFA0A5A10.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/8034E2A8-30D0-E511-BEC6-0025905C3D6A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B01B232A-84D0-E511-9692-7845C4FC3653.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B0B9053D-C9CF-E511-82A6-0025905C9740.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/C8CA6E2B-84D0-E511-91DD-7845C4FC346A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/D222FD2B-84D0-E511-A1D7-848F69FD2D6F.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/DEA204B0-30D0-E511-8C67-0025904C637A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/02E95119-73CC-E511-838D-0CC47A4D767E.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/18134830-8EC8-E511-B04C-0CC47A1DF64A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/1A9368F1-22CB-E511-8087-0025905A606A.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/20AE4631-7FCB-E511-BE42-0CC47A4C8F18.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/2A42C2B4-66C9-E511-B5B5-0025904C67B8.root',
-    '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/347B7EAD-36CA-E511-A446-C4346BC8D390.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/04D80F2D-84D0-E511-8816-00266CFAE074.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/24A57E51-31D0-E511-93BA-0025904C4E2A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/340C8AE7-C8CF-E511-97FB-008CFA197D38.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/74C802EA-23D0-E511-ACFB-008CFA0A5A10.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/8034E2A8-30D0-E511-BEC6-0025905C3D6A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B01B232A-84D0-E511-9692-7845C4FC3653.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/B0B9053D-C9CF-E511-82A6-0025905C9740.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/C8CA6E2B-84D0-E511-91DD-7845C4FC346A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/D222FD2B-84D0-E511-A1D7-848F69FD2D6F.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/DEA204B0-30D0-E511-8C67-0025904C637A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/02E95119-73CC-E511-838D-0CC47A4D767E.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/18134830-8EC8-E511-B04C-0CC47A1DF64A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/1A9368F1-22CB-E511-8087-0025905A606A.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/20AE4631-7FCB-E511-BE42-0CC47A4C8F18.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/2A42C2B4-66C9-E511-B5B5-0025904C67B8.root',
+    'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/347B7EAD-36CA-E511-A446-C4346BC8D390.root',
 ]
 
 mcfiles = [
@@ -42,4 +42,16 @@ mcfiles = [
     'root://xrootd.unl.edu///store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/163BFE7E-89C5-E511-AEFE-00259021A39E.root',
     'root://xrootd.unl.edu///store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/165F29F4-88C5-E511-9D0A-20CF3019DEEF.root',
     'root://xrootd.unl.edu///store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/70000/1890F42B-8AC5-E511-A6E3-20CF3027A592.root',
+]
+
+dyfiles = [
+    #'root://cms-xrd-global.cern.ch// #alternate redirector
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/06F87189-A0B0-E511-831B-001EC9ADC226.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/123CDF8D-3EB0-E511-AF0A-D8D385AE8A88.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/4A802170-3EB0-E511-9DAB-901B0E6459DE.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/6AEA8BE4-2FB0-E511-8705-D8D385AF8A12.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/9CFCAC5E-A0B0-E511-A734-0025907B4F78.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/A64E0A47-3BB0-E511-9A15-D8D385FF1914.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/B4AD4377-A0B0-E511-9C0C-34E6D7BDDEE8.root',
+    '/store/mc/RunIIFall15DR76/ZToMuMu_NNPDF30_13TeV-powheg_M_120_200/AODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12-v1/70000/DE8B5A17-37B0-E511-863E-B499BAABD28C.root' ,
 ]
