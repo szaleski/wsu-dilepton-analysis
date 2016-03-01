@@ -222,16 +222,17 @@ class cosmicEndpointShort() :
 
         #print obs, ref
 
-        mode = 4
-        self.calculateChi2(obs,ref,0,False,False)
-        self.calculateChi2(obs,ref,1,False,False)
-        self.calculateChi2(obs,ref,2,False,False)
-        self.calculateChi2(obs,ref,3,False,False)
-        self.calculateChi2(obs,ref,4,False,False)
-        # should perhaps return chi2/ndof?
-        xVals["chi2"][nBiasBins] = 0.
-        curvatureChi2 = self.calculateChi2(obs,ref,mode)
-        yVals["chi2"][nBiasBins] = curvatureChi2[1]
+        #not now#mode = 4
+        #not now#self.calculateChi2(obs,ref,0,False,False)
+        #not now#self.calculateChi2(obs,ref,1,False,False)
+        #not now#self.calculateChi2(obs,ref,2,False,False)
+        #not now#self.calculateChi2(obs,ref,3,False,False)
+        #not now#self.calculateChi2(obs,ref,4,False,False)
+        #not now## should perhaps return chi2/ndof?
+        #not now#xVals["chi2"][nBiasBins] = 0.
+        #not now#curvatureChi2 = self.calculateChi2(obs,ref,mode)
+        #not now#print "curvatureChi2",curvatureChi2
+        #not now#yVals["chi2"][nBiasBins] = curvatureChi2[1]
 
         # these are seeming to not work...
         xVals["KS"][nBiasBins] = 0.
@@ -240,7 +241,7 @@ class cosmicEndpointShort() :
         xVals["AD"][nBiasBins] = 0.
         yVals["AD"][nBiasBins] = obs.AndersonDarlingTest(ref,"D")
 
-        chi2opts = "PUUNORMCHI2/NDF"
+        chi2opts = "P,UU,NORM,CHI2/NDF"
         xVals["Chi2"][nBiasBins] = 0.
         resids = np.zeros(self.nTotalBins,np.dtype('float64')) # pointer argument, one per bin, not quite working
         #yVals["Chi2"][nBiasBins] = obs.Chi2Test(ref,"PCHI2/NDF",resids)
@@ -267,7 +268,7 @@ class cosmicEndpointShort() :
         chi2Val  = r.Double(0.) # necessary for pass-by-reference in python
         chi2ndf  = r.Long(0)    # necessary for pass-by-reference in python
         igood    = r.Long(0)    # necessary for pass-by-reference in python
-        histopts = "UUNORM" # unweighted/weighted, normalized
+        histopts = "UU,NORM" # unweighted/unweighted, normalized
         #histopts = "UUNORM" # unweighted/weighted, normalized
         
         #dummy = obs.Chi2Test(ref,"PCHI2/NDF")       # default options, return chi2/ndf, print summary
@@ -478,9 +479,9 @@ class cosmicEndpointShort() :
                 #self.outdirs["obs_%s"%(obsName)][trackName].Write()
             
             biasVal = (i+1)*(factor*maxBias/nBiasBins)
-            xVals["chi2"][nBiasBins+1+i] = biasVal
-            positiveBias = self.calculateChi2(obs_posBias,ref_posBias,mode)
-            yVals["chi2"][nBiasBins+1+i] = positiveBias[1]
+            #not now#xVals["chi2"][nBiasBins+1+i] = biasVal
+            #not now#positiveBias = self.calculateChi2(obs_posBias,ref_posBias,mode)
+            #not now#yVals["chi2"][nBiasBins+1+i] = positiveBias[1]
             #if getResiduals:
             #    residualCan = r.TCanvas("%s_%s_bin%03d_residual"%(histBaseName,trackName,i+1),
             #                            "%s_%s_bin%03d_residual"%(histBaseName,trackName,i+1),
@@ -530,9 +531,9 @@ class cosmicEndpointShort() :
 
             
             ## negative injected bias
-            xVals["chi2"][nBiasBins-(i+1)] = -1.*biasVal
-            negativeBias = self.calculateChi2(obs_negBias,ref_negBias,mode)
-            yVals["chi2"][nBiasBins-(i+1)] = negativeBias[1]
+            #not nowxVals["chi2"][nBiasBins-(i+1)] = -1.*biasVal
+            #not nownegativeBias = self.calculateChi2(obs_negBias,ref_negBias,mode)
+            #not nowyVals["chi2"][nBiasBins-(i+1)] = negativeBias[1]
             #if getResiduals:
             #    negativeBias[0].SetLineColor(r.kBlue)
             #    negativeBias[0].SetLineWidth(2)
