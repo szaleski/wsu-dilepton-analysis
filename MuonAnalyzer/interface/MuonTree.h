@@ -18,7 +18,6 @@
 #include <DataFormats/MuonReco/interface/MuonCocktails.h>
 #include <DataFormats/MuonReco/interface/MuonFwd.h>
 #include "DataFormats/MuonReco/interface/Muon.h"
-#include "DataFormats/MuonReco/src/Muon.cc"
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
 
@@ -30,12 +29,8 @@
 #include <TH2.h>
 #include <TH1.h>
 #include "TROOT.h"
-#include "TFile.h"
 #include "TLorentzVector.h"
-#include "TBrowser.h"
 #include "TMath.h"
-#include "TRandom.h"
-#include "TCanvas.h"
 
 
 //

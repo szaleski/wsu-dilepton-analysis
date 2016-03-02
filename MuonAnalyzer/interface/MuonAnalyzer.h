@@ -29,12 +29,8 @@
 #include <TH2.h>
 #include <TH1.h>
 #include "TROOT.h"
-#include "TFile.h"
 #include "TLorentzVector.h"
-#include "TBrowser.h"
 #include "TMath.h"
-#include "TRandom.h"
-#include "TCanvas.h"
 
 
 //
