@@ -5,7 +5,7 @@ import sys,os
 import numpy as np
 
 from optparse import OptionParser
-from wsuPythonUtils import checkRequiredArguments,setMinPT
+from wsuPythonUtils import *
 
 if __name__ == "__main__":
     parser = OptionParser(usage="Usage: %prog -i inputfile.root -o outputfile.root [-d]")
@@ -31,33 +31,56 @@ if __name__ == "__main__":
                       metavar="debug",
                       help="[OPTIONAL] Debug mode")
     parser.add_option("--histbase", type="string", dest="histbase",
-                      metavar="histbase", default="looseMuUpper",
-                      help="[OPTIONAL] Base name of the histogram object (default is \"looseMuUpper\")")
+                      metavar="histbase", default="looseMuLower",
+                      help="[OPTIONAL] Base name of the histogram object (default is \"looseMuLower\")")
     
     (options, args) = parser.parse_args()
     print options
     print args
-    checkRequiredArguments(options, parser)
+
+    if not options.debug:
+        print "setting batch mode True"
+        r.gROOT.SetBatch(True)
+    else:
+        print "setting batch mode False"
+        r.gROOT.SetBatch(False)
+
+        checkRequiredArguments(options, parser)
     myInFileName = options.infile
     myInFile = r.TFile(myInFileName,"READ")
-    
+
     gifDir = "sampleGif"
     histName = options.histbase
+
+    testHist = myInFile.Get("%s%s"%(histName,"PlusCurve")).Clone("test")
+    testHist = setMinPT(testHist,options.totalbins,200./1000.,True)
+    testHist.Rebin(options.rebins)
+    posmax = testHist.GetMaximum()
+
+    #need two arrays, length = (2*nBiasBins)+1
+    xVals = np.zeros(2*options.biasbins/options.stepsize+1,np.dtype('float64'))
+    
+    yVals = {}
+    for test in ["KS","Chi2"]:
+        yVals[test] = np.zeros(2*options.biasbins/options.stepsize+1,np.dtype('float64'))
+                                                                
     gifcanvas = r.TCanvas("gifcanvas","gifcanvas",750,750)
     r.gStyle.SetOptStat(0)
     print histName
     for step in range(0,options.biasbins/options.stepsize):
         gifcanvas.cd()
         negBias = myInFile.Get("%s%sMinusBias%03d"%(histName,"MinusCurve",options.biasbins-step*options.stepsize))
-        negBias = setMinPT(negBias,options.totalbins,200./1000.,True)
-        negBias.Rebin(options.rebins)
         posBias = myInFile.Get("%s%sMinusBias%03d"%(histName,"PlusCurve", options.biasbins-step*options.stepsize))
-        posBias = setMinPT(posBias,options.totalbins,200./1000.,True)
+        negBias.Rebin(options.rebins)
+        negBias = setMinPT(negBias,options.totalbins,200./1000.,True)
         posBias.Rebin(options.rebins)
+        posBias = setMinPT(posBias,options.totalbins,200./1000.,True)
         neginto = negBias.Integral()
         posinto = posBias.Integral()
         if (negBias.Integral()>0):
             negBias.Scale(posBias.Integral()/negBias.Integral())
+        else:
+            print "unable to scale neg histogram, integral is 0"
         neginta = negBias.Integral()
         posinta = posBias.Integral()
         negBias.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%(-(options.maxbias/options.biasbins)*(options.biasbins-step*options.stepsize)))
@@ -65,10 +88,11 @@ if __name__ == "__main__":
         negBias.SetLineWidth(2)
         negBias.Draw()
         negBias.GetXaxis().SetTitle("#kappa [c/TeV]")
-        negBias.SetMaximum(125)
+        negBias.SetMaximum(1.2*posmax)
         posBias.SetLineColor(r.kBlue)
         posBias.SetLineWidth(2)
         posBias.Draw("same")
+        flipHist(negBias).Draw("same")
         r.gPad.Update()
         #negBias.FindObject("stats").SetOptStat(0)
         #posBias.FindObject("stats").SetOptStat(0)
@@ -76,73 +100,96 @@ if __name__ == "__main__":
         chi2Val  = r.Double(0.) # necessary for pass-by-reference in python
         chi2ndf  = r.Long(0)    # necessary for pass-by-reference in python
         igood    = r.Long(0)    # necessary for pass-by-reference in python
-        histopts = "UUNORM" # unweighted/weighted, normalized
+        histopts = "UU,NORM" # unweighted/weighted, normalized
         resids = np.zeros(posBias.GetNbinsX(),np.dtype('float64')) # pointer argument, one per bin, not quite working
         #print "getting the probability"
-        prob = posBias.Chi2TestX(negBias,chi2Val,chi2ndf,igood,histopts,resids)
-        thelegend = r.TLegend(0.6,0.75,0.8,0.9)
-        thelegend.SetHeader("#chi^{2}/ndf = %2.2f(%2.2f/%d)"%(chi2Val/chi2ndf,chi2Val,chi2ndf))
+        prob   = posBias.Chi2TestX(flipHist(negBias),chi2Val,chi2ndf,igood,histopts,resids)
+        ksprob = posBias.KolmogorovTest(flipHist(negBias),"D")
+        xVals[step] = -(options.maxbias/options.biasbins)*(options.biasbins-step*options.stepsize)
+        yVals["Chi2"][step] = chi2Val/chi2ndf
+        yVals["KS"][step]   = ksprob
+        thelegend = r.TLegend(0.35,0.7,0.65,0.9)
+        thelegend.SetHeader("""#chi^{2}/ndf = %2.2f(%2.2f/%d)\n
+#KS prob = %2.4e"""%(chi2Val/chi2ndf,chi2Val,chi2ndf,ksprob))
         thelegend.AddEntry(posBias,"#mu+ (%d,%d)"%(posinto,posinta))
         thelegend.AddEntry(negBias,"#mu- (%d,%d)"%(neginto,neginta))
+        thelegend.AddEntry(negBias,"#mu- (%d,%d) (flipped)"%(neginto,neginta))
         gifcanvas.cd()
         thelegend.Draw()
         r.gPad.Update()
         gifcanvas.SaveAs("%s/biasBin%04d_sym.png"%(gifDir,step*options.stepsize))
 
+    if options.debug:
+        raw_input("press enter to exit")
     gifcanvas.cd()
-    negBias = myInFile.Get("%s%s"%(histName,"MinusCurve"))
-    negBias = setMinPT(negBias,options.totalbins,200./1000.,True)
-    negBias.Rebin(options.rebins)
-    posBias = myInFile.Get("%s%s"%(histName,"PlusCurve"))
-    posBias = setMinPT(posBias,options.totalbins,200./1000.,True)
-    posBias.Rebin(options.rebins)
-    neginto = negBias.Integral()
-    posinto = posBias.Integral()
-    if (negBias.Integral()>0):
-        negBias.Scale(posBias.Integral()/negBias.Integral())
-    neginta = negBias.Integral()
-    posinta = posBias.Integral()
-    negBias.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%(0))
-    negBias.SetLineColor(r.kRed)
-    negBias.SetLineWidth(2)
-    negBias.Draw()
-    negBias.GetXaxis().SetTitle("#kappa [c/TeV]")
-    negBias.SetMaximum(125)
-    posBias.SetLineColor(r.kBlue)
-    posBias.SetLineWidth(2)
-    posBias.Draw("sames")
+    negCurve = myInFile.Get("%s%s"%(histName,"MinusCurve"))
+    posCurve = myInFile.Get("%s%s"%(histName,"PlusCurve"))
+    print "posNBins %d, negNBins %d"%(posCurve.GetNbinsX(),negCurve.GetNbinsX())
+    negCurve.Rebin(options.rebins)
+    negCurve = setMinPT(negCurve,options.totalbins,200./1000.,True,True)
+    posCurve.Rebin(options.rebins)
+    posCurve = setMinPT(posCurve,options.totalbins,200./1000.,True,True)
+    neginto = negCurve.Integral()
+    posinto = posCurve.Integral()
+    if (negCurve.Integral()>0):
+        negCurve.Scale(posCurve.Integral()/negCurve.Integral())
+    else:
+        print "unable to scale neg histogram, integral is 0"
+    neginta = negCurve.Integral()
+    posinta = posCurve.Integral()
+    negCurve.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%(0))
+    negCurve.SetLineColor(r.kRed)
+    negCurve.SetLineWidth(2)
+    negCurve.Draw()
+    negCurve.GetXaxis().SetTitle("#kappa [c/TeV]")
+    negCurve.SetMaximum(1.2*posmax)
+    posCurve.SetLineColor(r.kBlue)
+    posCurve.SetLineWidth(2)
+    posCurve.Draw("sames")
+    flipHist(negCurve).Draw("sames")
     r.gPad.Update()
-    #negBias.FindObject("stats").SetOptStat(0)
-    #posBias.FindObject("stats").SetOptStat(0)
+    #negCurve.FindObject("stats").SetOptStat(0)
+    #posCurve.FindObject("stats").SetOptStat(0)
     gifcanvas.SaveAs("%s/biasBin%04d_sym.png"%(gifDir,1000))
     r.gPad.Update()
     chi2Val  = r.Double(0.) # necessary for pass-by-reference in python
     chi2ndf  = r.Long(0)    # necessary for pass-by-reference in python
     igood    = r.Long(0)    # necessary for pass-by-reference in python
-    histopts = "UUNORM" # unweighted/weighted, normalized
-    resids = np.zeros(posBias.GetNbinsX(),np.dtype('float64')) # pointer argument, one per bin, not quite working
+    histopts = "UU,NORM" # unweighted/weighted, normalized
+    resids = np.zeros(posCurve.GetNbinsX(),np.dtype('float64')) # pointer argument, one per bin, not quite working
     #print "getting the probability"
-    prob = posBias.Chi2TestX(negBias,chi2Val,chi2ndf,igood,histopts,resids)
-    thelegend = r.TLegend(0.6,0.75,0.8,0.9)
-    thelegend.SetHeader("#chi^{2}/ndf = %2.2f(%2.2f/%d)"%(chi2Val/chi2ndf,chi2Val,chi2ndf))
-    thelegend.AddEntry(posBias,"#mu+ (%d,%d)"%(posinto,posinta))
-    thelegend.AddEntry(negBias,"#mu- (%d,%d)"%(neginto,neginta))
+    prob = posCurve.Chi2TestX(flipHist(negCurve),chi2Val,chi2ndf,igood,histopts,resids)
+    ksprob = posCurve.KolmogorovTest(flipHist(negCurve),"D")
+    xVals[options.biasbins/options.stepsize] = 0.0
+    yVals["Chi2"][options.biasbins/options.stepsize] = chi2Val/chi2ndf
+    yVals["KS"][options.biasbins/options.stepsize]   = ksprob
+
+    thelegend = r.TLegend(0.35,0.7,0.65,0.9)
+    thelegend.SetHeader("""#chi^{2}/ndf = %2.2f(%2.2f/%d)\n
+#KS prob = %2.4e"""%(chi2Val/chi2ndf,chi2Val,chi2ndf,ksprob))
+    thelegend.AddEntry(posCurve,"#mu+ (%d,%d)"%(posinto,posinta))
+    thelegend.AddEntry(negCurve,"#mu- (%d,%d)"%(neginto,neginta))
+    thelegend.AddEntry(negCurve,"#mu- (%d,%d)(flipped)"%(neginto,neginta))
     gifcanvas.cd()
     thelegend.Draw()
     r.gPad.Update()
+    if options.debug:
+        raw_input("press enter to exit")
 
     for step in range(0,options.biasbins/options.stepsize):
         gifcanvas.cd()
         negBias = myInFile.Get("%s%sPlusBias%03d"%(histName,"MinusCurve",1+step*options.stepsize))
-        negBias = setMinPT(negBias,options.totalbins,200./1000.,True)
-        negBias.Rebin(options.rebins)
         posBias = myInFile.Get("%s%sPlusBias%03d"%(histName,"PlusCurve", 1+step*options.stepsize))
-        posBias = setMinPT(posBias,options.totalbins,200./1000.,True)
+        negBias.Rebin(options.rebins)
+        negBias = setMinPT(negBias,options.totalbins,200./1000.,True)
         posBias.Rebin(options.rebins)
+        posBias = setMinPT(posBias,options.totalbins,200./1000.,True)
         neginto = negBias.Integral()
         posinto = posBias.Integral()
         if (negBias.Integral()>0):
             negBias.Scale(posBias.Integral()/negBias.Integral())
+        else:
+            print "unable to scale neg histogram, integral is 0"
         neginta = negBias.Integral()
         posinta = posBias.Integral()
         negBias.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%((options.maxbias/options.biasbins)*(step*options.stepsize+1)))
@@ -150,10 +197,11 @@ if __name__ == "__main__":
         negBias.SetLineWidth(2)
         negBias.Draw()
         negBias.GetXaxis().SetTitle("#kappa [c/TeV]")
-        negBias.SetMaximum(125)
+        negBias.SetMaximum(1.2*posmax)
         posBias.SetLineColor(r.kBlue)
         posBias.SetLineWidth(2)
         posBias.Draw("sames")
+        flipHist(negBias).Draw("sames")
         r.gPad.Update()
         #negBias.FindObject("stats").SetOptStat(0)
         #posBias.FindObject("stats").SetOptStat(0)
@@ -161,16 +209,44 @@ if __name__ == "__main__":
         chi2Val  = r.Double(0.) # necessary for pass-by-reference in python
         chi2ndf  = r.Long(0)    # necessary for pass-by-reference in python
         igood    = r.Long(0)    # necessary for pass-by-reference in python
-        histopts = "UUNORM" # unweighted/weighted, normalized
+        histopts = "UU,NORM" # unweighted/weighted, normalized
         resids = np.zeros(posBias.GetNbinsX(),np.dtype('float64')) # pointer argument, one per bin, not quite working
         #print "getting the probability"
-        prob = posBias.Chi2TestX(negBias,chi2Val,chi2ndf,igood,histopts,resids)
-        thelegend = r.TLegend(0.6,0.75,0.8,0.9)
-        thelegend.SetHeader("#chi^{2}/ndf = %2.2f(%2.2f/%d)"%(chi2Val/chi2ndf,chi2Val,chi2ndf))
+        prob   = posBias.Chi2TestX(flipHist(negBias),chi2Val,chi2ndf,igood,histopts,resids)
+        ksprob = posBias.KolmogorovTest(flipHist(negBias),"D")
+        xVals[options.biasbins/options.stepsize+1+step] = (options.maxbias/options.biasbins)*(step*options.stepsize+1)
+        yVals["Chi2"][options.biasbins/options.stepsize+1+step] = chi2Val/chi2ndf
+        yVals["KS"][options.biasbins/options.stepsize+1+step]   = ksprob
+
+        thelegend = r.TLegend(0.35,0.7,0.65,0.9)
+        thelegend.SetHeader("""#chi^{2}/ndf = %2.2f(%2.2f/%d)\n
+#KS prob = %2.4e"""%(chi2Val/chi2ndf,chi2Val,chi2ndf,ksprob))
         thelegend.AddEntry(posBias,"#mu+ (%d,%d)"%(posinto,posinta))
         thelegend.AddEntry(negBias,"#mu- (%d,%d)"%(neginto,neginta))
+        thelegend.AddEntry(negBias,"#mu- (%d,%d)(flipped)"%(neginto,neginta))
         gifcanvas.cd()
         thelegend.Draw()
         r.gPad.Update()
         gifcanvas.SaveAs("%s/biasBin%04d_sym.png"%(gifDir,options.biasbins+1+step*options.stepsize))
-    raw_input("press enter to exit")
+    if options.debug:
+        raw_input("press enter to exit")
+
+    graphInfo = {}
+    graphInfo["KS"]   = {"color":r.kRed,"marker":r.kFullCircle,
+                         "title":"Kolmogorov test statistic",
+                         "yaxis":""}
+    graphInfo["Chi2"] = {"color":r.kBlue, "marker":r.kFullCircle,
+                         "title":"ROOT #chi^{2}/ndf",
+                         "yaxis":""}
+    
+    chi2graph = prettifyGraph(r.TGraph(xVals.size,xVals,yVals["Chi2"]),graphInfo["Chi2"])
+    ksgraph   = prettifyGraph(r.TGraph(xVals.size,xVals,yVals["KS"])  ,graphInfo["KS"]  )
+    chi2graph.Draw("ALP")
+    chi2graph.SaveAs("chi2_%s.C"%(options.histbase))
+    if options.debug:
+        ksgraph.Draw("LPSAMES")
+    else:
+        ksgraph.Draw("ALP")
+    ksgraph.SaveAs("ks_%s.C"%(options.histbase))
+    if options.debug:
+        raw_input("press enter to exit")
