@@ -105,6 +105,8 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     muon_isGlobal    [idx] = -1;
     muon_isTracker   [idx] = -1;
     muon_isStandAlone[idx] = -1;
+    muon_isLower[idx]      = -1;
+    muon_isUpper[idx]      = -1;
       
     muonP4[idx].SetXYZT(0,0,0,-1);
     muon_pT[idx]  = -1;
@@ -153,6 +155,9 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
       track_charge[tk][idx] = -10;
       track_chi2  [tk][idx] = -1;
       track_ndof  [tk][idx] = -1;
+
+      track_isLower  [tk][idx] = -1;
+      track_isUpper  [tk][idx] = -1;
       
       track_dxy     [tk][idx] = -1000;
       track_dz      [tk][idx] = -1000;
@@ -227,6 +232,9 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
       muon_isTracker   [muIdx] = mu->isTrackerMuon();
       muon_isGlobal    [muIdx] = mu->isGlobalMuon();
       muon_isStandAlone[muIdx] = mu->isStandAloneMuon();
+
+      muon_isLower[muIdx] = abs(mu->tunePMuonBestTrack()->innerPosition().Y()) < fabs(mu->tunePMuonBestTrack()->outerPosition().Y());
+      muon_isUpper[muIdx] = abs(mu->tunePMuonBestTrack()->innerPosition().Y()) > fabs(mu->tunePMuonBestTrack()->outerPosition().Y());
       
       muonP4       [muIdx] = mu->p4();
       muon_pT      [muIdx] = mu->pt();
@@ -281,7 +289,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	      << "found "     << nGlobalTracks  << " global "  << std::endl
 	      << "found "     << nCosmicTracks  << " cosmic "  << std::endl
 	      << "found "     << nTrackerTracks << " tracker " << std::endl;
-  if (debug_ > -1) {
+  if (debug_ > 2) {
     std::cout << " global tracks: " << std::endl;
     for (auto track = globalTrackColl->begin(); track != globalTrackColl->end(); ++track)
       std::cout << "y:"
@@ -349,6 +357,8 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
       std::cout << "looping over track collection " << tk << std::endl;
     for (auto trk = tracks[tk]->begin(); trk != tracks[tk]->end(); ++trk,++tkIdx) {
       
+      track_isLower [tk][tkIdx] = abs(trk->innerPosition().Y()) < fabs(trk->outerPosition().Y());
+      track_isUpper [tk][tkIdx] = abs(trk->innerPosition().Y()) > fabs(trk->outerPosition().Y());
       track_chi2    [tk][tkIdx] = trk->chi2();
       track_ndof    [tk][tkIdx] = trk->ndof();
       track_charge  [tk][tkIdx] = trk->charge();
@@ -474,6 +484,8 @@ void MuonTree::beginJob()
   muonTree->Branch("isGlobal",     muon_isGlobal,     "isGlobal[nMuons]/I"    );
   muonTree->Branch("isTracker",    muon_isTracker,    "isTracker[nMuons]/I"   );
   muonTree->Branch("isStandAlone", muon_isStandAlone, "isStandAlone[nMuons]/I");
+  muonTree->Branch("isLower",      muon_isLower,      "isLower[nMuons]/I"     );
+  muonTree->Branch("isUpper",      muon_isUpper,      "isUpper[nMuons]/I"     );
 
   muonTree->Branch("innerY",    muon_innerY, "innerY[nMuons]/D");
   muonTree->Branch("outerY",    muon_outerY, "outerY[nMuons]/D");
@@ -511,6 +523,8 @@ void MuonTree::beginJob()
   muonTree->Branch("trk_trackEta", track_trackEta, "trk_trackEta[3][10]/D");
   muonTree->Branch("trk_trackPhi", track_trackPhi, "trk_trackPhi[3][10]/D");
   muonTree->Branch("trk_chi2",     track_chi2,     "trk_chi2[3][10]/D"    );
+  muonTree->Branch("trk_isLower",  track_isLower,  "trk_isLower[3][10]/I" );
+  muonTree->Branch("trk_isUpper",  track_isUpper,  "trk_isUpper[3][10]/I" );
   muonTree->Branch("trk_ndof",     track_ndof,     "trk_ndof[3][10]/I"    );
   muonTree->Branch("trk_charge",   track_charge,   "trk_charge[3][10]/I"  );
   muonTree->Branch("trk_dxy",      track_dxy,      "trk_dxy[3][10]/D"     );

@@ -1,7 +1,8 @@
 datafiles = [
     #'root://cms-xrd-global.cern.ch// #alternate redirector
-    #'root://xrootd.unl.edu// #alternate redirector
-    #'root://cmssrv32.fnal.gov// #alternate redirector
+    #'root://xrootd.unl.edu//         #alternate redirector
+    #'root://cmssrv32.fnal.gov//      #alternate redirector
+    #'root://xrootd-cms.infn.it//     #alternate redirector
     #'root://// #alternate redirector
     'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/04D80F2D-84D0-E511-8816-00266CFAE074.root',
     'root://xrootd.unl.edu///store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/40000/24A57E51-31D0-E511-93BA-0025904C4E2A.root',
