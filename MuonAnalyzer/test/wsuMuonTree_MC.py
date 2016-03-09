@@ -26,7 +26,7 @@ process.source = cms.Source("PoolSource",
     )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(15000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
@@ -38,14 +38,14 @@ process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
 from WSUDiLeptons.MuonAnalyzer.wsuMuonTree_cfi import *
 
 process.analysisSPMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("zprimeMuons"),
-    upperLegSrc = cms.InputTag("zprimeUpperMuons"),
-    lowerLegSrc = cms.InputTag("zprimeLowerMuons"),
+    muonSrc         = cms.InputTag("zprimeMuons"),
+    upperLegSrc     = cms.InputTag("zprimeUpperMuons"),
+    lowerLegSrc     = cms.InputTag("zprimeLowerMuons"),
     globalTrackSrc  = cms.InputTag("globalSPMuonTracks"),
     cosmicTrackSrc  = cms.InputTag("cosmicSPMuonTracks"),
     trackerTrackSrc = cms.InputTag("trackerSPMuonTracks"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(2)
+    algoType        = cms.int32(5),
+    debug           = cms.int32(2)
 )
 
 process.TFileService = cms.Service("TFileService",

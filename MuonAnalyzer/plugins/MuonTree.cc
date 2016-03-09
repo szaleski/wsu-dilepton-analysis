@@ -284,76 +284,80 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     } // end loop over muons
   } // end check on muon collection size
   
-  if (debug_ > 0)
-    std::cout << std::endl
-	      << "found "     << nGlobalTracks  << " global "  << std::endl
-	      << "found "     << nCosmicTracks  << " cosmic "  << std::endl
-	      << "found "     << nTrackerTracks << " tracker " << std::endl;
-  if (debug_ > 2) {
-    std::cout << " global tracks: " << std::endl;
-    for (auto track = globalTrackColl->begin(); track != globalTrackColl->end(); ++track)
-      std::cout << "y:"
-		<< std::setw(8) << track->innerPosition().Y()
-		<< "/"
-		<< std::setw(8) << track->outerPosition().Y()
-		<< " pt:"           << std::setw(8) << track->pt()
-		<< " eta:"          << std::setw(8) << track->eta()
-		<< " phi:"          << std::setw(8) << track->phi()
-		<< " chi2:"         << std::setw(8) << track->chi2()
-		<< " dxy:"          << std::setw(8) << track->dxy()
-		<< " dz:"           << std::setw(8) << track->dz()
-		<< " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
-		<< " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
-		<< " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
-		<< " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
-		<< " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
-		<< " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
-		<< std::endl;
+  if (debug_ > -1) {
+    if (globalTrackColl->size() > 0) {
+      std::cout	<< "found "     << nGlobalTracks  << " global "  << std::endl;
+      std::cout << " global tracks: " << std::endl;
+      for (auto track = globalTrackColl->begin(); track != globalTrackColl->end(); ++track)
+	std::cout << "y:"
+		  << std::setw(8) << track->innerPosition().Y()
+		  << "/"
+		  << std::setw(8) << track->outerPosition().Y()
+		  << " pt:"           << std::setw(8) << track->pt()
+		  << " eta:"          << std::setw(8) << track->eta()
+		  << " phi:"          << std::setw(8) << track->phi()
+		  << " chi2:"         << std::setw(8) << track->chi2()
+		  << " dxy:"          << std::setw(8) << track->dxy()
+		  << " dz:"           << std::setw(8) << track->dz()
+		  << " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
+		  << " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
+		  << " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
+		  << " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
+		  << " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
+		  << " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
+		  << std::endl;
+    }
 
-    std::cout << " cosmic tracks: " << std::endl;
-    for (auto track = cosmicTrackColl->begin(); track != cosmicTrackColl->end(); ++track)
-      std::cout << "y:"
-		<< std::setw(8) << track->innerPosition().Y()
-		<< "/"
-		<< std::setw(8) << track->outerPosition().Y()
-		<< " pt:"           << std::setw(8) << track->pt()
-		<< " eta:"          << std::setw(8) << track->eta()
-		<< " phi:"          << std::setw(8) << track->phi()
-		<< " chi2:"         << std::setw(8) << track->chi2()
-		<< " dxy:"          << std::setw(8) << track->dxy()
-		<< " dz:"           << std::setw(8) << track->dz()
-		<< " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
-		<< " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
-		<< " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
-		<< " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
-		<< " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
-		<< " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
-		<< std::endl;
-
-    std::cout << " tracker tracks: " << std::endl;
-    for (auto track = trackerTrackColl->begin(); track != trackerTrackColl->end(); ++track)
-      std::cout << "y:"
-		<< std::setw(8) << track->innerPosition().Y()
-		<< "/"
-		<< std::setw(8) << track->outerPosition().Y()
-		<< " pt:"           << std::setw(8) << track->pt()
-		<< " eta:"          << std::setw(8) << track->eta()
-		<< " phi:"          << std::setw(8) << track->phi()
-		<< " chi2:"         << std::setw(8) << track->chi2()
-		<< " dxy:"          << std::setw(8) << track->dxy()
-		<< " dz:"           << std::setw(8) << track->dz()
-		<< " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
-		<< " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
-		<< " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
-		<< " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
-		<< " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
-		<< " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
-		<< std::endl;
+    if (cosmicTrackColl->size() > 0) {
+      std::cout << "found "     << nCosmicTracks  << " cosmic "  << std::endl;
+      std::cout << " cosmic tracks: " << std::endl;
+      for (auto track = cosmicTrackColl->begin(); track != cosmicTrackColl->end(); ++track)
+	std::cout << "y:"
+		  << std::setw(8) << track->innerPosition().Y()
+		  << "/"
+		  << std::setw(8) << track->outerPosition().Y()
+		  << " pt:"           << std::setw(8) << track->pt()
+		  << " eta:"          << std::setw(8) << track->eta()
+		  << " phi:"          << std::setw(8) << track->phi()
+		  << " chi2:"         << std::setw(8) << track->chi2()
+		  << " dxy:"          << std::setw(8) << track->dxy()
+		  << " dz:"           << std::setw(8) << track->dz()
+		  << " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
+		  << " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
+		  << " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
+		  << " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
+		  << " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
+		  << " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
+		  << std::endl;
+    }
+    
+    if (trackerTrackColl->size() > 0) {
+      std::cout	<< "found "     << nTrackerTracks  << " tracker "  << std::endl;
+      std::cout << " tracker tracks: " << std::endl;
+      for (auto track = trackerTrackColl->begin(); track != trackerTrackColl->end(); ++track)
+	std::cout << "y:"
+		  << std::setw(8) << track->innerPosition().Y()
+		  << "/"
+		  << std::setw(8) << track->outerPosition().Y()
+		  << " pt:"           << std::setw(8) << track->pt()
+		  << " eta:"          << std::setw(8) << track->eta()
+		  << " phi:"          << std::setw(8) << track->phi()
+		  << " chi2:"         << std::setw(8) << track->chi2()
+		  << " dxy:"          << std::setw(8) << track->dxy()
+		  << " dz:"           << std::setw(8) << track->dz()
+		  << " nPixHits:"     << std::setw(2) << track->hitPattern().numberOfValidPixelHits()
+		  << " nVTkHits:"     << std::setw(2) << track->hitPattern().numberOfValidTrackerHits()
+		  << " nTkLayWMeas:"  << std::setw(2) << track->hitPattern().trackerLayersWithMeasurement()
+		  << " nMuStaWVHits:" << std::setw(2) << track->hitPattern().muonStationsWithValidHits()
+		  << " nVHits:"       << std::setw(2) << track->hitPattern().numberOfValidHits()
+		  << " nVMuHits:"     << std::setw(2) << track->hitPattern().numberOfValidMuonHits()
+		  << std::endl;
+    }
   }
   
   for (int tk = 0; tk < 3; ++tk) {
     int tkIdx = 0;
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << "looping over track collection " << tk << std::endl;
     for (auto trk = tracks[tk]->begin(); trk != tracks[tk]->end(); ++trk,++tkIdx) {
       
@@ -388,7 +392,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
       double bestDPhi = maxDPhi_;
       double bestDR   = maxDR_;
       int muIdx = 0;
-      if (debug_ > 1)
+      if (debug_ > 2)
 	std::cout << "looking for matching muons to track " << tkIdx << std::endl;
       for (auto muon = muonColl->begin(); muon != muonColl->end(); ++muon) {
 	double tmpDEta = fabs(muon->eta()-trk->eta());
@@ -408,7 +412,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	  yCompatible = true;
 	
 	if (tmpDEta < bestDEta && tmpDPhi < bestDPhi) {
-	  if (debug_ > 1)
+	  if (debug_ > 2)
 	    std::cout << " deta = " << std::setw(6) << tmpDEta
 		      << " dphi = " << std::setw(6) << tmpDPhi
 		      << " y-outer (mu) = "  << std::setw(8) << muon->tunePMuonBestTrack()->outerPosition().Y()
@@ -428,7 +432,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	++muIdx;
       }
     }
-    if (debug_ > 1)
+    if (debug_ > 2)
       std::cout << std::endl;
   }// end loop over the differen track collections
   muonTree->Fill();
