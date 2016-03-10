@@ -67,9 +67,9 @@ def findTrackMatch(ev,idx,src,coll,debug=False):
     return matchIdx
 
 def passMuDen(ev,idx,tracker=False,debug=False):
-    result = ev.trackpT[idx] > 53. and abs(ev.trackEta[idx]) < 0.9
+    result = ev.trackpT[idx] > 53. and abs(ev.trackEta[idx]) < 0.9 and ev.isTracker[idx]
     if tracker:
-        result = result and ev.isTracker[idx]
+        result = result and passMuIDTrk(ev,idx)
     return result
 
 def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
@@ -84,8 +84,7 @@ def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
 def passMuIDTrk(ev,idx,glbl=True,tracker=False,debug=False):
     passNPHits = (ev.pixelHits[idx] > 0)
     passTKLays = (ev.tkLayersWMeas[idx] > 5)
-    result = passNPHits and passTKLays and passMuID(ev,idx,glbl,tracker,debug)
-    return result
+    return passNPHits and passTKLays
 
 def passTrkDen(ev,idx,coll,match=False,debug=False):
     muonMatch = ev.trk_matchedMuIdx[10*coll+idx]
@@ -196,33 +195,49 @@ if __name__ == "__main__":
     
     muDenPtHistoNB = r.TH1D("muonDenominatorPtNB","",300, 0., 3000.)
     muDenPtHisto   = r.TH1D("muonDenominatorPt","",300, 0., 3000.)
+    muDenPixHitHisto = r.TH1D("muonDenominatorPixHit","",10, -0.5, 9.5)
+    muDenTkMeasHisto = r.TH1D("muonDenominatorTkMeas","",20, -0.5, 19.5)
     muNum1PtHisto  = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
     muNum2PtHisto  = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
     muDenPtHistoNB.Sumw2()
     muDenPtHisto.Sumw2()
+    muDenPixHitHisto.Sumw2()
+    muDenTkMeasHisto.Sumw2()
     muNum1PtHisto.Sumw2()
     muNum2PtHisto.Sumw2()
     
     muIsTrkDenPtHistoNB = r.TH1D("muonIsTrkDenominatorPtNB","",300, 0., 3000.)
     muIsTrkDenPtHisto   = r.TH1D("muonIsTrkDenominatorPt","",300, 0., 3000.)
+    muIsTrkDenPixHitHisto = r.TH1D("muonIsTrkDenominatorPixHit","",10, -0.5, 9.5)
+    muIsTrkDenTkMeasHisto = r.TH1D("muonIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
     muIsTrkNum1PtHisto  = r.TH1D("muonIsTrkPassIDPt",     "",300, 0., 3000.)
     muIsTrkNum2PtHisto  = r.TH1D("muonIsTrkPassIDTrkPt",  "",300, 0., 3000.)
     muIsTrkDenPtHistoNB.Sumw2()
     muIsTrkDenPtHisto.Sumw2()
+    muIsTrkDenPixHitHisto.Sumw2()
+    muIsTrkDenTkMeasHisto.Sumw2()
     muIsTrkNum1PtHisto.Sumw2()
     muIsTrkNum2PtHisto.Sumw2()
 
     muIsGlbDenPtHisto   = r.TH1D("muonIsGlbDenominatorPt","",300, 0., 3000.)
+    muIsGlbDenPixHitHisto = r.TH1D("muonIsGlbDenominatorPixHit","",10, -0.5, 9.5)
+    muIsGlbDenTkMeasHisto = r.TH1D("muonIsGlbDenominatorTkMeas","",20, -0.5, 19.5)
     muIsGlbNum1PtHisto  = r.TH1D("muonIsGlbPassIDPt",     "",300, 0., 3000.)
     muIsGlbNum2PtHisto  = r.TH1D("muonIsGlbPassIDTrkPt",  "",300, 0., 3000.)
     muIsGlbDenPtHisto.Sumw2()
+    muIsGlbDenPixHitHisto.Sumw2()
+    muIsGlbDenTkMeasHisto.Sumw2()
     muIsGlbNum1PtHisto.Sumw2()
     muIsGlbNum2PtHisto.Sumw2()
     
     muIsGlbIsTrkDenPtHisto   = r.TH1D("muonIsGlbIsTrkDenominatorPt","",300, 0., 3000.)
+    muIsGlbIsTrkDenPixHitHisto = r.TH1D("muonIsGlbIsTrkDenominatorPixHit","",10, -0.5, 9.5)
+    muIsGlbIsTrkDenTkMeasHisto = r.TH1D("muonIsGlbIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
     muIsGlbIsTrkNum1PtHisto  = r.TH1D("muonIsGlbIsTrkPassIDPt",     "",300, 0., 3000.)
     muIsGlbIsTrkNum2PtHisto  = r.TH1D("muonIsGlbIsTrkPassIDTrkPt",  "",300, 0., 3000.)
     muIsGlbIsTrkDenPtHisto.Sumw2()
+    muIsGlbIsTrkDenPixHitHisto.Sumw2()
+    muIsGlbIsTrkDenTkMeasHisto.Sumw2()
     muIsGlbIsTrkNum1PtHisto.Sumw2()
     muIsGlbIsTrkNum2PtHisto.Sumw2()
     
@@ -251,23 +266,20 @@ if __name__ == "__main__":
         for mu in range(event.nMuons):
             if not (event.trackpT[mu] > 53. and abs(event.trackEta[mu]) < 0.9):
                 continue
+            #if not (abs(event.dxy[mu]) < 5. and abs(event.dz[mu]) < 30):
+            #    continue
             if options.upper:
                 if (abs(event.innerY[mu]) < abs(event.outerY[mu])):
                     continue
-                #if (event.innerY[mu] < 0):
-                #    continue
-                #if (event.outerY[mu] < 0):
-                #    continue
             else:
                 if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
                     continue
-                #if (event.innerY[mu] > 0):
-                #    continue
-                #if (event.outerY[mu] > 0):
-                #    continue
+
             if (passMuDen(event,mu,False,options.debug)):
                 muDenPtHistoNB.Fill(event.trackpT[mu])
                 muDenPtHisto.Fill(event.trackpT[mu])
+                muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                muDenPixHitHisto.Fill(event.pixelHits[mu])
                 if (passMuID(event,mu,False,False,options.debug)):
                     muNum1PtHisto.Fill(event.trackpT[mu])
                 if (passMuIDTrk(event,mu,False,False,options.debug)):
@@ -276,6 +288,8 @@ if __name__ == "__main__":
             if (passMuDen(event,mu,True,options.debug)):
                 muIsTrkDenPtHistoNB.Fill(event.trackpT[mu])
                 muIsTrkDenPtHisto.Fill(event.trackpT[mu])
+                muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
                 if (passMuID(event,mu,False,True,options.debug)):
                     muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
                 if (passMuIDTrk(event,mu,False,True,options.debug)):
@@ -284,6 +298,8 @@ if __name__ == "__main__":
             if (passMuDen(event,mu,False,options.debug)):
                 if event.isGlobal[mu]:
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
+                    muIsGlbDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                    muIsGlbDenPixHitHisto.Fill(event.pixelHits[mu])
                 if (passMuID(event,mu,True,False,options.debug)):
                     muIsGlbNum1PtHisto.Fill(event.trackpT[mu])
                 if (passMuIDTrk(event,mu,True,False,options.debug)):
@@ -292,6 +308,8 @@ if __name__ == "__main__":
             if (passMuDen(event,mu,True,options.debug)):
                 if event.isGlobal[mu]:
                     muIsGlbIsTrkDenPtHisto.Fill(event.trackpT[mu])
+                    muIsGlbIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                    muIsGlbIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
                 if (passMuID(event,mu,True,True,options.debug)):
                     muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[mu])
                 if (passMuIDTrk(event,mu,True,True,options.debug)):
@@ -365,19 +383,27 @@ if __name__ == "__main__":
     outfile.cd()
     muDenPtHistoNB.Write()
     muDenPtHisto.Write()
+    muDenPixHitHisto.Write()
+    muDenTkMeasHisto.Write()
     muNum1PtHisto.Write()
     muNum2PtHisto.Write()
     
     muIsTrkDenPtHistoNB.Write()
     muIsTrkDenPtHisto.Write()
+    muIsTrkDenPixHitHisto.Write()
+    muIsTrkDenTkMeasHisto.Write()
     muIsTrkNum1PtHisto.Write()
     muIsTrkNum2PtHisto.Write()
 
     muIsGlbDenPtHisto.Write()
+    muIsGlbDenPixHitHisto.Write()
+    muIsGlbDenTkMeasHisto.Write()
     muIsGlbNum1PtHisto.Write()
     muIsGlbNum2PtHisto.Write()
 
     muIsGlbIsTrkDenPtHisto.Write()
+    muIsGlbIsTrkDenPixHitHisto.Write()
+    muIsGlbIsTrkDenTkMeasHisto.Write()
     muIsGlbIsTrkNum1PtHisto.Write()
     muIsGlbIsTrkNum2PtHisto.Write()
     
