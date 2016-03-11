@@ -417,37 +417,40 @@ if __name__ == "__main__":
                         continue
                 if checkUpper:
                     # process upper rather than lower legs
+                    # if isLower[mu]
                     if (abs(event.innerY[mu]) < abs(event.outerY[mu])):
                         continue
                 else:
+                    # if isUpper[mu]
                     if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
                         continue
             
-                # first go, don't probe isGlobal in the numerator
-                # denominator cuts do not include track ID cuts, but include isTracker
-                if (passMuDen(event,mu,False,options.debug)):
-                    muDenPtHisto.Fill(event.trackpT[mu])
-                    muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                    muDenPixHitHisto.Fill(event.pixelHits[mu])
-                    muDenDXYHisto.Fill(event.dxy[mu])
-                    muDenDZHisto.Fill(event.dz[mu])
-                    if (passMuID(event,mu,False,False,options.debug)):
-                        muNum1PtHisto.Fill(event.trackpT[mu])
-                    if (passMuIDTrk(event,mu,False,False,options.debug)):
-                        muNum2PtHisto.Fill(event.trackpT[mu])
-                        
-                # denominator cuts include track ID cuts, in addition to isTracker
-                if (passMuDen(event,mu,True,options.debug)):
-                    muIsTrkDenPtHisto.Fill(event.trackpT[mu])
-                    muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                    muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
-                    muIsTrkDenDXYHisto.Fill(event.dxy[mu])
-                    muIsTrkDenDZHisto.Fill(event.dz[mu])
-                    if (passMuID(event,mu,False,True,options.debug)):
-                        muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                    if (passMuIDTrk(event,mu,False,True,options.debug)):
-                        muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
-            
+                # first go, don't probe isGlobal in the numerator, but require it in the full selection
+                if event.isGlobal[mu] > 0:
+                    # denominator cuts do not include track ID cuts, but include isTracker
+                    if (passMuDen(event,mu,False,options.debug)):
+                        muDenPtHisto.Fill(event.trackpT[mu])
+                        muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                        muDenPixHitHisto.Fill(event.pixelHits[mu])
+                        muDenDXYHisto.Fill(event.dxy[mu])
+                        muDenDZHisto.Fill(event.dz[mu])
+                        if (passMuID(event,mu,False,False,options.debug)):
+                            muNum1PtHisto.Fill(event.trackpT[mu])
+                        if (passMuIDTrk(event,mu,False,False,options.debug)):
+                            muNum2PtHisto.Fill(event.trackpT[mu])
+                            
+                    # denominator cuts include track ID cuts, in addition to isTracker
+                    if (passMuDen(event,mu,True,options.debug)):
+                        muIsTrkDenPtHisto.Fill(event.trackpT[mu])
+                        muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                        muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
+                        muIsTrkDenDXYHisto.Fill(event.dxy[mu])
+                        muIsTrkDenDZHisto.Fill(event.dz[mu])
+                        if (passMuID(event,mu,False,True,options.debug)):
+                            muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
+                        if (passMuIDTrk(event,mu,False,True,options.debug)):
+                            muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
+                
                 # probing isGlobal in the numerator
                 # denominator cuts do not include track ID cuts, but include isTracker
                 if (passMuDen(event,mu,False,options.debug)):
