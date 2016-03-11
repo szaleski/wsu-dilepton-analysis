@@ -18,6 +18,115 @@ def dPhi(phi1,phi2,debug=False):
         dphi = dphi - 2*math.pi
     return dphi
 
+def isGoodEvent(ev,isUpper=False,debug=False):
+    # find at least one muon with pT > 53 and |eta| < 0.9
+    for mu in range(ev.nMuons):
+        muPt  = ev.globalpT[mu]
+        muEta = ev.globalEta[mu]
+        
+        muLeg = ev.isLower[mu]
+        if isUpper:
+            muLeg = ev.isUpper[mu]
+        if muPt > 53. and abs(muEta) < 0.9 and muLeg == 1:
+            return True
+    return False
+        
+
+def findFunky(ev,isUpper=False,debug=False):
+    # want to find the evnets where we have a duplicated Muon object pt eta phi upper all identical
+    # optionally, use combined information?
+    funky = False
+    if ev.nMuons < 2:
+        return funky
+
+    for ref in range(ev.nMuons):
+        refPt  = ev.globalpT[ref]
+        refEta = ev.globalEta[ref]
+        refPhi = ev.globalPhi[ref]
+
+        refQ   = ev.charge[ref]
+
+        refGlb = ev.isGlobal[ref]
+        refTrk = ev.isTracker[ref]
+        refSta = ev.isStandAlone[ref]
+
+        refLeg = ev.isLower[ref]
+        if isUpper:
+            refLeg = ev.isUpper[ref]
+            if ev.isLower[ref] > 0:
+                continue
+        else:
+            if ev.isUpper[ref] > 0:
+                continue
+    
+        for mu in range(ref, ev.nMuons):
+            if mu == ref:
+                continue
+            chkPt  = ev.globalpT[mu]
+            chkEta = ev.globalEta[mu]
+            chkPhi = ev.globalPhi[mu]
+
+            chkQ   = ev.charge[mu]
+
+            chkGlb = ev.isGlobal[mu]
+            chkTrk = ev.isTracker[mu]
+            chkSta = ev.isStandAlone[mu]
+
+            chkLeg = ev.isLower[mu]
+            if isUpper:
+                chkLeg = ev.isUpper[mu]
+            if (chkLeg != refLeg):
+                continue
+            if debug:
+                print "chk%d-%d:q%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f"%(
+                    mu, chkLeg,chkQ,chkTrk,chkGlb,chkSta,chkPt,chkPhi,chkEta)
+                print "ref%d-%d:q%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f"%(
+                    ref,refLeg,refQ,refTrk,refGlb,refSta,refPt,refPhi,refEta)
+
+                print "funky check: c%d-%d(%dt/%dg/%dsa),r%d-%d(%dt/%dg/%dsa) dPt:%2.4f,dPhi:%2.4f,dEta:%2.4f"%(
+                    mu,chkLeg,chkTrk,chkGlb,chkSta,
+                    ref,refLeg,refTrk,refGlb,refSta,
+                    chkPt-refPt,
+                    dPhi(chkPhi,refPhi),
+                    (chkEta-refEta)
+                    )
+            if (chkPt - refPt) == 0 and dPhi(chkPhi,refPhi) == 0 and (chkEta-refEta) == 0 and (chkLeg == refLeg) and (chkQ == refQ):
+                print "found funky (%d/%d/%d): c%d-%d,r%d-%d dPt:%2.4f,dPhi:%2.4f,dEta:%2.4f"%(
+                    ev.run,ev.lumi,ev.event,
+                    mu,chkLeg,ref,refLeg,
+                    (chkPt-refPt),
+                    dPhi(chkPhi,refPhi),
+                    (chkEta-refEta)
+                    )
+                print "chk%d up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
+                    mu,ev.isUpper[mu],ev.isLower[mu],chkQ,chkTrk,chkGlb,chkSta,chkPt,chkPhi,chkEta,
+                    ev.dxy[mu],
+                    ev.dz[mu],
+                    ev.trackpT[mu],
+                    ev.ptError[mu]/ev.trackpT[mu],
+                    ev.pixelHits[mu],
+                    ev.trackerHits[mu],
+                    ev.tkLayersWMeas[mu],
+                    ev.muonStationHits[mu],
+                    ev.nValidMuonHits[mu],
+                    ev.nMatchedStations[mu])
+
+                print "ref%d,up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
+                    ref,ev.isUpper[ref],ev.isLower[ref],refQ,refTrk,refGlb,refSta,refPt,refPhi,refEta,
+                    ev.dxy[ref],
+                    ev.dz[ref],
+                    ev.trackpT[ref],
+                    ev.ptError[ref]/ev.trackpT[ref],
+                    ev.pixelHits[ref],
+                    ev.trackerHits[ref],
+                    ev.tkLayersWMeas[ref],
+                    ev.muonStationHits[ref],
+                    ev.nValidMuonHits[ref],
+                    ev.nMatchedStations[ref])
+                funky = True
+        
+    return funky
+
 def findTrackMatch(ev,idx,src,coll,debug=False):
     nTracks = 0
     if coll == src:
@@ -161,8 +270,11 @@ if __name__ == "__main__":
     parser.add_option("-u", "--upper", action="store_true", dest="upper",
                       metavar="upper",
                       help="[OPTIONAL] Use the upper leg, rather than the (default) lower leg")
+    parser.add_option("--tight", action="store_true", dest="tight",
+                      metavar="tight",
+                      help="[OPTIONAL] Use the tight cuts on dxy/dz")
     parser.add_option("-t", "--tchain", action="store_true", dest="tchain",
-                      metavar="debug",
+                      metavar="tchain",
                       help="[OPTIONAL] Use a TChain rather than the raw file, must specify a list of input files as a text file to -i")
 
     (options, args) = parser.parse_args()
@@ -193,51 +305,68 @@ if __name__ == "__main__":
             mychain.Add("%s"%(line))
         mytree = mychain
     
-    muDenPtHistoNB = r.TH1D("muonDenominatorPtNB","",300, 0., 3000.)
-    muDenPtHisto   = r.TH1D("muonDenominatorPt","",300, 0., 3000.)
+    nMuonsUpperLower   = r.TH2D("nMuons","",10, -0.5,9.5, 10, -0.5,9.5)
+    nMuonsUpperLower.Sumw2()
+    eventCounter   = r.TH1D("eventCounter","",3, -0.5, 2.5)
+    eventCounter.Sumw2()
+
     muDenPixHitHisto = r.TH1D("muonDenominatorPixHit","",10, -0.5, 9.5)
     muDenTkMeasHisto = r.TH1D("muonDenominatorTkMeas","",20, -0.5, 19.5)
-    muNum1PtHisto  = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
-    muNum2PtHisto  = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
-    muDenPtHistoNB.Sumw2()
+    muDenDXYHisto    = r.TH1D("muonDenominatorDXY","",100, -10., 10.)
+    muDenDZHisto     = r.TH1D("muonDenominatorDZ","",100, -50., 50.)
+    muDenPtHisto     = r.TH1D("muonDenominatorPt","",300, 0., 3000.)
+    muNum1PtHisto    = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
+    muNum2PtHisto    = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
     muDenPtHisto.Sumw2()
     muDenPixHitHisto.Sumw2()
     muDenTkMeasHisto.Sumw2()
+    muDenDXYHisto.Sumw2()
+    muDenDZHisto.Sumw2()
     muNum1PtHisto.Sumw2()
     muNum2PtHisto.Sumw2()
     
-    muIsTrkDenPtHistoNB = r.TH1D("muonIsTrkDenominatorPtNB","",300, 0., 3000.)
-    muIsTrkDenPtHisto   = r.TH1D("muonIsTrkDenominatorPt","",300, 0., 3000.)
     muIsTrkDenPixHitHisto = r.TH1D("muonIsTrkDenominatorPixHit","",10, -0.5, 9.5)
     muIsTrkDenTkMeasHisto = r.TH1D("muonIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsTrkNum1PtHisto  = r.TH1D("muonIsTrkPassIDPt",     "",300, 0., 3000.)
-    muIsTrkNum2PtHisto  = r.TH1D("muonIsTrkPassIDTrkPt",  "",300, 0., 3000.)
-    muIsTrkDenPtHistoNB.Sumw2()
+    muIsTrkDenDXYHisto    = r.TH1D("muonIsTrkDenominatorDXY","",100, -10., 10.)
+    muIsTrkDenDZHisto     = r.TH1D("muonIsTrkDenominatorDZ","",100, -50., 50.)
+    muIsTrkDenPtHisto     = r.TH1D("muonIsTrkDenominatorPt","",300, 0., 3000.)
+    muIsTrkNum1PtHisto    = r.TH1D("muonIsTrkPassIDPt",     "",300, 0., 3000.)
+    muIsTrkNum2PtHisto    = r.TH1D("muonIsTrkPassIDTrkPt",  "",300, 0., 3000.)
     muIsTrkDenPtHisto.Sumw2()
     muIsTrkDenPixHitHisto.Sumw2()
     muIsTrkDenTkMeasHisto.Sumw2()
+    muIsTrkDenDXYHisto.Sumw2()
+    muIsTrkDenDZHisto.Sumw2()
     muIsTrkNum1PtHisto.Sumw2()
     muIsTrkNum2PtHisto.Sumw2()
 
-    muIsGlbDenPtHisto   = r.TH1D("muonIsGlbDenominatorPt","",300, 0., 3000.)
     muIsGlbDenPixHitHisto = r.TH1D("muonIsGlbDenominatorPixHit","",10, -0.5, 9.5)
     muIsGlbDenTkMeasHisto = r.TH1D("muonIsGlbDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsGlbNum1PtHisto  = r.TH1D("muonIsGlbPassIDPt",     "",300, 0., 3000.)
-    muIsGlbNum2PtHisto  = r.TH1D("muonIsGlbPassIDTrkPt",  "",300, 0., 3000.)
+    muIsGlbDenDXYHisto    = r.TH1D("muonIsGlbDenominatorDXY","",100, -10., 10.)
+    muIsGlbDenDZHisto     = r.TH1D("muonIsGlbDenominatorDZ","",100, -50., 50.)
+    muIsGlbDenPtHisto     = r.TH1D("muonIsGlbDenominatorPt","",300, 0., 3000.)
+    muIsGlbNum1PtHisto    = r.TH1D("muonIsGlbPassIDPt",     "",300, 0., 3000.)
+    muIsGlbNum2PtHisto    = r.TH1D("muonIsGlbPassIDTrkPt",  "",300, 0., 3000.)
     muIsGlbDenPtHisto.Sumw2()
     muIsGlbDenPixHitHisto.Sumw2()
     muIsGlbDenTkMeasHisto.Sumw2()
+    muIsGlbDenDXYHisto.Sumw2()
+    muIsGlbDenDZHisto.Sumw2()
     muIsGlbNum1PtHisto.Sumw2()
     muIsGlbNum2PtHisto.Sumw2()
     
-    muIsGlbIsTrkDenPtHisto   = r.TH1D("muonIsGlbIsTrkDenominatorPt","",300, 0., 3000.)
     muIsGlbIsTrkDenPixHitHisto = r.TH1D("muonIsGlbIsTrkDenominatorPixHit","",10, -0.5, 9.5)
     muIsGlbIsTrkDenTkMeasHisto = r.TH1D("muonIsGlbIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsGlbIsTrkNum1PtHisto  = r.TH1D("muonIsGlbIsTrkPassIDPt",     "",300, 0., 3000.)
-    muIsGlbIsTrkNum2PtHisto  = r.TH1D("muonIsGlbIsTrkPassIDTrkPt",  "",300, 0., 3000.)
+    muIsGlbIsTrkDenDXYHisto    = r.TH1D("muonIsGlbIsTrkDenominatorDXY","",100, -10., 10.)
+    muIsGlbIsTrkDenDZHisto     = r.TH1D("muonIsGlbIsTrkDenominatorDZ","",100, -50., 50.)
+    muIsGlbIsTrkDenPtHisto     = r.TH1D("muonIsGlbIsTrkDenominatorPt","",300, 0., 3000.)
+    muIsGlbIsTrkNum1PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDPt",     "",300, 0., 3000.)
+    muIsGlbIsTrkNum2PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDTrkPt",  "",300, 0., 3000.)
     muIsGlbIsTrkDenPtHisto.Sumw2()
     muIsGlbIsTrkDenPixHitHisto.Sumw2()
     muIsGlbIsTrkDenTkMeasHisto.Sumw2()
+    muIsGlbIsTrkDenDXYHisto.Sumw2()
+    muIsGlbIsTrkDenDZHisto.Sumw2()
     muIsGlbIsTrkNum1PtHisto.Sumw2()
     muIsGlbIsTrkNum2PtHisto.Sumw2()
     
@@ -257,68 +386,99 @@ if __name__ == "__main__":
     
     nEvents = mytree.GetEntries()
     eid = 0
+    checkUpper = False
+    if options.upper:
+        checkUpper = True
+    print "checkUpper %d"%(checkUpper)
+    
     for event in mytree:
         if eid%1000 == 0:
             print "event=%d/%d: g=%d c=%d t=%d"%(eid,nEvents,event.nGlobalTracks,event.nCosmicTracks,event.nTrackerTracks)
         if options.debug and eid%10 == 0:
             print "event=%d/%d: g=%d c=%d t=%d"%(eid,nEvents,event.nGlobalTracks,event.nCosmicTracks,event.nTrackerTracks)
         nTracks = [event.nGlobalTracks,event.nCosmicTracks,event.nTrackerTracks]
-        for mu in range(event.nMuons):
-            if not (event.trackpT[mu] > 53. and abs(event.trackEta[mu]) < 0.9):
+
+        if isGoodEvent(event,checkUpper,options.debug):
+            # should have at least one muon with pT > 53. and |eta| < 0.9
+            nMuonsUpperLower.Fill(event.nUpperLegs,event.nLowerLegs)
+            eventCounter.Fill(0)
+            if findFunky(event,checkUpper,options.debug):
+                # skip events where we find the "duplicate" muons
+                eventCounter.Fill(2)
                 continue
-            #if not (abs(event.dxy[mu]) < 5. and abs(event.dz[mu]) < 30):
-            #    continue
-            if options.upper:
-                if (abs(event.innerY[mu]) < abs(event.outerY[mu])):
+            eventCounter.Fill(1)
+            for mu in range(event.nMuons):
+                if not (event.trackpT[mu] > 53. and abs(event.trackEta[mu]) < 0.9):
+                    # skip muons that fail the basic Z' kinematic cuts and barrel region
                     continue
-            else:
-                if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
-                    continue
-
-            if (passMuDen(event,mu,False,options.debug)):
-                muDenPtHistoNB.Fill(event.trackpT[mu])
-                muDenPtHisto.Fill(event.trackpT[mu])
-                muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                muDenPixHitHisto.Fill(event.pixelHits[mu])
-                if (passMuID(event,mu,False,False,options.debug)):
-                    muNum1PtHisto.Fill(event.trackpT[mu])
-                if (passMuIDTrk(event,mu,False,False,options.debug)):
-                    muNum2PtHisto.Fill(event.trackpT[mu])
-                    
-            if (passMuDen(event,mu,True,options.debug)):
-                muIsTrkDenPtHistoNB.Fill(event.trackpT[mu])
-                muIsTrkDenPtHisto.Fill(event.trackpT[mu])
-                muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
-                if (passMuID(event,mu,False,True,options.debug)):
-                    muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                if (passMuIDTrk(event,mu,False,True,options.debug)):
-                    muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
-
-            if (passMuDen(event,mu,False,options.debug)):
-                if event.isGlobal[mu]:
+                if options.tight:
+                    # optionally apply tighter pixel requirements
+                    if not (abs(event.dxy[mu]) < 7.5 and abs(event.dz[mu]) < 25.):
+                        continue
+                if checkUpper:
+                    # process upper rather than lower legs
+                    if (abs(event.innerY[mu]) < abs(event.outerY[mu])):
+                        continue
+                else:
+                    if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
+                        continue
+            
+                # first go, don't probe isGlobal in the numerator
+                # denominator cuts do not include track ID cuts, but include isTracker
+                if (passMuDen(event,mu,False,options.debug)):
+                    muDenPtHisto.Fill(event.trackpT[mu])
+                    muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                    muDenPixHitHisto.Fill(event.pixelHits[mu])
+                    muDenDXYHisto.Fill(event.dxy[mu])
+                    muDenDZHisto.Fill(event.dz[mu])
+                    if (passMuID(event,mu,False,False,options.debug)):
+                        muNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,False,False,options.debug)):
+                        muNum2PtHisto.Fill(event.trackpT[mu])
+                        
+                # denominator cuts include track ID cuts, in addition to isTracker
+                if (passMuDen(event,mu,True,options.debug)):
+                    muIsTrkDenPtHisto.Fill(event.trackpT[mu])
+                    muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
+                    muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
+                    muIsTrkDenDXYHisto.Fill(event.dxy[mu])
+                    muIsTrkDenDZHisto.Fill(event.dz[mu])
+                    if (passMuID(event,mu,False,True,options.debug)):
+                        muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,False,True,options.debug)):
+                        muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
+            
+                # probing isGlobal in the numerator
+                # denominator cuts do not include track ID cuts, but include isTracker
+                if (passMuDen(event,mu,False,options.debug)):
+                    #if event.isGlobal[mu]:
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
                     muIsGlbDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
                     muIsGlbDenPixHitHisto.Fill(event.pixelHits[mu])
-                if (passMuID(event,mu,True,False,options.debug)):
-                    muIsGlbNum1PtHisto.Fill(event.trackpT[mu])
-                if (passMuIDTrk(event,mu,True,False,options.debug)):
-                    muIsGlbNum2PtHisto.Fill(event.trackpT[mu])
-                    
-            if (passMuDen(event,mu,True,options.debug)):
-                if event.isGlobal[mu]:
+                    muIsGlbDenDXYHisto.Fill(event.dxy[mu])
+                    muIsGlbDenDZHisto.Fill(event.dz[mu])
+                    if (passMuID(event,mu,True,False,options.debug)):
+                        muIsGlbNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,True,False,options.debug)):
+                        muIsGlbNum2PtHisto.Fill(event.trackpT[mu])
+                        
+                # denominator cuts include track ID cuts, in addition to isTracker
+                if (passMuDen(event,mu,True,options.debug)):
+                    #if event.isGlobal[mu]:
                     muIsGlbIsTrkDenPtHisto.Fill(event.trackpT[mu])
                     muIsGlbIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
                     muIsGlbIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
-                if (passMuID(event,mu,True,True,options.debug)):
-                    muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                if (passMuIDTrk(event,mu,True,True,options.debug)):
-                    muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[mu])
-                    
+                    muIsGlbIsTrkDenDXYHisto.Fill(event.dxy[mu])
+                    muIsGlbIsTrkDenDZHisto.Fill(event.dz[mu])
+                    if (passMuID(event,mu,True,True,options.debug)):
+                        muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,True,True,options.debug)):
+                        muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[mu])
+                        
         for tk in range(nTracks[1]):
             if not (event.trk_trackpT[tk] > 53. and abs(event.trk_trackEta[tk]) < 0.9):
                 continue
-            if options.upper:
+            if checkUpper:
                 #if (abs(event.trk_innerY[tk]) < abs(event.trk_outerY[tk])):
                 #    continue
                 if (event.trk_innerY[tk] < 0):
@@ -381,29 +541,38 @@ if __name__ == "__main__":
         eid = eid + 1
     # end event loop
     outfile.cd()
-    muDenPtHistoNB.Write()
+    nMuonsUpperLower.Write()
+    eventCounter.Write()
+
     muDenPtHisto.Write()
     muDenPixHitHisto.Write()
     muDenTkMeasHisto.Write()
+    muDenDXYHisto.Write()
+    muDenDZHisto.Write()
     muNum1PtHisto.Write()
     muNum2PtHisto.Write()
     
-    muIsTrkDenPtHistoNB.Write()
     muIsTrkDenPtHisto.Write()
     muIsTrkDenPixHitHisto.Write()
     muIsTrkDenTkMeasHisto.Write()
+    muIsTrkDenDXYHisto.Write()
+    muIsTrkDenDZHisto.Write()
     muIsTrkNum1PtHisto.Write()
     muIsTrkNum2PtHisto.Write()
 
     muIsGlbDenPtHisto.Write()
     muIsGlbDenPixHitHisto.Write()
     muIsGlbDenTkMeasHisto.Write()
+    muIsGlbDenDXYHisto.Write()
+    muIsGlbDenDZHisto.Write()
     muIsGlbNum1PtHisto.Write()
     muIsGlbNum2PtHisto.Write()
 
     muIsGlbIsTrkDenPtHisto.Write()
     muIsGlbIsTrkDenPixHitHisto.Write()
     muIsGlbIsTrkDenTkMeasHisto.Write()
+    muIsGlbIsTrkDenDXYHisto.Write()
+    muIsGlbIsTrkDenDZHisto.Write()
     muIsGlbIsTrkNum1PtHisto.Write()
     muIsGlbIsTrkNum2PtHisto.Write()
     
