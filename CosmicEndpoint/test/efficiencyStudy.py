@@ -191,9 +191,10 @@ def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
     return result and passMuDen(ev,idx,tracker,debug)
 
 def passMuIDTrk(ev,idx,glbl=True,tracker=False,debug=False):
-    passNPHits = (ev.pixelHits[idx] > 0)
-    passTKLays = (ev.tkLayersWMeas[idx] > 5)
-    return passNPHits and passTKLays
+    passFirstPix = (ev.firstPixel[idx] > 0)
+    passNPHits   = (ev.pixelHits[idx] > 0)
+    passTKLays   = (ev.tkLayersWMeas[idx] > 5)
+    return passFirstPix and passNPHits and passTKLays
 
 def passTrkDen(ev,idx,coll,match=False,debug=False):
     muonMatch = ev.trk_matchedMuIdx[10*coll+idx]
@@ -248,12 +249,14 @@ def passTrkMuIDTrk(ev,idx,coll,match=False,debug=False):
         return False
 
     # for track, we want to preliminarily match to the global track tracker information, though we could match to the tracker track
-    passNPHits = (ev.trk_pixelHits[10*coll+idx]     > 0)
-    passTKLays = (ev.trk_tkLayersWMeas[10*coll+idx] > 5)
+    passFirstPix = (ev.trk_firstPixel[10*coll+idx]     > 0)
+    passNPHits   = (ev.trk_pixelHits[10*coll+idx]     > 0)
+    passTKLays   = (ev.trk_tkLayersWMeas[10*coll+idx] > 5)
     if match:
-        passNPHits = (ev.pixelHits[muonMatch]     > 0)
-        passTKLays = (ev.tkLayersWMeas[muonMatch] > 5)
-    result = passNPHits and passTKLays and passTrkMuID(ev,idx,coll,match,debug)
+        passFirstPix = (ev.firstPixel[muonMatch]     > 0)
+        passNPHits   = (ev.pixelHits[muonMatch]     > 0)
+        passTKLays   = (ev.tkLayersWMeas[muonMatch] > 5)
+    result = passFirstPix and passNPHits and passTKLays and passTrkMuID(ev,idx,coll,match,debug)
     return result
 
 if __name__ == "__main__":
@@ -318,6 +321,7 @@ if __name__ == "__main__":
     muNum1PtHisto    = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
     muNum2PtHisto    = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
 
+    muNumFirstPixPtHisto     = r.TH1D("muonPassFirstPix",     "",300, 0., 3000.)
     muNumNPixHitPtHisto      = r.TH1D("muonPassNPixHit",      "",300, 0., 3000.)
     muNumNTkLayersPtHisto    = r.TH1D("muonPassNTkLayers",    "",300, 0., 3000.)
     muNumRelPtErrPtHisto     = r.TH1D("muonPassRelPtErr",     "",300, 0., 3000.)
@@ -333,6 +337,7 @@ if __name__ == "__main__":
     muNum1PtHisto.Sumw2()
     muNum2PtHisto.Sumw2()
 
+    muNumFirstPixPtHisto   .Sumw2()
     muNumNPixHitPtHisto    .Sumw2()
     muNumNTkLayersPtHisto  .Sumw2()
     muNumRelPtErrPtHisto   .Sumw2()
@@ -470,6 +475,8 @@ if __name__ == "__main__":
                 # denominator cuts do not include track ID cuts, but include isTracker
                 if (passMuDen(event,mu,False,options.debug)):
                     #if event.isGlobal[mu]:
+                    if event.firstPixel[mu] > 0:
+                        muNumFirstPixPtHisto.Fill(event.trackpT[mu])
                     if event.pixelHits[mu] > 0:
                         muNumNPixHitPtHisto.Fill(event.trackpT[mu])
                     if event.tkLayersWMeas[mu] > 5:
@@ -583,6 +590,7 @@ if __name__ == "__main__":
     muNum1PtHisto.Write()
     muNum2PtHisto.Write()
 
+    muNumFirstPixPtHisto.Write()
     muNumNPixHitPtHisto.Write()
     muNumNTkLayersPtHisto.Write()
     muNumRelPtErrPtHisto.Write()
