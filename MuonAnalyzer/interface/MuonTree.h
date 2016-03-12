@@ -97,7 +97,7 @@ class MuonTree : public edm::EDAnalyzer {
   int muon_isUpper[10], muon_isLower[10],
     muon_isGlobal[10], muon_isTracker[10], muon_isStandAlone[10];
   int muon_ndof[10], muon_charge[10];
-  int muon_pixHits[10],muon_tkHits[10],muon_muonStaHits[10],
+  int muon_firstPixel[10],muon_pixHits[10],muon_tkHits[10],muon_muonStaHits[10],
     muon_nVHits[10],muon_nVMuHits[10],muon_nMatSta[10],muon_tkLayWMeas[10];
 
   double track_innerY[3][10], track_outerY[3][10], track_tpin[3][10], track_tpout[3][10];
@@ -107,7 +107,7 @@ class MuonTree : public edm::EDAnalyzer {
   double track_trackPt[3][10], track_trackEta[3][10], track_trackPhi[3][10];
   int track_isUpper[3][10], track_isLower[3][10];
   int track_ndof[3][10], track_charge[3][10], track_matchedMuIdx[3][10];
-  int track_pixHits[3][10],track_tkHits[3][10],track_muonStaHits[3][10],
+  int track_firstPixel[3][10],track_pixHits[3][10],track_tkHits[3][10],track_muonStaHits[3][10],
     track_nVHits[3][10],track_nVMuHits[3][10],track_nMatSta[3][10],track_tkLayWMeas[3][10];
 };
 
