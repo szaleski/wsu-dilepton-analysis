@@ -317,6 +317,14 @@ if __name__ == "__main__":
     muDenPtHisto     = r.TH1D("muonDenominatorPt","",300, 0., 3000.)
     muNum1PtHisto    = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
     muNum2PtHisto    = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
+
+    muNumNPixHitPtHisto      = r.TH1D("muonPassNPixHit",      "",300, 0., 3000.)
+    muNumNTkLayersPtHisto    = r.TH1D("muonPassNTkLayers",    "",300, 0., 3000.)
+    muNumRelPtErrPtHisto     = r.TH1D("muonPassRelPtErr",     "",300, 0., 3000.)
+    muNumNValidMuHitPtHisto  = r.TH1D("muonPassNValidMuHits", "",300, 0., 3000.)
+    muNumNMuStationsPtHisto  = r.TH1D("muonPassNMuStations",  "",300, 0., 3000.)
+    muNumIsGlobalPtHisto     = r.TH1D("muonPassIsGlobal",     "",300, 0., 3000.)
+
     muDenPtHisto.Sumw2()
     muDenPixHitHisto.Sumw2()
     muDenTkMeasHisto.Sumw2()
@@ -324,6 +332,13 @@ if __name__ == "__main__":
     muDenDZHisto.Sumw2()
     muNum1PtHisto.Sumw2()
     muNum2PtHisto.Sumw2()
+
+    muNumNPixHitPtHisto    .Sumw2()
+    muNumNTkLayersPtHisto  .Sumw2()
+    muNumRelPtErrPtHisto   .Sumw2()
+    muNumNValidMuHitPtHisto.Sumw2()
+    muNumNMuStationsPtHisto.Sumw2()
+    muNumIsGlobalPtHisto   .Sumw2()
     
     muIsTrkDenPixHitHisto = r.TH1D("muonIsTrkDenominatorPixHit","",10, -0.5, 9.5)
     muIsTrkDenTkMeasHisto = r.TH1D("muonIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
@@ -455,6 +470,19 @@ if __name__ == "__main__":
                 # denominator cuts do not include track ID cuts, but include isTracker
                 if (passMuDen(event,mu,False,options.debug)):
                     #if event.isGlobal[mu]:
+                    if event.pixelHits[mu] > 0:
+                        muNumNPixHitPtHisto.Fill()
+                    if event.tkLayersWMeas[mu] > 5:
+                        muNumNTkLayersPtHisto.Fill()
+                    if (event.ptError[mu]/event.trackpT[mu]) < 0.3:
+                        muNumRelPtErrPtHisto.Fill()
+                    if event.nValidMuonHits[mu] > 0:
+                        muNumNValidMuHitPtHisto.Fill()
+                    if event.nMatchedStations[mu] > 1:
+                        muNumNMuStationsPtHisto.Fill()
+                    if event.isGlobal[mu] > 0:
+                        muNumIsGlobalPtHisto.Fill()
+                    
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
                     muIsGlbDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
                     muIsGlbDenPixHitHisto.Fill(event.pixelHits[mu])
@@ -554,6 +582,13 @@ if __name__ == "__main__":
     muDenDZHisto.Write()
     muNum1PtHisto.Write()
     muNum2PtHisto.Write()
+
+    muNumNPixHitPtHisto.Write()
+    muNumNTkLayersPtHisto.Write()
+    muNumRelPtErrPtHisto.Write()
+    muNumNValidMuHitPtHisto.Write()
+    muNumNMuStationsPtHisto.Write()
+    muNumIsGlobalPtHisto.Write()
     
     muIsTrkDenPtHisto.Write()
     muIsTrkDenPixHitHisto.Write()
