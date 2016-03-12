@@ -471,17 +471,17 @@ if __name__ == "__main__":
                 if (passMuDen(event,mu,False,options.debug)):
                     #if event.isGlobal[mu]:
                     if event.pixelHits[mu] > 0:
-                        muNumNPixHitPtHisto.Fill()
+                        muNumNPixHitPtHisto.Fill(event.trackpT[mu])
                     if event.tkLayersWMeas[mu] > 5:
-                        muNumNTkLayersPtHisto.Fill()
+                        muNumNTkLayersPtHisto.Fill(event.trackpT[mu])
                     if (event.ptError[mu]/event.trackpT[mu]) < 0.3:
-                        muNumRelPtErrPtHisto.Fill()
+                        muNumRelPtErrPtHisto.Fill(event.trackpT[mu])
                     if event.nValidMuonHits[mu] > 0:
-                        muNumNValidMuHitPtHisto.Fill()
+                        muNumNValidMuHitPtHisto.Fill(event.trackpT[mu])
                     if event.nMatchedStations[mu] > 1:
-                        muNumNMuStationsPtHisto.Fill()
+                        muNumNMuStationsPtHisto.Fill(event.trackpT[mu])
                     if event.isGlobal[mu] > 0:
-                        muNumIsGlobalPtHisto.Fill()
+                        muNumIsGlobalPtHisto.Fill(event.trackpT[mu])
                     
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
                     muIsGlbDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
