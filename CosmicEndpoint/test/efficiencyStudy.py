@@ -428,7 +428,7 @@ if __name__ == "__main__":
                     continue
                 if options.tight:
                     # optionally apply tighter pixel requirements
-                    if not (abs(event.dxy[mu]) < 7.5 and abs(event.dz[mu]) < 25.):
+                    if not (abs(event.dxy[mu]) < 2.5 and abs(event.dz[mu]) < 10.):
                         continue
                 if checkUpper:
                     # process upper rather than lower legs
