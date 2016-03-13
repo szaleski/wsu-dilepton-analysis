@@ -190,8 +190,10 @@ def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
         result = result and ev.isGlobal[idx]
     return result and passMuDen(ev,idx,tracker,debug)
 
-def passMuIDTrk(ev,idx,glbl=True,tracker=False,debug=False):
-    passFirstPix = (ev.firstPixel[idx] > 0)
+def passMuIDTrk(ev,idx,first=False,debug=False):
+    passFirstPix = True
+    if first:
+        passFirstPix = (ev.firstPixel[idx] > 0)
     passNPHits   = (ev.pixelHits[idx] > 0)
     passTKLays   = (ev.tkLayersWMeas[idx] > 5)
     return passFirstPix and passNPHits and passTKLays
@@ -456,7 +458,7 @@ if __name__ == "__main__":
                         muDenDZHisto.Fill(event.dz[mu])
                         if (passMuID(event,mu,False,False,options.debug)):
                             muNum1PtHisto.Fill(event.trackpT[mu])
-                        if (passMuIDTrk(event,mu,False,False,options.debug)):
+                        if (passMuIDTrk(event,mu,True,options.debug)):
                             muNum2PtHisto.Fill(event.trackpT[mu])
                             
                     # denominator cuts include track ID cuts, in addition to isTracker
@@ -468,7 +470,7 @@ if __name__ == "__main__":
                         muIsTrkDenDZHisto.Fill(event.dz[mu])
                         if (passMuID(event,mu,False,True,options.debug)):
                             muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                        if (passMuIDTrk(event,mu,False,True,options.debug)):
+                        if (passMuIDTrk(event,mu,True,options.debug)):
                             muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
                 
                 # probing isGlobal in the numerator
@@ -497,7 +499,7 @@ if __name__ == "__main__":
                     muIsGlbDenDZHisto.Fill(event.dz[mu])
                     if (passMuID(event,mu,True,False,options.debug)):
                         muIsGlbNum1PtHisto.Fill(event.trackpT[mu])
-                    if (passMuIDTrk(event,mu,True,False,options.debug)):
+                    if (passMuIDTrk(event,mu,True,options.debug)):
                         muIsGlbNum2PtHisto.Fill(event.trackpT[mu])
                         
                 # denominator cuts include track ID cuts, in addition to isTracker
@@ -510,7 +512,7 @@ if __name__ == "__main__":
                     muIsGlbIsTrkDenDZHisto.Fill(event.dz[mu])
                     if (passMuID(event,mu,True,True,options.debug)):
                         muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                    if (passMuIDTrk(event,mu,True,True,options.debug)):
+                    if (passMuIDTrk(event,mu,True,options.debug)):
                         muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[mu])
                         
         for tk in range(nTracks[1]):
