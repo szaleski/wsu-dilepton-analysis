@@ -94,6 +94,7 @@ class MuonTree : public edm::EDAnalyzer {
   double muon_ptError[10], muon_dxyError[10], muon_dzError[10];
   double muon_Pt[10], muon_Eta[10], muon_Phi[10];
   double muon_trackPt[10], muon_trackEta[10], muon_trackPhi[10];
+  int muon_hasGlobal[10], muon_hasInner[10], muon_hasOuter[10];
   int muon_isUpper[10], muon_isLower[10],
     muon_isGlobal[10], muon_isTracker[10], muon_isStandAlone[10];
   int muon_ndof[10], muon_charge[10];

@@ -105,8 +105,13 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     muon_isGlobal    [idx] = -1;
     muon_isTracker   [idx] = -1;
     muon_isStandAlone[idx] = -1;
-    muon_isLower[idx]      = -1;
-    muon_isUpper[idx]      = -1;
+
+    muon_hasGlobal[idx] = -1;
+    muon_hasInner[idx]  = -1;
+    muon_hasOuter[idx]  = -1;
+
+    muon_isLower[idx] = -1;
+    muon_isUpper[idx] = -1;
       
     muonP4[idx].SetXYZT(0,0,0,-1);
     muon_pT[idx]  = -1;
@@ -260,9 +265,16 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	muon_outerY  [muIdx] = ref->outerPosition().Y();
       }
 
+      if (mu->globalTrack().isNonnull())
+	muon_hasGlobal[muIdx] = 1;
+      if (mu->innerTrack().isNonnull())
+	muon_hasInner[muIdx] = 1;
+      if (mu->outerTrack().isNonnull())
+	muon_hasOuter[muIdx] = 1;
+
       // take hit pattern from global track
       if (mu->globalTrack().isNonnull()) {
-	
+	muon_hasGlobal[muIdx] = 1;
 	muon_firstPixel [muIdx] = (mu->globalTrack()->hitPattern().hasValidHitInFirstPixelBarrel() ||
 				   mu->globalTrack()->hitPattern().hasValidHitInFirstPixelEndcap());
 	muon_pixHits    [muIdx] = mu->globalTrack()->hitPattern().numberOfValidPixelHits();
@@ -484,9 +496,9 @@ void MuonTree::beginJob()
   muonTree->Branch("nCosmicTracks",  &nCosmicTracks,  "nCosmicTracks/I" );
   muonTree->Branch("nTrackerTracks", &nTrackerTracks, "nTrackerTracks/I");
 
-  muonTree->Branch("event",      &event,      "event/I"     );
-  muonTree->Branch("run",        &run,        "run/I"       );
-  muonTree->Branch("lumi",       &lumi,       "lumi/I"      );
+  muonTree->Branch("event", &event, "event/I");
+  muonTree->Branch("run",   &run,   "run/I"  );
+  muonTree->Branch("lumi",  &lumi,  "lumi/I" );
 
   // variables per muon ([nMuons] indexed)
   muonTree->Branch("globalpT",  muon_pT,  "globalpT[nMuons]/D" );
@@ -497,13 +509,18 @@ void MuonTree::beginJob()
   muonTree->Branch("isGlobal",     muon_isGlobal,     "isGlobal[nMuons]/I"    );
   muonTree->Branch("isTracker",    muon_isTracker,    "isTracker[nMuons]/I"   );
   muonTree->Branch("isStandAlone", muon_isStandAlone, "isStandAlone[nMuons]/I");
-  muonTree->Branch("isLower",      muon_isLower,      "isLower[nMuons]/I"     );
-  muonTree->Branch("isUpper",      muon_isUpper,      "isUpper[nMuons]/I"     );
 
-  muonTree->Branch("innerY",    muon_innerY, "innerY[nMuons]/D");
-  muonTree->Branch("outerY",    muon_outerY, "outerY[nMuons]/D");
-  muonTree->Branch("tpin",      muon_tpin,   "tpin[nMuons]/D"  );
-  muonTree->Branch("tpout",     muon_tpout,  "tpout[nMuons]/D" );
+  muonTree->Branch("hasGlobal", muon_hasGlobal, "hasGlobal[nMuons]/I");
+  muonTree->Branch("hasInner",  muon_hasInner,  "hasInner[nMuons]/I" );
+  muonTree->Branch("hasOuter",  muon_hasOuter,  "hasOuter[nMuons]/I" );
+
+  muonTree->Branch("isLower", muon_isLower, "isLower[nMuons]/I");
+  muonTree->Branch("isUpper", muon_isUpper, "isUpper[nMuons]/I");
+
+  muonTree->Branch("innerY", muon_innerY, "innerY[nMuons]/D");
+  muonTree->Branch("outerY", muon_outerY, "outerY[nMuons]/D");
+  muonTree->Branch("tpin",   muon_tpin,   "tpin[nMuons]/D"  );
+  muonTree->Branch("tpout",  muon_tpout,  "tpout[nMuons]/D" );
 
   muonTree->Branch("trackpT",  muon_trackPt,  "trackpT[nMuons]/D" );
   muonTree->Branch("trackEta", muon_trackEta, "trackEta[nMuons]/D");
