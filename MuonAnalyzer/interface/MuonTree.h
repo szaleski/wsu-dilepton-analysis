@@ -90,6 +90,8 @@ class MuonTree : public edm::EDAnalyzer {
   math::XYZVector muon_trackVec[10];
  
   double muon_innerY[10], muon_outerY[10], muon_tpin[10], muon_tpout[10];
+  double muon_global_chi2[10],muon_inner_chi2[10],muon_outer_chi2[10];
+  int    muon_global_ndof[10],muon_inner_ndof[10],muon_outer_ndof[10];
   double muon_chi2[10], muon_dxy[10], muon_dz[10], muon_pT[10];
   double muon_ptError[10], muon_dxyError[10], muon_dzError[10];
   double muon_Pt[10], muon_Eta[10], muon_Phi[10];
