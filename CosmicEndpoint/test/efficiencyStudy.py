@@ -32,6 +32,25 @@ def isGoodEvent(ev,isUpper=False,debug=False):
     return False
         
 
+def fillChi2Hists(ev,idx,chi2Hist,trkChi2Hist,glbChi2Hist,staChi2Hist,debug=False):
+    rchi2 = -1.
+    if (ev.ndof[mu] > 0):
+        rchi2 = ev.chi2[mu]/ev.ndof[mu]
+    chi2Hist.Fill(ev.trackpT[mu],rchi2)
+    #rchi2 = -1.
+    #if (ev.innerNDF[mu] > 0):
+    #    rchi2 = ev.innerChi2[mu]/ev.innerNDF[mu]
+    #trkChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    #rchi2 = -1.
+    #if (ev.globalNDF[mu] > 0):
+    #    rchi2 = ev.globalChi2[mu]/ev.globalNDF[mu]
+    #glbChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    #rchi2 = -1.
+    #if (ev.outerNDF[mu] > 0):
+    #    rchi2 = ev.outerChi2[mu]/ev.outerNDF[mu]
+    #staChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    
+
 def findFunky(ev,isUpper=False,debug=False):
     # want to find the evnets where we have a duplicated Muon object pt eta phi upper all identical
     # optionally, use combined information?
@@ -98,10 +117,12 @@ def findFunky(ev,isUpper=False,debug=False):
                     dPhi(chkPhi,refPhi),
                     (chkEta-refEta)
                     )
-                print "chk%d up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
+                print "chk%d up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,chi2:%2.2f,ndf:%d,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
                     mu,ev.isUpper[mu],ev.isLower[mu],chkQ,chkTrk,chkGlb,chkSta,chkPt,chkPhi,chkEta,
                     ev.dxy[mu],
                     ev.dz[mu],
+                    ev.chi2[mu],
+                    ev.ndof[mu],
                     ev.trackpT[mu],
                     ev.ptError[mu]/ev.trackpT[mu],
                     ev.pixelHits[mu],
@@ -111,10 +132,12 @@ def findFunky(ev,isUpper=False,debug=False):
                     ev.nValidMuonHits[mu],
                     ev.nMatchedStations[mu])
 
-                print "ref%d,up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
+                print "ref%d,up=%d/lo=%d,q=%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f - dxy:%2.2f,dz:%2.2f,chi2:%2.2f,ndf:%d,pt:%2.4f,dpt/pt:%2.4f,pix:%d,tkhits:%d,tklaywmeas:%d,mustahits:%d,vmuhits:%d,matched:%d"%(
                     ref,ev.isUpper[ref],ev.isLower[ref],refQ,refTrk,refGlb,refSta,refPt,refPhi,refEta,
                     ev.dxy[ref],
                     ev.dz[ref],
+                    ev.chi2[ref],
+                    ev.ndof[ref],
                     ev.trackpT[ref],
                     ev.ptError[ref]/ev.trackpT[ref],
                     ev.pixelHits[ref],
@@ -178,7 +201,7 @@ def findTrackMatch(ev,idx,src,coll,debug=False):
 def passMuDen(ev,idx,tracker=False,debug=False):
     result = ev.trackpT[idx] > 53. and abs(ev.trackEta[idx]) < 0.9 and ev.isTracker[idx]
     if tracker:
-        result = result and passMuIDTrk(ev,idx)
+        result = result and passMuIDTrk(ev,idx,tracker)
     return result
 
 def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
@@ -290,6 +313,8 @@ if __name__ == "__main__":
     ptBins  = np.array([0.,10.,20.,30.,40.,50.,75.,100.,150.,200.,250.,300.,400.,500.,750.,1000.,1500.,2000.,3000.])
     ptBins  = np.array([0., 53., 100., 200., 300., 400., 500., 750., 1000., 1500., 2000.])
     ptBins  = np.array([0., 50., 100., 150., 200., 250., 300., 500., 1000.])
+    ptBins  = np.array([0., 50., 100., 150., 200., 300., 500., 1000.])
+    ptBins  = np.array([50.,60.,75.,100.,125.,150.,175.,200.,250.,300.,500.,3000.])
     etaBins = np.array([-2., -1.6, -0.9, 0., 0.9, 1.6,  2.])
     phiBins = np.array([-4., -1.6, 0., 1.6,  4.])
     
@@ -310,98 +335,326 @@ if __name__ == "__main__":
             mychain.Add("%s"%(line))
         mytree = mychain
     
-    nMuonsUpperLower   = r.TH2D("nMuons","",10, -0.5,9.5, 10, -0.5,9.5)
+    nMuonsUpperLower = r.TH2D("nMuons","", 10, -0.5,9.5, 10, -0.5,9.5)
     nMuonsUpperLower.Sumw2()
-    eventCounter   = r.TH1D("eventCounter","",3, -0.5, 2.5)
+    eventCounter = r.TH1D("eventCounter","", 3, -0.5, 2.5)
     eventCounter.Sumw2()
 
-    muDenPixHitHisto = r.TH1D("muonDenominatorPixHit","",10, -0.5, 9.5)
-    muDenTkMeasHisto = r.TH1D("muonDenominatorTkMeas","",20, -0.5, 19.5)
-    muDenDXYHisto    = r.TH1D("muonDenominatorDXY","",100, -10., 10.)
-    muDenDZHisto     = r.TH1D("muonDenominatorDZ","",100, -50., 50.)
-    muDenPtHisto     = r.TH1D("muonDenominatorPt","",300, 0., 3000.)
-    muNum1PtHisto    = r.TH1D("muonPassIDPt",     "",300, 0., 3000.)
-    muNum2PtHisto    = r.TH1D("muonPassIDTrkPt",  "",300, 0., 3000.)
+    # denominator cuts on pT, eta, isTracker and isGlobal
+    muDenPixHitHisto          = r.TH2D("muonDenominatorPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muDenTkMeasHisto          = r.TH2D("muonDenominatorTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
+    muDenRelPtErrorHisto      = r.TH2D("muonDenominatorRelPtError",     "", len(ptBins)-1, ptBins, 100, 0.,   1. )
+    muDenValidMuonHitsHisto   = r.TH2D("muonDenominatorValidMuonHits",  "", len(ptBins)-1, ptBins, 75, -0.5, 74.5)
+    muDenMatchedStationsHisto = r.TH2D("muonDenominatorMatchedStations","", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muDenChi2Histo            = r.TH2D("muonDenominatorChi2",           "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muDenTrkChi2Histo         = r.TH2D("muonDenominatorTrkChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muDenGlbChi2Histo         = r.TH2D("muonDenominatorGlbChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muDenStaChi2Histo         = r.TH2D("muonDenominatorStaChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muDenNormChi2Histo        = r.TH2D("muonDenominatorNormChi2",       "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muDenTrkNormChi2Histo     = r.TH2D("muonDenominatorTrkNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muDenGlbNormChi2Histo     = r.TH2D("muonDenominatorGlbNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muDenStaNormChi2Histo     = r.TH2D("muonDenominatorStaNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muDenDXYHisto             = r.TH2D("muonDenominatorDXY",            "", len(ptBins)-1, ptBins, 100,-10., 10. )
+    muDenDZHisto              = r.TH2D("muonDenominatorDZ",             "", len(ptBins)-1, ptBins, 100,-50., 50. )
 
-    muNumFirstPixPtHisto     = r.TH1D("muonPassFirstPix",     "",300, 0., 3000.)
-    muNumNPixHitPtHisto      = r.TH1D("muonPassNPixHit",      "",300, 0., 3000.)
-    muNumNTkLayersPtHisto    = r.TH1D("muonPassNTkLayers",    "",300, 0., 3000.)
-    muNumRelPtErrPtHisto     = r.TH1D("muonPassRelPtErr",     "",300, 0., 3000.)
-    muNumNValidMuHitPtHisto  = r.TH1D("muonPassNValidMuHits", "",300, 0., 3000.)
-    muNumNMuStationsPtHisto  = r.TH1D("muonPassNMuStations",  "",300, 0., 3000.)
-    muNumIsGlobalPtHisto     = r.TH1D("muonPassIsGlobal",     "",300, 0., 3000.)
+    muDenPtHisto     = r.TH1D("muonDenominatorPt",   "", 300, 0., 3000.)
+    muNum1PtHisto    = r.TH1D("muonPassIDPt",        "", 300, 0., 3000.)
+    muNum2PtHisto    = r.TH1D("muonPassIDTrkPt",     "", 300, 0., 3000.)
 
-    muDenPtHisto.Sumw2()
+    muNumFirstPixPtHisto      = r.TH1D("muonPassFirstPix",        "", 300, 0., 3000.)
+    muNumFirstPixChi2Histo    = r.TH2D("muonPassFirstPixChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumFirstPixTrkChi2Histo = r.TH2D("muonPassFirstPixTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumFirstPixGlbChi2Histo = r.TH2D("muonPassFirstPixGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumFirstPixStaChi2Histo = r.TH2D("muonPassFirstPixStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumFirstPixNormChi2Histo    = r.TH2D("muonPassFirstPixNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumFirstPixTrkNormChi2Histo = r.TH2D("muonPassFirstPixTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumFirstPixGlbNormChi2Histo = r.TH2D("muonPassFirstPixGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumFirstPixStaNormChi2Histo = r.TH2D("muonPassFirstPixStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumNPixHitPtHisto      = r.TH1D("muonPassNPixHit",        "", 300, 0., 3000.)
+    muNumNPixHitChi2Histo    = r.TH2D("muonPassNPixHitChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNPixHitTrkChi2Histo = r.TH2D("muonPassNPixHitTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNPixHitGlbChi2Histo = r.TH2D("muonPassNPixHitGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNPixHitStaChi2Histo = r.TH2D("muonPassNPixHitStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNPixHitNormChi2Histo    = r.TH2D("muonPassNPixHitNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNPixHitTrkNormChi2Histo = r.TH2D("muonPassNPixHitTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNPixHitGlbNormChi2Histo = r.TH2D("muonPassNPixHitGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNPixHitStaNormChi2Histo = r.TH2D("muonPassNPixHitStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumNTkLayersPtHisto      = r.TH1D("muonPassNTkLayers",        "", 300, 0., 3000.)
+    muNumNTkLayersChi2Histo    = r.TH2D("muonPassNTkLayersChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNTkLayersTrkChi2Histo = r.TH2D("muonPassNTkLayersTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNTkLayersGlbChi2Histo = r.TH2D("muonPassNTkLayersGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNTkLayersStaChi2Histo = r.TH2D("muonPassNTkLayersStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNTkLayersNormChi2Histo    = r.TH2D("muonPassNTkLayersNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNTkLayersTrkNormChi2Histo = r.TH2D("muonPassNTkLayersTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNTkLayersGlbNormChi2Histo = r.TH2D("muonPassNTkLayersGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNTkLayersStaNormChi2Histo = r.TH2D("muonPassNTkLayersStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumRelPtErrPtHisto      = r.TH1D("muonPassRelPtErr",        "", 300, 0., 3000.)
+    muNumRelPtErrChi2Histo    = r.TH2D("muonPassRelPtErrChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumRelPtErrTrkChi2Histo = r.TH2D("muonPassRelPtErrTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumRelPtErrGlbChi2Histo = r.TH2D("muonPassRelPtErrGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumRelPtErrStaChi2Histo = r.TH2D("muonPassRelPtErrStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumRelPtErrNormChi2Histo    = r.TH2D("muonPassRelPtErrNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumRelPtErrTrkNormChi2Histo = r.TH2D("muonPassRelPtErrTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumRelPtErrGlbNormChi2Histo = r.TH2D("muonPassRelPtErrGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumRelPtErrStaNormChi2Histo = r.TH2D("muonPassRelPtErrStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumNValidMuHitPtHisto       = r.TH1D("muonPassNValidMuHits",        "", 300, 0., 3000.)
+    muNumNValidMuHitChi2Histo    = r.TH2D("muonPassNValidMuHitsChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNValidMuHitTrkChi2Histo = r.TH2D("muonPassNValidMuHitsTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNValidMuHitGlbChi2Histo = r.TH2D("muonPassNValidMuHitsGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNValidMuHitStaChi2Histo = r.TH2D("muonPassNValidMuHitsStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNValidMuHitNormChi2Histo    = r.TH2D("muonPassNValidMuHitsNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNValidMuHitTrkNormChi2Histo = r.TH2D("muonPassNValidMuHitsTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNValidMuHitGlbNormChi2Histo = r.TH2D("muonPassNValidMuHitsGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNValidMuHitStaNormChi2Histo = r.TH2D("muonPassNValidMuHitsStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumNMuStationsPtHisto      = r.TH1D("muonPassNMuStations",        "", 300, 0., 3000.)
+    muNumNMuStationsChi2Histo    = r.TH2D("muonPassNMuStationsChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNMuStationsTrkChi2Histo = r.TH2D("muonPassNMuStationsTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNMuStationsGlbChi2Histo = r.TH2D("muonPassNMuStationsGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNMuStationsStaChi2Histo = r.TH2D("muonPassNMuStationsStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumNMuStationsNormChi2Histo    = r.TH2D("muonPassNMuStationsNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNMuStationsTrkNormChi2Histo = r.TH2D("muonPassNMuStationsTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNMuStationsGlbNormChi2Histo = r.TH2D("muonPassNMuStationsGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumNMuStationsStaNormChi2Histo = r.TH2D("muonPassNMuStationsStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+    muNumIsGlobalPtHisto      = r.TH1D("muonPassIsGlobal",        "", 300, 0., 3000.)
+    muNumIsGlobalChi2Histo    = r.TH2D("muonPassIsGlobalChi2",    "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumIsGlobalTrkChi2Histo = r.TH2D("muonPassIsGlobalTrkChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumIsGlobalGlbChi2Histo = r.TH2D("muonPassIsGlobalGlbChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumIsGlobalStaChi2Histo = r.TH2D("muonPassIsGlobalStaChi2", "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNumIsGlobalNormChi2Histo    = r.TH2D("muonPassIsGlobalNormChi2",    "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumIsGlobalTrkNormChi2Histo = r.TH2D("muonPassIsGlobalTrkNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumIsGlobalGlbNormChi2Histo = r.TH2D("muonPassIsGlobalGlbNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+    muNumIsGlobalStaNormChi2Histo = r.TH2D("muonPassIsGlobalStaNormChi2", "", len(ptBins)-1, ptBins, 150,  0., 50. )
+
+
     muDenPixHitHisto.Sumw2()
     muDenTkMeasHisto.Sumw2()
+    muDenRelPtErrorHisto.Sumw2()
+    muDenValidMuonHitsHisto.Sumw2()
+    muDenMatchedStationsHisto.Sumw2()
+    muDenChi2Histo.Sumw2()
+    muDenTrkChi2Histo.Sumw2()
+    muDenGlbChi2Histo.Sumw2()
+    muDenStaChi2Histo.Sumw2()
+    muDenNormChi2Histo.Sumw2()
+    muDenTrkNormChi2Histo.Sumw2()
+    muDenGlbNormChi2Histo.Sumw2()
+    muDenStaNormChi2Histo.Sumw2()
     muDenDXYHisto.Sumw2()
     muDenDZHisto.Sumw2()
+
+    muDenPtHisto.Sumw2()
     muNum1PtHisto.Sumw2()
     muNum2PtHisto.Sumw2()
 
     muNumFirstPixPtHisto   .Sumw2()
+    muNumFirstPixChi2Histo   .Sumw2()
+    muNumFirstPixTrkChi2Histo.Sumw2()
+    muNumFirstPixGlbChi2Histo.Sumw2()
+    muNumFirstPixStaChi2Histo.Sumw2()
+    muNumFirstPixNormChi2Histo   .Sumw2()
+    muNumFirstPixTrkNormChi2Histo.Sumw2()
+    muNumFirstPixGlbNormChi2Histo.Sumw2()
+    muNumFirstPixStaNormChi2Histo.Sumw2()
+
     muNumNPixHitPtHisto    .Sumw2()
+    muNumNPixHitChi2Histo   .Sumw2()
+    muNumNPixHitTrkChi2Histo.Sumw2()
+    muNumNPixHitGlbChi2Histo.Sumw2()
+    muNumNPixHitStaChi2Histo.Sumw2()
+    muNumNPixHitNormChi2Histo   .Sumw2()
+    muNumNPixHitTrkNormChi2Histo.Sumw2()
+    muNumNPixHitGlbNormChi2Histo.Sumw2()
+    muNumNPixHitStaNormChi2Histo.Sumw2()
+
     muNumNTkLayersPtHisto  .Sumw2()
+    muNumNTkLayersChi2Histo   .Sumw2()
+    muNumNTkLayersTrkChi2Histo.Sumw2()
+    muNumNTkLayersGlbChi2Histo.Sumw2()
+    muNumNTkLayersStaChi2Histo.Sumw2()
+    muNumNTkLayersNormChi2Histo   .Sumw2()
+    muNumNTkLayersTrkNormChi2Histo.Sumw2()
+    muNumNTkLayersGlbNormChi2Histo.Sumw2()
+    muNumNTkLayersStaNormChi2Histo.Sumw2()
+
     muNumRelPtErrPtHisto   .Sumw2()
+    muNumRelPtErrChi2Histo   .Sumw2()
+    muNumRelPtErrTrkChi2Histo.Sumw2()
+    muNumRelPtErrGlbChi2Histo.Sumw2()
+    muNumRelPtErrStaChi2Histo.Sumw2()
+    muNumRelPtErrNormChi2Histo   .Sumw2()
+    muNumRelPtErrTrkNormChi2Histo.Sumw2()
+    muNumRelPtErrGlbNormChi2Histo.Sumw2()
+    muNumRelPtErrStaNormChi2Histo.Sumw2()
+
     muNumNValidMuHitPtHisto.Sumw2()
+    muNumNValidMuHitChi2Histo   .Sumw2()
+    muNumNValidMuHitTrkChi2Histo.Sumw2()
+    muNumNValidMuHitGlbChi2Histo.Sumw2()
+    muNumNValidMuHitStaChi2Histo.Sumw2()
+    muNumNValidMuHitNormChi2Histo   .Sumw2()
+    muNumNValidMuHitTrkNormChi2Histo.Sumw2()
+    muNumNValidMuHitGlbNormChi2Histo.Sumw2()
+    muNumNValidMuHitStaNormChi2Histo.Sumw2()
+
     muNumNMuStationsPtHisto.Sumw2()
+    muNumNMuStationsChi2Histo   .Sumw2()
+    muNumNMuStationsTrkChi2Histo.Sumw2()
+    muNumNMuStationsGlbChi2Histo.Sumw2()
+    muNumNMuStationsStaChi2Histo.Sumw2()
+    muNumNMuStationsNormChi2Histo   .Sumw2()
+    muNumNMuStationsTrkNormChi2Histo.Sumw2()
+    muNumNMuStationsGlbNormChi2Histo.Sumw2()
+    muNumNMuStationsStaNormChi2Histo.Sumw2()
+
     muNumIsGlobalPtHisto   .Sumw2()
+    muNumIsGlobalChi2Histo   .Sumw2()
+    muNumIsGlobalTrkChi2Histo.Sumw2()
+    muNumIsGlobalGlbChi2Histo.Sumw2()
+    muNumIsGlobalStaChi2Histo.Sumw2()
+    muNumIsGlobalNormChi2Histo   .Sumw2()
+    muNumIsGlobalTrkNormChi2Histo.Sumw2()
+    muNumIsGlobalGlbNormChi2Histo.Sumw2()
+    muNumIsGlobalStaNormChi2Histo.Sumw2()
     
-    muIsTrkDenPixHitHisto = r.TH1D("muonIsTrkDenominatorPixHit","",10, -0.5, 9.5)
-    muIsTrkDenTkMeasHisto = r.TH1D("muonIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsTrkDenDXYHisto    = r.TH1D("muonIsTrkDenominatorDXY","",100, -10., 10.)
-    muIsTrkDenDZHisto     = r.TH1D("muonIsTrkDenominatorDZ","",100, -50., 50.)
-    muIsTrkDenPtHisto     = r.TH1D("muonIsTrkDenominatorPt","",300, 0., 3000.)
-    muIsTrkNum1PtHisto    = r.TH1D("muonIsTrkPassIDPt",     "",300, 0., 3000.)
-    muIsTrkNum2PtHisto    = r.TH1D("muonIsTrkPassIDTrkPt",  "",300, 0., 3000.)
+    # denominator adds cuts on pixel hits and tracker layers
+    muIsTrkDenPixHitHisto          = r.TH2D("muonIsTrkDenominatorPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsTrkDenTkMeasHisto          = r.TH2D("muonIsTrkDenominatorTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
+    muIsTrkDenRelPtErrorHisto      = r.TH2D("muonIsTrkDenominatorRelPtError",     "", len(ptBins)-1, ptBins, 100, 0.,   1. )
+    muIsTrkDenValidMuonHitsHisto   = r.TH2D("muonIsTrkDenominatorValidMuonHits",  "", len(ptBins)-1, ptBins, 75, -0.5, 74.5)
+    muIsTrkDenMatchedStationsHisto = r.TH2D("muonIsTrkDenominatorMatchedStations","", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsTrkDenChi2Histo            = r.TH2D("muonIsTrkDenominatorChi2",           "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsTrkDenTrkChi2Histo         = r.TH2D("muonIsTrkDenominatorTrkChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsTrkDenGlbChi2Histo         = r.TH2D("muonIsTrkDenominatorGlbChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsTrkDenStaChi2Histo         = r.TH2D("muonIsTrkDenominatorStaChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsTrkDenNormChi2Histo        = r.TH2D("muonIsTrkDenominatorNormChi2",       "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsTrkDenTrkNormChi2Histo     = r.TH2D("muonIsTrkDenominatorTrkNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsTrkDenGlbNormChi2Histo     = r.TH2D("muonIsTrkDenominatorGlbNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsTrkDenStaNormChi2Histo     = r.TH2D("muonIsTrkDenominatorStaNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsTrkDenDXYHisto             = r.TH2D("muonIsTrkDenominatorDXY",            "", len(ptBins)-1, ptBins, 100,-10., 10. )
+    muIsTrkDenDZHisto              = r.TH2D("muonIsTrkDenominatorDZ",             "", len(ptBins)-1, ptBins, 100,-50., 50. )
+
+    muIsTrkDenPtHisto     = r.TH1D("muonIsTrkDenominatorPt","", 300, 0., 3000.)
+    muIsTrkNum1PtHisto    = r.TH1D("muonIsTrkPassIDPt",     "", 300, 0., 3000.)
+    muIsTrkNum2PtHisto    = r.TH1D("muonIsTrkPassIDTrkPt",  "", 300, 0., 3000.)
+
     muIsTrkDenPtHisto.Sumw2()
     muIsTrkDenPixHitHisto.Sumw2()
     muIsTrkDenTkMeasHisto.Sumw2()
+    muIsTrkDenRelPtErrorHisto.Sumw2()
+    muIsTrkDenValidMuonHitsHisto.Sumw2()
+    muIsTrkDenMatchedStationsHisto.Sumw2()
+    muIsTrkDenChi2Histo.Sumw2()
+    muIsTrkDenTrkChi2Histo.Sumw2()
+    muIsTrkDenGlbChi2Histo.Sumw2()
+    muIsTrkDenStaChi2Histo.Sumw2()
+    muIsTrkDenNormChi2Histo.Sumw2()
+    muIsTrkDenTrkNormChi2Histo.Sumw2()
+    muIsTrkDenGlbNormChi2Histo.Sumw2()
+    muIsTrkDenStaNormChi2Histo.Sumw2()
     muIsTrkDenDXYHisto.Sumw2()
     muIsTrkDenDZHisto.Sumw2()
     muIsTrkNum1PtHisto.Sumw2()
     muIsTrkNum2PtHisto.Sumw2()
 
-    muIsGlbDenPixHitHisto = r.TH1D("muonIsGlbDenominatorPixHit","",10, -0.5, 9.5)
-    muIsGlbDenTkMeasHisto = r.TH1D("muonIsGlbDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsGlbDenDXYHisto    = r.TH1D("muonIsGlbDenominatorDXY","",100, -10., 10.)
-    muIsGlbDenDZHisto     = r.TH1D("muonIsGlbDenominatorDZ","",100, -50., 50.)
-    muIsGlbDenPtHisto     = r.TH1D("muonIsGlbDenominatorPt","",300, 0., 3000.)
-    muIsGlbNum1PtHisto    = r.TH1D("muonIsGlbPassIDPt",     "",300, 0., 3000.)
-    muIsGlbNum2PtHisto    = r.TH1D("muonIsGlbPassIDTrkPt",  "",300, 0., 3000.)
-    muIsGlbDenPtHisto.Sumw2()
+    # Probe isGlobal in the numerator, denominator only has pT, eta, and isTracker
+    muIsGlbDenPixHitHisto          = r.TH2D("muonIsGlbDenominatorPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsGlbDenTkMeasHisto          = r.TH2D("muonIsGlbDenominatorTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
+    muIsGlbDenRelPtErrorHisto      = r.TH2D("muonIsGlbDenominatorRelPtError",     "", len(ptBins)-1, ptBins, 100, 0.,   1. )
+    muIsGlbDenValidMuonHitsHisto   = r.TH2D("muonIsGlbDenominatorValidMuonHits",  "", len(ptBins)-1, ptBins, 75, -0.5, 74.5)
+    muIsGlbDenMatchedStationsHisto = r.TH2D("muonIsGlbDenominatorMatchedStations","", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsGlbDenChi2Histo            = r.TH2D("muonIsGlbDenominatorChi2",           "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbDenTrkChi2Histo         = r.TH2D("muonIsGlbDenominatorTrkChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbDenGlbChi2Histo         = r.TH2D("muonIsGlbDenominatorGlbChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbDenStaChi2Histo         = r.TH2D("muonIsGlbDenominatorStaChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbDenNormChi2Histo        = r.TH2D("muonIsGlbDenominatorNormChi2",       "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbDenTrkNormChi2Histo     = r.TH2D("muonIsGlbDenominatorTrkNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbDenGlbNormChi2Histo     = r.TH2D("muonIsGlbDenominatorGlbNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbDenStaNormChi2Histo     = r.TH2D("muonIsGlbDenominatorStaNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbDenDXYHisto             = r.TH2D("muonIsGlbDenominatorDXY",            "", len(ptBins)-1, ptBins, 100,-10., 10. )
+    muIsGlbDenDZHisto              = r.TH2D("muonIsGlbDenominatorDZ",             "", len(ptBins)-1, ptBins, 100,-50., 50. )
+
+    muIsGlbDenPtHisto     = r.TH1D("muonIsGlbDenominatorPt","", 300, 0., 3000.)
+    muIsGlbNum1PtHisto    = r.TH1D("muonIsGlbPassIDPt",     "", 300, 0., 3000.)
+    muIsGlbNum2PtHisto    = r.TH1D("muonIsGlbPassIDTrkPt",  "", 300, 0., 3000.)
+
     muIsGlbDenPixHitHisto.Sumw2()
     muIsGlbDenTkMeasHisto.Sumw2()
+    muIsGlbDenRelPtErrorHisto.Sumw2()
+    muIsGlbDenValidMuonHitsHisto.Sumw2()
+    muIsGlbDenMatchedStationsHisto.Sumw2()
+    muIsGlbDenTrkChi2Histo.Sumw2()
+    muIsGlbDenGlbChi2Histo.Sumw2()
+    muIsGlbDenStaChi2Histo.Sumw2()
+    muIsGlbDenChi2Histo.Sumw2()
+    muIsGlbDenTrkNormChi2Histo.Sumw2()
+    muIsGlbDenGlbNormChi2Histo.Sumw2()
+    muIsGlbDenStaNormChi2Histo.Sumw2()
+    muIsGlbDenNormChi2Histo.Sumw2()
     muIsGlbDenDXYHisto.Sumw2()
     muIsGlbDenDZHisto.Sumw2()
+
+    muIsGlbDenPtHisto.Sumw2()
     muIsGlbNum1PtHisto.Sumw2()
     muIsGlbNum2PtHisto.Sumw2()
     
-    muIsGlbIsTrkDenPixHitHisto = r.TH1D("muonIsGlbIsTrkDenominatorPixHit","",10, -0.5, 9.5)
-    muIsGlbIsTrkDenTkMeasHisto = r.TH1D("muonIsGlbIsTrkDenominatorTkMeas","",20, -0.5, 19.5)
-    muIsGlbIsTrkDenDXYHisto    = r.TH1D("muonIsGlbIsTrkDenominatorDXY","",100, -10., 10.)
-    muIsGlbIsTrkDenDZHisto     = r.TH1D("muonIsGlbIsTrkDenominatorDZ","",100, -50., 50.)
-    muIsGlbIsTrkDenPtHisto     = r.TH1D("muonIsGlbIsTrkDenominatorPt","",300, 0., 3000.)
-    muIsGlbIsTrkNum1PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDPt",     "",300, 0., 3000.)
-    muIsGlbIsTrkNum2PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDTrkPt",  "",300, 0., 3000.)
-    muIsGlbIsTrkDenPtHisto.Sumw2()
+    # denominator adds cuts on pixel hits and tracker layers
+    muIsGlbIsTrkDenPixHitHisto          = r.TH2D("muonIsGlbIsTrkDenominatorPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsGlbIsTrkDenTkMeasHisto          = r.TH2D("muonIsGlbIsTrkDenominatorTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
+    muIsGlbIsTrkDenRelPtErrorHisto      = r.TH2D("muonIsGlbIsTrkDenominatorRelPtError",     "", len(ptBins)-1, ptBins, 100, 0.,   1. )
+    muIsGlbIsTrkDenValidMuonHitsHisto   = r.TH2D("muonIsGlbIsTrkDenominatorValidMuonHits",  "", len(ptBins)-1, ptBins, 75, -0.5, 74.5)
+    muIsGlbIsTrkDenMatchedStationsHisto = r.TH2D("muonIsGlbIsTrkDenominatorMatchedStations","", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muIsGlbIsTrkDenChi2Histo            = r.TH2D("muonIsGlbIsTrkDenominatorChi2",           "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbIsTrkDenTrkChi2Histo         = r.TH2D("muonIsGlbIsTrkDenominatorTrkChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbIsTrkDenGlbChi2Histo         = r.TH2D("muonIsGlbIsTrkDenominatorGlbChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbIsTrkDenStaChi2Histo         = r.TH2D("muonIsGlbIsTrkDenominatorStaChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muIsGlbIsTrkDenNormChi2Histo        = r.TH2D("muonIsGlbIsTrkDenominatorNormChi2",       "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbIsTrkDenTrkNormChi2Histo     = r.TH2D("muonIsGlbIsTrkDenominatorTrkNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbIsTrkDenGlbNormChi2Histo     = r.TH2D("muonIsGlbIsTrkDenominatorGlbNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbIsTrkDenStaNormChi2Histo     = r.TH2D("muonIsGlbIsTrkDenominatorStaNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muIsGlbIsTrkDenDXYHisto             = r.TH2D("muonIsGlbIsTrkDenominatorDXY",            "", len(ptBins)-1, ptBins, 100,-10., 10. )
+    muIsGlbIsTrkDenDZHisto              = r.TH2D("muonIsGlbIsTrkDenominatorDZ",             "", len(ptBins)-1, ptBins, 100,-50., 50. )
+
+    muIsGlbIsTrkDenPtHisto     = r.TH1D("muonIsGlbIsTrkDenominatorPt","", 300, 0., 3000.)
+    muIsGlbIsTrkNum1PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDPt",     "", 300, 0., 3000.)
+    muIsGlbIsTrkNum2PtHisto    = r.TH1D("muonIsGlbIsTrkPassIDTrkPt",  "", 300, 0., 3000.)
+
     muIsGlbIsTrkDenPixHitHisto.Sumw2()
     muIsGlbIsTrkDenTkMeasHisto.Sumw2()
+    muIsGlbIsTrkDenRelPtErrorHisto.Sumw2()
+    muIsGlbIsTrkDenValidMuonHitsHisto.Sumw2()
+    muIsGlbIsTrkDenMatchedStationsHisto.Sumw2()
+    muIsGlbIsTrkDenChi2Histo.Sumw2()
+    muIsGlbIsTrkDenTrkChi2Histo.Sumw2()
+    muIsGlbIsTrkDenGlbChi2Histo.Sumw2()
+    muIsGlbIsTrkDenStaChi2Histo.Sumw2()
+    muIsGlbIsTrkDenNormChi2Histo.Sumw2()
+    muIsGlbIsTrkDenTrkNormChi2Histo.Sumw2()
+    muIsGlbIsTrkDenGlbNormChi2Histo.Sumw2()
+    muIsGlbIsTrkDenStaNormChi2Histo.Sumw2()
     muIsGlbIsTrkDenDXYHisto.Sumw2()
     muIsGlbIsTrkDenDZHisto.Sumw2()
+
+    muIsGlbIsTrkDenPtHisto.Sumw2()
     muIsGlbIsTrkNum1PtHisto.Sumw2()
     muIsGlbIsTrkNum2PtHisto.Sumw2()
     
-    trkDenPtHisto  = r.TH1D("trackDenominatorPt","",300, 0., 3000.)
-    trkNum1PtHisto = r.TH1D("trackPassIDPt",     "",300, 0., 3000.)
-    trkNum2PtHisto = r.TH1D("trackPassIDTrkPt",  "",300, 0., 3000.)
+    # histograms for study starting from raw track collection.
+    trkDenPtHisto  = r.TH1D("trackDenominatorPt","", 300, 0., 3000.)
+    trkNum1PtHisto = r.TH1D("trackPassIDPt",     "", 300, 0., 3000.)
+    trkNum2PtHisto = r.TH1D("trackPassIDTrkPt",  "", 300, 0., 3000.)
     trkDenPtHisto.Sumw2()
     trkNum1PtHisto.Sumw2()
     trkNum2PtHisto.Sumw2()
     
-    trkMuDenPtHisto  = r.TH1D("trackMuDenominatorPt","",300, 0., 3000.)
-    trkMuNum1PtHisto = r.TH1D("trackMuPassIDPt",     "",300, 0., 3000.)
-    trkMuNum2PtHisto = r.TH1D("trackMuPassIDTrkPt",  "",300, 0., 3000.)
+    trkMuDenPtHisto  = r.TH1D("trackMuDenominatorPt","", 300, 0., 3000.)
+    trkMuNum1PtHisto = r.TH1D("trackMuPassIDPt",     "", 300, 0., 3000.)
+    trkMuNum2PtHisto = r.TH1D("trackMuPassIDTrkPt",  "", 300, 0., 3000.)
     trkMuDenPtHisto.Sumw2()
     trkMuNum1PtHisto.Sumw2()
     trkMuNum2PtHisto.Sumw2()
@@ -424,6 +677,9 @@ if __name__ == "__main__":
             # should have at least one muon with pT > 53. and |eta| < 0.9
             nMuonsUpperLower.Fill(event.nUpperLegs,event.nLowerLegs)
             eventCounter.Fill(0)
+            # this will reject any events where we find duplicate muons
+            # can we be clever and keep the muon that is 1t/1g/1sa if it exists?
+            # or will this be an additional bias?
             if findFunky(event,checkUpper,options.debug):
                 # skip events where we find the "duplicate" muons
                 eventCounter.Fill(2)
@@ -452,10 +708,15 @@ if __name__ == "__main__":
                     # denominator cuts do not include track ID cuts, but include isTracker
                     if (passMuDen(event,mu,False,options.debug)):
                         muDenPtHisto.Fill(event.trackpT[mu])
-                        muDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                        muDenPixHitHisto.Fill(event.pixelHits[mu])
-                        muDenDXYHisto.Fill(event.dxy[mu])
-                        muDenDZHisto.Fill(event.dz[mu])
+                        muDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                        muDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                        muDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                        muDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                        muDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                        fillChi2Hists(event,mu,muDenChi2Histo,muDenTrkChi2Histo,muDenGlbChi2Histo,muDenStaChi2Histo)
+                        fillChi2Hists(event,mu,muDenNormChi2Histo,muDenTrkNormChi2Histo,muDenGlbNormChi2Histo,muDenStaChi2Histo,True)
+                        muDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                        muDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
                         if (passMuID(event,mu,False,False,options.debug)):
                             muNum1PtHisto.Fill(event.trackpT[mu])
                         if (passMuIDTrk(event,mu,True,options.debug)):
@@ -464,39 +725,87 @@ if __name__ == "__main__":
                     # denominator cuts include track ID cuts, in addition to isTracker
                     if (passMuDen(event,mu,True,options.debug)):
                         muIsTrkDenPtHisto.Fill(event.trackpT[mu])
-                        muIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                        muIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
-                        muIsTrkDenDXYHisto.Fill(event.dxy[mu])
-                        muIsTrkDenDZHisto.Fill(event.dz[mu])
+                        muIsTrkDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                        muIsTrkDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                        muIsTrkDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                        muIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                        muIsTrkDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                        fillChi2Hists(event,mu,muIsTrkDenChi2Histo,muIsTrkDenTrkChi2Histo,
+                                      muIsTrkDenGlbChi2Histo,muIsTrkDenStaChi2Histo)
+                        fillChi2Hists(event,mu,muIsTrkDenNormChi2Histo,muIsTrkDenTrkNormChi2Histo,
+                                      muIsTrkDenGlbNormChi2Histo,muIsTrkDenStaChi2Histo,True)
+                        muIsTrkDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                        muIsTrkDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
                         if (passMuID(event,mu,False,True,options.debug)):
                             muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
                         if (passMuIDTrk(event,mu,True,options.debug)):
                             muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
-                
+                    
                 # probing isGlobal in the numerator
                 # denominator cuts do not include track ID cuts, but include isTracker
                 if (passMuDen(event,mu,False,options.debug)):
                     #if event.isGlobal[mu]:
                     if event.firstPixel[mu] > 0:
                         muNumFirstPixPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumFirstPixChi2Histo,muNumFirstPixTrkChi2Histo,
+                                      muNumFirstPixGlbChi2Histo,muNumFirstPixStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumFirstPixNormChi2Histo,muNumFirstPixTrkNormChi2Histo,
+                                      muNumFirstPixGlbNormChi2Histo,muNumFirstPixStaChi2Histo,True)
+                        
                     if event.pixelHits[mu] > 0:
                         muNumNPixHitPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumNPixHitChi2Histo,muNumNPixHitTrkChi2Histo,
+                                      muNumNPixHitGlbChi2Histo,muNumNPixHitStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumNPixHitNormChi2Histo,muNumNPixHitTrkNormChi2Histo,
+                                      muNumNPixHitGlbNormChi2Histo,muNumNPixHitStaChi2Histo,True)
+                        
                     if event.tkLayersWMeas[mu] > 5:
                         muNumNTkLayersPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumNTkLayersChi2Histo,muNumNTkLayersTrkChi2Histo,
+                                      muNumNTkLayersGlbChi2Histo,muNumNTkLayersStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumNTkLayersNormChi2Histo,muNumNTkLayersTrkNormChi2Histo,
+                                      muNumNTkLayersGlbNormChi2Histo,muNumNTkLayersStaChi2Histo,True)
+                        
                     if (event.ptError[mu]/event.trackpT[mu]) < 0.3:
                         muNumRelPtErrPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumRelPtErrChi2Histo,muNumRelPtErrTrkChi2Histo,
+                                      muNumRelPtErrGlbChi2Histo,muNumRelPtErrStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumRelPtErrNormChi2Histo,muNumRelPtErrTrkNormChi2Histo,
+                                      muNumRelPtErrGlbNormChi2Histo,muNumRelPtErrStaChi2Histo,True)
+                        
                     if event.nValidMuonHits[mu] > 0:
                         muNumNValidMuHitPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumNValidMuHitChi2Histo,muNumNValidMuHitTrkChi2Histo,
+                                      muNumNValidMuHitGlbChi2Histo,muNumNValidMuHitStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumNValidMuHitNormChi2Histo,muNumNValidMuHitTrkNormChi2Histo,
+                                      muNumNValidMuHitGlbNormChi2Histo,muNumNValidMuHitStaChi2Histo,True)
+                        
                     if event.nMatchedStations[mu] > 1:
                         muNumNMuStationsPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumNMuStationsChi2Histo,muNumNMuStationsTrkChi2Histo,
+                                      muNumNMuStationsGlbChi2Histo,muNumNMuStationsStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumNMuStationsNormChi2Histo,muNumNMuStationsTrkNormChi2Histo,
+                                      muNumNMuStationsGlbNormChi2Histo,muNumNMuStationsStaChi2Histo,True)
+                        
                     if event.isGlobal[mu] > 0:
                         muNumIsGlobalPtHisto.Fill(event.trackpT[mu])
+                        fillChi2Hists(event,mu,muNumIsGlobalChi2Histo,muNumIsGlobalTrkChi2Histo,
+                                      muNumIsGlobalGlbChi2Histo,muNumIsGlobalStaChi2Histo)
+                        fillChi2Hists(event,mu,muNumIsGlobalNormChi2Histo,muNumIsGlobalTrkNormChi2Histo,
+                                      muNumIsGlobalGlbNormChi2Histo,muNumIsGlobalStaChi2Histo,True)
                     
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
-                    muIsGlbDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                    muIsGlbDenPixHitHisto.Fill(event.pixelHits[mu])
-                    muIsGlbDenDXYHisto.Fill(event.dxy[mu])
-                    muIsGlbDenDZHisto.Fill(event.dz[mu])
+                    muIsGlbDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                    muIsGlbDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                    muIsGlbDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                    muIsGlbDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                    muIsGlbDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                    fillChi2Hists(event,mu,muIsGlbDenChi2Histo,muIsGlbDenTrkChi2Histo,
+                                  muIsGlbDenGlbChi2Histo,muIsGlbDenStaChi2Histo)
+                    fillChi2Hists(event,mu,muIsGlbDenNormChi2Histo,muIsGlbDenTrkNormChi2Histo,
+                                  muIsGlbDenGlbNormChi2Histo,muIsGlbDenStaChi2Histo,True)
+                    muIsGlbDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                    muIsGlbDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
                     if (passMuID(event,mu,True,False,options.debug)):
                         muIsGlbNum1PtHisto.Fill(event.trackpT[mu])
                     if (passMuIDTrk(event,mu,True,options.debug)):
@@ -504,12 +813,18 @@ if __name__ == "__main__":
                         
                 # denominator cuts include track ID cuts, in addition to isTracker
                 if (passMuDen(event,mu,True,options.debug)):
-                    #if event.isGlobal[mu]:
                     muIsGlbIsTrkDenPtHisto.Fill(event.trackpT[mu])
-                    muIsGlbIsTrkDenTkMeasHisto.Fill(event.tkLayersWMeas[mu])
-                    muIsGlbIsTrkDenPixHitHisto.Fill(event.pixelHits[mu])
-                    muIsGlbIsTrkDenDXYHisto.Fill(event.dxy[mu])
-                    muIsGlbIsTrkDenDZHisto.Fill(event.dz[mu])
+                    muIsGlbIsTrkDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                    muIsGlbIsTrkDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                    muIsGlbIsTrkDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                    muIsGlbIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                    muIsGlbIsTrkDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                    fillChi2Hists(event,mu,muIsGlbIsTrkDenChi2Histo,muIsGlbIsTrkDenTrkChi2Histo,
+                                  muIsGlbIsTrkDenGlbChi2Histo,muIsGlbIsTrkDenStaChi2Histo)
+                    fillChi2Hists(event,mu,muIsGlbIsTrkDenNormChi2Histo,muIsGlbIsTrkDenTrkNormChi2Histo,
+                                  muIsGlbIsTrkDenGlbNormChi2Histo,muIsGlbIsTrkDenStaChi2Histo,True)
+                    muIsGlbIsTrkDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                    muIsGlbIsTrkDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
                     if (passMuID(event,mu,True,True,options.debug)):
                         muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[mu])
                     if (passMuIDTrk(event,mu,True,options.debug)):
@@ -587,22 +902,106 @@ if __name__ == "__main__":
     muDenPtHisto.Write()
     muDenPixHitHisto.Write()
     muDenTkMeasHisto.Write()
+    muDenRelPtErrorHisto.Write()
+    muDenValidMuonHitsHisto.Write()
+    muDenMatchedStationsHisto.Write()
+    muDenChi2Histo.Write()
+    muDenTrkChi2Histo.Write()
+    muDenGlbChi2Histo.Write()
+    muDenStaChi2Histo.Write()
+    muDenNormChi2Histo.Write()
+    muDenTrkNormChi2Histo.Write()
+    muDenGlbNormChi2Histo.Write()
+    muDenStaNormChi2Histo.Write()
     muDenDXYHisto.Write()
     muDenDZHisto.Write()
     muNum1PtHisto.Write()
     muNum2PtHisto.Write()
 
-    muNumFirstPixPtHisto.Write()
-    muNumNPixHitPtHisto.Write()
-    muNumNTkLayersPtHisto.Write()
-    muNumRelPtErrPtHisto.Write()
+    muNumFirstPixPtHisto   .Write()
+    muNumFirstPixChi2Histo   .Write()
+    muNumFirstPixTrkChi2Histo.Write()
+    muNumFirstPixGlbChi2Histo.Write()
+    muNumFirstPixStaChi2Histo.Write()
+    muNumFirstPixNormChi2Histo   .Write()
+    muNumFirstPixTrkNormChi2Histo.Write()
+    muNumFirstPixGlbNormChi2Histo.Write()
+    muNumFirstPixStaNormChi2Histo.Write()
+
+    muNumNPixHitPtHisto    .Write()
+    muNumNPixHitChi2Histo   .Write()
+    muNumNPixHitTrkChi2Histo.Write()
+    muNumNPixHitGlbChi2Histo.Write()
+    muNumNPixHitStaChi2Histo.Write()
+    muNumNPixHitNormChi2Histo   .Write()
+    muNumNPixHitTrkNormChi2Histo.Write()
+    muNumNPixHitGlbNormChi2Histo.Write()
+    muNumNPixHitStaNormChi2Histo.Write()
+
+    muNumNTkLayersPtHisto  .Write()
+    muNumNTkLayersChi2Histo   .Write()
+    muNumNTkLayersTrkChi2Histo.Write()
+    muNumNTkLayersGlbChi2Histo.Write()
+    muNumNTkLayersStaChi2Histo.Write()
+    muNumNTkLayersNormChi2Histo   .Write()
+    muNumNTkLayersTrkNormChi2Histo.Write()
+    muNumNTkLayersGlbNormChi2Histo.Write()
+    muNumNTkLayersStaNormChi2Histo.Write()
+
+    muNumRelPtErrPtHisto   .Write()
+    muNumRelPtErrChi2Histo   .Write()
+    muNumRelPtErrTrkChi2Histo.Write()
+    muNumRelPtErrGlbChi2Histo.Write()
+    muNumRelPtErrStaChi2Histo.Write()
+    muNumRelPtErrNormChi2Histo   .Write()
+    muNumRelPtErrTrkNormChi2Histo.Write()
+    muNumRelPtErrGlbNormChi2Histo.Write()
+    muNumRelPtErrStaNormChi2Histo.Write()
+
     muNumNValidMuHitPtHisto.Write()
+    muNumNValidMuHitChi2Histo   .Write()
+    muNumNValidMuHitTrkChi2Histo.Write()
+    muNumNValidMuHitGlbChi2Histo.Write()
+    muNumNValidMuHitStaChi2Histo.Write()
+    muNumNValidMuHitNormChi2Histo   .Write()
+    muNumNValidMuHitTrkNormChi2Histo.Write()
+    muNumNValidMuHitGlbNormChi2Histo.Write()
+    muNumNValidMuHitStaNormChi2Histo.Write()
+
     muNumNMuStationsPtHisto.Write()
-    muNumIsGlobalPtHisto.Write()
+    muNumNMuStationsChi2Histo   .Write()
+    muNumNMuStationsTrkChi2Histo.Write()
+    muNumNMuStationsGlbChi2Histo.Write()
+    muNumNMuStationsStaChi2Histo.Write()
+    muNumNMuStationsNormChi2Histo   .Write()
+    muNumNMuStationsTrkNormChi2Histo.Write()
+    muNumNMuStationsGlbNormChi2Histo.Write()
+    muNumNMuStationsStaNormChi2Histo.Write()
+
+    muNumIsGlobalPtHisto   .Write()
+    muNumIsGlobalChi2Histo   .Write()
+    muNumIsGlobalTrkChi2Histo.Write()
+    muNumIsGlobalGlbChi2Histo.Write()
+    muNumIsGlobalStaChi2Histo.Write()
+    muNumIsGlobalNormChi2Histo   .Write()
+    muNumIsGlobalTrkNormChi2Histo.Write()
+    muNumIsGlobalGlbNormChi2Histo.Write()
+    muNumIsGlobalStaNormChi2Histo.Write()
     
     muIsTrkDenPtHisto.Write()
     muIsTrkDenPixHitHisto.Write()
     muIsTrkDenTkMeasHisto.Write()
+    muIsTrkDenRelPtErrorHisto.Write()
+    muIsTrkDenValidMuonHitsHisto.Write()
+    muIsTrkDenMatchedStationsHisto.Write()
+    muIsTrkDenChi2Histo.Write()
+    muIsTrkDenTrkChi2Histo.Write()
+    muIsTrkDenGlbChi2Histo.Write()
+    muIsTrkDenStaChi2Histo.Write()
+    muIsTrkDenNormChi2Histo.Write()
+    muIsTrkDenTrkNormChi2Histo.Write()
+    muIsTrkDenGlbNormChi2Histo.Write()
+    muIsTrkDenStaNormChi2Histo.Write()
     muIsTrkDenDXYHisto.Write()
     muIsTrkDenDZHisto.Write()
     muIsTrkNum1PtHisto.Write()
@@ -611,6 +1010,17 @@ if __name__ == "__main__":
     muIsGlbDenPtHisto.Write()
     muIsGlbDenPixHitHisto.Write()
     muIsGlbDenTkMeasHisto.Write()
+    muIsGlbDenRelPtErrorHisto.Write()
+    muIsGlbDenValidMuonHitsHisto.Write()
+    muIsGlbDenMatchedStationsHisto.Write()
+    muIsGlbDenChi2Histo.Write()
+    muIsGlbDenTrkChi2Histo.Write()
+    muIsGlbDenGlbChi2Histo.Write()
+    muIsGlbDenStaChi2Histo.Write()
+    muIsGlbDenNormChi2Histo.Write()
+    muIsGlbDenTrkNormChi2Histo.Write()
+    muIsGlbDenGlbNormChi2Histo.Write()
+    muIsGlbDenStaNormChi2Histo.Write()
     muIsGlbDenDXYHisto.Write()
     muIsGlbDenDZHisto.Write()
     muIsGlbNum1PtHisto.Write()
@@ -619,6 +1029,17 @@ if __name__ == "__main__":
     muIsGlbIsTrkDenPtHisto.Write()
     muIsGlbIsTrkDenPixHitHisto.Write()
     muIsGlbIsTrkDenTkMeasHisto.Write()
+    muIsGlbIsTrkDenRelPtErrorHisto.Write()
+    muIsGlbIsTrkDenValidMuonHitsHisto.Write()
+    muIsGlbIsTrkDenMatchedStationsHisto.Write()
+    muIsGlbIsTrkDenChi2Histo.Write()
+    muIsGlbIsTrkDenTrkChi2Histo.Write()
+    muIsGlbIsTrkDenGlbChi2Histo.Write()
+    muIsGlbIsTrkDenStaChi2Histo.Write()
+    muIsGlbIsTrkDenNormChi2Histo.Write()
+    muIsGlbIsTrkDenTrkNormChi2Histo.Write()
+    muIsGlbIsTrkDenGlbNormChi2Histo.Write()
+    muIsGlbIsTrkDenStaNormChi2Histo.Write()
     muIsGlbIsTrkDenDXYHisto.Write()
     muIsGlbIsTrkDenDZHisto.Write()
     muIsGlbIsTrkNum1PtHisto.Write()
