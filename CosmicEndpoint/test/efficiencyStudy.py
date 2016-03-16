@@ -37,18 +37,18 @@ def fillChi2Hists(ev,idx,chi2Hist,trkChi2Hist,glbChi2Hist,staChi2Hist,debug=Fals
     if (ev.ndof[mu] > 0):
         rchi2 = ev.chi2[mu]/ev.ndof[mu]
     chi2Hist.Fill(ev.trackpT[mu],rchi2)
-    #rchi2 = -1.
-    #if (ev.innerNDF[mu] > 0):
-    #    rchi2 = ev.innerChi2[mu]/ev.innerNDF[mu]
-    #trkChi2Hist.Fill(ev.trackpT[mu],rchi2)
-    #rchi2 = -1.
-    #if (ev.globalNDF[mu] > 0):
-    #    rchi2 = ev.globalChi2[mu]/ev.globalNDF[mu]
-    #glbChi2Hist.Fill(ev.trackpT[mu],rchi2)
-    #rchi2 = -1.
-    #if (ev.outerNDF[mu] > 0):
-    #    rchi2 = ev.outerChi2[mu]/ev.outerNDF[mu]
-    #staChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    rchi2 = -1.
+    if (ev.innerNDF[mu] > 0):
+        rchi2 = ev.innerChi2[mu]/ev.innerNDF[mu]
+    trkChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    rchi2 = -1.
+    if (ev.globalNDF[mu] > 0):
+        rchi2 = ev.globalChi2[mu]/ev.globalNDF[mu]
+    glbChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    rchi2 = -1.
+    if (ev.outerNDF[mu] > 0):
+        rchi2 = ev.outerChi2[mu]/ev.outerNDF[mu]
+    staChi2Hist.Fill(ev.trackpT[mu],rchi2)
     
 
 def findFunky(ev,isUpper=False,debug=False):
@@ -704,7 +704,7 @@ if __name__ == "__main__":
                         continue
             
                 # first go, don't probe isGlobal in the numerator, but require it in the full selection
-                if event.isGlobal[mu] > 0:
+                #if event.isGlobal[mu] > 0:
                     # denominator cuts do not include track ID cuts, but include isTracker
                     if (passMuDen(event,mu,False,options.debug)):
                         muDenPtHisto.Fill(event.trackpT[mu])
