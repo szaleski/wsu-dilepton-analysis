@@ -705,41 +705,41 @@ if __name__ == "__main__":
             
                 # first go, don't probe isGlobal in the numerator, but require it in the full selection
                 #if event.isGlobal[mu] > 0:
-                    # denominator cuts do not include track ID cuts, but include isTracker
-                    if (passMuDen(event,mu,False,options.debug)):
-                        muDenPtHisto.Fill(event.trackpT[mu])
-                        muDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
-                        muDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
-                        muDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
-                        muDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
-                        muDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
-                        fillChi2Hists(event,mu,muDenChi2Histo,muDenTrkChi2Histo,muDenGlbChi2Histo,muDenStaChi2Histo)
-                        fillChi2Hists(event,mu,muDenNormChi2Histo,muDenTrkNormChi2Histo,muDenGlbNormChi2Histo,muDenStaChi2Histo,True)
-                        muDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
-                        muDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
-                        if (passMuID(event,mu,False,False,options.debug)):
-                            muNum1PtHisto.Fill(event.trackpT[mu])
-                        if (passMuIDTrk(event,mu,True,options.debug)):
-                            muNum2PtHisto.Fill(event.trackpT[mu])
-                            
-                    # denominator cuts include track ID cuts, in addition to isTracker
-                    if (passMuDen(event,mu,True,options.debug)):
-                        muIsTrkDenPtHisto.Fill(event.trackpT[mu])
-                        muIsTrkDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
-                        muIsTrkDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
-                        muIsTrkDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
-                        muIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
-                        muIsTrkDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
-                        fillChi2Hists(event,mu,muIsTrkDenChi2Histo,muIsTrkDenTrkChi2Histo,
-                                      muIsTrkDenGlbChi2Histo,muIsTrkDenStaChi2Histo)
-                        fillChi2Hists(event,mu,muIsTrkDenNormChi2Histo,muIsTrkDenTrkNormChi2Histo,
-                                      muIsTrkDenGlbNormChi2Histo,muIsTrkDenStaChi2Histo,True)
-                        muIsTrkDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
-                        muIsTrkDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
-                        if (passMuID(event,mu,False,True,options.debug)):
-                            muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
-                        if (passMuIDTrk(event,mu,True,options.debug)):
-                            muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
+                # denominator cuts do not include track ID cuts, but include isTracker
+                if (passMuDen(event,mu,False,options.debug)):
+                    muDenPtHisto.Fill(event.trackpT[mu])
+                    muDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                    muDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                    muDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                    muDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                    muDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                    fillChi2Hists(event,mu,muDenChi2Histo,muDenTrkChi2Histo,muDenGlbChi2Histo,muDenStaChi2Histo)
+                    fillChi2Hists(event,mu,muDenNormChi2Histo,muDenTrkNormChi2Histo,muDenGlbNormChi2Histo,muDenStaChi2Histo,True)
+                    muDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                    muDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
+                    if (passMuID(event,mu,False,False,options.debug)):
+                        muNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,True,options.debug)):
+                        muNum2PtHisto.Fill(event.trackpT[mu])
+                        
+                # denominator cuts include track ID cuts, in addition to isTracker
+                if (passMuDen(event,mu,True,options.debug)):
+                    muIsTrkDenPtHisto.Fill(event.trackpT[mu])
+                    muIsTrkDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                    muIsTrkDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                    muIsTrkDenRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                    muIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                    muIsTrkDenMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                    fillChi2Hists(event,mu,muIsTrkDenChi2Histo,muIsTrkDenTrkChi2Histo,
+                                  muIsTrkDenGlbChi2Histo,muIsTrkDenStaChi2Histo)
+                    fillChi2Hists(event,mu,muIsTrkDenNormChi2Histo,muIsTrkDenTrkNormChi2Histo,
+                                  muIsTrkDenGlbNormChi2Histo,muIsTrkDenStaChi2Histo,True)
+                    muIsTrkDenDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                    muIsTrkDenDZHisto.Fill(event.trackpT[mu],event.dz[mu])
+                    if (passMuID(event,mu,False,True,options.debug)):
+                        muIsTrkNum1PtHisto.Fill(event.trackpT[mu])
+                    if (passMuIDTrk(event,mu,True,options.debug)):
+                        muIsTrkNum2PtHisto.Fill(event.trackpT[mu])
                     
                 # probing isGlobal in the numerator
                 # denominator cuts do not include track ID cuts, but include isTracker
