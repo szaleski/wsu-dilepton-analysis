@@ -702,6 +702,13 @@ if __name__ == "__main__":
                     # if isUpper[mu]
                     if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
                         continue
+                    pass
+                
+                # just require first pixel layer for everything
+                if not (event.firstPixel[mu] > 0):
+                    continue
+                pass
+
             
                 # first go, don't probe isGlobal in the numerator, but require it in the full selection
                 #if event.isGlobal[mu] > 0:
