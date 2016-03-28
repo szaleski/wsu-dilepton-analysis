@@ -34,21 +34,21 @@ def isGoodEvent(ev,isUpper=False,debug=False):
 
 def fillChi2Hists(ev,idx,chi2Hist,trkChi2Hist,glbChi2Hist,staChi2Hist,debug=False):
     rchi2 = -1.
-    if (ev.ndof[mu] > 0):
-        rchi2 = ev.chi2[mu]/ev.ndof[mu]
-    chi2Hist.Fill(ev.trackpT[mu],rchi2)
+    if (ev.ndof[idx] > 0):
+        rchi2 = ev.chi2[idx]/ev.ndof[idx]
+    chi2Hist.Fill(ev.trackpT[idx],rchi2)
     rchi2 = -1.
-    if (ev.innerNDF[mu] > 0):
-        rchi2 = ev.innerChi2[mu]/ev.innerNDF[mu]
-    trkChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    if (ev.innerNDF[idx] > 0):
+        rchi2 = ev.innerChi2[idx]/ev.innerNDF[idx]
+    trkChi2Hist.Fill(ev.trackpT[idx],rchi2)
     rchi2 = -1.
-    if (ev.globalNDF[mu] > 0):
-        rchi2 = ev.globalChi2[mu]/ev.globalNDF[mu]
-    glbChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    if (ev.globalNDF[idx] > 0):
+        rchi2 = ev.globalChi2[idx]/ev.globalNDF[idx]
+    glbChi2Hist.Fill(ev.trackpT[idx],rchi2)
     rchi2 = -1.
-    if (ev.outerNDF[mu] > 0):
-        rchi2 = ev.outerChi2[mu]/ev.outerNDF[mu]
-    staChi2Hist.Fill(ev.trackpT[mu],rchi2)
+    if (ev.outerNDF[idx] > 0):
+        rchi2 = ev.outerChi2[idx]/ev.outerNDF[idx]
+    staChi2Hist.Fill(ev.trackpT[idx],rchi2)
     
 
 def findFunky(ev,isUpper=False,debug=False):
@@ -230,10 +230,11 @@ def findTagMuon(ev,tightSel=False,useUpper=True,useGlobal=True,useTracker=True,d
                 continue
             pass
         if passMuDen(ev,mu,useTracker):
-            if passMuID(ev,mu,useGlobal,useTracker):
-                tagIdx = mu
-                tagCount = tagCount + 1
-    if debug:
+            if passMuIDTrk(ev,mu,useGlobal,useTracker):
+                if passMuID(ev,mu,useGlobal,useTracker):
+                    tagIdx = mu
+                    tagCount = tagCount + 1
+    if tagCount > 0:
         print "Found %d tags"%(tagCount)
     return tagIdx
 
@@ -380,6 +381,11 @@ if __name__ == "__main__":
     checkRequiredArguments(options, parser)
     r.gROOT.SetBatch(True)
 
+    print "debug",options.debug
+    if options.debug:
+        print "debugging turned on"
+    else:
+        print "debugging turned off"
 
     ptBins  = np.array([0.,10.,20.,30.,40.,50.,75.,100.,150.,200.,250.,300.,400.,500.,750.,1000.,1500.,2000.,3000.])
     ptBins  = np.array([0., 53., 100., 200., 300., 400., 500., 750., 1000., 1500., 2000.])
@@ -804,7 +810,158 @@ if __name__ == "__main__":
                 probeIdx,event.isLower[probeIdx],event.isUpper[probeIdx],
                 event.charge[probeIdx],event.isTracker[probeIdx],event.isGlobal[probeIdx],event.isStandAlone[probeIdx],
                 event.trackpT[probeIdx],event.trackPhi[probeIdx],event.trackEta[probeIdx])
-            continue
+            
+            if (passMuDen(event,probeIdx,False,options.debug)):
+                muDenPtHisto.Fill(event.trackpT[probeIdx])
+                muDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
+                muDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
+                muDenRelPtErrorHisto.Fill(event.trackpT[probeIdx],event.ptError[probeIdx]/event.trackpT[probeIdx])
+                muDenValidMuonHitsHisto.Fill(event.trackpT[probeIdx],event.nValidMuonHits[probeIdx])
+                muDenMatchedStationsHisto.Fill(event.trackpT[probeIdx],event.nMatchedStations[probeIdx])
+                fillChi2Hists(event,probeIdx,muDenChi2Histo,muDenTrkChi2Histo,muDenGlbChi2Histo,muDenStaChi2Histo)
+                fillChi2Hists(event,probeIdx,muDenNormChi2Histo,muDenTrkNormChi2Histo,muDenGlbNormChi2Histo,muDenStaChi2Histo,True)
+                muDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
+                muDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
+                if (passMuID(event,probeIdx,False,False,options.debug)):
+                    muNum1PtHisto.Fill(event.trackpT[probeIdx])
+                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                    muNum2PtHisto.Fill(event.trackpT[probeIdx])
+                    pass
+            # denominator cuts include track ID cuts, in addition to isTracker
+            if (passMuDen(event,probeIdx,True,options.debug)):
+                muIsTrkDenPtHisto.Fill(event.trackpT[probeIdx])
+                muIsTrkDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
+                muIsTrkDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
+                muIsTrkDenRelPtErrorHisto.Fill(event.trackpT[probeIdx],event.ptError[probeIdx]/event.trackpT[probeIdx])
+                muIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[probeIdx],event.nValidMuonHits[probeIdx])
+                muIsTrkDenMatchedStationsHisto.Fill(event.trackpT[probeIdx],event.nMatchedStations[probeIdx])
+                fillChi2Hists(event,probeIdx,muIsTrkDenChi2Histo,muIsTrkDenTrkChi2Histo,
+                              muIsTrkDenGlbChi2Histo,muIsTrkDenStaChi2Histo)
+                fillChi2Hists(event,probeIdx,muIsTrkDenNormChi2Histo,muIsTrkDenTrkNormChi2Histo,
+                              muIsTrkDenGlbNormChi2Histo,muIsTrkDenStaChi2Histo,True)
+                muIsTrkDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
+                muIsTrkDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
+                if (passMuID(event,probeIdx,False,True,options.debug)):
+                    muIsTrkNum1PtHisto.Fill(event.trackpT[probeIdx])
+                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                    muIsTrkNum2PtHisto.Fill(event.trackpT[probeIdx])
+                
+            # probing isGlobal in the numerator
+            # denominator cuts do not include track ID cuts, but include isTracker
+            if (passMuDen(event,probeIdx,False,options.debug)):
+                #if event.isGlobal[probeIdx]:
+                if event.firstPixel[probeIdx] > 0:
+                    muNumFirstPixPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumFirstPixChi2Histo,muNumFirstPixTrkChi2Histo,
+                                  muNumFirstPixGlbChi2Histo,muNumFirstPixStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumFirstPixNormChi2Histo,muNumFirstPixTrkNormChi2Histo,
+                                  muNumFirstPixGlbNormChi2Histo,muNumFirstPixStaChi2Histo,True)
+                    
+                if event.pixelHits[probeIdx] > 0:
+                    muNumNPixHitPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumNPixHitChi2Histo,muNumNPixHitTrkChi2Histo,
+                                  muNumNPixHitGlbChi2Histo,muNumNPixHitStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumNPixHitNormChi2Histo,muNumNPixHitTrkNormChi2Histo,
+                                  muNumNPixHitGlbNormChi2Histo,muNumNPixHitStaChi2Histo,True)
+                    
+                if event.tkLayersWMeas[probeIdx] > 5:
+                    muNumNTkLayersPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumNTkLayersChi2Histo,muNumNTkLayersTrkChi2Histo,
+                                  muNumNTkLayersGlbChi2Histo,muNumNTkLayersStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumNTkLayersNormChi2Histo,muNumNTkLayersTrkNormChi2Histo,
+                                  muNumNTkLayersGlbNormChi2Histo,muNumNTkLayersStaChi2Histo,True)
+                    
+                if (event.ptError[probeIdx]/event.trackpT[probeIdx]) < 0.3:
+                    muNumRelPtErrPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumRelPtErrChi2Histo,muNumRelPtErrTrkChi2Histo,
+                                  muNumRelPtErrGlbChi2Histo,muNumRelPtErrStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumRelPtErrNormChi2Histo,muNumRelPtErrTrkNormChi2Histo,
+                                  muNumRelPtErrGlbNormChi2Histo,muNumRelPtErrStaChi2Histo,True)
+                    
+                if event.nValidMuonHits[probeIdx] > 0:
+                    muNumNValidMuHitPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumNValidMuHitChi2Histo,muNumNValidMuHitTrkChi2Histo,
+                                  muNumNValidMuHitGlbChi2Histo,muNumNValidMuHitStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumNValidMuHitNormChi2Histo,muNumNValidMuHitTrkNormChi2Histo,
+                                  muNumNValidMuHitGlbNormChi2Histo,muNumNValidMuHitStaChi2Histo,True)
+                    
+                if event.nMatchedStations[probeIdx] > 1:
+                    muNumNMuStationsPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumNMuStationsChi2Histo,muNumNMuStationsTrkChi2Histo,
+                                  muNumNMuStationsGlbChi2Histo,muNumNMuStationsStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumNMuStationsNormChi2Histo,muNumNMuStationsTrkNormChi2Histo,
+                                  muNumNMuStationsGlbNormChi2Histo,muNumNMuStationsStaChi2Histo,True)
+                    
+                if event.isGlobal[probeIdx] > 0:
+                    muNumIsGlobalPtHisto.Fill(event.trackpT[probeIdx])
+                    fillChi2Hists(event,probeIdx,muNumIsGlobalChi2Histo,muNumIsGlobalTrkChi2Histo,
+                                  muNumIsGlobalGlbChi2Histo,muNumIsGlobalStaChi2Histo)
+                    fillChi2Hists(event,probeIdx,muNumIsGlobalNormChi2Histo,muNumIsGlobalTrkNormChi2Histo,
+                                  muNumIsGlobalGlbNormChi2Histo,muNumIsGlobalStaChi2Histo,True)
+                
+                else:
+                    # write out run/lumi/event for further analysis?
+                    strange.write("ng: %d/%d/%d\n"%(event.run,event.lumi,event.event))
+                    # maybe also look at distributions for failing global cuts
+                    muNotGlobalPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
+                    muNotGlobalTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
+                    muNotGlobalRelPtErrorHisto.Fill(event.trackpT[probeIdx],event.ptError[probeIdx]/event.trackpT[probeIdx])
+                    muNotGlobalValidMuonHitsHisto.Fill(event.trackpT[probeIdx],event.nValidMuonHits[probeIdx])
+                    muNotGlobalMatchedStationsHisto.Fill(event.trackpT[probeIdx],event.nMatchedStations[probeIdx])
+                    muNotGlobalChi2Histo.Fill(event.trackpT[probeIdx],event.chi2[probeIdx])
+                    muNotGlobalTrkChi2Histo.Fill(event.trackpT[probeIdx],event.innerChi2[probeIdx])
+                    muNotGlobalGlbChi2Histo.Fill(event.trackpT[probeIdx],event.globalChi2[probeIdx])
+                    muNotGlobalStaChi2Histo.Fill(event.trackpT[probeIdx],event.outerChi2[probeIdx])
+                    if event.ndof[probeIdx] > 0:
+                        muNotGlobalNormChi2Histo.Fill(event.trackpT[probeIdx],event.chi2[probeIdx]/event.ndof[probeIdx])
+                    if event.innerNDF[probeIdx] > 0:
+                        muNotGlobalTrkNormChi2Histo.Fill(event.trackpT[probeIdx],event.innerChi2[probeIdx]/event.innerNDF[probeIdx])
+                    if event.globalNDF[probeIdx] > 0:
+                        muNotGlobalGlbNormChi2Histo.Fill(event.trackpT[probeIdx],event.globalChi2[probeIdx]/event.globalNDF[probeIdx])
+                    if event.outerNDF[probeIdx] > 0:
+                        muNotGlobalStaNormChi2Histo.Fill(event.trackpT[probeIdx],event.outerChi2[probeIdx]/event.outerNDF[probeIdx])
+                    muNotGlobalDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
+                    muNotGlobalDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
+                    
+                    pass
+                
+                muIsGlbDenPtHisto.Fill(event.trackpT[probeIdx])
+                muIsGlbDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
+                muIsGlbDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
+                muIsGlbDenRelPtErrorHisto.Fill(event.trackpT[probeIdx],event.ptError[probeIdx]/event.trackpT[probeIdx])
+                muIsGlbDenValidMuonHitsHisto.Fill(event.trackpT[probeIdx],event.nValidMuonHits[probeIdx])
+                muIsGlbDenMatchedStationsHisto.Fill(event.trackpT[probeIdx],event.nMatchedStations[probeIdx])
+                fillChi2Hists(event,probeIdx,muIsGlbDenChi2Histo,muIsGlbDenTrkChi2Histo,
+                              muIsGlbDenGlbChi2Histo,muIsGlbDenStaChi2Histo)
+                fillChi2Hists(event,probeIdx,muIsGlbDenNormChi2Histo,muIsGlbDenTrkNormChi2Histo,
+                              muIsGlbDenGlbNormChi2Histo,muIsGlbDenStaChi2Histo,True)
+                muIsGlbDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
+                muIsGlbDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
+                if (passMuID(event,probeIdx,True,False,options.debug)):
+                    muIsGlbNum1PtHisto.Fill(event.trackpT[probeIdx])
+                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                    muIsGlbNum2PtHisto.Fill(event.trackpT[probeIdx])
+                    
+            # denominator cuts include track ID cuts, in addition to isTracker
+            if (passMuDen(event,probeIdx,True,options.debug)):
+                muIsGlbIsTrkDenPtHisto.Fill(event.trackpT[probeIdx])
+                muIsGlbIsTrkDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
+                muIsGlbIsTrkDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
+                muIsGlbIsTrkDenRelPtErrorHisto.Fill(event.trackpT[probeIdx],event.ptError[probeIdx]/event.trackpT[probeIdx])
+                muIsGlbIsTrkDenValidMuonHitsHisto.Fill(event.trackpT[probeIdx],event.nValidMuonHits[probeIdx])
+                muIsGlbIsTrkDenMatchedStationsHisto.Fill(event.trackpT[probeIdx],event.nMatchedStations[probeIdx])
+                fillChi2Hists(event,probeIdx,muIsGlbIsTrkDenChi2Histo,muIsGlbIsTrkDenTrkChi2Histo,
+                              muIsGlbIsTrkDenGlbChi2Histo,muIsGlbIsTrkDenStaChi2Histo)
+                fillChi2Hists(event,probeIdx,muIsGlbIsTrkDenNormChi2Histo,muIsGlbIsTrkDenTrkNormChi2Histo,
+                              muIsGlbIsTrkDenGlbNormChi2Histo,muIsGlbIsTrkDenStaChi2Histo,True)
+                muIsGlbIsTrkDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
+                muIsGlbIsTrkDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
+                if (passMuID(event,probeIdx,True,True,options.debug)):
+                    muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[probeIdx])
+                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                    muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[probeIdx])
+            
+            continue ## no longer use the old study
             for mu in range(event.nMuons):
                 if not (event.trackpT[mu] > 45. and abs(event.trackEta[mu]) < 0.9):
                     # skip muons that fail the basic Z' kinematic cuts and barrel region
