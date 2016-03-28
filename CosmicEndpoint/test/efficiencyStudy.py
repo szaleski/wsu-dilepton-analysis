@@ -19,7 +19,7 @@ def dPhi(phi1,phi2,debug=False):
     return dphi
 
 def isGoodEvent(ev,isUpper=False,debug=False):
-    # find at least one muon with pT > 53 and |eta| < 0.9
+    # find at least one muon with pT > 45 and |eta| < 0.9
     for mu in range(ev.nMuons):
         muPt  = ev.globalpT[mu]
         muEta = ev.globalEta[mu]
@@ -27,7 +27,7 @@ def isGoodEvent(ev,isUpper=False,debug=False):
         muLeg = ev.isLower[mu]
         if isUpper:
             muLeg = ev.isUpper[mu]
-        if muPt > 53. and abs(muEta) < 0.9 and muLeg == 1:
+        if muPt > 45. and abs(muEta) < 0.9 and muLeg == 1:
             return True
     return False
         
@@ -198,8 +198,79 @@ def findTrackMatch(ev,idx,src,coll,debug=False):
         print "unable to match track %d from collection %d to a track in collection %d"%(idx,src,coll)
     return matchIdx
 
+def findTagMuon(ev,tightSel=False,useUpper=True,useGlobal=True,useTracker=True,debug=False):
+    tagIdx   = -1
+    tagCount = 0
+    for mu in range(ev.nMuons):
+        if useUpper:
+            # process upper rather than lower legs
+            if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
+                if debug:
+                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+                continue
+            pass
+        else:
+            # if isUpper[mu]
+            if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
+                if debug:
+                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+                continue
+            pass
+        
+        if not (ev.trackpT[mu] > 45. and abs(ev.trackEta[mu]) < 0.9):
+            # skip muons that fail the basic Z' kinematic cuts and barrel region
+            continue
+        if not (abs(ev.dxy[mu]) < 4. and abs(ev.dz[mu]) < 10.):
+            continue
+        if tightSel:
+            # optionally apply tighter pixel requirements
+            # if not (abs(ev.dxy[mu]) < 2.5 and abs(ev.dz[mu]) < 10.):
+            # if not (abs(ev.dxy[mu]) < 2.5 and abs(ev.dz[mu]) < 10.):
+            if not (abs(ev.dxy[mu]) < 1.0 and abs(ev.dz[mu]) < 2.5):
+                continue
+            pass
+        if passMuDen(ev,mu,useTracker):
+            if passMuID(ev,mu,useGlobal,useTracker):
+                tagIdx = mu
+                tagCount = tagCount + 1
+    if debug:
+        print "Found %d tags"%(tagCount)
+    return tagIdx
+
+def findProbeMuon(ev,tagIdx,tightSel=False,useUpper=False,useGlobal=True,useTracker=True,debug=False):
+    probeIdx   = -1
+    probeCount = 0
+    yCompatible = False
+    bestDEta = 10
+    bestDPhi = 10
+    for mu in range(ev.nMuons):
+        if mu == tagIdx:
+            continue
+        if useUpper:
+            # process upper rather than lower legs
+            if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
+                if debug:
+                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+                continue
+            pass
+        else:
+            # if isUpper[mu]
+            if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
+                if debug:
+                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+                continue
+            pass
+        tmpDEta = abs(ev.trackEta[tagIdx] - ev.trackEta[mu])
+        tmpDPhi = dPhi(ev.trackPhi[tagIdx], ev.trackPhi[mu])
+        if tmpDEta < bestDEta and tmpDPhi < bestDPhi:
+            probeIdx = mu
+            bestDEta = tmpDEta
+            bestDPhi = tmpDPhi
+
+    return probeIdx
+
 def passMuDen(ev,idx,tracker=False,debug=False):
-    result = ev.trackpT[idx] > 53. and abs(ev.trackEta[idx]) < 0.9 and ev.isTracker[idx]
+    result = ev.trackpT[idx] > 45. and abs(ev.trackEta[idx]) < 0.9 and ev.isTracker[idx]
     if tracker:
         result = result and passMuIDTrk(ev,idx,tracker)
     return result
@@ -236,7 +307,7 @@ def passTrkDen(ev,idx,coll,match=False,debug=False):
     if match:
         ev.isTracker[muonMatch]
 
-    return ev.trk_trackpT[10*coll+idx] > 53. and abs(ev.trk_trackEta[10*coll+idx]) < 0.9 and isTracker
+    return ev.trk_trackpT[10*coll+idx] > 45. and abs(ev.trk_trackEta[10*coll+idx]) < 0.9 and isTracker
 
 def passTrkMuID(ev,idx,coll,match=False,debug=False):
     muonMatch = ev.trk_matchedMuIdx[10*coll+idx]
@@ -522,6 +593,39 @@ if __name__ == "__main__":
     muNumIsGlobalGlbNormChi2Histo.Sumw2()
     muNumIsGlobalStaNormChi2Histo.Sumw2()
     
+    #  not isGlobal distributions
+    muNotGlobalPixHitHisto          = r.TH2D("muonIsNotGlobalPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muNotGlobalTkMeasHisto          = r.TH2D("muonIsNotGlobalTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
+    muNotGlobalRelPtErrorHisto      = r.TH2D("muonIsNotGlobalRelPtError",     "", len(ptBins)-1, ptBins, 100, 0.,   1. )
+    muNotGlobalValidMuonHitsHisto   = r.TH2D("muonIsNotGlobalValidMuonHits",  "", len(ptBins)-1, ptBins, 75, -0.5, 74.5)
+    muNotGlobalMatchedStationsHisto = r.TH2D("muonIsNotGlobalMatchedStations","", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
+    muNotGlobalChi2Histo            = r.TH2D("muonIsNotGlobalChi2",           "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNotGlobalTrkChi2Histo         = r.TH2D("muonIsNotGlobalTrkChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNotGlobalGlbChi2Histo         = r.TH2D("muonIsNotGlobalGlbChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNotGlobalStaChi2Histo         = r.TH2D("muonIsNotGlobalStaChi2",        "", len(ptBins)-1, ptBins, 50,  0., 150. )
+    muNotGlobalNormChi2Histo        = r.TH2D("muonIsNotGlobalNormChi2",       "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muNotGlobalTrkNormChi2Histo     = r.TH2D("muonIsNotGlobalTrkNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muNotGlobalGlbNormChi2Histo     = r.TH2D("muonIsNotGlobalGlbNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muNotGlobalStaNormChi2Histo     = r.TH2D("muonIsNotGlobalStaNormChi2",    "", len(ptBins)-1, ptBins, 150, 0.,  50. )
+    muNotGlobalDXYHisto             = r.TH2D("muonIsNotGlobalDXY",            "", len(ptBins)-1, ptBins, 100,-10., 10. )
+    muNotGlobalDZHisto              = r.TH2D("muonIsNotGlobalDZ",             "", len(ptBins)-1, ptBins, 100,-50., 50. )
+
+    muNotGlobalPixHitHisto.Sumw2()
+    muNotGlobalTkMeasHisto.Sumw2()
+    muNotGlobalRelPtErrorHisto.Sumw2()
+    muNotGlobalValidMuonHitsHisto.Sumw2()
+    muNotGlobalMatchedStationsHisto.Sumw2()
+    muNotGlobalChi2Histo.Sumw2()
+    muNotGlobalTrkChi2Histo.Sumw2()
+    muNotGlobalGlbChi2Histo.Sumw2()
+    muNotGlobalStaChi2Histo.Sumw2()
+    muNotGlobalNormChi2Histo.Sumw2()
+    muNotGlobalTrkNormChi2Histo.Sumw2()
+    muNotGlobalGlbNormChi2Histo.Sumw2()
+    muNotGlobalStaNormChi2Histo.Sumw2()
+    muNotGlobalDXYHisto.Sumw2()
+    muNotGlobalDZHisto.Sumw2()
+
     # denominator adds cuts on pixel hits and tracker layers
     muIsTrkDenPixHitHisto          = r.TH2D("muonIsTrkDenominatorPixHit",         "", len(ptBins)-1, ptBins, 10, -0.5,  9.5)
     muIsTrkDenTkMeasHisto          = r.TH2D("muonIsTrkDenominatorTkMeas",         "", len(ptBins)-1, ptBins, 20, -0.5, 19.5)
@@ -665,7 +769,7 @@ if __name__ == "__main__":
     if options.upper:
         checkUpper = True
     print "checkUpper %d"%(checkUpper)
-    
+    strange = open("%s_interesting.events.txt"%(options.outfile),"w")
     for event in mytree:
         if eid%1000 == 0:
             print "event=%d/%d: g=%d c=%d t=%d"%(eid,nEvents,event.nGlobalTracks,event.nCosmicTracks,event.nTrackerTracks)
@@ -674,30 +778,50 @@ if __name__ == "__main__":
         nTracks = [event.nGlobalTracks,event.nCosmicTracks,event.nTrackerTracks]
 
         if isGoodEvent(event,checkUpper,options.debug):
-            # should have at least one muon with pT > 53. and |eta| < 0.9
+            # should have at least one muon with pT > 45. and |eta| < 0.9
             nMuonsUpperLower.Fill(event.nUpperLegs,event.nLowerLegs)
             eventCounter.Fill(0)
             # this will reject any events where we find duplicate muons
             # can we be clever and keep the muon that is 1t/1g/1sa if it exists?
             # or will this be an additional bias?
-            if findFunky(event,checkUpper,options.debug):
+            if findFunky(event,checkUpper,options.debug) or findFunky(event,not checkUpper,options.debug):
                 # skip events where we find the "duplicate" muons
+                # write out run/lumi/event for further analysis?
+                strange.write("funky: %d/%d/%d\n"%(event.run,event.lumi,event.event))
                 eventCounter.Fill(2)
                 continue
             eventCounter.Fill(1)
+            tagIdx = findTagMuon(event,False,not checkUpper,True,True,options.debug)
+            if tagIdx < 0:
+                continue
+            probeIdx = findProbeMuon(event,tagIdx,False,checkUpper,True,True,options.debug)
+            print "tag=%d, probe=%d"%(tagIdx,probeIdx)
+            print "tag:%d-l%d/u%d:q%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f"%(
+                tagIdx,event.isLower[tagIdx],event.isUpper[tagIdx],
+                event.charge[tagIdx],event.isTracker[tagIdx],event.isGlobal[tagIdx],event.isStandAlone[tagIdx],
+                event.trackpT[tagIdx],event.trackPhi[tagIdx],event.trackEta[tagIdx])
+            print "probe:%d-l%d/u%d:q%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f"%(
+                probeIdx,event.isLower[probeIdx],event.isUpper[probeIdx],
+                event.charge[probeIdx],event.isTracker[probeIdx],event.isGlobal[probeIdx],event.isStandAlone[probeIdx],
+                event.trackpT[probeIdx],event.trackPhi[probeIdx],event.trackEta[probeIdx])
+            continue
             for mu in range(event.nMuons):
-                if not (event.trackpT[mu] > 53. and abs(event.trackEta[mu]) < 0.9):
+                if not (event.trackpT[mu] > 45. and abs(event.trackEta[mu]) < 0.9):
                     # skip muons that fail the basic Z' kinematic cuts and barrel region
                     continue
                 if options.tight:
                     # optionally apply tighter pixel requirements
-                    if not (abs(event.dxy[mu]) < 2.5 and abs(event.dz[mu]) < 10.):
+                    # if not (abs(event.dxy[mu]) < 2.5 and abs(event.dz[mu]) < 10.):
+                    # if not (abs(event.dxy[mu]) < 2.5 and abs(event.dz[mu]) < 10.):
+                    if not (abs(event.dxy[mu]) < 1.0 and abs(event.dz[mu]) < 2.5):
                         continue
+                    pass
                 if checkUpper:
                     # process upper rather than lower legs
                     # if isLower[mu]
                     if (abs(event.innerY[mu]) < abs(event.outerY[mu])):
                         continue
+                    pass
                 else:
                     # if isUpper[mu]
                     if (abs(event.innerY[mu]) > abs(event.outerY[mu])):
@@ -706,12 +830,13 @@ if __name__ == "__main__":
                 
                 # just require first pixel layer for everything
                 if not (event.firstPixel[mu] > 0):
-                    continue
-                pass
-
+                    #continue
+                    pass
+                
             
                 # first go, don't probe isGlobal in the numerator, but require it in the full selection
-                #if event.isGlobal[mu] > 0:
+                if event.isGlobal[mu] > 0:
+                    pass
                 # denominator cuts do not include track ID cuts, but include isTracker
                 if (passMuDen(event,mu,False,options.debug)):
                     muDenPtHisto.Fill(event.trackpT[mu])
@@ -801,6 +926,32 @@ if __name__ == "__main__":
                         fillChi2Hists(event,mu,muNumIsGlobalNormChi2Histo,muNumIsGlobalTrkNormChi2Histo,
                                       muNumIsGlobalGlbNormChi2Histo,muNumIsGlobalStaChi2Histo,True)
                     
+                    else:
+                        # write out run/lumi/event for further analysis?
+                        strange.write("ng: %d/%d/%d\n"%(event.run,event.lumi,event.event))
+                        # maybe also look at distributions for failing global cuts
+                        muNotGlobalPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
+                        muNotGlobalTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
+                        muNotGlobalRelPtErrorHisto.Fill(event.trackpT[mu],event.ptError[mu]/event.trackpT[mu])
+                        muNotGlobalValidMuonHitsHisto.Fill(event.trackpT[mu],event.nValidMuonHits[mu])
+                        muNotGlobalMatchedStationsHisto.Fill(event.trackpT[mu],event.nMatchedStations[mu])
+                        muNotGlobalChi2Histo.Fill(event.trackpT[mu],event.chi2[mu])
+                        muNotGlobalTrkChi2Histo.Fill(event.trackpT[mu],event.innerChi2[mu])
+                        muNotGlobalGlbChi2Histo.Fill(event.trackpT[mu],event.globalChi2[mu])
+                        muNotGlobalStaChi2Histo.Fill(event.trackpT[mu],event.outerChi2[mu])
+                        if event.ndof[mu] > 0:
+                            muNotGlobalNormChi2Histo.Fill(event.trackpT[mu],event.chi2[mu]/event.ndof[mu])
+                        if event.innerNDF[mu] > 0:
+                            muNotGlobalTrkNormChi2Histo.Fill(event.trackpT[mu],event.innerChi2[mu]/event.innerNDF[mu])
+                        if event.globalNDF[mu] > 0:
+                            muNotGlobalGlbNormChi2Histo.Fill(event.trackpT[mu],event.globalChi2[mu]/event.globalNDF[mu])
+                        if event.outerNDF[mu] > 0:
+                            muNotGlobalStaNormChi2Histo.Fill(event.trackpT[mu],event.outerChi2[mu]/event.outerNDF[mu])
+                        muNotGlobalDXYHisto.Fill(event.trackpT[mu],event.dxy[mu])
+                        muNotGlobalDZHisto.Fill(event.trackpT[mu],event.dz[mu])
+                        
+                        pass
+                    
                     muIsGlbDenPtHisto.Fill(event.trackpT[mu])
                     muIsGlbDenTkMeasHisto.Fill(event.trackpT[mu],event.tkLayersWMeas[mu])
                     muIsGlbDenPixHitHisto.Fill(event.trackpT[mu],event.pixelHits[mu])
@@ -838,7 +989,7 @@ if __name__ == "__main__":
                         muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[mu])
                         
         for tk in range(nTracks[1]):
-            if not (event.trk_trackpT[tk] > 53. and abs(event.trk_trackEta[tk]) < 0.9):
+            if not (event.trk_trackpT[tk] > 45. and abs(event.trk_trackEta[tk]) < 0.9):
                 continue
             if checkUpper:
                 #if (abs(event.trk_innerY[tk]) < abs(event.trk_outerY[tk])):
@@ -995,6 +1146,22 @@ if __name__ == "__main__":
     muNumIsGlobalGlbNormChi2Histo.Write()
     muNumIsGlobalStaNormChi2Histo.Write()
     
+    muNotGlobalPixHitHisto.Write()
+    muNotGlobalTkMeasHisto.Write()
+    muNotGlobalRelPtErrorHisto.Write()
+    muNotGlobalValidMuonHitsHisto.Write()
+    muNotGlobalMatchedStationsHisto.Write()
+    muNotGlobalChi2Histo.Write()
+    muNotGlobalTrkChi2Histo.Write()
+    muNotGlobalGlbChi2Histo.Write()
+    muNotGlobalStaChi2Histo.Write()
+    muNotGlobalNormChi2Histo.Write()
+    muNotGlobalTrkNormChi2Histo.Write()
+    muNotGlobalGlbNormChi2Histo.Write()
+    muNotGlobalStaNormChi2Histo.Write()
+    muNotGlobalDXYHisto.Write()
+    muNotGlobalDZHisto.Write()
+
     muIsTrkDenPtHisto.Write()
     muIsTrkDenPixHitHisto.Write()
     muIsTrkDenTkMeasHisto.Write()
@@ -1060,6 +1227,7 @@ if __name__ == "__main__":
     trkMuNum1PtHisto.Write()
     trkMuNum2PtHisto.Write()
     outfile.Close()
-    
+
+    strange.close()
     # matching track to track, check y-position compatibility
     # matching track to muon,  check y-position compatibility
