@@ -39,22 +39,26 @@ samples = [
     #"lower_tight_interfill2015d_v6",
     #"upper_interfill2015d_v6",
     #"upper_tight_interfill2015d_v6",
-    "lower_asym_deco_p10_v10",
-    "lower_tight_asym_deco_p10_v10",
-    "upper_asym_deco_p10_v10",
-    "upper_tight_asym_deco_p10_v10",
-    "lower_asym_deco_p100_v10",
-    "lower_tight_asym_deco_p100_v10",
-    "upper_asym_deco_p100_v10",
-    "upper_tight_asym_deco_p100_v10",
-    "lower_craft15_v10",
-    "lower_tight_craft15_v10",
-    "upper_craft15_v10",
-    "upper_tight_craft15_v10",
-    "lower_interfill2015d_v10",
-    "lower_tight_interfill2015d_v10",
-    "upper_interfill2015d_v10",
-    "upper_tight_interfill2015d_v10",
+    #"lower_asym_deco_p10_v10",
+    #"lower_tight_asym_deco_p10_v10",
+    #"upper_asym_deco_p10_v10",
+    #"upper_tight_asym_deco_p10_v10",
+    "lower_asym_deco_p100_v12",
+    "lower_tight_asym_deco_p100_v12",
+    "upper_asym_deco_p100_v12",
+    "upper_tight_asym_deco_p100_v12",
+    "lower_startup_peak_p100_v12",
+    "lower_tight_startup_peak_p100_v12",
+    "upper_startup_peak_p100_v12",
+    "upper_tight_startup_peak_p100_v12",
+    "lower_craft15_v12",
+    "lower_tight_craft15_v12",
+    "upper_craft15_v12",
+    "upper_tight_craft15_v12",
+    "lower_interfill2015d_v12",
+    "lower_tight_interfill2015d_v12",
+    "upper_interfill2015d_v12",
+    "upper_tight_interfill2015d_v12",
     #"startup_peak_p100_v4",
     #"craft15",
     #"interfill2015d"
@@ -66,11 +70,31 @@ samples = [
 isTrk = ["", "IsTrk"]
 isGlb = ["", "IsGlb"]
 ptBins = np.array([0., 50., 100., 150., 200., 300., 500., 1000.])
-ptBins = np.array([50.,60.,75.,100.,125.,150.,175.,200.,250.,300.,500.,3000.])
+#ptBins = np.array([50.,60.,75.,100.,125.,150.,175.,200.,250.,300.,500.,3000.])
 r.gROOT.SetBatch(True)
 
+## v12
+# denominator: isGlobal && isTracker && pT > 53 && |eta| < 0.9
+# IsTrk: passFirstPixel && nPixHits > 0 && nTkLayers > 5
+# numerator: relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# IsGlb: 
+
+## v13
+# denominator: isTracker && pT > 53 && |eta| < 0.9
+# IsTrk: passFirstPixel && nPixHits > 0 && nTkLayers > 5
+# numerator: relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# IsGlb: isGlobal
+
+## v14
+# denominator: passFirstPixel && isTracker && pT > 53 && |eta| < 0.9
+# IsTrk: passFirstPixel && nPixHits > 0 && nTkLayers > 5
+# numerator: relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# IsGlb: isGlobal
+
 for sample in samples:
-    
+    tightCut = ""
+    if sample.rfind("tight") > 0:
+        tightCut = " && |dxy| < 2.5 && |dz| < 10"
     inputfile = r.TFile("eff_%s.root"%(sample),"r")
     print inputfile
     for hist in isTrk:
@@ -129,7 +153,7 @@ for sample in samples:
             denPt.GetXaxis().SetLabelOffset(0.005)
             denPt.GetYaxis().SetLabelSize(0.035)
             denPt.GetXaxis().SetNdivisions(510)
-            minimum = 0.8*passIDTrkPt.GetMinimum(1)
+            minimum = 0.8*passIDTrkPt.GetMinimum(10)
             if minimum == 0 or minimum < 0:
                 minimum = 0.01
             denPt.GetYaxis().SetRangeUser(0.5*minimum,1.2*denPt.GetMaximum())
@@ -144,18 +168,23 @@ for sample in samples:
             
             thelegend = r.TLegend(0.15,0.7,0.9,0.9)
             thelegend.SetBorderSize(0)
-            thelegend.SetTextSize(0.035)
+            thelegend.SetTextSize(0.025)
             thelegend.SetLineWidth(0)
             thelegend.SetFillColor(0)
             thelegend.SetFillStyle(3000)
-            if hist == "IsTrk":
-                thelegend.AddEntry(denPt,   "p_{T} > 53 && |#eta| < 0.9 && isTracker && N_{pix} > 0 && N_{trk layers} > 5 && firstPixel", "lpe")
-            else:
-                thelegend.AddEntry(denPt,   "p_{T} > 53 && |#eta| < 0.9 && isTracker", "lpe")
+
+            denLegend = "p_{T} > 53 && |#eta| < 0.9 && isTracker"
+            numLegend = "+#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1"
             if ghist == "IsGlb":
-                thelegend.AddEntry(passIDPt,"+#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1 && isGlobal","lpe")
+                numLegend = numLegend + " && isGlobal"
             else:
-                thelegend.AddEntry(passIDPt,"+#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1","lpe")
+                denLegend = denLegend + " && isGlobal"
+            if hist == "IsTrk":
+                denLegend = denLegend + " && N_{pix} > 0 && N_{trk layers} > 5 && firstPixel"
+            else:
+                pass
+            thelegend.AddEntry(denPt,   denLegend, "lpe")
+            thelegend.AddEntry(passIDPt,numLegend, "lpe")
             #thelegend.AddEntry(passIDTrkPt,"+N_{pix} > 0 && N_{trk layers} > 5 && firstPixel", "lpe")
             thelegend.Draw("nb")
             
@@ -256,10 +285,10 @@ for sample in samples:
                 plotPad.SetGridy(1)
                 plotPad.SetGridx(1)
 
-                thelegend2 = r.TLegend(0.35,0.7,0.9,0.9)
+                thelegend2 = r.TLegend(0.35,0.75,0.9,0.975)
                 thelegend2.SetNColumns(2)
                 thelegend2.SetBorderSize(0)
-                thelegend2.SetTextSize(0.035)
+                thelegend2.SetTextSize(0.025)
                 thelegend2.SetLineWidth(0)
                 thelegend2.SetFillColor(0)
                 thelegend2.SetFillStyle(3000)
