@@ -18,6 +18,9 @@ parser.add_option("-i", "--infiles", type="string", dest="infiles",
 parser.add_option("-t", "--title", type="string", dest="title",
                   metavar="title",
                   help="[REQUIRED] Task title ")
+parser.add_option("-x", "--tool", type="string", dest="tool",
+                  metavar="tool", default="efficiencyStudy",
+                  help="[REQUIRED] Tool name (default is efficiencyStudy)")
 parser.add_option("-d", "--debug", action="store_true", dest="debug",
                   metavar="debug",
                   help="[OPTIONAL] Run in debug mode, i.e., don't submit jobs, just create them")
@@ -41,7 +44,7 @@ os.system(cmd)
 count = 0
 
 for line in open(options.infiles):
-    scriptname = "efficiencyScripts/bsub_eff_%s_job_%d.sh"%(options.title,count)
+    scriptname = "efficiencyScripts/bsub_eff_%s_%s_job_%d.sh"%(options.title,options.tool,count)
     script = open(scriptname,"w")
     script.write("""#!/bin/bash
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
@@ -55,7 +58,7 @@ klist
 echo "hostname is $HOSTNAME"
 export JOBDIR=${PWD}
 echo "batch job directory is ${JOBDIR}"
-export OUTPUTDIR=${JOBDIR}/output_%s
+export OUTPUTDIR=${JOBDIR}/output_%s_%s
 echo "output directory is ${OUTPUTDIR}"
 mkdir ${OUTPUTDIR}
 ls -tar
@@ -63,26 +66,27 @@ ls -tar
 cd %s
 export AFSJOBDIR=${PWD}
 eval `scramv1 runtime -sh`
-cp efficiencyStudy.py ${JOBDIR}/
+cp %s.py ${JOBDIR}/
 cp ../python/wsuPythonUtils.py ${JOBDIR}/
 cd ${JOBDIR}
 export PATH=${PWD}:${PATH}
 export PYTHONPATH=${PWD}:${PYTHONPATH}
 ls -tar
-./efficiencyStudy.py -i root://xrootd.unl.edu//%s -o ${OUTPUTDIR}/eff_lower_%s_job_%d
-./efficiencyStudy.py -i root://xrootd.unl.edu//%s --tight -o ${OUTPUTDIR}/eff_lower_tight_%s_job_%d
-./efficiencyStudy.py -i root://xrootd.unl.edu//%s -u -o ${OUTPUTDIR}/eff_upper_%s_job_%d
-./efficiencyStudy.py -i root://xrootd.unl.edu//%s -u --tight -o ${OUTPUTDIR}/eff_upper_tight_%s_job_%d
+./%s.py -i root://cms-xrd-global.cern.ch//%s -o ${OUTPUTDIR}/eff_lower_%s_job_%d
+./%s.py -i root://cms-xrd-global.cern.ch//%s --tight -o ${OUTPUTDIR}/eff_lower_tight_%s_job_%d
+./%s.py -i root://cms-xrd-global.cern.ch//%s -u -o ${OUTPUTDIR}/eff_upper_%s_job_%d
+./%s.py -i root://cms-xrd-global.cern.ch//%s -u --tight -o ${OUTPUTDIR}/eff_upper_tight_%s_job_%d
 tree
 echo "rsync \\"ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null\\" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/"
 rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -aAXch --progress ${OUTPUTDIR} %s:/tmp/${USER}/
 """%(proxyPath,
-     options.title,
+     options.title,options.tool,
      os.getcwd(),
-     line[:-6],options.title,count,
-     line[:-6],options.title,count,
-     line[:-6],options.title,count,
-     line[:-6],options.title,count,
+     options.tool,
+     options.tool,line[:-6],options.title,count,
+     options.tool,line[:-6],options.title,count,
+     options.tool,line[:-6],options.title,count,
+     options.tool,line[:-6],options.title,count,
      socket.gethostname(),socket.gethostname()))
 
     script.close()

@@ -853,7 +853,7 @@ if __name__ == "__main__":
                 if (passMuIDTrk(event,probeIdx,False,options.debug)):
                     muIsTrkNum2PtHisto.Fill(event.trackpT[probeIdx])
                 
-            # probing isGlobal in the numerator
+            # probing isGlobal in the numerator (for muID, and first pixel in muIDTrk)
             # denominator cuts do not include track ID cuts, but include isTracker
             if (passMuDen(event,tagIdx,False,options.debug)):
                 #if event.isGlobal[probeIdx]:
