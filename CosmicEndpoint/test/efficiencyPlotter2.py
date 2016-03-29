@@ -43,22 +43,22 @@ samples = [
     #"lower_tight_asym_deco_p10_v10",
     #"upper_asym_deco_p10_v10",
     #"upper_tight_asym_deco_p10_v10",
-    "lower_asym_deco_p100_trk",
-    "lower_tight_asym_deco_p100_trk",
-    "upper_asym_deco_p100_trk",
-    "upper_tight_asym_deco_p100_trk",
-    #"lower_startup_peak_p100_trk",
-    #"lower_tight_startup_peak_p100_trk",
-    #"upper_startup_peak_p100_trk",
-    #"upper_tight_startup_peak_p100_trk",
-    "lower_craft15_trk",
-    "lower_tight_craft15_trk",
-    "upper_craft15_trk",
-    "upper_tight_craft15_trk",
-    #"lower_interfill2015d_trk",
-    #"lower_tight_interfill2015d_trk",
-    #"upper_interfill2015d_trk",
-    #"upper_tight_interfill2015d_trk",
+    "lower_asym_deco_p100_tag",
+    "lower_tight_asym_deco_p100_tag",
+    "upper_asym_deco_p100_tag",
+    "upper_tight_asym_deco_p100_tag",
+    #"lower_startup_peak_p100_tag",
+    #"lower_tight_startup_peak_p100_tag",
+    #"upper_startup_peak_p100_tag",
+    #"upper_tight_startup_peak_p100_tag",
+    "lower_craft15_tag",
+    "lower_tight_craft15_tag",
+    "upper_craft15_tag",
+    "upper_tight_craft15_tag",
+    #"lower_interfill2015d_tag",
+    #"lower_tight_interfill2015d_tag",
+    #"upper_interfill2015d_tag",
+    #"upper_tight_interfill2015d_tag",
     #"startup_peak_p100_v4",
     #"craft15",
     #"interfill2015d"
@@ -196,19 +196,21 @@ for sample in samples:
             thelegend.SetFillColor(0)
             thelegend.SetFillStyle(3000)
 
-            denLegend  = "tag:reco::Track matched to probe:reco::Muon"
+            denLegend     = "tag:upper leg reco::Muon matched to probe:lower leg reco::Muon"
+            denSubLegend  = "full high-p_{T} && p_{T} > 45. && |#eta| < 0.9 && |D_{xy}|< 4. && |D_{z}| < 10."
             numLegendI = "probe:#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1"
             numLegendR = "probe:N_{pix} > 0 && N_{trk layers} > 5"
             if ghist == "IsGlb":
                 numLegendI = numLegendI + " && isGlobal"
-            else:
-                pass
-            if hist == "IsTrk":
                 numLegendR = numLegendR + " && firstPixel"
             else:
                 pass
-            thelegend.AddEntry(denPt,      denLegend, "lpe")
-            thelegend.AddEntry(None,      "p_{T} > 45. && |#eta| < 0.9 && |D_{xy}| < 4. && |D_{z}| < 10.", "")
+            if hist == "IsTrk":
+                denSubLegend = denSubLegend + " && firstPixel"
+            else:
+                pass
+            thelegend.AddEntry(denPt,      denLegend,    "lpe")
+            thelegend.AddEntry(None,       denSubLegend, "")
             thelegend.AddEntry(passIDPt,   numLegendI, "lpe")
             thelegend.AddEntry(passIDTrkPt,numLegendR, "lpe")
             thelegend.Draw("nb")
@@ -317,9 +319,11 @@ for sample in samples:
                 thelegend2.SetLineWidth(0)
                 thelegend2.SetFillColor(0)
                 thelegend2.SetFillStyle(3000)
-                thelegend2.AddEntry(denPt,                "tag:reco::Track matched to probe:reco::Muon", "lpe")
+
+                denLegend     = "tag:upper leg reco::Muon matched to probe:lower leg reco::Muon"
+                thelegend2.AddEntry(denPt,                "tag:upper leg reco::Muon matched to probe:lower leg reco::Muon", "lpe")
                 thelegend2.AddEntry(None,                 "", "")
-                thelegend2.AddEntry(None,                 "p_{T} > 45. && |#eta| < 0.9", "")
+                thelegend2.AddEntry(None,                 "full high-p_{T} && p_{T} > 45. && |#eta| < 0.9", "")
                 thelegend2.AddEntry(None,                 "&& |D_{xy}|< 4. && |D_{z}| < 10.", "")
                 thelegend2.AddEntry(passFirstPixel,       "probe:first pixel layer",                      "lpe")
                 thelegend2.AddEntry(passNPixHits,         "probe:N_{pix} > 0",                            "lpe")
