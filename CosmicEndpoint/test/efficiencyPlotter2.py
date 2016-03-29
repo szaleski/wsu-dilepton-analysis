@@ -43,22 +43,22 @@ samples = [
     #"lower_tight_asym_deco_p10_v10",
     #"upper_asym_deco_p10_v10",
     #"upper_tight_asym_deco_p10_v10",
-    "lower_asym_deco_p100_v12",
-    "lower_tight_asym_deco_p100_v12",
-    "upper_asym_deco_p100_v12",
-    "upper_tight_asym_deco_p100_v12",
-    "lower_startup_peak_p100_v12",
-    "lower_tight_startup_peak_p100_v12",
-    "upper_startup_peak_p100_v12",
-    "upper_tight_startup_peak_p100_v12",
-    "lower_craft15_v12",
-    "lower_tight_craft15_v12",
-    "upper_craft15_v12",
-    "upper_tight_craft15_v12",
-    "lower_interfill2015d_v12",
-    "lower_tight_interfill2015d_v12",
-    "upper_interfill2015d_v12",
-    "upper_tight_interfill2015d_v12",
+    "lower_asym_deco_p100_trk",
+    "lower_tight_asym_deco_p100_trk",
+    "upper_asym_deco_p100_trk",
+    "upper_tight_asym_deco_p100_trk",
+    #"lower_startup_peak_p100_trk",
+    #"lower_tight_startup_peak_p100_trk",
+    #"upper_startup_peak_p100_trk",
+    #"upper_tight_startup_peak_p100_trk",
+    "lower_craft15_trk",
+    "lower_tight_craft15_trk",
+    "upper_craft15_trk",
+    "upper_tight_craft15_trk",
+    #"lower_interfill2015d_trk",
+    #"lower_tight_interfill2015d_trk",
+    #"upper_interfill2015d_trk",
+    #"upper_tight_interfill2015d_trk",
     #"startup_peak_p100_v4",
     #"craft15",
     #"interfill2015d"
@@ -90,6 +90,29 @@ r.gROOT.SetBatch(True)
 # IsTrk: passFirstPixel && nPixHits > 0 && nTkLayers > 5
 # numerator: relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
 # IsGlb: isGlobal
+
+## v15
+# require tag reco::Muon (opposite leg) passing all high-pT selections
+# denominator: isTracker && pT > 53 && |eta| < 0.9
+# IsTrk: passFirstPixel && nPixHits > 0 && nTkLayers > 5
+# numerator: relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# IsGlb: isGlobal
+
+## trk
+# require tag reco::Track (same leg) passing basic track/kinematic cuts
+# denominator: require match to reco::Muon
+# ID numerator  : relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# reco numerator: nPixHits > 0 && nTkLayers > 5
+# IsTrk: passFirstPixel (added to reco num.)
+# IsGlb: isGlobal (added to ID num.)
+
+## tag
+# require tag reco::Muon (opposite leg) passing all high-pT selections
+# denominator: require match to reco::Muon
+# IsTrk: passFirstPixel (added to den.)
+# ID numerator  : relPtErr < 0.3 && nValidMuHits > 0 && nMatchedMuonStations > 1
+# reco numerator: nPixHits > 0 && nTkLayers > 5
+# IsGlb: isGlobal (added to ID num.), passFirstPixel (added to reco num.)
 
 for sample in samples:
     tightCut = ""
@@ -161,7 +184,7 @@ for sample in samples:
             denPt.SetTitle("")
             denPt.Draw("ep0")
             passIDPt.Draw("ep0same")
-            #passIDTrkPt.Draw("ep0same")
+            passIDTrkPt.Draw("ep0same")
             plotPad.SetLogy(1)
             plotPad.SetGridy(1)
             plotPad.SetGridx(1)
@@ -173,19 +196,21 @@ for sample in samples:
             thelegend.SetFillColor(0)
             thelegend.SetFillStyle(3000)
 
-            denLegend = "p_{T} > 53 && |#eta| < 0.9 && isTracker"
-            numLegend = "+#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1"
+            denLegend  = "tag:reco::Track matched to probe:reco::Muon"
+            numLegendI = "probe:#frac{#Delta p_{T}}{p_{T}} < 0.3 && N_{#mu hits} > 0 && N_{#mu stations} > 1"
+            numLegendR = "probe:N_{pix} > 0 && N_{trk layers} > 5"
             if ghist == "IsGlb":
-                numLegend = numLegend + " && isGlobal"
-            else:
-                denLegend = denLegend + " && isGlobal"
-            if hist == "IsTrk":
-                denLegend = denLegend + " && N_{pix} > 0 && N_{trk layers} > 5 && firstPixel"
+                numLegendI = numLegendI + " && isGlobal"
             else:
                 pass
-            thelegend.AddEntry(denPt,   denLegend, "lpe")
-            thelegend.AddEntry(passIDPt,numLegend, "lpe")
-            #thelegend.AddEntry(passIDTrkPt,"+N_{pix} > 0 && N_{trk layers} > 5 && firstPixel", "lpe")
+            if hist == "IsTrk":
+                numLegendR = numLegendR + " && firstPixel"
+            else:
+                pass
+            thelegend.AddEntry(denPt,      denLegend, "lpe")
+            thelegend.AddEntry(None,      "p_{T} > 45. && |#eta| < 0.9 && |D_{xy}| < 4. && |D_{z}| < 10.", "")
+            thelegend.AddEntry(passIDPt,   numLegendI, "lpe")
+            thelegend.AddEntry(passIDTrkPt,numLegendR, "lpe")
             thelegend.Draw("nb")
             
             ratioPad.cd()
@@ -205,7 +230,7 @@ for sample in samples:
             effToID.GetYaxis().SetNdivisions(410)
             effToID.GetYaxis().SetLabelSize(0.07)
             effToID.GetYaxis().SetTickLength(0.02)
-            effToID.GetYaxis().SetRangeUser(0.75,1.)
+            effToID.GetYaxis().SetRangeUser(0.9,1.)
             
             effToIDTrk.SetMarkerStyle(r.kFullDiamond)
             effToIDTrk.SetMarkerSize(1)
@@ -221,8 +246,8 @@ for sample in samples:
             effToIDTrk.GetYaxis().SetNdivisions(410)
             effToIDTrk.GetYaxis().SetLabelSize(0.07)
             effToIDTrk.GetYaxis().SetTickLength(0.02)
-            effToIDTrk.GetYaxis().SetRangeUser(0.75,1.)
-            #effToIDTrk.Draw("CP+")
+            effToIDTrk.GetYaxis().SetRangeUser(0.9,1.)
+            effToIDTrk.Draw("CP+")
             
             ratioPad.SetGridy(1)
             ratioPad.SetGridx(1)
@@ -292,15 +317,17 @@ for sample in samples:
                 thelegend2.SetLineWidth(0)
                 thelegend2.SetFillColor(0)
                 thelegend2.SetFillStyle(3000)
-                thelegend2.AddEntry(denPt,                "p_{T} > 53 && |#eta| < 0.9 && isTracker", "lpe")
+                thelegend2.AddEntry(denPt,                "tag:reco::Track matched to probe:reco::Muon", "lpe")
                 thelegend2.AddEntry(None,                 "", "")
-                thelegend2.AddEntry(passFirstPixel,       "+first pixel layer",                      "lpe")
-                thelegend2.AddEntry(passNPixHits,         "+N_{pix} > 0",                            "lpe")
-                thelegend2.AddEntry(passNTkLayers,        "+N_{trk layers} > 5",                     "lpe")
-                thelegend2.AddEntry(passRelPtErr,         "+#frac{#Delta p_{T}}{p_{T}} < 0.3",       "lpe")
-                thelegend2.AddEntry(passNValidMuHits,     "+N_{#mu hits} > 0",                       "lpe")
-                thelegend2.AddEntry(passNMatchedStations, "+N_{#mu stations} > 1",                   "lpe")
-                thelegend2.AddEntry(passIsGlobal,         "+isGlobal",                               "lpe")
+                thelegend2.AddEntry(None,                 "p_{T} > 45. && |#eta| < 0.9", "")
+                thelegend2.AddEntry(None,                 "&& |D_{xy}|< 4. && |D_{z}| < 10.", "")
+                thelegend2.AddEntry(passFirstPixel,       "probe:first pixel layer",                      "lpe")
+                thelegend2.AddEntry(passNPixHits,         "probe:N_{pix} > 0",                            "lpe")
+                thelegend2.AddEntry(passNTkLayers,        "probe:N_{trk layers} > 5",                     "lpe")
+                thelegend2.AddEntry(passRelPtErr,         "probe:#frac{#Delta p_{T}}{p_{T}} < 0.3",       "lpe")
+                thelegend2.AddEntry(passNValidMuHits,     "probe:N_{#mu hits} > 0",                       "lpe")
+                thelegend2.AddEntry(passNMatchedStations, "probe:N_{#mu stations} > 1",                   "lpe")
+                thelegend2.AddEntry(passIsGlobal,         "probe:isGlobal",                               "lpe")
                 thelegend2.Draw("nb")
 
                 effFirstPixel       = r.TGraphAsymmErrors(passFirstPixel,denPt,       "cl=0.683 b(1,1) mode")
