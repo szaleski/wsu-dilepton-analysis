@@ -175,7 +175,7 @@ def findTrackMatch(ev,idx,src,coll,debug=False):
                                                    ev.trk_outerY[10*src+idx])
     for tk in range(nTracks):
         tmpDEta = abs(ev.trk_trackEta[10*src+idx] - ev.trk_trackEta[10*coll+tk])
-        tmpDPhi = dPhi(ev.trk_trackPhi[10*src+idx], ev.trk_trackPhi[10*coll+tk])
+        tmpDPhi = abs(dPhi(ev.trk_trackPhi[10*src+idx], ev.trk_trackPhi[10*coll+tk]))
         if debug:
             print "%2d (%2.2f, %2.2f, %2.2f, %2.2f) "%(tk,
                                                        ev.trk_trackEta[10*coll+tk],
@@ -262,7 +262,7 @@ def findProbeMuon(ev,tagIdx,tightSel=False,useUpper=False,useGlobal=True,useTrac
                 continue
             pass
         tmpDEta = abs(ev.trackEta[tagIdx] - ev.trackEta[mu])
-        tmpDPhi = dPhi(ev.trackPhi[tagIdx], ev.trackPhi[mu])
+        tmpDPhi = abs(dPhi(ev.trackPhi[tagIdx], ev.trackPhi[mu]))
         if tmpDEta < bestDEta and tmpDPhi < bestDPhi:
             probeIdx = mu
             bestDEta = tmpDEta
