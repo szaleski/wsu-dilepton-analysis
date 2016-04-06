@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-basic_cut  = "pt > 45"
+basic_cut  = "pt > 30"
 # restrict collections to tracks passing near the pixel
 dxy_cut = "(abs(dxy) < 50.)"
 dz_cut  = " && (abs(dz)  < 75.)"

@@ -26,7 +26,14 @@ muonTree = cms.EDAnalyzer('MuonTree',
     globalTrackSrc  = cms.InputTag("globalSPMuonTracks"),
     cosmicTrackSrc  = cms.InputTag("cosmicSPMuonTracks"),
     trackerTrackSrc = cms.InputTag("trackerSPMuonTracks"),
+    simTrackSrc     = cms.InputTag("g4SimHits"),
+    l1MuonSrc       = cms.InputTag("l1extraParticles","","RECO"),
+    #l1tResults      = cms.InputTag('gtDigis','','HLT'),
+    trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
+    hltTrigCut      = cms.string('L1SingleMuOpen'),
+ 
 
+    isGen       = cms.bool(False),
     debug       = cms.int32(0),
     maxDR       = cms.double(0.15), # not currently used, but to match upper/lower legs
     maxDPhi     = cms.double(0.10), # match requirement between upper/lower legs

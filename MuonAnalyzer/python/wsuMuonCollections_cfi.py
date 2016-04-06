@@ -23,10 +23,20 @@ zprimeLowerMuons = cms.EDFilter("MuonSelector",
     #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
 )
 
+# upper: outer position > 0 if standalone track outerTrack.isNonnull ? outerPosition.Y > 0
+# upper: inner position > 0
+# upper: abs(inner position) > abs(outer position)
+upper_cut = "? outerTrack.isNonnull ? (outerTrack.outerPosition.Y > 0) : (abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y))"
+lower_cut = "? outerTrack.isNonnull ? (outerTrack.outerPosition.Y < 0) : (abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y))"
+upper_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y > 0) : ((abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y)))"
+lower_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y < 0) : ((abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
+upper_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y > 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y)))"
+lower_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y < 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
 zprimeUpperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("zprimeMuons"),
     #cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
+    cut = cms.string(upper_cut_2)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
     #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
 )
 
@@ -50,22 +60,30 @@ globalSPMuons = cms.EDFilter("MuonSelector",
 #  - time information: also reliability issues
 upperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string(upper_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 upperGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string(upper_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string(lower_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string(lower_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 
@@ -90,6 +108,9 @@ COSMICoutput = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco_outer_new_changed.root'),
     outputCommands = cms.untracked.vstring('drop *',
                                            'keep *_muons_*_*',
+                                           'keep *_zprimeMuons_*_*',
+                                           'keep *_zprimeUpperMuons_*_*',
+                                           'keep *_zprimeLowerMuons_*_*',
                                            'keep *_betterMuons_*_*',
                                            'keep *_globalMuons_*_*',
                                            'keep *_betterSPMuons_*_*',

@@ -24,6 +24,35 @@ datafiles = [
     '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/70000/20AE4631-7FCB-E511-BE42-0CC47A4C8F18.root',
     ]
 
+interfillfiles = [
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/009366D5-5DC3-E511-B089-0025904C637C.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/12C49AF8-26C4-E511-AAB8-008CFA1983BC.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/224090C2-6DC3-E511-896C-0002C94D5614.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/367B2EB2-85C4-E511-AFA4-24BE05C626C1.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/4CA17646-2CC4-E511-8276-00266CFFBFC0.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/50309594-5AC3-E511-9CFE-001D09FDD6AB.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/521B1789-B9C4-E511-86BC-00266CF9ACB0.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/52C3B259-4BC4-E511-88F5-F45214939740.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/6066F19C-50C3-E511-956D-0025905C3D96.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/720AFF96-B9C4-E511-BEF2-FACADE0000F0.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/78ED43A6-64C3-E511-900F-0025904C656A.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/7CF88F4A-0FC4-E511-92A6-782BCB409872.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/8CA12BFA-51C3-E511-A0DD-00266CF9ABA8.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/981A2948-81C3-E511-A6C7-E41D2D08DE40.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/9895C1EE-76C3-E511-B914-0025904C51F0.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/98C5A04C-2CC4-E511-AA44-00266CF9AE10.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/AAA4399F-64C3-E511-A4DF-00266CFAE7AC.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/AAECBF15-BBC3-E511-A7CB-24BE05CE2E81.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/CEE9F8FD-2DC3-E511-8A23-0025905C9724.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/ECA3E3FE-40C4-E511-99AD-002590596498.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/F25298FE-40C4-E511-A3CB-0025905C2CE8.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/F450D00A-76C3-E511-970B-0CC47A78A414.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/FEFBED21-5AC3-E511-B799-00266CFCCB44.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/50000/AA9D3221-93CB-E511-B33B-24BE05C3CCE1.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/60000/568563F9-8AC8-E511-8C31-00266CF9B884.root',
+       '/store/data/Run2015D/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/60000/BA2DED87-A2D2-E511-A5FA-E41D2D08E0C0.root'
+    ]
+
 mcfiles = [
     #'root://cms-xrd-global.cern.ch// #alternate redirector
     'root://xrootd.unl.edu///store/mc/CosmicWinter15DR/SPLooseMuCosmic_38T_p100/GEN-SIM-RECO/DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v1/50000/02D2E238-63C5-E511-AAAA-BC305B3909F1.root',

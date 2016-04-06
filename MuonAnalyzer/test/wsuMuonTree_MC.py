@@ -8,7 +8,9 @@ process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 # load conditions from the global tag, what to use here?
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '') ## default = ?
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc_50nsGRun', '') ## L1GtTriggerMenu_L1Menu_Collisions2012_v3_mc
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', 'FULL') ## L1Menu_Collisions2015_25nsStage1_v5
 
 l1path = 'L1_SingleMuOpen'
 from HLTrigger.HLTfilters.triggerResultsFilter_cfi import triggerResultsFilter
@@ -21,16 +23,17 @@ from WSUDiLeptons.MuonAnalyzer.inputfiles import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        mcfilespt10asym
+        mcfilespt100startup
+        #mcfilespt100asym
         #dyfiles
-    )
+        )
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(15000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
-process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_deco_p100_CosmicSP.root')
+process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_startup_p100_CosmicSP_HLT.root')
 
 from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
 process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
@@ -45,18 +48,21 @@ process.analysisSPMuons = muonTree.clone(
     cosmicTrackSrc  = cms.InputTag("cosmicSPMuonTracks"),
     trackerTrackSrc = cms.InputTag("trackerSPMuonTracks"),
     algoType        = cms.int32(5),
-    debug           = cms.int32(2)
+    debug           = cms.int32(2),
+    trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
+    hltTrigCut      = cms.string('L1SingleMuOpen'),
+    isGen           = cms.bool(True)
 )
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonTree_MC_76X.root')
+    fileName = cms.string('CosmicMuonTree_MC_76X_startup_HLT.root')
 )
 
 process.muonSPFilter.src = cms.InputTag("zprimeMuons")
 
 process.muonanalysis = cms.Path(
-    process.trigFilter
-    +process.zprimeMuons
+    #process.trigFilter
+    process.zprimeMuons
     +process.zprimeLowerMuons
     +process.zprimeUpperMuons
     +process.cosmicMuonTracks
@@ -75,5 +81,5 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-#    ,process.COSMICoutput_step
+    ,process.COSMICoutput_step
 )
