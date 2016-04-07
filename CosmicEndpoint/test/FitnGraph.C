@@ -1,5 +1,5 @@
 {
-  TFile *file = new TFile("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_4_12/src/WSUCosmicAnalysis/CosmicEndpoint/test/testTunePmaxbias0005r100.root", "READ");
+  TFile *file = new TFile("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/CosmicEndpoint/test", "READ");
   std::cout << "The file reading is" << file << std::endl;
 
   std::cout << "\nThe file is open" <<   file->IsOpen()  << std::endl;

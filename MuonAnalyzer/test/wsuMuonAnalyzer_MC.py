@@ -21,6 +21,19 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.COSMICoutput.fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_generic.root')
 
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+
+l1path = 'L1_SingleMuOpen'
+from HLTrigger.HLTfilters.triggerResultsFilter_cfi import triggerResultsFilter
+process.trigFilter = triggerResultsFilter.clone()
+process.trigFilter.triggerConditions = cms.vstring("HLT_L1SingleMuOpen*")
+process.trigFilter.l1tResults        = cms.InputTag('gtDigis','','HLT')
+process.trigFilter.hltResults        = cms.InputTag('TriggerResults','','HLT')
+
+
+
 from WSUDiLeptons.MuonAnalyzer.wsuMuonAnalyzer_cfi import *
 
 process.analysisMuons = muonAnalysis.clone(
@@ -166,8 +179,9 @@ process.TFileService = cms.Service("TFileService",
 )
 
 process.muonanalysis = cms.Path(
+    process.trigFilter
     #process.reconstructionCosmics
-    process.betterMuons
+    +process.betterMuons
     +process.globalMuons
     +process.betterSPMuons
     +process.globalSPMuons
@@ -191,11 +205,11 @@ process.muonanalysis = cms.Path(
     #+process.analysisUpperTagDYTMuons
     #+process.analysisUpperTagPickyMuons
     #+process.analysisUpperTagTunePMuons
-    #+process.analysisTrackerMuons
-    #+process.analysisTPFMSMuons
-    #+process.analysisDYTMuons
-    #+process.analysisPickyMuons
-    #+process.analysisTunePMuons
+    +process.analysisTrackerMuons
+    +process.analysisTPFMSMuons
+    +process.analysisDYTMuons
+    +process.analysisPickyMuons
+    +process.analysisTunePMuons
     )
 
 # generate EDM output
@@ -205,6 +219,6 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 process.schedule = cms.Schedule(
 
 
-    process.muonanalysis,
-    process.COSMICoutput_step
+    process.muonanalysis
+    #,process.COSMICoutput_step
 )

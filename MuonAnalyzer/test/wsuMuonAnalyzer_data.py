@@ -183,20 +183,20 @@ process.muonanalysis = cms.Path(
     +process.analysisSPMuons
     +process.analysisGlobalSPMuons
     #+process.analysisLowerTagTrackerMuons
-    #+process.analysisLowerTagTPFMSMuons
-    #+process.analysisLowerTagDYTMuons
-    #+process.analysisLowerTagPickyMuons
-    #+process.analysisLowerTagTunePMuons
-    #+process.analysisUpperTagTrackerMuons
+    # +process.analysisLowerTagTPFMSMuons
+    # +process.analysisLowerTagDYTMuons
+    # +process.analysisLowerTagPickyMuons
+    # +process.analysisLowerTagTunePMuons
+    # #+process.analysisUpperTagTrackerMuons
     #+process.analysisUpperTagTPFMSMuons
     #+process.analysisUpperTagDYTMuons
     #+process.analysisUpperTagPickyMuons
     #+process.analysisUpperTagTunePMuons
-    #+process.analysisTrackerMuons
-    #+process.analysisTPFMSMuons
-    #+process.analysisDYTMuons
-    #+process.analysisPickyMuons
-    #+process.analysisTunePMuons
+    +process.analysisTrackerMuons
+    +process.analysisTPFMSMuons
+    +process.analysisDYTMuons
+    +process.analysisPickyMuons
+    +process.analysisTunePMuons
     )
 
 # generate EDM output
@@ -205,5 +205,5 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-    ,process.COSMICoutput_step
+    #,process.COSMICoutput_step
 )

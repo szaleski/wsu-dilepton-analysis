@@ -847,6 +847,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
       
 	bool up_tightdxy = (*upTrackerDxy < 0.2) ? 1 : 0;
 	bool up_tightdz  = (*upTrackerDz  < 0.5) ? 1 : 0;
+	bool up_etaBar   = (fabs(upTrackerMuonP4->eta()) < 0.9) ? 1 : 0;
 	bool up_superpointing = ((std::fabs(*upTrackerDxy) < 10) && (std::fabs(*upTrackerDz)  < 50))
 	  ? 1 : 0;
 
@@ -954,7 +955,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	}
 
 	// fill the counters histogram for the upper leg muons passing the super-pointing selection, currently just fill
-	if (up_superpointing || true) {
+	//if (up_superpointing || true) {
+	if (up_superpointing && up_etaBar) {	  
 	  h_countersUpper->Fill(0);
 	  
 	  if (up_n1ptrelerr)
@@ -1380,6 +1382,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
       
 	bool low_tightdxy = (*lowTrackerDxy < 0.2) ? 1 : 0;
 	bool low_tightdz  = (*lowTrackerDz  < 0.5) ? 1 : 0;
+	bool low_etaBar   = (fabs(lowTrackerMuonP4->eta()) < 0.9) ? 1 : 0;
 	bool low_superpointing = ((std::fabs(*lowTrackerDxy) < 10) && (std::fabs(*lowTrackerDz)  < 50))
 	  ? 1 : 0;
 	
@@ -1488,7 +1491,8 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	}
 
 	// fill the counters histogram for the lower leg muons passing the super-pointing selection
-	if (low_superpointing || true) {
+	//	if (low_superpointing || true) {
+	if (low_superpointing && low_etaBar) {
 	  h_countersLower->Fill(0);
 
 	  if (low_n1ptrelerr)

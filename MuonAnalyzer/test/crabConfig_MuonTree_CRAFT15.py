@@ -3,14 +3,14 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 
 config.section_('General')
-config.General.requestName = 'MuonEfficiencyTree_CRAFT15_Feb23'
+config.General.requestName = 'MuonEfficiencyTree_CRAFT15_Mar9'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'wsuMuonTree_data.py'
+config.JobType.psetName = 'wsuMuonAnalyzer_data.py'
 
 config.section_('Data')
 config.Data.inputDataset = '/Cosmics/Commissioning2015-CosmicSP-20Jan2016-v1/RAW-RECO'
@@ -21,7 +21,7 @@ config.Data.lumiMask = 'http://cmsdoc.cern.ch/~sturdy/Cosmics/JSON/cosmics_CRAFT
 config.Data.allowNonValidInputDataset = True
 #config.Data.publication = True
 config.Data.outLFNDirBase = '/store/user/sturdy/MuonEfficiency'
-config.Data.outputDatasetTag = 'MuonEfficiencyTree_CRAFT15_Feb23'
+config.Data.outputDatasetTag = 'MuonEfficiencyTree_CRAFT15_Mar_2016'
 
 config.section_('Site')
 config.Site.storageSite = 'T3_US_FNALLPC'

@@ -2,7 +2,7 @@ from WMCore.Configuration import Configuration
 
 config = Configuration()
 config.section_('General')
-config.General.requestName = 'CosmicMuonAnalysis_data_interfill_Feb17_2016'
+config.General.requestName = 'CosmicMuonAnalysis_data_interfill_Mar9_2016'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -23,6 +23,6 @@ config.Data.lumiMask = '/afs/cern.ch/work/s/szaleski/private/CMSSW_7_4_12/src/WS
 config.Data.allowNonValidInputDataset = True
 #config.Data.outLFNDirBase = '/store/user/%s/' %(getUserNameFromSiteDB())
 config.Data.publication = True
-config.Data.outputDatasetTag = 'MuonAnalysis_data_Feb_2016'
+config.Data.outputDatasetTag = 'MuonAnalysis_data_Mar_2016'
 config.section_('Site')
 config.Site.storageSite = 'T3_US_FNALLPC'
