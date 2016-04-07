@@ -327,16 +327,16 @@ for fileName in fileNames.keys():
             #    continue
             if not passHighPtMuon(ev,mu):
                 continue
-            if fileName in ["startup","asymptotic"] and not matchSimTrack(ev,mu,0.05,0.15,True) > -1:
+            if fileName in ["startup","asymptotic"] and not matchSimTrack(ev,mu,0.9,0.9,True) > -1:
                 continue
             trig_eff_hist[fileName].Fill(0,0)
             matchCount = matchCount + 1
-            if matchL1SingleMu(ev,mu,0.05,0.15,True) > -1:
+            if matchL1SingleMu(ev,mu,0.9,0.9,True) > -1:
                 trig_eff_hist[fileName].Fill(0,1)
             # second selection with firstPixelLayer
             if passHighPtMuon(ev,mu,True):
                 trig_eff_hist[fileName].Fill(1,0)
-                if matchL1SingleMu(ev,mu) > -1:
+                if matchL1SingleMu(ev,mu,0.9,0.9,True) > -1:
                     trig_eff_hist[fileName].Fill(1,1)
                     pass
                 pass
@@ -351,9 +351,9 @@ for fileName in fileNames.keys():
     trigCan.Update()
     funky.close()
     pass
-trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff.png")
-trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff.pdf")
-trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff.C")
+trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff_match_deta90_dphi90.png")
+trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff_match_deta90_dphi90.pdf")
+trigCan.SaveAs("~/public/html/Cosmics/L1Info/trig_eff_match_deta90_dphi90.C")
     
 
 for cut in cuts.keys():

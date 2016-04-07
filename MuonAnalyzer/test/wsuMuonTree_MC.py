@@ -33,7 +33,10 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
-process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_startup_p100_CosmicSP_HLT.root')
+process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_startup_p100_CosmicSP_HLT_filtered.root')
+
+process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
+process.singleMuFilter.filterEvent = cms.bool(True)
 
 from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
 process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
@@ -55,14 +58,15 @@ process.analysisSPMuons = muonTree.clone(
 )
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonTree_MC_76X_startup_HLT.root')
+    fileName = cms.string('CosmicMuonTree_MC_76X_startup_HLT_filtered.root')
 )
 
 process.muonSPFilter.src = cms.InputTag("zprimeMuons")
 
 process.muonanalysis = cms.Path(
     #process.trigFilter
-    process.zprimeMuons
+    process.singleMuFilter
+    +process.zprimeMuons
     +process.zprimeLowerMuons
     +process.zprimeUpperMuons
     +process.cosmicMuonTracks

@@ -6,23 +6,6 @@ basic_cut  = "pt > 53. && isTrackerMuon"
 dxy_cut = "(abs(tunePMuonBestTrack.dxy) < 50.)"
 dz_cut  = " && (abs(tunePMuonBestTrack.dz)  < 75.)"
 
-betterMuons = cms.EDFilter("MuonSelector",
-    src = cms.InputTag("muons"),
-    cut = cms.string(basic_cut),
-)
-
-zprimeMuons = cms.EDFilter("MuonSelector",
-    src = cms.InputTag("muons"),
-    cut = cms.string("pt > 53. && abs(eta) < 0.9 && abs(tunePMuonBestTrack.dxy) < 10. && abs(tunePMuonBestTrack.dz) < 50."),
-    # no need to have isTrackerMuon here as we can save it and put it in the denominator selection anyway
-)
-zprimeLowerMuons = cms.EDFilter("MuonSelector",
-    src = cms.InputTag("zprimeMuons"),
-    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
-    cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
-    #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
-)
-
 # upper: outer position > 0 if standalone track outerTrack.isNonnull ? outerPosition.Y > 0
 # upper: inner position > 0
 # upper: abs(inner position) > abs(outer position)
@@ -32,6 +15,25 @@ upper_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y > 0) : ((ab
 lower_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y < 0) : ((abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
 upper_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y > 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y)))"
 lower_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y < 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
+
+betterMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string(basic_cut),
+)
+
+zprimeMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 45. && abs(eta) < 0.9 && abs(tunePMuonBestTrack.dxy) < 10. && abs(tunePMuonBestTrack.dz) < 50."),
+    # no need to have isTrackerMuon here as we can save it and put it in the denominator selection anyway
+)
+zprimeLowerMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("zprimeMuons"),
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    cut = cms.string(lower_cut_2)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
+    #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
+)
+
 zprimeUpperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("zprimeMuons"),
     #cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
