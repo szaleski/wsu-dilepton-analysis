@@ -201,5 +201,5 @@ process.COSMICoutput_step = cms.EndPath(process.COSMICoutput)
 # Schedule definition
 process.schedule = cms.Schedule(
     process.muonanalysis
-    ,process.COSMICoutput_step
+#    ,process.COSMICoutput_step
 )

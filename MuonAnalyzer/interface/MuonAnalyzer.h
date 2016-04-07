@@ -21,6 +21,15 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/Math/interface/Vector3D.h"
 
+//sim track information
+#include "SimDataFormats/Track/interface/SimTrack.h"
+#include "SimDataFormats/Track/interface/SimTrackContainer.h"
+
+// Trigger information
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/L1Trigger/interface/L1MuonParticle.h"
+
 // TFile Service
 #include <FWCore/ServiceRegistry/interface/Service.h>
 #include <CommonTools/UtilAlgos/interface/TFileService.h>
@@ -79,8 +88,17 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   
   // ----------member data ---------------------------
   edm::EDGetTokenT<reco::MuonCollection > muonToken_, tagLegToken_, probeLegToken_;
+  edm::EDGetTokenT<edm::SimTrackContainer> simTrackToken_;
+  edm::EDGetTokenT<edm::TriggerResults>   trigResultsToken_;
+  edm::EDGetTokenT<bool> fakeL1SingleMuToken_;
+
   edm::InputTag muonSrc_, tagLegSrc_, probeLegSrc_;
+  edm::InputTag simTrackSrc_, trigResultsSrc_, fakeL1SingleMuSrc_;
   edm::Service<TFileService> fs;
+
+  std::string hltTrigCut_;
+  bool isGen_;
+  
   TTree *cosmicTree;
 
   int event, run, lumi, nMuons, nTags, nProbes, foundMatch;
@@ -88,6 +106,11 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   
   reco::Muon::ArbitrationType type;
  
+  int    nSimTracks, simtrack_type[5];
+  double simtrack_pt[5], simtrack_eta[5], simtrack_phi[5], simtrack_charge[5];
+
+  int    l1SingleMu, fakeL1SingleMu;
+
   reco::Candidate::LorentzVector lowerMuon_P4;
   math::XYZVector lowerMuon_trackVec;
   double lowerMuon_chi2, lowerMuon_dxy, lowerMuon_dz, lowerMuon_pT;
@@ -95,7 +118,8 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   double lowerMuon_trackPt;
   int lowerMuon_ndof, lowerMuon_charge,
     lowerMuon_isGlobal, lowerMuon_isTracker, lowerMuon_isStandAlone;
-  int lowerMuon_pixelHits,
+  int lowerMuon_firstPixel,
+    lowerMuon_pixelHits,
     lowerMuon_trackerHits,
     lowerMuon_muonStationHits,
     lowerMuon_numberOfValidHits,
@@ -110,7 +134,8 @@ class MuonAnalyzer : public edm::EDAnalyzer {
   double upperMuon_trackPt;
   int upperMuon_ndof, upperMuon_charge,
     upperMuon_isGlobal, upperMuon_isTracker, upperMuon_isStandAlone;
-  int upperMuon_pixelHits,
+  int  upperMuon_firstPixel,
+    upperMuon_pixelHits,
     upperMuon_trackerHits,
     upperMuon_muonStationHits,
     upperMuon_numberOfValidHits,
