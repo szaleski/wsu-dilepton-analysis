@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-basic_cut  = "pt > 45"
+basic_cut  = "pt > 30"
 # restrict collections to tracks passing near the pixel
 dxy_cut = "(abs(dxy) < 50.)"
 dz_cut  = " && (abs(dz)  < 75.)"
@@ -40,18 +40,18 @@ trackerSPMuonTracks = cms.EDFilter("TrackSelector",
 #  - time information: also reliability issues
 upperMuonTracks = cms.EDFilter("TrackSelector",
     src = cms.InputTag("cosmicSPMuonTracks"),
-    #cut = cms.string("outerPosition.Y > 0"),
+    cut = cms.string("outerPosition.Y > 0"),
     #cut = cms.string("(innerPosition.Y > 0) || (innerPosition.Y < 0 && outerPosition.Y > 0)"),
-    cut = cms.string("abs(innerPosition.Y) > abs(outerPosition.Y)"),
+    #cut = cms.string("abs(innerPosition.Y) > abs(outerPosition.Y)"),
     #cut = cms.string("(innerPosition.Y > 0) || (innerPosition.Y < 0 && outerPosition.Y > 0)"),
     #cut = cms.string("((outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
 )
 
 upperGlobalMuonTracks = cms.EDFilter("TrackSelector",
     src = cms.InputTag("globalSPMuonTracks"),
-    #cut = cms.string("outerPosition.Y > 0"),
+    cut = cms.string("outerPosition.Y > 0"),
     #cut = cms.string("(innerPosition.Y > 0) || (innerPosition.Y < 0 && outerPosition.Y > 0)"),
-    cut = cms.string("abs(innerPosition.Y) > abs(outerPosition.Y)"),
+    #cut = cms.string("abs(innerPosition.Y) > abs(outerPosition.Y)"),
     #cut = cms.string("((outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
 )
 
@@ -65,15 +65,15 @@ upperTrackerMuonTracks = cms.EDFilter("TrackSelector",
 
 lowerMuonTracks = cms.EDFilter("TrackSelector",
     src = cms.InputTag("cosmicSPMuonTracks"),
-    #cut = cms.string("outerPosition.Y < 0"),
-    cut = cms.string("abs(innerPosition.Y) < abs(outerPosition.Y)"),
+    cut = cms.string("outerPosition.Y < 0"),
+    #cut = cms.string("abs(innerPosition.Y) < abs(outerPosition.Y)"),
     #cut = cms.string("((outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
 )
 
 lowerGlobalMuonTracks = cms.EDFilter("TrackSelector",
     src = cms.InputTag("globalSPMuonTracks"),
-    #cut = cms.string("outerPosition.Y < 0"),
-    cut = cms.string("abs(innerPosition.Y) < abs(outerPosition.Y)"),
+    cut = cms.string("outerPosition.Y < 0"),
+    #cut = cms.string("abs(innerPosition.Y) < abs(outerPosition.Y)"),
     #cut = cms.string("((outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
 )
 

@@ -21,6 +21,14 @@ muonAnalysis = cms.EDAnalyzer('MuonAnalyzer',
     muonSrc     = cms.InputTag("muons1Leg"),
     tagLegSrc   = cms.InputTag("upperMuons"),
     probeLegSrc = cms.InputTag("lowerMuons"),
+
+    simTrackSrc     = cms.InputTag("g4SimHits"),
+    trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
+    fakeL1SingleMuSrc = cms.InputTag("singleMuFilter"),
+    hltTrigCut      = cms.string('L1SingleMuOpen'),
+ 
+    isGen       = cms.bool(False),
+
     algoType    = cms.int32(1),
     debug       = cms.int32(0),
     maxDR       = cms.double(0.15), # not currently used, but to match upper/lower legs

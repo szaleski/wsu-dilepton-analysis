@@ -175,7 +175,7 @@ def findTrackMatch(ev,idx,src,coll,debug=False):
                                                    ev.trk_outerY[10*src+idx])
     for tk in range(nTracks):
         tmpDEta = abs(ev.trk_trackEta[10*src+idx] - ev.trk_trackEta[10*coll+tk])
-        tmpDPhi = abs(dPhi(ev.trk_trackPhi[10*src+idx], ev.trk_trackPhi[10*coll+tk]))
+        tmpDPhi = dPhi(ev.trk_trackPhi[10*src+idx], ev.trk_trackPhi[10*coll+tk])
         if debug:
             print "%2d (%2.2f, %2.2f, %2.2f, %2.2f) "%(tk,
                                                        ev.trk_trackEta[10*coll+tk],
@@ -202,18 +202,18 @@ def findTagMuon(ev,tightSel=False,useUpper=True,useGlobal=True,useTracker=True,d
     tagIdx   = -1
     tagCount = 0
     for mu in range(ev.nMuons):
+        if debug:
+            print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
         if useUpper:
             # process upper rather than lower legs
-            if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
-                if debug:
-                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+            #if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
+            if ev.isLower[mu]:
                 continue
             pass
         else:
             # if isUpper[mu]
-            if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
-                if debug:
-                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+            #if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
+            if ev.isUpper[mu]:
                 continue
             pass
         
@@ -247,22 +247,21 @@ def findProbeMuon(ev,tagIdx,tightSel=False,useUpper=False,useGlobal=True,useTrac
     for mu in range(ev.nMuons):
         if mu == tagIdx:
             continue
+        if debug:
+            print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
         if useUpper:
             # process upper rather than lower legs
-            if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
-                if debug:
-                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+            #if (abs(ev.innerY[mu]) < abs(ev.outerY[mu])):
+            if ev.isLower[mu]:
                 continue
             pass
         else:
-            # if isUpper[mu]
-            if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
-                if debug:
-                    print "l%d/u%d"%(ev.isLower[mu],ev.isUpper[mu])
+            #if (abs(ev.innerY[mu]) > abs(ev.outerY[mu])):
+            if ev.isUpper[mu]:
                 continue
             pass
         tmpDEta = abs(ev.trackEta[tagIdx] - ev.trackEta[mu])
-        tmpDPhi = abs(dPhi(ev.trackPhi[tagIdx], ev.trackPhi[mu]))
+        tmpDPhi = dPhi(ev.trackPhi[tagIdx], ev.trackPhi[mu])
         if tmpDEta < bestDEta and tmpDPhi < bestDPhi:
             probeIdx = mu
             bestDEta = tmpDEta
@@ -283,7 +282,7 @@ def passMuID(ev,idx,glbl=True,tracker=False,debug=False):
     result = passNVMuHits and passNMMuStations and passRelPtErr
     if glbl:
         result = result and ev.isGlobal[idx]
-    return result and passMuDen(ev,idx,tracker,debug)
+    return result #and passMuDen(ev,idx,tracker,debug)
 
 def passMuIDTrk(ev,idx,first=False,debug=False):
     passFirstPix = True
@@ -797,11 +796,12 @@ if __name__ == "__main__":
                 eventCounter.Fill(2)
                 continue
             eventCounter.Fill(1)
-            tagIdx = findTagMuon(event,False,not checkUpper,True,True,options.debug)
+            
+            tagIdx = findTagMuon(event,options.tight,not checkUpper,True,False,options.debug)
             if tagIdx < 0:
                 continue
             probeIdx = findProbeMuon(event,tagIdx,False,checkUpper,True,True,options.debug)
-            print "tag=%d, probe=%d"%(tagIdx,probeIdx)
+            print "tag=%d, probe=%d, nTracks=%d - %d/%d/%d\n"%(tagIdx,probeIdx,event.nTrackerTracks,event.run,event.lumi,event.event)
             print "tag:%d-l%d/u%d:q%d (%dt/%dg/%dsa) pT:%2.4f,phi:%2.4f,eta:%2.4f"%(
                 tagIdx,event.isLower[tagIdx],event.isUpper[tagIdx],
                 event.charge[tagIdx],event.isTracker[tagIdx],event.isGlobal[tagIdx],event.isStandAlone[tagIdx],
@@ -810,8 +810,15 @@ if __name__ == "__main__":
                 probeIdx,event.isLower[probeIdx],event.isUpper[probeIdx],
                 event.charge[probeIdx],event.isTracker[probeIdx],event.isGlobal[probeIdx],event.isStandAlone[probeIdx],
                 event.trackpT[probeIdx],event.trackPhi[probeIdx],event.trackEta[probeIdx])
+            for trk in range(event.nTrackerTracks):
+                print "trk:%d-l%d/u%d:q%d pT:%2.4f,phi:%2.4f,eta:%2.4f,dxy:%2.2f,dz:%2.2f,muIdx:%d"%(
+                    trk,event.trk_isLower[10*2+trk],event.trk_isUpper[10*2+trk],
+                    event.trk_charge[10*2+trk],
+                    event.trk_trackpT[10*2+trk],event.trk_trackPhi[10*2+trk],event.trk_trackEta[10*2+trk],
+                    event.trk_dxy[10*2+trk],event.trk_dz[10*2+trk],event.trk_matchedMuIdx[10*2+trk])
             
-            if (passMuDen(event,probeIdx,False,options.debug)):
+            # denominator must be defined by the tag, and all cuts to select pp-like muons imposed there
+            if (passMuDen(event,tagIdx,False,options.debug)):
                 muDenPtHisto.Fill(event.trackpT[probeIdx])
                 muDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
                 muDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
@@ -824,11 +831,11 @@ if __name__ == "__main__":
                 muDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
                 if (passMuID(event,probeIdx,False,False,options.debug)):
                     muNum1PtHisto.Fill(event.trackpT[probeIdx])
-                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                if (passMuIDTrk(event,probeIdx,False,options.debug)):
                     muNum2PtHisto.Fill(event.trackpT[probeIdx])
                     pass
             # denominator cuts include track ID cuts, in addition to isTracker
-            if (passMuDen(event,probeIdx,True,options.debug)):
+            if (passMuDen(event,tagIdx,True,options.debug)):
                 muIsTrkDenPtHisto.Fill(event.trackpT[probeIdx])
                 muIsTrkDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
                 muIsTrkDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
@@ -841,14 +848,14 @@ if __name__ == "__main__":
                               muIsTrkDenGlbNormChi2Histo,muIsTrkDenStaChi2Histo,True)
                 muIsTrkDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
                 muIsTrkDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
-                if (passMuID(event,probeIdx,False,True,options.debug)):
+                if (passMuID(event,probeIdx,False,False,options.debug)):
                     muIsTrkNum1PtHisto.Fill(event.trackpT[probeIdx])
-                if (passMuIDTrk(event,probeIdx,True,options.debug)):
+                if (passMuIDTrk(event,probeIdx,False,options.debug)):
                     muIsTrkNum2PtHisto.Fill(event.trackpT[probeIdx])
                 
-            # probing isGlobal in the numerator
+            # probing isGlobal in the numerator (for muID, and first pixel in muIDTrk)
             # denominator cuts do not include track ID cuts, but include isTracker
-            if (passMuDen(event,probeIdx,False,options.debug)):
+            if (passMuDen(event,tagIdx,False,options.debug)):
                 #if event.isGlobal[probeIdx]:
                 if event.firstPixel[probeIdx] > 0:
                     muNumFirstPixPtHisto.Fill(event.trackpT[probeIdx])
@@ -943,7 +950,7 @@ if __name__ == "__main__":
                     muIsGlbNum2PtHisto.Fill(event.trackpT[probeIdx])
                     
             # denominator cuts include track ID cuts, in addition to isTracker
-            if (passMuDen(event,probeIdx,True,options.debug)):
+            if (passMuDen(event,tagIdx,True,options.debug)):
                 muIsGlbIsTrkDenPtHisto.Fill(event.trackpT[probeIdx])
                 muIsGlbIsTrkDenTkMeasHisto.Fill(event.trackpT[probeIdx],event.tkLayersWMeas[probeIdx])
                 muIsGlbIsTrkDenPixHitHisto.Fill(event.trackpT[probeIdx],event.pixelHits[probeIdx])
@@ -956,7 +963,7 @@ if __name__ == "__main__":
                               muIsGlbIsTrkDenGlbNormChi2Histo,muIsGlbIsTrkDenStaChi2Histo,True)
                 muIsGlbIsTrkDenDXYHisto.Fill(event.trackpT[probeIdx],event.dxy[probeIdx])
                 muIsGlbIsTrkDenDZHisto.Fill(event.trackpT[probeIdx],event.dz[probeIdx])
-                if (passMuID(event,probeIdx,True,True,options.debug)):
+                if (passMuID(event,probeIdx,True,False,options.debug)):
                     muIsGlbIsTrkNum1PtHisto.Fill(event.trackpT[probeIdx])
                 if (passMuIDTrk(event,probeIdx,True,options.debug)):
                     muIsGlbIsTrkNum2PtHisto.Fill(event.trackpT[probeIdx])
