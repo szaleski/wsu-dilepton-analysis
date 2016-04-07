@@ -1,20 +1,52 @@
 import FWCore.ParameterSet.Config as cms
 
-basic_cut  = "pt > 45"
+
+basic_cut  = "pt > 53. && isTrackerMuon"
 # restrict collections to muons near the pixel
-dxy_cut = "(abs(muonBestTrack.dxy) < 50.)"
-dz_cut  = " && (abs(muonBestTrack.dz)  < 75.)"
+dxy_cut = "(abs(tunePMuonBestTrack.dxy) < 50.)"
+dz_cut  = " && (abs(tunePMuonBestTrack.dz)  < 75.)"
+
+# upper: outer position > 0 if standalone track outerTrack.isNonnull ? outerPosition.Y > 0
+# upper: inner position > 0
+# upper: abs(inner position) > abs(outer position)
+upper_cut = "? outerTrack.isNonnull ? (outerTrack.outerPosition.Y > 0) : (abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y))"
+lower_cut = "? outerTrack.isNonnull ? (outerTrack.outerPosition.Y < 0) : (abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y))"
+upper_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y > 0) : ((abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y)))"
+lower_cut_ = "? (outerTrack.isNonnull) ? (outerTrack.outerPosition.Y < 0) : ((abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
+upper_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y > 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) > abs(innerTrack.outerPosition.Y)))"
+lower_cut_2 = "(outerTrack.isNonnull && (outerTrack.outerPosition.Y < 0)) || (!(outerTrack.isNonnull) &&(abs(innerTrack.innerPosition.Y) < abs(innerTrack.outerPosition.Y)))"
 
 betterMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("muons"),
     cut = cms.string(basic_cut),
 )
 
+zprimeMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("muons"),
+    cut = cms.string("pt > 45. && abs(eta) < 0.9 && abs(tunePMuonBestTrack.dxy) < 10. && abs(tunePMuonBestTrack.dz) < 50."),
+    # no need to have isTrackerMuon here as we can save it and put it in the denominator selection anyway
+)
+zprimeLowerMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("zprimeMuons"),
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    cut = cms.string(lower_cut_2)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
+    #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
+)
+
+zprimeUpperMuons = cms.EDFilter("MuonSelector",
+    src = cms.InputTag("zprimeMuons"),
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    cut = cms.string(upper_cut_2)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
+    #cut = cms.string("((tunePMuonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((tunePMuonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
+)
+
 globalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterMuons"),
     cut = cms.string("isGlobalMuon"),
 )
-
+                                
 betterSPMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterMuons"),
     cut = cms.string(dxy_cut+dz_cut),
@@ -30,46 +62,31 @@ globalSPMuons = cms.EDFilter("MuonSelector",
 #  - time information: also reliability issues
 upperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    #cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
-    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
-    cut = cms.string("abs(muonBestTrack.innerPosition.Y) > abs(muonBestTrack.outerPosition.Y)"),
-    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
-    #cut = cms.string("((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string(upper_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 upperGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    #cut = cms.string("muonBestTrack.outerPosition.Y > 0"),
-    #cut = cms.string("(muonBestTrack.innerPosition.Y > 0) || (muonBestTrack.innerPosition.Y < 0 && muonBestTrack.outerPosition.Y > 0)"),
-    cut = cms.string("abs(muonBestTrack.innerPosition.Y) > abs(muonBestTrack.outerPosition.Y)"),
-    #cut = cms.string("((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn < 0)) || ((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn < 0))"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    #cut = cms.string(upper_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    #cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
-    cut = cms.string("abs(muonBestTrack.innerPosition.Y) < abs(muonBestTrack.outerPosition.Y)"),
-    #cut = cms.string("((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string(lower_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    #cut = cms.string("muonBestTrack.outerPosition.Y < 0"),
-    #cut = cms.string("(muonBestTrack.innerPosition.Y < 0) || (muonBestTrack.innerPosition.Y > 0 && muonBestTrack.outerPosition.Y < 0)"),
-    cut = cms.string("abs(muonBestTrack.innerPosition.Y) < abs(muonBestTrack.outerPosition.Y)"),
-    #cut = cms.string("((muonBestTrack.outerPosition.Y < 0) && (time.timeAtIpOutIn > 0)) || ((muonBestTrack.outerPosition.Y > 0) && (time.timeAtIpOutIn > 0))"),
+    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    #cut = cms.string(lower_cut)
+    #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
-
-
-#upperGlobalMuons = cms.EDFilter("MuonSelector",
-#    src = cms.InputTag("upperMuons"),
-#    cut = cms.string("isGlobalMuon"),
-#)
-#
-#lowerGlobalMuons = cms.EDFilter("MuonSelector",
-#    src = cms.InputTag("lowerMuons"),
-#    cut = cms.string("isGlobalMuon"),
-#)
 
 
 muonSPFilter = cms.EDFilter("MuonCountFilter",
@@ -93,6 +110,9 @@ COSMICoutput = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string('Cosmics_deco_p100_CosmicSP_ReReco_outer_new_changed.root'),
     outputCommands = cms.untracked.vstring('drop *',
                                            'keep *_muons_*_*',
+                                           'keep *_zprimeMuons_*_*',
+                                           'keep *_zprimeUpperMuons_*_*',
+                                           'keep *_zprimeLowerMuons_*_*',
                                            'keep *_betterMuons_*_*',
                                            'keep *_globalMuons_*_*',
                                            'keep *_betterSPMuons_*_*',

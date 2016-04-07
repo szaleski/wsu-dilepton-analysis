@@ -211,14 +211,18 @@ class cosmicEndpointShort() :
             # call obs.SetContent(array)
             obsValsX = np.zeros(obs.GetNbinsX(),np.dtype('float64'))
             obsValsY = np.zeros(obs.GetNbinsX(),np.dtype('float64'))
+            obsErrsY = np.zeros(obs.GetNbinsX(),np.dtype('float64'))
             for b in range(obs.GetNbinsX()):
                 obsValsX[b] = b+1
                 obsValsY[b] = obs.GetBinContent(b+1)
+                obsErrsY[b] = obs.GetBinError(b+1)
                 
             obsValsYRev = np.fliplr([obsValsY])[0]
+            obsErrsYRev = np.fliplr([obsErrsY])[0]
             # obs.SetContent(obsValsYRev) ## doesn't work for some reason, oh well, hack it
             for b in range(obs.GetNbinsX()):
                 obs.SetBinContent(b+1,obsValsYRev[b])
+                obs.SetBinError(b+1,obsErrsYRev[b])
 
         #print obs, ref
 
@@ -431,20 +435,28 @@ class cosmicEndpointShort() :
                 obs_negBiasValsX = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
                 obs_posBiasValsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
                 obs_negBiasValsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
+                obs_posBiasErrsY = np.zeros(obs_posBias.GetNbinsX(),np.dtype('float64'))
+                obs_negBiasErrsY = np.zeros(obs_negBias.GetNbinsX(),np.dtype('float64'))
             
                 for b in range(obs_posBias.GetNbinsX()):
                     obs_posBiasValsX[b] = b+1
                     obs_negBiasValsX[b] = b+1
                     obs_posBiasValsY[b] = obs_posBias.GetBinContent(b+1)
                     obs_negBiasValsY[b] = obs_negBias.GetBinContent(b+1)
+                    obs_posBiasErrsY[b] = obs_posBias.GetBinError(b+1)
+                    obs_negBiasErrsY[b] = obs_negBias.GetBinError(b+1)
 
                 obs_posBiasValsYRev = np.fliplr([obs_posBiasValsY])[0]
                 obs_negBiasValsYRev = np.fliplr([obs_negBiasValsY])[0]
+                obs_posBiasErrsYRev = np.fliplr([obs_posBiasErrsY])[0]
+                obs_negBiasErrsYRev = np.fliplr([obs_negBiasErrsY])[0]
                 # obs_posBias.SetContent(obs_posBiasValsYRev)
                 # obs_negBias.SetContent(obs_negBiasValsYRev)
                 for b in range(obs_posBias.GetNbinsX()):
                     obs_posBias.SetBinContent(b+1,obs_posBiasValsYRev[b])
                     obs_negBias.SetBinContent(b+1,obs_negBiasValsYRev[b])
+                    obs_posBias.SetBinError(b+1,obs_posBiasErrsYRev[b])
+                    obs_negBias.SetBinError(b+1,obs_negBiasErrsYRev[b])
                 
             if (i%100 == 0):
                 self.outdirs["obs_%s"%(obsName)][trackName].cd()
@@ -740,6 +752,7 @@ class cosmicEndpointShort() :
                                                    hist.GetXaxis().GetBinWidth(  thebin))
             for binlow in range(0,thebin+1):
                 hist.SetBinContent(binlow,0)
+                hist.SetBinError(binlow,0)
 
         thebin = hist.FindBin(1./minPt)
         while not (hist.GetXaxis().GetBinUpEdge(thebin) > 1./minPt):
@@ -757,6 +770,7 @@ class cosmicEndpointShort() :
         print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
         for binhigh in range(thebin,nbins+2):
             hist.SetBinContent(binhigh,0)
+            hist.SetBinError(binhigh,0)
         print "nbins+1 content %d"%(hist.GetBinContent(nbins+1))
         print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
 

@@ -29,6 +29,16 @@ MuonAnalyzer::MuonAnalyzer(const edm::ParameterSet& pset)
   muonSrc_     = pset.getParameter<edm::InputTag>("muonSrc");
   tagLegSrc_   = pset.getParameter<edm::InputTag>("tagLegSrc");
   probeLegSrc_ = pset.getParameter<edm::InputTag>("probeLegSrc");
+
+  isGen_       = pset.getParameter<bool>("isGen");
+  if (isGen_) {
+    simTrackSrc_ = pset.getParameter<edm::InputTag>("simTrackSrc");
+  }
+
+  trigResultsSrc_    = pset.getParameter<edm::InputTag>("trigResultsSrc");
+  fakeL1SingleMuSrc_ = pset.getParameter<edm::InputTag>("fakeL1SingleMuSrc");
+  hltTrigCut_        = pset.getParameter<std::string>("hltTrigCut");
+
   debug_       = pset.getParameter<int>("debug");
   algoType_    = pset.getParameter<int>("algoType");
 
@@ -37,11 +47,17 @@ MuonAnalyzer::MuonAnalyzer(const edm::ParameterSet& pset)
   maxDR_   = pset.getParameter<double>("maxDR");
   minPt_   = pset.getParameter<double>("minPt");
 
+  //now do what ever initialization is needed
   muonToken_     = consumes<reco::MuonCollection>(muonSrc_);
   tagLegToken_   = consumes<reco::MuonCollection>(tagLegSrc_);
   probeLegToken_ = consumes<reco::MuonCollection>(probeLegSrc_);
-  //now do what ever initialization is needed
- 
+
+  if (isGen_) {
+    simTrackToken_ = consumes<edm::SimTrackContainer>(simTrackSrc_);
+  } 
+
+  trigResultsToken_    = consumes<edm::TriggerResults>(trigResultsSrc_);
+  fakeL1SingleMuToken_ = consumes<bool>(fakeL1SingleMuSrc_);
 }
 
 
@@ -79,6 +95,16 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   ev.getByToken(tagLegToken_, tagLegColl);
   ev.getByToken(probeLegToken_, probeLegColl);
   
+  edm::Handle<edm::SimTrackContainer > simTrackColl;
+  if (isGen_)
+    ev.getByToken(simTrackToken_, simTrackColl);
+
+  edm::Handle<edm::TriggerResults> triggerResults;
+  ev.getByToken(trigResultsToken_, triggerResults);
+
+  edm::Handle<bool>                   fakeL1SingleMuH;
+  ev.getByToken(fakeL1SingleMuToken_, fakeL1SingleMuH);      
+
   // skip processing empty collection
   if ( muonColl->size() < 1)
     return;
@@ -92,6 +118,16 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   nMuons  = muonColl->size();
   nTags   = tagLegColl->size();
   nProbes = probeLegColl->size();
+
+  nSimTracks = -1;
+  for (int idx = 0; idx < 5; ++idx) {
+    // initialize muon sim track variables
+    simtrack_type[idx]   = 0;
+    simtrack_pt[idx]     = -1.;
+    simtrack_eta[idx]    = -10.;
+    simtrack_phi[idx]    = -10.;
+    simtrack_charge[idx] = -10;
+  }
 
   matchDR = 100.;  matchDEta = 100.;  matchDPhi = 100.;
   foundMatch = -1;
@@ -116,6 +152,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   upperMuon_dxyError = -1;    lowerMuon_dxyError = -1;
   upperMuon_dzError  = -1;    lowerMuon_dzError  = -1;
   
+  upperMuon_firstPixel                   = -1; lowerMuon_firstPixel                   = -1;
   upperMuon_pixelHits                    = -1; lowerMuon_pixelHits                    = -1;
   upperMuon_trackerHits                  = -1; lowerMuon_trackerHits                  = -1;
   upperMuon_muonStationHits              = -1; lowerMuon_muonStationHits              = -1;
@@ -141,12 +178,12 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
 		<< ") " << std::setw(10) << "y:"
-		<< muon->muonBestTrack()->innerPosition().Y()
+		<< muon->tunePMuonBestTrack()->innerPosition().Y()
 		<< "/"
-		<< muon->muonBestTrack()->outerPosition().Y()
-		<< " "  << std::setw(10) << "chi2:"  << muon->muonBestTrack()->chi2()
-		<< " "  << std::setw(10) << "dxy:"   << muon->muonBestTrack()->dxy()
-		<< " "  << std::setw(10) << "dz:"    << muon->muonBestTrack()->dz()
+		<< muon->tunePMuonBestTrack()->outerPosition().Y()
+		<< " "  << std::setw(10) << "chi2:"  << muon->tunePMuonBestTrack()->chi2()
+		<< " "  << std::setw(10) << "dxy:"   << muon->tunePMuonBestTrack()->dxy()
+		<< " "  << std::setw(10) << "dz:"    << muon->tunePMuonBestTrack()->dz()
 		<< " "  << std::setw(10) << "tpin:"  << muon->time().timeAtIpInOut
 		<< " "  << std::setw(10) << "tpout:" << muon->time().timeAtIpOutIn
 		<< std::endl;
@@ -157,7 +194,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
-		<< ") " << muon->muonBestTrack()->innerPosition().Y()
+		<< ") " << muon->tunePMuonBestTrack()->innerPosition().Y()
 		<< std::endl;
     std::cout << " probe legs: " << std::endl;
     for (reco::MuonCollection::const_iterator muon = probeLegColl->begin();
@@ -166,7 +203,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 		<< muon->isTrackerMuon()            << "t"
 		<< "/"  << muon->isGlobalMuon()     << "g"
 		<< "/"  << muon->isStandAloneMuon() << "sa"
-		<< ") " << muon->muonBestTrack()->innerPosition().Y()
+		<< ") " << muon->tunePMuonBestTrack()->innerPosition().Y()
 		<< std::endl;
   }
   std::cout.flush();  
@@ -258,13 +295,13 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
 	      << " (" << muon->isTrackerMuon()     << "t"
 	      << "/"  << muon->isGlobalMuon()      << "g"
 	      << "/"  << muon->isStandAloneMuon()  << "sa"
-	      << ") " << muon->muonBestTrack()->innerPosition().Y() << std::endl;
+	      << ") " << muon->tunePMuonBestTrack()->innerPosition().Y() << std::endl;
   if (debug_ > -1 && bestMatch)
     std::cout << "with probe    " << std::hex << *bestMatch << std::dec
 	      << " (" << bestMatch->isTrackerMuon()     << "t"
 	      << "/"  << bestMatch->isGlobalMuon()      << "g"
 	      << "/"  << bestMatch->isStandAloneMuon()  << "sa"
-	      << ") " << bestMatch->muonBestTrack()->innerPosition().Y() << std::endl;
+	      << ") " << bestMatch->tunePMuonBestTrack()->innerPosition().Y() << std::endl;
   std::cout.flush();
 
   // this still segfaults on occasion...
@@ -339,6 +376,48 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     std::cout.flush();
     ++muIdx;
   } // end for (auto leg = muonPair.begin(); leg != muonPair.end(); ++leg)
+
+  ////////////////// edm::SimTrack information /////////////////////////
+  if (isGen_) {
+    if (simTrackColl->size() > 0) {
+      nSimTracks = 0;
+      int simIdx = 0;
+      for (auto simtrack = simTrackColl->begin(); simtrack != simTrackColl->end(); ++simtrack) {
+	if (fabs(simtrack->type()) == 13) { // only consider simtracks from muons
+	  if (debug_ > 2)
+	    std::cout << std::setw(5) << *simtrack << std::endl; 
+	  
+	  simtrack_charge[simIdx] = simtrack->charge();
+	  simtrack_type[simIdx]   = simtrack->type();
+	  simtrack_pt[simIdx]  = simtrack->trackerSurfaceMomentum().pt();
+	  simtrack_eta[simIdx] = simtrack->trackerSurfaceMomentum().eta();
+	  simtrack_phi[simIdx] = simtrack->trackerSurfaceMomentum().phi();
+	  ++simIdx;
+	  ++nSimTracks;
+	}
+      }
+    }
+  }
+  
+  // trigger information
+  l1SingleMu = 0;
+  const edm::TriggerNames& trigNames = ev.triggerNames(*triggerResults);
+  for (unsigned int trig = 0; trig < trigNames.size(); ++trig) {
+    //for (auto trig = triggerNames.begin(); trig != triggerNames.end(); ++trig) {
+    if (triggerResults->accept(trig)) {
+      std::string pathName = trigNames.triggerName(trig);
+      if (debug_ > 2)
+	std::cout << "Trigger path " << pathName << " fired" << std::endl;
+      
+      if (pathName.find(hltTrigCut_) != std::string::npos) {
+	if (debug_ > 0)
+	  std::cout << "Trigger path " << pathName << " fired" << std::endl;
+	l1SingleMu = 1;
+      }
+    }
+  }
+  
+  fakeL1SingleMu = *fakeL1SingleMuH;
   cosmicTree->Fill();
 }
   
@@ -365,10 +444,10 @@ std::shared_ptr<reco::Muon> MuonAnalyzer::findBestMatch(reco::MuonCollection::co
       continue;
     }
     /*
-    if (((mu->muonBestTrack()->innerPosition().Y() > 0) &&
-	 (mu1->muonBestTrack()->innerPosition().Y() > 0)) ||
-	((mu->muonBestTrack()->innerPosition().Y() < 0) &&
-	 (mu1->muonBestTrack()->innerPosition().Y() < 0))) {
+    if (((mu->tunePMuonBestTrack()->innerPosition().Y() > 0) &&
+	 (mu1->tunePMuonBestTrack()->innerPosition().Y() > 0)) ||
+	((mu->tunePMuonBestTrack()->innerPosition().Y() < 0) &&
+	 (mu1->tunePMuonBestTrack()->innerPosition().Y() < 0))) {
       if (debug_ > 2)
 	std::cout << "both muons in same half, moving on" << std::endl;
       continue;
@@ -431,8 +510,10 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
   if (debug_ > 2)
     std::cout << "Starting to Fill Histograms!" << std::endl;
 
-  //if (muon->muonBestTrack()->innerPosition().Y() > 0) {
-  if (fabs(muon->muonBestTrack()->innerPosition().Y()) > fabs(muon->muonBestTrack()->outerPosition().Y())) {
+  //if (muon->tunePMuonBestTrack()->innerPosition().Y() > 0) {
+  //if (fabs(muon->tunePMuonBestTrack()->innerPosition().Y()) > fabs(muon->tunePMuonBestTrack()->outerPosition().Y())) {
+  if ((muon->outerTrack().isNonnull() && muon->outerTrack()->outerPosition().Y() > 0 ) || 
+      (!(muon->outerTrack().isNonnull()) && (fabs(muon->innerTrack()->innerPosition().Y()) > fabs(muon->innerTrack()->outerPosition().Y())))) {
     if (debug_ > 2)
       std::cout << "upper muon, check on tracker" << std::endl;
     upperMuon_isTracker    = muon->isTrackerMuon();
@@ -468,6 +549,8 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     if (upperMuon_isGlobal) {
       if (debug_ > 2)
 	std::cout << "upper muon, global track hit pattern variables" << std::endl;
+      upperMuon_firstPixel                   = (muon->globalTrack()->hitPattern().hasValidHitInFirstPixelBarrel() ||
+						muon->globalTrack()->hitPattern().hasValidHitInFirstPixelEndcap());
       upperMuon_pixelHits                    = muon->globalTrack()->hitPattern().numberOfValidPixelHits();
       upperMuon_trackerHits                  = muon->globalTrack()->hitPattern().numberOfValidTrackerHits();
       upperMuon_trackerLayersWithMeasurement = muon->globalTrack()->hitPattern().trackerLayersWithMeasurement();
@@ -478,6 +561,8 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
       if (upperMuon_isTracker) {
 	if (debug_ > 2)
 	  std::cout << "upper muon, inner track hit pattern variables" << std::endl;
+	upperMuon_firstPixel                   = (muon->innerTrack()->hitPattern().hasValidHitInFirstPixelBarrel() ||
+						  muon->innerTrack()->hitPattern().hasValidHitInFirstPixelEndcap());
 	upperMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
 	upperMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
 	upperMuon_trackerLayersWithMeasurement = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement();
@@ -560,8 +645,10 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     }
   }
   
-  //else if (muon->muonBestTrack()->innerPosition().Y() < 0) {
-  else if (fabs(muon->muonBestTrack()->innerPosition().Y()) < fabs(muon->muonBestTrack()->outerPosition().Y())) {
+  //else if (muon->tunePMuonBestTrack()->innerPosition().Y() < 0) {
+  //else if (fabs(muon->tunePMuonBestTrack()->innerPosition().Y()) < fabs(muon->tunePMuonBestTrack()->outerPosition().Y())) {
+  else if ((muon->outerTrack().isNonnull() && muon->outerTrack()->outerPosition().Y() < 0 ) || 
+	   (!(muon->outerTrack().isNonnull()) && (fabs(muon->innerTrack()->innerPosition().Y()) < fabs(muon->innerTrack()->outerPosition().Y())))) {
     if (debug_ > 2)
       std::cout << "lower muon, check on tracker" << std::endl;
     lowerMuon_isTracker    = muon->isTrackerMuon();
@@ -597,6 +684,8 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
     if (lowerMuon_isGlobal) {
       if (debug_ > 2)
 	std::cout << "lower muon, inner track hit pattern variables" << std::endl;
+      lowerMuon_firstPixel                   = (muon->globalTrack()->hitPattern().hasValidHitInFirstPixelBarrel() ||
+						muon->globalTrack()->hitPattern().hasValidHitInFirstPixelEndcap());
       lowerMuon_pixelHits                    = muon->globalTrack()->hitPattern().numberOfValidPixelHits();
       lowerMuon_trackerHits                  = muon->globalTrack()->hitPattern().numberOfValidTrackerHits();
       lowerMuon_trackerLayersWithMeasurement = muon->globalTrack()->hitPattern().trackerLayersWithMeasurement();
@@ -607,6 +696,8 @@ void MuonAnalyzer::TrackFill(reco::TrackRef ref, reco::Muon const* muon, reco::M
       if (lowerMuon_isTracker) {
 	if (debug_ > 2)
 	  std::cout << "lower muon, inner track hit pattern variables" << std::endl;
+	lowerMuon_firstPixel                   = (muon->innerTrack()->hitPattern().hasValidHitInFirstPixelBarrel() ||
+						  muon->innerTrack()->hitPattern().hasValidHitInFirstPixelEndcap());
 	lowerMuon_pixelHits                    = muon->innerTrack()->hitPattern().numberOfValidPixelHits();
 	lowerMuon_trackerHits                  = muon->innerTrack()->hitPattern().numberOfValidTrackerHits();
 	lowerMuon_trackerLayersWithMeasurement = muon->innerTrack()->hitPattern().trackerLayersWithMeasurement();
@@ -742,6 +833,17 @@ void MuonAnalyzer::beginJob()
   cosmicTree->Branch("matchDEta",  &matchDEta,  10000, 1);
   cosmicTree->Branch("foundMatch", &foundMatch, 10000, 1);
 
+  cosmicTree->Branch("l1SingleMu",     &l1SingleMu,      "l1SingleMu/I");
+  cosmicTree->Branch("fakeL1SingleMu", &fakeL1SingleMu, "fakeL1SingleMu/I");
+
+  cosmicTree->Branch("nSimTracks", &nSimTracks, "nSimTracks/I");
+  // variables per simTrack ([nSimTracks] indexed)
+  cosmicTree->Branch("simTrackpT",  simtrack_pt,  "simTrackpT[nSimTracks]/D" );
+  cosmicTree->Branch("simTrackEta", simtrack_eta, "simTrackEta[nSimTracks]/D");
+  cosmicTree->Branch("simTrackPhi", simtrack_phi, "simTrackPhi[nSimTracks]/D");
+  cosmicTree->Branch("simTrackCharge", simtrack_charge, "simTrackCharge[nSimTracks]/I");
+  cosmicTree->Branch("simTrackType",   simtrack_type,   "simTrackType[nSimTracks]/I");
+
   /////////Muon in upper half of CMS
   cosmicTree->Branch("upperMuon_pT", &upperMuon_pT, 10000, 1);
   cosmicTree->Branch("upperMuon_P4", &upperMuon_P4, 10000, 1);
@@ -761,6 +863,7 @@ void MuonAnalyzer::beginJob()
   cosmicTree->Branch("upperMuon_dxyError", &upperMuon_dxyError, 10000, 1);
   cosmicTree->Branch("upperMuon_dzError",  &upperMuon_dzError,  10000, 1);
 
+  cosmicTree->Branch("upperMuon_firstPixel",                   &upperMuon_firstPixel,                   10000, 1);
   cosmicTree->Branch("upperMuon_pixelHits",                    &upperMuon_pixelHits,                    10000, 1);
   cosmicTree->Branch("upperMuon_trackerHits",                  &upperMuon_trackerHits,                  10000, 1);
   cosmicTree->Branch("upperMuon_muonStationHits",              &upperMuon_muonStationHits,              10000, 1);
@@ -788,6 +891,7 @@ void MuonAnalyzer::beginJob()
   cosmicTree->Branch("lowerMuon_dxyError", &lowerMuon_dxyError, 10000, 1);
   cosmicTree->Branch("lowerMuon_dzError",  &lowerMuon_dzError,  10000, 1);
 
+  cosmicTree->Branch("lowerMuon_firstPixel",                   &lowerMuon_firstPixel,                   10000, 1);
   cosmicTree->Branch("lowerMuon_pixelHits",                    &lowerMuon_pixelHits,                    10000, 1);
   cosmicTree->Branch("lowerMuon_trackerHits",                  &lowerMuon_trackerHits,                  10000, 1);
   cosmicTree->Branch("lowerMuon_muonStationHits",              &lowerMuon_muonStationHits,              10000, 1);

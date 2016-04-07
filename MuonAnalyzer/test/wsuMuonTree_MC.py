@@ -5,114 +5,71 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
+# load conditions from the global tag, what to use here?
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '') ## default = ?
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc_50nsGRun', '') ## L1GtTriggerMenu_L1Menu_Collisions2012_v3_mc
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', 'FULL') ## L1Menu_Collisions2015_25nsStage1_v5
+
+l1path = 'L1_SingleMuOpen'
+from HLTrigger.HLTfilters.triggerResultsFilter_cfi import triggerResultsFilter
+process.trigFilter = triggerResultsFilter.clone()
+process.trigFilter.triggerConditions = cms.vstring("HLT_L1SingleMuOpen*")
+process.trigFilter.l1tResults        = cms.InputTag('gtDigis','','HLT')
+process.trigFilter.hltResults        = cms.InputTag('TriggerResults','','HLT')
+
 from WSUDiLeptons.MuonAnalyzer.inputfiles import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        mcfiles
+        mcfilespt100startup
+        #mcfilespt100asym
         #dyfiles
-    )
+        )
 )
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
-process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_deco_p100_CosmicSP.root')
+process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_startup_p100_CosmicSP_HLT_filtered.root')
+
+process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
+process.singleMuFilter.filterEvent = cms.bool(False)
 
 from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
 process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
 
 from WSUDiLeptons.MuonAnalyzer.wsuMuonTree_cfi import *
 
-## for comparing with standard collision data/MC
-# can't get y position from AOD/AODSIM, lives in TrackExtra not stored in AOD
-#process.cosmicMuonTracks.src  = cms.InputTag("standAloneMuons")
-#process.globalMuonTracks.src  = cms.InputTag("globalMuons")
-#process.trackerMuonTracks.src = cms.InputTag("generalTracks")
-
-process.analysisMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    upperLegSrc = cms.InputTag("betterMuons"),
-    lowerLegSrc = cms.InputTag("betterMuons"),
+process.analysisSPMuons = muonTree.clone(
+    muonSrc         = cms.InputTag("zprimeMuons"),
+    upperLegSrc     = cms.InputTag("zprimeUpperMuons"),
+    lowerLegSrc     = cms.InputTag("zprimeLowerMuons"),
     globalTrackSrc  = cms.InputTag("globalSPMuonTracks"),
     cosmicTrackSrc  = cms.InputTag("cosmicSPMuonTracks"),
     trackerTrackSrc = cms.InputTag("trackerSPMuonTracks"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(2)
-)
-process.analysisGlobalMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("globalMuons"),
-    upperLegSrc = cms.InputTag("globalMuons"),
-    lowerLegSrc = cms.InputTag("globalMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(-1)
-)
-process.analysisSPMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(2)
-)
-process.analysisGlobalSPMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("globalSPMuons"),
-    upperLegSrc = cms.InputTag("upperGlobalMuons"),
-    lowerLegSrc = cms.InputTag("lowerGlobalMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(2)
-)
-process.analysisTrackerMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
-)
-process.analysisTPFMSMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(2),
-    debug       = cms.int32(-1)
-)
-process.analysisDYTMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(3),
-    debug       = cms.int32(-1)
-)
-process.analysisPickyMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(4),
-    debug       = cms.int32(-1)
-)
-
-process.analysisTunePMuons = muonTree.clone(
-    muonSrc     = cms.InputTag("betterSPMuons"),
-    upperLegSrc = cms.InputTag("upperMuons"),
-    lowerLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(2)
+    algoType        = cms.int32(5),
+    debug           = cms.int32(2),
+    trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
+    hltTrigCut      = cms.string('L1SingleMuOpen'),
+    fakeL1SingleMuSrc = cms.InputTag("singleMuFilter"),
+    isGen           = cms.bool(True)
 )
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonTree_MC_76X.root')
+    fileName = cms.string('CosmicMuonTree_MC_76X_startup_HLT_filtered.root')
 )
 
+process.muonSPFilter.src = cms.InputTag("zprimeMuons")
+
 process.muonanalysis = cms.Path(
-    #process.reconstructionCosmics
-    process.betterMuons
-    +process.globalMuons
-    +process.betterSPMuons
-    +process.globalSPMuons
-    +process.upperMuons
-    +process.lowerMuons
-    +process.upperGlobalMuons
-    +process.lowerGlobalMuons
+    #process.trigFilter
+    process.singleMuFilter
+    +process.zprimeMuons
+    +process.zprimeLowerMuons
+    +process.zprimeUpperMuons
     +process.cosmicMuonTracks
     +process.globalMuonTracks
     +process.trackerMuonTracks
@@ -120,16 +77,7 @@ process.muonanalysis = cms.Path(
     +process.globalSPMuonTracks
     +process.trackerSPMuonTracks
     #+process.muonSPFilter
-    #+process.globalMuonSPFilter
-    #+process.analysisMuons
-    #+process.analysisGlobalMuons
     +process.analysisSPMuons
-    #+process.analysisGlobalSPMuons
-    #+process.analysisTrackerMuons
-    #+process.analysisTPFMSMuons
-    #+process.analysisDYTMuons
-    #+process.analysisPickyMuons
-    #+process.analysisTunePMuons
     )
 
 # generate EDM output

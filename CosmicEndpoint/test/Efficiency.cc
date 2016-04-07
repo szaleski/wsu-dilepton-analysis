@@ -29,6 +29,23 @@
 #include <math.h>
 #include <cmath>
 
+int findMatchedTrack(int tkIdx, int src, int tkColl)
+{
+  int nTracks = 0;
+  switch(tkColl):
+  case 0:
+    nTracks = 
+  if (tkColl = 0)
+  for (int tk = 0; tk < 
+  return matchIndex;
+}
+
+
+int findMatchedMuon(int
+{
+  return matchIndex;
+}
+
 
 void Efficiency(std::string const& filelist, std::string const& outFile,
 		int trackVal_, double minPt_, double maxBias_, int nBiasBins_,
@@ -160,6 +177,10 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TH1F *h_TrackEta = new TH1F("TrackEta","TrackEta", 40, -2., 2.);
   TH1F *h_TrackPhi = new TH1F("TrackPhi","TrackPhi", 40, -4., 4.);
 
+  TH1F *h_matchedTrackPt  = new TH1F("matchedTrackPt", "matchedTrackPt",  300, 0., 3000.);
+  TH1F *h_matchedTrackEta = new TH1F("matchedTrackEta","matchedTrackEta", 40, -2., 2.);
+  TH1F *h_matchedTrackPhi = new TH1F("matchedTrackPhi","matchedTrackPhi", 40, -4., 4.);
+
   TH1F *h_passRECOPt       = new TH1F("passRECOPt",    "passRECOPt",    300,  0., 3000.);
   TH1F *h_passRECOEta      = new TH1F("passRECOEta",   "passRECOEta",    40, -2.,    2.);
   TH1F *h_passRECOPhi      = new TH1F("passRECOPhi",   "passRECOPhi",    40, -4.,    4.);
@@ -167,6 +188,10 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TH1F *h_passRECOTrackPt  = new TH1F("passRECOTrackPt", "passRECOTrackPt",  300, 0., 3000.);
   TH1F *h_passRECOTrackEta = new TH1F("passRECOTrackEta","passRECOTrackEta", 40, -2., 2.);
   TH1F *h_passRECOTrackPhi = new TH1F("passRECOTrackPhi","passRECOTrackPhi", 40, -4., 4.);
+
+  TH1F *h_passRECOmatchedTrackPt  = new TH1F("passRECOmatchedTrackPt", "passRECOmatchedTrackPt",  300, 0., 3000.);
+  TH1F *h_passRECOmatchedTrackEta = new TH1F("passRECOmatchedTrackEta","passRECOmatchedTrackEta", 40, -2., 2.);
+  TH1F *h_passRECOmatchedTrackPhi = new TH1F("passRECOmatchedTrackPhi","passRECOmatchedTrackPhi", 40, -4., 4.);
 
   TH1F *h_passIDPt       = new TH1F("passIDPt",    "passIDPt",    300,  0., 3000.);
   TH1F *h_passIDEta      = new TH1F("passIDEta",   "passIDEta",    40, -2.,    2.);
@@ -176,6 +201,10 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TH1F *h_passIDTrackEta = new TH1F("passIDTrackEta","passIDTrackEta", 40, -2., 2.);
   TH1F *h_passIDTrackPhi = new TH1F("passIDTrackPhi","passIDTrackPhi", 40, -4., 4.);
 
+  TH1F *h_passIDmatchedTrackPt  = new TH1F("passIDmatchedTrackPt", "passIDmatchedTrackPt",  300, 0., 3000.);
+  TH1F *h_passIDmatchedTrackEta = new TH1F("passIDmatchedTrackEta","passIDmatchedTrackEta", 40, -2., 2.);
+  TH1F *h_passIDmatchedTrackPhi = new TH1F("passIDmatchedTrackPhi","passIDmatchedTrackPhi", 40, -4., 4.);
+
   TH1F *h_passRECOIDPt       = new TH1F("passRECOIDPt",    "passRECOIDPt",    300,  0., 3000.);
   TH1F *h_passRECOIDEta      = new TH1F("passRECOIDEta",   "passRECOIDEta",    40, -2.,    2.);
   TH1F *h_passRECOIDPhi      = new TH1F("passRECOIDPhi",   "passRECOIDPhi",    40, -4.,    4.);
@@ -183,6 +212,10 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TH1F *h_passRECOIDTrackPt  = new TH1F("passRECOIDTrackPt", "passRECOIDTrackPt",  300, 0., 3000.);
   TH1F *h_passRECOIDTrackEta = new TH1F("passRECOIDTrackEta","passRECOIDTrackEta", 40, -2., 2.);
   TH1F *h_passRECOIDTrackPhi = new TH1F("passRECOIDTrackPhi","passRECOIDTrackPhi", 40, -4., 4.);
+
+  TH1F *h_passRECOIDmatchedTrackPt  = new TH1F("passRECOIDmatchedTrackPt", "passRECOIDmatchedTrackPt",  300, 0., 3000.);
+  TH1F *h_passRECOIDmatchedTrackEta = new TH1F("passRECOIDmatchedTrackEta","passRECOIDmatchedTrackEta", 40, -2., 2.);
+  TH1F *h_passRECOIDmatchedTrackPhi = new TH1F("passRECOIDmatchedTrackPhi","passRECOIDmatchedTrackPhi", 40, -4., 4.);
 
   std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<int>    run(  trackReader, "run"  );
@@ -192,6 +225,10 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TTreeReaderValue<int> nMuons(    trackReader, "nMuons"    );
   TTreeReaderValue<int> nUpperLegs(trackReader, "nUpperLegs");
   TTreeReaderValue<int> nLowerLegs(trackReader, "nLowerLegs");
+
+  TTreeReaderValue<int> nGlobalTracks( trackReader, "nGlobalTracks" );
+  TTreeReaderValue<int> nCosmicTracks( trackReader, "nCosmicTracks" );
+  TTreeReaderValue<int> nTrackerTracks(trackReader, "nTrackerTracks");
 
   //TTreeReaderArray<math::XYZTLorentzVector> MuonP4(trackReader,"muonP4"  );
   //TTreeReaderArray<math::XYZVector>         Track( trackReader,"trackVec");
@@ -203,6 +240,9 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TTreeReaderArray<double> globalPt(      trackReader, "globalpT" );
   TTreeReaderArray<double> globalEta(     trackReader, "globalEta");
   TTreeReaderArray<double> globalPhi(     trackReader, "globalPhi");
+
+  TTreeReaderArray<double> innerY( trackReader, "innerY" );
+  TTreeReaderArray<double> outerY( trackReader, "outerY" );
 
   TTreeReaderArray<double> trackPt( trackReader, "trackpT" );
   TTreeReaderArray<double> trackEta(trackReader, "trackEta");
@@ -225,6 +265,9 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
   TTreeReaderArray<int> LayersWithMeasurement(trackReader, "tkLayersWMeas"   );
 
   // track variables [3][10]
+  TTreeReaderArray<double> trk_innerY( trackReader, "trk_innerY" );
+  TTreeReaderArray<double> trk_outerY( trackReader, "trk_outerY" );
+
   TTreeReaderArray<double> trk_trackPt( trackReader, "trk_trackpT" );
   TTreeReaderArray<double> trk_trackEta(trackReader, "trk_trackEta");
   TTreeReaderArray<double> trk_trackPhi(trackReader, "trk_trackPhi");
@@ -256,11 +299,42 @@ void Efficiency(std::string const& filelist, std::string const& outFile,
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
     
-    // only consider events with at most one upper/lower leg for now
-    if (*nUpperLegs > 1 && *nLowerLegs > 1)
-      continue;
-    
+    // loop over standalone tracks
+    for (int trkIdx = 0; trkIdx < *nCosmicTracks; ++ trkIdx) {
+      // skip upper legs
+      if (trk_outerY[muIdx] > 0 || trk_innerY[muIdx] > 0)
+	continue;
+
+      if (trk_trackPt[10+trkIdx] > 53. && fabs(trk_trackEta[10+trkIdx]) < 0.9) {
+	h_TrackPt->Fill(  trk_trackPt[10+trkIdx] );
+	h_TrackEta->Fill( trk_trackEta[10+trkIdx]);
+	h_TrackPhi->Fill( trk_trackPhi[10+trkIdx]);
+	
+	if (passTrackRECO) {
+	  h_passRECOTrackPt->Fill(  trackPt[10+trkIdx] );
+	  h_passRECOTrackEta->Fill( trackEta[10+trkIdx]);
+	  h_passRECOTrackPhi->Fill( trackPhi[10+trkIdx]);
+	}
+	
+	if (passTrackID) {
+	  h_passIDTrackPt->Fill( trackPt[10+trkIdx] );
+	  h_passIDTrackEta->Fill(trackEta[10+trkIdx]);
+	  h_passIDTrackPhi->Fill(trackPhi[10+trkIdx]);
+	}
+	
+	if (passTrackRECO && passTrackID) {
+	  h_passRECOIDTrackPt->Fill( trackPt[10+trkIdx] );
+	  h_passRECOIDTrackEta->Fill(trackEta[10+trkIdx]);
+	  h_passRECOIDTrackPhi->Fill(trackPhi[10+trkIdx]);
+	}
+      } // end check on standalone track pT/eta
+    }
+
     for (int muIdx = 0; muIdx < *nMuons; ++ muIdx) {
+      // skip upper legs
+      if (outerY[muIdx] > 0 || innerY[muIdx] > 0)
+	continue;
+    
       // make sure we're not reading from the skipped events
       if (debug)
 	std::cout << "looping over muons on index " << muIdx 
