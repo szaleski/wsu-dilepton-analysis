@@ -2,7 +2,7 @@ from WMCore.Configuration import Configuration
 
 config = Configuration()
 config.section_('General')
-config.General.requestName = 'CosmicMuonAnalysis_MC_p100Asym_Apr1_2016'
+config.General.requestName = 'CosmicMuonAnalysis_MC_p100Asym_Apr7_2016'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
