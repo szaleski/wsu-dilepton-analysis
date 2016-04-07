@@ -28,7 +28,6 @@
 // Trigger information
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
-#include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/L1Trigger/interface/L1MuonParticle.h"
 
 // TFile Service
@@ -90,12 +89,11 @@ class MuonTree : public edm::EDAnalyzer {
   edm::EDGetTokenT<edm::SimTrackContainer> simTrackToken_;
   edm::EDGetTokenT<std::vector<l1extra::L1MuonParticle> > l1MuonToken_;
   edm::EDGetTokenT<edm::TriggerResults>   trigResultsToken_;
-  edm::EDGetTokenT<trigger::TriggerEvent> trigSummaryToken_;
   edm::EDGetTokenT<bool> fakeL1SingleMuToken_;
 
   edm::InputTag muonSrc_, upperLegSrc_, lowerLegSrc_;
   edm::InputTag globalTrackSrc_, cosmicTrackSrc_, trackerTrackSrc_, simTrackSrc_;
-  edm::InputTag l1MuonSrc_, trigResultsSrc_, trigSummarySrc_,fakeL1SingleMuSrc_;
+  edm::InputTag l1MuonSrc_, trigResultsSrc_, fakeL1SingleMuSrc_;
 
   std::string hltTrigCut_;
   edm::Service<TFileService> fs;
@@ -127,7 +125,7 @@ class MuonTree : public edm::EDAnalyzer {
   double muon_Pt[25], muon_Eta[25], muon_Phi[25];
   double muon_trackPt[25], muon_trackEta[25], muon_trackPhi[25];
   int muon_hasGlobal[25], muon_hasInner[25], muon_hasOuter[25];
-  int muon_isUpper[25], muon_isLower[25],
+  int muon_isUpper[25], muon_isLower[25], muon_isUpperOld[25], muon_isLowerOld[25],
     muon_isGlobal[25], muon_isTracker[25], muon_isStandAlone[25];
   int muon_ndof[25], muon_charge[25];
   int muon_firstPixel[25],muon_pixHits[25],muon_tkHits[25],muon_muonStaHits[25],
@@ -138,7 +136,7 @@ class MuonTree : public edm::EDAnalyzer {
   double track_ptError[7][25], track_dxyError[7][25], track_dzError[7][25];
   double track_Pt[7][25], track_Eta[7][25], track_Phi[7][25];
   double track_trackPt[7][25], track_trackEta[7][25], track_trackPhi[7][25];
-  int track_isUpper[7][25], track_isLower[7][25];
+  int track_isUpper[7][25], track_isLower[7][25], track_isUpperOld[7][25], track_isLowerOld[7][25];
   int track_ndof[7][25], track_charge[7][25], track_matchedMuIdx[7][25];
   int track_firstPixel[7][25],track_pixHits[7][25],track_tkHits[7][25],track_muonStaHits[7][25],
     track_nVHits[7][25],track_nVMuHits[7][25],track_nMatSta[7][25],track_tkLayWMeas[7][25];

@@ -21,8 +21,10 @@ process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
 process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_Interfill_CosmicSP_76X.root')
 
 from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
-from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
 process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
+
+process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
+process.singleMuFilter.filterEvent = cms.bool(False)
 
 from WSUDiLeptons.MuonAnalyzer.wsuMuonTree_cfi import *
 
@@ -46,7 +48,8 @@ process.TFileService = cms.Service("TFileService",
 process.muonSPFilter.src = cms.InputTag("zprimeMuons")
 
 process.muonanalysis = cms.Path(
-    process.zprimeMuons
+    process.singleMuFilter
+    +process.zprimeMuons
     +process.zprimeLowerMuons
     +process.zprimeUpperMuons
     +process.cosmicMuonTracks
