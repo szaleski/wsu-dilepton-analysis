@@ -41,10 +41,10 @@ MuonTree::MuonTree(const edm::ParameterSet& pset)
 
   l1MuonSrc_      = pset.getParameter<edm::InputTag>("l1MuonSrc");
   trigResultsSrc_ = pset.getParameter<edm::InputTag>("trigResultsSrc");
-  //trigSummarySrc_ = pset.getParameter<edm::InputTag>("trigSummarySrc");
   l1MuonToken_      = consumes<std::vector<l1extra::L1MuonParticle> >(l1MuonSrc_);
   trigResultsToken_ = consumes<edm::TriggerResults>(trigResultsSrc_);
-  //trigSummaryToken_ = consumes<trigger::TriggerEvent>(trigSummarySrc_);
+  fakeL1SingleMuSrc_   = pset.getParameter<edm::InputTag>("fakeL1SingleMuSrc");
+  fakeL1SingleMuToken_ = consumes<bool>(fakeL1SingleMuSrc_);
   hltTrigCut_     = pset.getParameter<std::string>("hltTrigCut");
 
   debug_       = pset.getParameter<int>("debug");
@@ -103,10 +103,10 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
 
   edm::Handle<std::vector<l1extra::L1MuonParticle> > l1MuonColl;
   edm::Handle<edm::TriggerResults> triggerResults;
-  //edm::Handle<trigger::TriggerEvent> triggerEvent;
   ev.getByToken(l1MuonToken_,      l1MuonColl);      
   ev.getByToken(trigResultsToken_, triggerResults);
-  //ev.getByToken(trigSummaryToken_, triggerEvent);
+  edm::Handle<bool>                   fakeL1SingleMuH;
+  ev.getByToken(fakeL1SingleMuToken_, fakeL1SingleMuH);      
 
   edm::Handle<reco::TrackCollection> tracks[3] = {globalTrackColl, cosmicTrackColl, trackerTrackColl};
   
@@ -658,6 +658,7 @@ void MuonTree::analyze(const edm::Event& ev, const edm::EventSetup& es)
     }
   }
   
+  fakeL1SingleMu = *fakeL1SingleMuH;
   muonTree->Fill();
 }
 
@@ -713,7 +714,8 @@ void MuonTree::beginJob()
   muonTree->Branch("simTrackType",   simtrack_type,   "simTrackType[nSimTracks]/I");
 
   // trigger information
-  muonTree->Branch("l1SingleMu", &l1SingleMu, "l1SingleMu/I");
+  muonTree->Branch("l1SingleMu",     &l1SingleMu,      "l1SingleMu/I");
+  muonTree->Branch("fakeL1SingleMu", &fakeL1SingleMu, "fakeL1SingleMu/I");
   // variables per L1Muon ([nL1Muons] indexed)
   muonTree->Branch("l1MuonpT",     l1muon_pt,     "l1MuonpT[nL1Muons]/D" );
   muonTree->Branch("l1MuonEta",    l1muon_eta,    "l1MuonEta[nL1Muons]/D");

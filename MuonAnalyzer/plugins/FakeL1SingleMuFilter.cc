@@ -60,8 +60,16 @@ FakeL1SingleMuFilter::filter(edm::Event& ev, const edm::EventSetup& es)
   bool result = false;
   StringCutObjectSelector<l1extra::L1MuonParticle> select(l1SingleMuCuts_);
   for (auto l1mu = l1MuonColl->begin(); l1mu != l1MuonColl->end(); ++ l1mu)
-    if (select(*l1mu))
+    if (select(*l1mu)) {
       result = true;
+      std::auto_ptr<bool> pOut(new bool(result));
+      ev.put( pOut);
+      
+      if (filter_)
+	return result;
+      else
+	return true;
+    }
   
   std::auto_ptr<bool> pOut(new bool(result));
   ev.put( pOut);

@@ -36,7 +36,7 @@ process.load("WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi")
 process.COSMICoutput.fileName = cms.untracked.string('CosmicTree_startup_p100_CosmicSP_HLT_filtered.root')
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
-process.singleMuFilter.filterEvent = cms.bool(True)
+process.singleMuFilter.filterEvent = cms.bool(False)
 
 from WSUDiLeptons.MuonAnalyzer.wsuTrackCollections_cfi import COSMICTrackoutput
 process.COSMICoutput.outputCommands.append(COSMICTrackoutput)
@@ -54,6 +54,7 @@ process.analysisSPMuons = muonTree.clone(
     debug           = cms.int32(2),
     trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
     hltTrigCut      = cms.string('L1SingleMuOpen'),
+    fakeL1SingleMuSrc = cms.InputTag("singleMuFilter"),
     isGen           = cms.bool(True)
 )
 

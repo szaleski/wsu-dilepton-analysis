@@ -30,6 +30,7 @@ muonTree = cms.EDAnalyzer('MuonTree',
     l1MuonSrc       = cms.InputTag("l1extraParticles","","RECO"),
     #l1tResults      = cms.InputTag('gtDigis','','HLT'),
     trigResultsSrc  = cms.InputTag('TriggerResults','','HLT'),
+    fakeL1SingleMuSrc = cms.InputTag("singleMuFilter"),
     hltTrigCut      = cms.string('L1SingleMuOpen'),
  
 

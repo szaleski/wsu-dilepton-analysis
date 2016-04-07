@@ -91,10 +91,11 @@ class MuonTree : public edm::EDAnalyzer {
   edm::EDGetTokenT<std::vector<l1extra::L1MuonParticle> > l1MuonToken_;
   edm::EDGetTokenT<edm::TriggerResults>   trigResultsToken_;
   edm::EDGetTokenT<trigger::TriggerEvent> trigSummaryToken_;
+  edm::EDGetTokenT<bool> fakeL1SingleMuToken_;
 
   edm::InputTag muonSrc_, upperLegSrc_, lowerLegSrc_;
   edm::InputTag globalTrackSrc_, cosmicTrackSrc_, trackerTrackSrc_, simTrackSrc_;
-  edm::InputTag l1MuonSrc_, trigResultsSrc_, trigSummarySrc_;
+  edm::InputTag l1MuonSrc_, trigResultsSrc_, trigSummarySrc_,fakeL1SingleMuSrc_;
 
   std::string hltTrigCut_;
   edm::Service<TFileService> fs;
@@ -114,7 +115,7 @@ class MuonTree : public edm::EDAnalyzer {
   int    nSimTracks, simtrack_type[25];
   double simtrack_pt[25], simtrack_eta[25], simtrack_phi[25], simtrack_charge[25];
 
-  int    nL1Muons, l1SingleMu, l1muon_isFwd[25], l1muon_isRPC[25],
+  int    nL1Muons, l1SingleMu, fakeL1SingleMu, l1muon_isFwd[25], l1muon_isRPC[25],
     l1muon_quality[25], l1muon_detector[25], l1muon_bx[25];
   double l1muon_pt[25], l1muon_eta[25], l1muon_phi[25], l1muon_charge[25];
 
