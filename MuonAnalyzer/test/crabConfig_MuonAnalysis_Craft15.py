@@ -2,7 +2,7 @@ from WMCore.Configuration import Configuration
 
 config = Configuration()
 config.section_('General')
-config.General.requestName = 'CosmicMuonAnalysis_CRAFT_Apr7_2016'
+config.General.requestName = 'CosmicMuonAnalysis_CRAFT_Apr8_2016'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -18,7 +18,7 @@ config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 200
 #NJOBS = 50
 #config.Data.totalUnits = config.Data.unitsPerJob * NJOBS
-config.Data.lumiMask = 'https://cmsdoc.cern.ch/~sturdy/Cosmics/JSON/21.03.2016/cosmics_CRAFT15_pix_strip_DT_RPC_complete.json'
+config.Data.lumiMask = '/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/MuonAnalyzer/test/lumisToProcess.json'
 #config.Data.runRange = ''
 config.Data.allowNonValidInputDataset = True
 #config.Data.outLFNDirBase = '/store/user/%s/' %(getUserNameFromSiteDB())

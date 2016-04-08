@@ -12,12 +12,17 @@ from WSUDiLeptons.MuonAnalyzer.inputfiles import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        datafiles
+        #datafiles
+        '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/80000/A667FE36-94D2-E511-B204-0025905938A8.root',
+         '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/CE61D454-F9D9-E511-B742-00266CFADE34.root'
     )
 )
+process.source.inputCommands = cms.untracked.vstring(
+    "keep *",
+   "drop FEDRawDataCollection_rawDataCollector_*_*"
+)
 
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
 process.singleMuFilter.filterEvent = cms.bool(False)
