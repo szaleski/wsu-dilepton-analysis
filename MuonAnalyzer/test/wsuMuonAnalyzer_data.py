@@ -22,6 +22,7 @@ process.source.inputCommands = cms.untracked.vstring(
    "drop FEDRawDataCollection_rawDataCollector_*_*"
 )
 
+process.source.dropDescendantsOfDroppedBranches=cms.untracked.bool(False)
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
