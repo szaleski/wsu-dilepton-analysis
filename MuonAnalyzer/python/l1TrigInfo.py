@@ -1,14 +1,19 @@
 #!/bin/env python
 
 class l1TrigInfo():
-    def __init__(self, infile, outfile, tchain=False,debug=False) :
+    def __init__(self, infile, outfile, isMC=False, tchain=False,debug=False) :
         import ROOT as r
+        print "l1TrigInfo"
         self.infile  = infile
-        self.outfile = r.TFile("%s.root"%(options.outfile),"update")
-        self.outdir = self.outfile.MakeDirectory("l1TrigInfo")
+        #self.outfile = r.TFile("%s.root"%(outfile),"update")
+        self.outfile = outfile
+        self.outdir  = self.outfile.mkdir("l1TrigInfo")
+        self.isMC    = isMC
         self.tchain  = tchain
         self.debug   = debug
-        
+
+        print "l1TrigInfo:creating histograms"
+        self.outfile.cd()
         self.outdir.cd()
         self.trig_info_hist = r.TH2D("trig_info","Trigger counters",
                                      6, -0.5, 5.5, 5, -0.5, 4.5)
@@ -102,12 +107,30 @@ class l1TrigInfo():
             self.time_hist["den"][cut].Sumw2()
             self.time_hist["num"][cut].Sumw2()
             pass
+
+        #self.outfile.Write()
+        print "l1TrigInfo:done with __init__"
         return
 
     def processTree(self,tree):
+        from wsuMuonTreeUtils import passHighPtMuon, matchSimTrack, matchL1SingleMu, passDxyDz
+
+        import sys,os
+        nEvents = tree.GetEntries()
+        eid = 0
         for ev in tree:
-            # performance hit of creating an array every time through the event loop
-            # rather than just resetting the values to false
+            if self.debug and eid > 1000:
+                print "debugging, not processing events more than 1000"
+                break
+                
+            if self.debug and eid%10 == 0:
+                print "event=%d/%d: simTracks=%d"%(eid,nEvents,ev.nSimTracks)
+                pass
+            elif eid%1000 == 0:
+                print "event=%d/%d: simTracks=%d"%(eid,nEvents,ev.nSimTracks)
+                pass
+
+            sys.stdout.flush()
             selections = []
             for l1mu in range(ev.nL1Muons):
                 tmp1 = []
@@ -126,10 +149,10 @@ class l1TrigInfo():
                     # funky.write("%d/%d/%d - %d\n"%(ev.run,ev.lumi,ev.event,ev.nL1Muons))
                     pass
                 
-                eta_vs_phi_hist.Fill( ev.l1MuonEta[l1mu],ev.l1MuonPhi[l1mu])
-                eta_vs_qual_hist.Fill(ev.l1MuonEta[l1mu],ev.l1MuonQuality[l1mu])
-                eta_vs_singlemu_hist.Fill(ev.l1MuonEta[l1mu],ev.l1SingleMu)
-                phi_vs_singlemu_hist.Fill(ev.l1MuonPhi[l1mu],ev.l1SingleMu)
+                self.eta_vs_phi_hist.Fill( ev.l1MuonEta[l1mu],ev.l1MuonPhi[l1mu])
+                self.eta_vs_qual_hist.Fill(ev.l1MuonEta[l1mu],ev.l1MuonQuality[l1mu])
+                self.eta_vs_singlemu_hist.Fill(ev.l1MuonEta[l1mu],ev.l1SingleMu)
+                self.phi_vs_singlemu_hist.Fill(ev.l1MuonPhi[l1mu],ev.l1SingleMu)
                 
                 selections[l1mu][0][0] = True
                 if ev.l1MuonIsFwd[l1mu]==0:
@@ -233,7 +256,7 @@ class l1TrigInfo():
                         pass
                     # if there is any l1muon in the event passing the given selection, we fill the histo
                     if result > 0:
-                        trig_info_hist.Fill(xbin,ybin)
+                        self.trig_info_hist.Fill(xbin,ybin)
                         pass
                     pass
                 pass
@@ -246,7 +269,7 @@ class l1TrigInfo():
                     continue
                 if not passHighPtMuon(ev,mu):
                     continue
-                if options.isMC and not matchSimTrack(ev,mu,0.9,0.9,options.debug) > -1:
+                if self.isMC and not matchSimTrack(ev,mu,0.9,0.9,self.debug) > -1:
                     continue
                 
                 self.trig_eff_hist.Fill(0,0)
@@ -257,7 +280,7 @@ class l1TrigInfo():
                 
                 matchCount = matchCount + 1
                 
-                if matchL1SingleMu(ev,mu,0.9,0.9,options.debug) > -1:
+                if matchL1SingleMu(ev,mu,0.9,0.9,self.debug) > -1:
                     self.trig_eff_hist.Fill(0,1)
                     self.pt_hist["num"][0].Fill(ev.trackpT[mu])
                     self.eta_hist["num"][0].Fill(ev.trackEta[mu])
@@ -273,7 +296,7 @@ class l1TrigInfo():
                     self.phi_hist["den"][1].Fill(ev.trackPhi[mu])
                     self.time_hist["den"][1].Fill(ev.tpin[mu])
                     
-                    if matchL1SingleMu(ev,mu,0.9,0.9,options.debug) > -1:
+                    if matchL1SingleMu(ev,mu,0.9,0.9,self.debug) > -1:
                         self.trig_eff_hist.Fill(1,1)
                         self.pt_hist["num"][1].Fill(ev.trackpT[mu])
                         self.eta_hist["num"][1].Fill(ev.trackEta[mu])
@@ -290,7 +313,7 @@ class l1TrigInfo():
                     self.phi_hist["den"][2].Fill(ev.trackPhi[mu])
                     self.time_hist["den"][2].Fill(ev.tpin[mu])
                     
-                    if matchL1SingleMu(ev,mu,0.9,0.9,options.debug) > -1:
+                    if matchL1SingleMu(ev,mu,0.9,0.9,self.debug) > -1:
                         self.trig_eff_hist.Fill(2,1)
                         self.pt_hist["num"][2].Fill(ev.trackpT[mu])
                         self.eta_hist["num"][2].Fill(ev.trackEta[mu])
@@ -307,7 +330,7 @@ class l1TrigInfo():
                     self.phi_hist["den"][3].Fill(ev.trackPhi[mu])
                     self.time_hist["den"][3].Fill(ev.tpin[mu])
                     
-                    if matchL1SingleMu(ev,mu,0.9,0.9,options.debug) > -1:
+                    if matchL1SingleMu(ev,mu,0.9,0.9,self.debug) > -1:
                         self.trig_eff_hist.Fill(3,1)
                         self.pt_hist["num"][3].Fill(ev.trackpT[mu])
                         self.eta_hist["num"][3].Fill(ev.trackEta[mu])
@@ -320,6 +343,7 @@ class l1TrigInfo():
                 print "found %d high-pT muons"%(matchCount)
                 pass
             
+            eid = eid + 1
             pass
         return
     
@@ -327,138 +351,29 @@ class l1TrigInfo():
         self.outfile.cd()
         self.outdir.cd()
 
-        trig_info_hist.Write()
-        trig_eff_hist.Write()
+        self.trig_info_hist.Write()
+        self.trig_eff_hist.Write()
         
-        eta_vs_phi_hist.Write()
-        eta_vs_qual_hist.Write()
-        eta_vs_singlemu_hist.Write()
-        phi_vs_singlemu_hist.Write()
+        self.eta_vs_phi_hist.Write()
+        self.eta_vs_qual_hist.Write()
+        self.eta_vs_singlemu_hist.Write()
+        self.phi_vs_singlemu_hist.Write()
         
         for cut in range(4):
-            pt_hist["den"][cut].Write()
-            pt_hist["num"][cut].Write()
+            self.pt_hist["den"][cut].Write()
+            self.pt_hist["num"][cut].Write()
             
-            eta_hist["den"][cut].Write()
-            eta_hist["num"][cut].Write()
+            self.eta_hist["den"][cut].Write()
+            self.eta_hist["num"][cut].Write()
             
-            phi_hist["den"][cut].Write()
-            phi_hist["num"][cut].Write()
+            self.phi_hist["den"][cut].Write()
+            self.phi_hist["num"][cut].Write()
             
-            time_hist["den"][cut].Write()
-            time_hist["num"][cut].Write()
+            self.time_hist["den"][cut].Write()
+            self.time_hist["num"][cut].Write()
             pass
         
         self.outdir.Write()
         self.outfile.Write()
-        self.outfile.Close()
+        #self.outfile.Close()
         return
-    
-
-if __name__ == "__main__":
-    import sys,os
-    import ROOT as r
-    
-    import numpy as np
-    from wsuPythonUtils import checkRequiredArguments
-    from wsuMuonTreeUtils import *
-    
-    from optparse import OptionParser
-
-    parser = OptionParser()
-    parser.add_option("-i", "--infile", type="string", dest="infile",
-                      metavar="infile", default="CosmicMuonTree_MC_76X",
-                      help="[REQUIRED] Name of the input ROOT file, or list of files (for -t mode)")
-    parser.add_option("-o", "--outfile", type="string", dest="outfile",
-                      metavar="outfile", default="l1_trigger_info",
-                      help="[REQUIRED] Name of the output ROOT file")
-    parser.add_option("-d", "--debug", action="store_true", dest="debug",
-                      metavar="debug",
-                      help="[OPTIONAL] Run in debug mode")
-    parser.add_option("-m", "--mc", action="store_true", dest="isMC",
-                      metavar="mc",
-                      help="[OPTIONAL] Processing MC, so match to sim tracks")
-    parser.add_option("-t", "--tchain", action="store_true", dest="tchain",
-                      metavar="tchain",
-                      help="[OPTIONAL] Use a TChain rather than the raw file, must specify a list of input files as a text file to -i")
-
-    parser.add_option("--craftfile", type="string", dest="craftfile",
-                      metavar="craftfile", default="CosmicMuonTree_MC_76X",
-                      help="[OPTIONAL] Name of the input CRAFT file, or list of files (for -t mode)")
-    parser.add_option("--interfile", type="string", dest="interfile",
-                      metavar="interfile", default="CosmicMuonTree_MC_76X",
-                      help="[OPTIONAL] Name of the input Interfill file, or list of files (for -t mode)")
-    parser.add_option("--startupfile", type="string", dest="startupfile",
-                      metavar="startupfile", default="CosmicMuonTree_MC_76X",
-                      help="[OPTIONAL] Name of the input startup MC file, or list of files (for -t mode)")
-    parser.add_option("--asymfile", type="string", dest="asymfile",
-                      metavar="asymfile", default="CosmicMuonTree_MC_76X",
-                      help="[OPTIONAL] Name of the input asymptotic MC file, or list of files (for -t mode)")
-
-    (options, args) = parser.parse_args()
-    checkRequiredArguments(options, parser)
-    r.gROOT.SetBatch(True)
-    
-    myfile = None    
-    mytree = None    
-
-    study = l1TrigInfo(options.infile,options.outfile,options.tchain,options.debug)
-    
-    if options.tchain:
-        mychain = r.TChain("analysisSPMuons/MuonTree")
-        for line in open("%s"%(options.infile),"r"):
-            if options.debug:
-                print "root://xrootd.unl.edu//%s"%(line[:-1])
-                tmp = r.TNetXNGFile("root://xrootd.unl.edu//%s"%(line[:-1]),"r")
-                print tmp, "%d - %d"%(tmp.IsZombie(),tmp.IsOpen())
-                sys.stdout.flush()
-                pass
-            print "adding root://xrootd.unl.edu//%s"%(line[:-1])
-            sys.stdout.flush()
-            mychain.Add("root://xrootd.unl.edu//%s"%(line[:-1]))
-            print "to my chain (%d)"%(mychain.GetEntries())
-            sys.stdout.flush()
-            pass
-
-        mytree = mychain
-        study.processTree(mytree)
-        pass
-    else:
-        if (options.infile).find("root://") > -1:
-            print "using TNetXNGFile for EOS access"
-            print "%s"%(options.infile)
-            myfile = r.TNetXNGFile("%s"%(options.infile),"r")
-            pass 
-        else:
-            print "%s"%(options.infile)
-            myfile = r.TFile("%s"%(options.infile),"r")
-            pass
-        
-        mytree = myfile.Get("analysisSPMuons/MuonTree")
-        study.processTree(mytree)
-        pass
-        #else:
-        #for i,line in enumerate(open("%s"%(options.infile),"r")):
-        #    if options.debug and i > 1:
-        #        print "debugging, not processing more than 2 files"
-        #        break
-        #    myfile = r.TNetXNGFile("root://xrootd.unl.edu//%s"%(line[:-1]),"r")
-        #    print myfile, "%d - %d"%(myfile.IsZombie(),myfile.IsOpen())
-        #    sys.stdout.flush()
-        #    
-        #    mytree = myfile.Get("analysisSPMuons/MuonTree")
-        #    study.processTree(mytree)
-        #    #pass
-        #    pass
-        #pass
-    
-    study.writeOut()
-            
-    cuts = {
-        "_all":"1",
-        "_noFwd":"l1MuonIsFwd==0",
-        "_noRPC":"l1MuonIsRPC==0",
-        "_isFwd":"l1MuonIsFwd==1",
-        "_isRPC":"l1MuonIsRPC==1",
-        }
-    
