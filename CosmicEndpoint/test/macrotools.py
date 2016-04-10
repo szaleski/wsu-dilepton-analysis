@@ -40,7 +40,7 @@ def splitJobsForBsub(inputFile,numberOfJobs,maxBias,minPt,nBiasBins,symasym):
 		return fid
 
 def bSubSplitJobs(pyScriptName,toolName,outputFile,inputFile,proxyPath,numberOfJobs,
-		  maxBias,minPt,nBiasBins,symmetric,debug):
+		  maxBias,minPt,nBiasBins,simlow,simhigh,symmetric,trigger,isMC,debug):
 	symasym = "asym"
 	if symmetric:
 		symasym = "sym"
@@ -57,7 +57,7 @@ def bSubSplitJobs(pyScriptName,toolName,outputFile,inputFile,proxyPath,numberOfJ
 		os.makedirs(rootScriptDir)
 
 	clearSplitLists(maxBias,minPt,nBiasBins,symasym,inputFile)
-	clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym)
+	clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym,inputFile)
 	nJobs = splitJobsForBsub(inputFile,numberOfJobs,maxBias,minPt,nBiasBins,symasym)
 	print "Prepared %i jobs ready to be submitted to bsub." % nJobs
 	for i in range (1,nJobs+1):
@@ -70,17 +70,19 @@ def bSubSplitJobs(pyScriptName,toolName,outputFile,inputFile,proxyPath,numberOfJ
 		f.write("  gROOT->ProcessLine(\" .L %s.so\");\n"%(toolName))
 		##the first execution seems to clear the proxy error
 		
-		f.write("  %s(\"%s\",\"%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(toolName,inputFileList,
+		f.write("  %s(\"%s\",\"%s_%s_%d_\",%d, %f, %f, %d, %f, %f, %f, %d, %d, %d);\n"%(toolName,inputFileList,
 										symasym,outputFile,i,
 										1,
 										minPt,maxBias,nBiasBins,
-										1000.,symmetric))
+										1000.,simlow,simhigh,
+										symmetric,trigger,isMC))
 		for tk in range(5):
-			f.write("  %s(\"%s\",\"%s_%s_%d_\",%d, %f, %f, %d, %f, %d);\n"%(toolName,inputFileList,
+			f.write("  %s(\"%s\",\"%s_%s_%d_\",%d, %f, %f, %d, %f, %f, %f, %d, %d, %d);\n"%(toolName,inputFileList,
 											symasym,outputFile,i,
 											tk+1,
 											minPt,maxBias,nBiasBins,
-											1000.,symmetric))
+											1000.,simlow,simhigh,
+											symmetric,trigger,isMC))
 		f.write("}\n")
 		# root -x -b -q  put this in the shell script
 		pyCommand = "%s"%(rootScriptName)
@@ -134,13 +136,14 @@ rsync -e "ssh -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" -a
      socket.gethostname()))
 	f.close()
 	os.chmod(subfile,0777)
-	# cmd = "bsub -q test -W 0:20 %s/%s"%(subfile) #submit to the test queue if debug (only a single job though
-	cmd = "bsub -q 8nh -W 240 %s"%(subfile)
-	#cmd = "bsub -q 1nh -W 0:30 %s"%(subfile)
-	print cmd
 	if not debug:
+		cmd = "bsub -q 8nh -W 240 %s"%(subfile)
+		print cmd
 		os.system(cmd)
-
+	else:
+		cmd = "bsub -q test -W 240 %s"%(subfile)
+		print cmd
+		
 def clearSplitLists(maxBias,minPt,nBiasBins,symasym,title):
 	samplesListsDir="samplesLists_data"
 	splitListsDir=samplesListsDir+"/splitLists_b%.2f_pt%2.0f_n%d/"%(1000*maxBias,minPt,nBiasBins)
@@ -158,7 +161,7 @@ def clearSplitLists(maxBias,minPt,nBiasBins,symasym,title):
 			except Exception,e:
 				print e
 
-def clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym):
+def clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym,title):
 	bSubScriptsDir="bsubs_b%.2f_pt%2.0f_n%d/"%(1000*maxBias,minPt,nBiasBins)
         #d = os.path.dirname(bSubScriptsDir)
         if not os.path.exists(bSubScriptsDir):
@@ -166,7 +169,7 @@ def clearBsubShellScripts(maxBias,minPt,nBiasBins,symasym):
 
 	for the_file in os.listdir(bSubScriptsDir):
 		file_path = os.path.join(bSubScriptsDir,the_file)
-		if (file_path.find("-"+symasym+"-") > 0):
+		if ((file_path.find("-"+symasym+"-") > 0) and (file_path.find(title) > 0)):
 			try:
 				if os.path.isfile(file_path):
 					os.unlink(file_path)

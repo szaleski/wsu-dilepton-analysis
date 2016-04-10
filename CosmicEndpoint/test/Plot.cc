@@ -13,6 +13,7 @@
 #include "TTreeReader.h"
 #include "TCanvas.h"
 #include "TTreeReaderValue.h"
+#include "TTreeReaderArray.h"
 #include "TVector2.h"
 #include "TVector3.h"
 #include "TPad.h"
@@ -30,7 +31,9 @@
 
 void Plot(std::string const& filelist, std::string const& outFile,
 	  int trackVal_, double minPt_, double maxBias_, int nBiasBins_,
-	  double factor_=1.0, bool symmetric_=false, bool debug_=false)
+	  double factor_=1.0, double lowpT_=-1.0, double highpT_=-1.0,
+	  bool symmetric_=false, bool applyTrigger_=false, bool mcFlag_=false,
+	  bool debug_=false)
 {
   bool debug = debug_;
 
@@ -371,17 +374,17 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_muLowerMinusCharge = new TH1F("muLowerMinusCharge","muLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_muLowerPlusCharge  = new TH1F("muLowerPlusCharge", "muLowerPlusCharge",  3, -1.5, 1.5);
   TH1F *h_muMinusCurve      = new TH1F("muMinusCurve",     "muMinusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muUpperMinusCurve = new TH1F("muUpperMinusCurve","muUpperMinusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muPlusCurve       = new TH1F("muPlusCurve",      "muPlusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muUpperPlusCurve  = new TH1F("muUpperPlusCurve", "muUpperPlusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muLowerMinusCurve = new TH1F("muLowerMinusCurve","muLowerMinusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muLowerPlusCurve  = new TH1F("muLowerPlusCurve", "muLowerPlusCurve",
-				       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muMinusDxy      = new TH1F("muMinusDxy",     "muMinusDxy",      100, -100., 100.);
   TH1F *h_muUpperMinusDxy = new TH1F("muUpperMinusDxy","muUpperMinusDxy", 100, -100., 100.);
   TH1F *h_muPlusDxy       = new TH1F("muPlusDxy",      "muPlusDxy",       100, -100., 100.);
@@ -503,40 +506,40 @@ void Plot(std::string const& filelist, std::string const& outFile,
     mtitle << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
     h_muMinusCurvePlusBias[i]       = new TH1F(TString("muMinusCurvePlusBias"       + name.str()),
 					       TString("muMinusCurvePlusBias"       + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muMinusCurveMinusBias[i]      = new TH1F(TString("muMinusCurveMinusBias"      + name.str()),
 					       TString("muMinusCurveMinusBias"      + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias"  + name.str()),
 					       TString("muUpperMinusCurvePlusBias"  + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),
 					       TString("muUpperMinusCurveMinusBias" + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias"  + name.str()),
 					       TString("muLowerMinusCurvePlusBias"  + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),
 					       TString("muLowerMinusCurveMinusBias" + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muPlusCurvePlusBias[i]        = new TH1F(TString("muPlusCurvePlusBias"        + name.str()),
 					       TString("muPlusCurvePlusBias"        + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muPlusCurveMinusBias[i]       = new TH1F(TString("muPlusCurveMinusBias"       + name.str()),
 					       TString("muPlusCurveMinusBias"       + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muUpperPlusCurvePlusBias[i]   = new TH1F(TString("muUpperPlusCurvePlusBias"   + name.str()),
 					       TString("muUpperPlusCurvePlusBias"   + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muUpperPlusCurveMinusBias[i]  = new TH1F(TString("muUpperPlusCurveMinusBias"  + name.str()),
 					       TString("muUpperPlusCurveMinusBias"  + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muLowerPlusCurvePlusBias[i]   = new TH1F(TString("muLowerPlusCurvePlusBias"   + name.str()),
 					       TString("muLowerPlusCurvePlusBias"   + ptitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muLowerPlusCurveMinusBias[i]  = new TH1F(TString("muLowerPlusCurveMinusBias"  + name.str()),
 					       TString("muLowerPlusCurveMinusBias"  + mtitle.str()),
-					       symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
   }
 
   // histograms for loose cuts (not applying the Dxy/Dz cuts)
@@ -578,17 +581,17 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_looseMuLowerMinusCharge = new TH1F("looseMuLowerMinusCharge","looseMuLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuLowerPlusCharge  = new TH1F("looseMuLowerPlusCharge", "looseMuLowerPlusCharge",  3, -1.5, 1.5);
   TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve",     "looseMuMinusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve",      "looseMuPlusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve", "looseMuUpperPlusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuLowerMinusCurve = new TH1F("looseMuLowerMinusCurve","looseMuLowerMinusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve", "looseMuLowerPlusCurve",
-					    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuMinusDxy      = new TH1F("looseMuMinusDxy",     "looseMuMinusDxy",      100, -100., 100.);
   TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuPlusDxy       = new TH1F("looseMuPlusDxy",      "looseMuPlusDxy",       100, -100., 100.);
@@ -710,46 +713,51 @@ void Plot(std::string const& filelist, std::string const& outFile,
     mtitle << "#Delta#kappa = -" << (i+1)*(factor_*maxBias/nBiasBins);
     h_looseMuMinusCurvePlusBias[i]       = new TH1F(TString("looseMuMinusCurvePlusBias"       + name.str()),
 						    TString("looseMuMinusCurvePlusBias"       + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuMinusCurveMinusBias[i]      = new TH1F(TString("looseMuMinusCurveMinusBias"      + name.str()),
 						    TString("looseMuMinusCurveMinusBias"      + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
 						    TString("looseMuUpperMinusCurvePlusBias"  + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),
 						    TString("looseMuUpperMinusCurveMinusBias" + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
 						    TString("looseMuLowerMinusCurvePlusBias"  + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),
 						    TString("looseMuLowerMinusCurveMinusBias" + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuPlusCurvePlusBias[i]        = new TH1F(TString("looseMuPlusCurvePlusBias"        + name.str()),
 						    TString("looseMuPlusCurvePlusBias"        + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuPlusCurveMinusBias[i]       = new TH1F(TString("looseMuPlusCurveMinusBias"       + name.str()),
 						    TString("looseMuPlusCurveMinusBias"       + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
 						    TString("looseMuUpperPlusCurvePlusBias"   + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
 						    TString("looseMuUpperPlusCurveMinusBias"  + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
 						    TString("looseMuLowerPlusCurvePlusBias"   + ptitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuLowerPlusCurveMinusBias[i]  = new TH1F(TString("looseMuLowerPlusCurveMinusBias"  + name.str()),
 						    TString("looseMuLowerPlusCurveMinusBias"  + mtitle.str()),
-						    symmetric_ ? 1500 : 750, symmetric_ ? -0.0075*factor_ : 0., 0.0075*factor_);  
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
   }
 
   std::cout << "Creating upper muMinus TTreeReaderValues" << std::endl;
   TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
   TTreeReaderValue<Int_t>    lumi( trackReader, "muonLumiBlock"  );
   TTreeReaderValue<Int_t>    event(trackReader, "muonEventNumber");
+
+  TTreeReaderValue<Int_t> trueL1SingleMu(trackReader, "l1SingleMu");
+  TTreeReaderValue<Int_t> fakeL1SingleMu(trackReader, "fakeL1SingleMu");
+  TTreeReaderValue<Int_t> nSimTracks( trackReader,    "nSimTracks");
+  TTreeReaderArray<double> simTrackpT(trackReader,    "simTrackpT" );
   
   TTreeReaderValue<math::XYZTLorentzVector> upTrackerMuonP4(trackReader,"upperMuon_P4"      );
   TTreeReaderValue<math::XYZVector>         upTrackerTrack( trackReader,"upperMuon_trackVec");
@@ -800,7 +808,19 @@ void Plot(std::string const& filelist, std::string const& outFile,
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
     g->cd();
+    
+    // apply the trigger, i.e., don't process if the trigger didn't fire
+    if (applyTrigger_ && !(*fakeL1SingleMu))
+      continue;
 
+    // make combination of samples easy
+    if (mcFlag_) {
+      if (*nSimTracks > 0) {
+	if ((simTrackpT[0] >= highpT_) || (simTrackpT[0] < lowpT_))
+	  continue;
+      }
+    }
+    
     bool hasPt100Loose(false), hasPt200Loose(false), hasPt400Loose(false);
     bool hasPt100Tight(false), hasPt200Tight(false), hasPt400Tight(false);
     
