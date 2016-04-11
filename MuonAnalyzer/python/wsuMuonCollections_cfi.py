@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 
-basic_cut  = "pt > 45 && isTrackerMuon"
 
+basic_cut  = "pt > 40. && isTrackerMuon"
 # restrict collections to muons near the pixel
 dxy_cut = "(abs(tunePMuonBestTrack.dxy) < 50.)"
 dz_cut  = " && (abs(tunePMuonBestTrack.dz)  < 75.)"
@@ -63,29 +63,29 @@ globalSPMuons = cms.EDFilter("MuonSelector",
 #  - time information: also reliability issues
 upperMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
-    #cut = cms.string(upper_cut)
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    cut = cms.string(upper_cut_2)
     #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 upperGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
-    #cut = cms.string(upper_cut)
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y > 0"),
+    cut = cms.string(upper_cut_2)
     #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) > abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("betterSPMuons"),
-    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
-    #cut = cms.string(lower_cut)
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    cut = cms.string(lower_cut_2)
     #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
 lowerGlobalMuons = cms.EDFilter("MuonSelector",
     src = cms.InputTag("globalSPMuons"),
-    cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
-    #cut = cms.string(lower_cut)
+    #cut = cms.string("tunePMuonBestTrack.outerPosition.Y < 0"),
+    cut = cms.string(lower_cut_2)
     #cut = cms.string("abs(tunePMuonBestTrack.innerPosition.Y) < abs(tunePMuonBestTrack.outerPosition.Y)"),
 )
 
