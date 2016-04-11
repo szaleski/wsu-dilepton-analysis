@@ -30,9 +30,10 @@
 
 void Plot(std::string const& filelist, std::string const& outFile,
 	  int trackVal_, double minPt_, double maxBias_, int nBiasBins_,
-	  double factor_=1.0, bool symmetric_=false, bool debug_=false)
+	  double factor_=1.0, bool symmetric_=false, bool debug_=false, bool mcFlag_=false)
 {
   bool debug = debug_;
+  
 
   if (debug) {
     std::cout<<"arg 1 is:  " << filelist   << std::endl;
@@ -753,6 +754,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TTreeReaderValue<Int_t>    run(  trackReader, "muonRunNumber"  );
   TTreeReaderValue<Int_t>    lumi( trackReader, "muonLumiBlock"  );
   TTreeReaderValue<Int_t>    event(trackReader, "muonEventNumber");
+  TTreeReaderValue<Int_t>    trigger(  trackReader, "fakeL1SingleMu"  );
   
   TTreeReaderValue<math::XYZTLorentzVector> upTrackerMuonP4(trackReader,"upperMuon_P4"      );
   TTreeReaderValue<math::XYZVector>         upTrackerTrack( trackReader,"upperMuon_trackVec");
@@ -799,7 +801,10 @@ void Plot(std::string const& filelist, std::string const& outFile,
   std::cout << "Made it to Histogramming!" << std::endl; 
   int j = 0;
   double maxDR = 0.15; // what is reasonable here? Aachen did dPhi < 0.1, dTheta (eta?) < 0.05
+
+
   while (trackReader.Next()) {
+    if(mcFlag_ && ((*trigger) < 1)) continue;
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
     g->cd();
