@@ -249,10 +249,10 @@ void Plot(std::string const& filelist, std::string const& outFile,
   TH1F *h_upperChi2     = new TH1F("upperChi2",  "upperChi2",   50,  0.,  150.);
   TH1F *h_upperNdof     = new TH1F("upperNdof",  "upperNdof",   100, -0.5, 99.5);
   TH1F *h_upperCharge   = new TH1F("upperCharge","upperCharge", 3, -1.5, 1.5);
-  // default asymmetric binning -7.5/TeV to 7.5/TeV = 15/TeV, 15/1500 = 0.01/TeV
+  // default asymmetric binning -8.0/TeV to 8.0/TeV = 16/TeV, 16/1600 = 0.01/TeV
   // suggested for KS is 0.01/TeV
   // suggested for chi2 is 0.25/TeV to be around expected resolution, means rebinning 25 0.01 bins into one
-  // symmetric binning 0/TeV to 7.5/TeV = 7.5/TeV, 7.5/750 = 0.01/TeV
+  // symmetric binning 0/TeV to 8.0/TeV = 8.0/TeV, 8.0/800 = 0.01/TeV
   // suggested for KS is 0.01/TeV
   // suggested for chi2 is 0.25/TeV to be around expected resolution, means rebinning 25 0.01 bins into one
   // should *never* have a bin that straddles 0, 0 should *always* be a bin boundary
@@ -337,47 +337,52 @@ void Plot(std::string const& filelist, std::string const& outFile,
   
   // histograms for no cuts
   TH1F *h_muMinusPt      = new TH1F("muMinusPt",     "muMinusPt",      300, 0., 3000.);
-  TH1F *h_muUpperMinusPt = new TH1F("muUpperMinusPt","muUpperMinusPt", 300, 0., 3000.);
   TH1F *h_muPlusPt       = new TH1F("muPlusPt",      "muPlusPt",       300, 0., 3000.);
+  TH1F *h_muUpperMinusPt = new TH1F("muUpperMinusPt","muUpperMinusPt", 300, 0., 3000.);
   TH1F *h_muUpperPlusPt  = new TH1F("muUpperPlusPt", "muUpperPlusPt",  300, 0., 3000.);
   TH1F *h_muLowerMinusPt = new TH1F("muLowerMinusPt","muLowerMinusPt", 300, 0., 3000.);
   TH1F *h_muLowerPlusPt  = new TH1F("muLowerPlusPt", "muLowerPlusPt",  300, 0., 3000.);
+
   TH1F *h_muMinusEta      = new TH1F("muMinusEta",     "muMinusEta",      40, -2., 2.);
-  TH1F *h_muUpperMinusEta = new TH1F("muUpperMinusEta","muUpperMinusEta", 40, -2., 2.);
   TH1F *h_muPlusEta       = new TH1F("muPlusEta",      "muPlusEta",       40, -2., 2.);
+  TH1F *h_muUpperMinusEta = new TH1F("muUpperMinusEta","muUpperMinusEta", 40, -2., 2.);
   TH1F *h_muUpperPlusEta  = new TH1F("muUpperPlusEta", "muUpperPlusEta",  40, -2., 2.);
   TH1F *h_muLowerMinusEta = new TH1F("muLowerMinusEta","muLowerMinusEta", 40, -2., 2.);
   TH1F *h_muLowerPlusEta  = new TH1F("muLowerPlusEta", "muLowerPlusEta",  40, -2., 2.);
+
   TH1F *h_muMinusPhi      = new TH1F("muMinusPhi",     "muMinusPhi",      40, -4., 4.);
-  TH1F *h_muUpperMinusPhi = new TH1F("muUpperMinusPhi","muUpperMinusPhi", 40, -4., 4.);
   TH1F *h_muPlusPhi       = new TH1F("muPlusPhi",      "muPlusPhi",       40, -4., 4.);
+  TH1F *h_muUpperMinusPhi = new TH1F("muUpperMinusPhi","muUpperMinusPhi", 40, -4., 4.);
   TH1F *h_muUpperPlusPhi  = new TH1F("muUpperPlusPhi", "muUpperPlusPhi",  40, -4., 4.);
   TH1F *h_muLowerMinusPhi = new TH1F("muLowerMinusPhi","muLowerMinusPhi", 40, -4., 4.);
   TH1F *h_muLowerPlusPhi  = new TH1F("muLowerPlusPhi", "muLowerPlusPhi",  40, -4., 4.);
 
   TH1F *h_muMinusChi2      = new TH1F("muMinusChi2",     "muMinusChi2",      50, 0., 150.);
-  TH1F *h_muUpperMinusChi2 = new TH1F("muUpperMinusChi2","muUpperMinusChi2", 50, 0., 150.);
   TH1F *h_muPlusChi2       = new TH1F("muPlusChi2",      "muPlusChi2",       50, 0., 150.);
+  TH1F *h_muUpperMinusChi2 = new TH1F("muUpperMinusChi2","muUpperMinusChi2", 50, 0., 150.);
   TH1F *h_muUpperPlusChi2  = new TH1F("muUpperPlusChi2", "muUpperPlusChi2",  50, 0., 150.);
   TH1F *h_muLowerMinusChi2 = new TH1F("muLowerMinusChi2","muLowerMinusChi2", 50, 0., 150.);
   TH1F *h_muLowerPlusChi2  = new TH1F("muLowerPlusChi2", "muLowerPlusChi2",  50, 0., 150.);
+
   TH1F *h_muMinusNdof      = new TH1F("muMinusNdof",     "muMinusNdof",      100, -0.5, 99.5);
-  TH1F *h_muUpperMinusNdof = new TH1F("muUpperMinusNdof","muUpperMinusNdof", 100, -0.5, 99.5);
   TH1F *h_muPlusNdof       = new TH1F("muPlusNdof",      "muPlusNdof",       100, -0.5, 99.5);
+  TH1F *h_muUpperMinusNdof = new TH1F("muUpperMinusNdof","muUpperMinusNdof", 100, -0.5, 99.5);
   TH1F *h_muUpperPlusNdof  = new TH1F("muUpperPlusNdof", "muUpperPlusNdof",  100, -0.5, 99.5);
   TH1F *h_muLowerMinusNdof = new TH1F("muLowerMinusNdof","muLowerMinusNdof", 100, -0.5, 99.5);
   TH1F *h_muLowerPlusNdof  = new TH1F("muLowerPlusNdof", "muLowerPlusNdof",  100, -0.5, 99.5);
+
   TH1F *h_muMinusCharge      = new TH1F("muMinusCharge",     "muMinusCharge",      3, -1.5, 1.5);
-  TH1F *h_muUpperMinusCharge = new TH1F("muUpperMinusCharge","muUpperMinusCharge", 3, -1.5, 1.5);
   TH1F *h_muPlusCharge       = new TH1F("muPlusCharge",      "muPlusCharge",       3, -1.5, 1.5);
+  TH1F *h_muUpperMinusCharge = new TH1F("muUpperMinusCharge","muUpperMinusCharge", 3, -1.5, 1.5);
   TH1F *h_muUpperPlusCharge  = new TH1F("muUpperPlusCharge", "muUpperPlusCharge",  3, -1.5, 1.5);
   TH1F *h_muLowerMinusCharge = new TH1F("muLowerMinusCharge","muLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_muLowerPlusCharge  = new TH1F("muLowerPlusCharge", "muLowerPlusCharge",  3, -1.5, 1.5);
+
   TH1F *h_muMinusCurve      = new TH1F("muMinusCurve",     "muMinusCurve",
 				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-  TH1F *h_muUpperMinusCurve = new TH1F("muUpperMinusCurve","muUpperMinusCurve",
-				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muPlusCurve       = new TH1F("muPlusCurve",      "muPlusCurve",
+				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+  TH1F *h_muUpperMinusCurve = new TH1F("muUpperMinusCurve","muUpperMinusCurve",
 				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muUpperPlusCurve  = new TH1F("muUpperPlusCurve", "muUpperPlusCurve",
 				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
@@ -385,115 +390,129 @@ void Plot(std::string const& filelist, std::string const& outFile,
 				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_muLowerPlusCurve  = new TH1F("muLowerPlusCurve", "muLowerPlusCurve",
 				       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+
   TH1F *h_muMinusDxy      = new TH1F("muMinusDxy",     "muMinusDxy",      100, -100., 100.);
-  TH1F *h_muUpperMinusDxy = new TH1F("muUpperMinusDxy","muUpperMinusDxy", 100, -100., 100.);
   TH1F *h_muPlusDxy       = new TH1F("muPlusDxy",      "muPlusDxy",       100, -100., 100.);
+  TH1F *h_muUpperMinusDxy = new TH1F("muUpperMinusDxy","muUpperMinusDxy", 100, -100., 100.);
   TH1F *h_muUpperPlusDxy  = new TH1F("muUpperPlusDxy", "muUpperPlusDxy",  100, -100., 100.);
   TH1F *h_muLowerMinusDxy = new TH1F("muLowerMinusDxy","muLowerMinusDxy", 100, -100., 100.);
   TH1F *h_muLowerPlusDxy  = new TH1F("muLowerPlusDxy", "muLowerPlusDxy",  100, -100., 100.);
+
   TH1F *h_muMinusDz       = new TH1F("muMinusDz",     "muMinusDz",        100, -250., 250.);
-  TH1F *h_muUpperMinusDz  = new TH1F("muUpperMinusDz","muUpperMinusDz",   100, -250., 250.);
   TH1F *h_muPlusDz        = new TH1F("muPlusDz",      "muPlusDz",         100, -250., 250.);
+  TH1F *h_muUpperMinusDz  = new TH1F("muUpperMinusDz","muUpperMinusDz",   100, -250., 250.);
   TH1F *h_muUpperPlusDz   = new TH1F("muUpperPlusDz", "muUpperPlusDz",    100, -250., 250.);
   TH1F *h_muLowerMinusDz  = new TH1F("muLowerMinusDz","muLowerMinusDz",   100, -250., 250.);
   TH1F *h_muLowerPlusDz   = new TH1F("muLowerPlusDz", "muLowerPlusDz",    100, -250., 250.);
+
   TH1F *h_muMinusDxyError      = new TH1F("muMinusDxyError",     "muMinusDxyError",      50, 0., 150.);
-  TH1F *h_muUpperMinusDxyError = new TH1F("muUpperMinusDxyError","muUpperMinusDxyError", 50, 0., 150.);
   TH1F *h_muPlusDxyError       = new TH1F("muPlusDxyError",      "muPlusDxyError",       50, 0., 150.);
+  TH1F *h_muUpperMinusDxyError = new TH1F("muUpperMinusDxyError","muUpperMinusDxyError", 50, 0., 150.);
   TH1F *h_muUpperPlusDxyError  = new TH1F("muUpperPlusDxyError", "muUpperPlusDxyError",  50, 0., 150.);
   TH1F *h_muLowerMinusDxyError = new TH1F("muLowerMinusDxyError","muLowerMinusDxyError", 50, 0., 150.);
   TH1F *h_muLowerPlusDxyError  = new TH1F("muLowerPlusDxyError", "muLowerPlusDxyError",  50, 0., 150.);
+
   TH1F *h_muMinusDzError      = new TH1F("muMinusDzError",     "muMinusDzError",      50, 0., 150.);
-  TH1F *h_muUpperMinusDzError = new TH1F("muUpperMinusDzError","muUpperMinusDzError", 50, 0., 150.);
   TH1F *h_muPlusDzError       = new TH1F("muPlusDzError",      "muPlusDzError",       50, 0., 150.);
+  TH1F *h_muUpperMinusDzError = new TH1F("muUpperMinusDzError","muUpperMinusDzError", 50, 0., 150.);
   TH1F *h_muUpperPlusDzError  = new TH1F("muUpperPlusDzError", "muUpperPlusDzError",  50, 0., 150.);
   TH1F *h_muLowerMinusDzError = new TH1F("muLowerMinusDzError","muLowerMinusDzError", 50, 0., 150.);
   TH1F *h_muLowerPlusDzError  = new TH1F("muLowerPlusDzError", "muLowerPlusDzError",  50, 0., 150.);
 
   TH1F *h_muMinusTrackPt      = new TH1F("muMinusTrackPt",     "muMinusTrackPt",      300, 0., 3000.);
-  TH1F *h_muUpperMinusTrackPt = new TH1F("muUpperMinusTrackPt","muUpperMinusTrackPt", 300, 0., 3000.);
   TH1F *h_muPlusTrackPt       = new TH1F("muPlusTrackPt",      "muPlusTrackPt",       300, 0., 3000.);
+  TH1F *h_muUpperMinusTrackPt = new TH1F("muUpperMinusTrackPt","muUpperMinusTrackPt", 300, 0., 3000.);
   TH1F *h_muUpperPlusTrackPt  = new TH1F("muUpperPlusTrackPt", "muUpperPlusTrackPt",  300, 0., 3000.);
   TH1F *h_muLowerMinusTrackPt = new TH1F("muLowerMinusTrackPt","muLowerMinusTrackPt", 300, 0., 3000.);
   TH1F *h_muLowerPlusTrackPt  = new TH1F("muLowerPlusTrackPt", "muLowerPlusTrackPt",  300, 0., 3000.);
+
   TH1F *h_muMinusTrackEta      = new TH1F("muMinusTrackEta",   "muMinusTrackEta",        40, -2., 2.);
-  TH1F *h_muUpperMinusTrackEta = new TH1F("muUpperMinusTrackEta","muUpperMinusTrackEta", 40, -2., 2.);
   TH1F *h_muPlusTrackEta       = new TH1F("muPlusTrackEta",      "muPlusTrackEta",       40, -2., 2.);
+  TH1F *h_muUpperMinusTrackEta = new TH1F("muUpperMinusTrackEta","muUpperMinusTrackEta", 40, -2., 2.);
   TH1F *h_muUpperPlusTrackEta  = new TH1F("muUpperPlusTrackEta", "muUpperPlusTrackEta",  40, -2., 2.);
   TH1F *h_muLowerMinusTrackEta = new TH1F("muLowerMinusTrackEta","muLowerMinusTrackEta", 40, -2., 2.);
   TH1F *h_muLowerPlusTrackEta  = new TH1F("muLowerPlusTrackEta", "muLowerPlusTrackEta",  40, -2., 2.);
+
   TH1F *h_muMinusTrackPhi      = new TH1F("muMinusTrackPhi",     "muMinusTrackPhi",      40, -4., 4.);
-  TH1F *h_muUpperMinusTrackPhi = new TH1F("muUpperMinusTrackPhi","muUpperMinusTrackPhi", 40, -4., 4.);
   TH1F *h_muPlusTrackPhi       = new TH1F("muPlusTrackPhi",      "muPlusTrackPhi",       40, -4., 4.);
+  TH1F *h_muUpperMinusTrackPhi = new TH1F("muUpperMinusTrackPhi","muUpperMinusTrackPhi", 40, -4., 4.);
   TH1F *h_muUpperPlusTrackPhi  = new TH1F("muUpperPlusTrackPhi", "muUpperPlusTrackPhi",  40, -4., 4.);
   TH1F *h_muLowerMinusTrackPhi = new TH1F("muLowerMinusTrackPhi","muLowerMinusTrackPhi", 40, -4., 4.);
   TH1F *h_muLowerPlusTrackPhi  = new TH1F("muLowerPlusTrackPhi", "muLowerPlusTrackPhi",  40, -4., 4.);
+
   TH1F *h_muMinusPtError      = new TH1F("muMinusPtError",     "muMinusPtError",      100, 0., 600.);
-  TH1F *h_muUpperMinusPtError = new TH1F("muUpperMinusPtError","muUpperMinusPtError", 100, 0., 600.);
   TH1F *h_muPlusPtError       = new TH1F("muPlusPtError",      "muPlusPtError",       100, 0., 600.);
+  TH1F *h_muUpperMinusPtError = new TH1F("muUpperMinusPtError","muUpperMinusPtError", 100, 0., 600.);
   TH1F *h_muUpperPlusPtError  = new TH1F("muUpperPlusPtError", "muUpperPlusPtError",  100, 0., 600.);
   TH1F *h_muLowerMinusPtError = new TH1F("muLowerMinusPtError","muLowerMinusPtError", 100, 0., 600.);
   TH1F *h_muLowerPlusPtError  = new TH1F("muLowerPlusPtError", "muLowerPlusPtError",  100, 0., 600.);
+
   TH1F *h_muMinusPtRelErr      = new TH1F("muMinusPtRelErr",     "muMinusPtRelErr",      100, 0., 1.);
-  TH1F *h_muUpperMinusPtRelErr = new TH1F("muUpperMinusPtRelErr","muUpperMinusPtRelErr", 100, 0., 1.);
   TH1F *h_muPlusPtRelErr       = new TH1F("muPlusPtRelErr",      "muPlusPtRelErr",       100, 0., 1.);
+  TH1F *h_muUpperMinusPtRelErr = new TH1F("muUpperMinusPtRelErr","muUpperMinusPtRelErr", 100, 0., 1.);
   TH1F *h_muUpperPlusPtRelErr  = new TH1F("muUpperPlusPtRelErr", "muUpperPlusPtRelErr",  100, 0., 1.);
   TH1F *h_muLowerMinusPtRelErr = new TH1F("muLowerMinusPtRelErr","muLowerMinusPtRelErr", 100, 0., 1.);
   TH1F *h_muLowerPlusPtRelErr  = new TH1F("muLowerPlusPtRelErr","muLowerPlusPtRelErr",   100, 0., 1.);
 
   TH1F *h_muMinusPixelHits      = new TH1F("muMinusPixelHits",     "muMinusPixelHits",      10, -0.5, 9.5);
-  TH1F *h_muUpperMinusPixelHits = new TH1F("muUpperMinusPixelHits","muUpperMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_muPlusPixelHits       = new TH1F("muPlusPixelHits",      "muPlusPixelHits",       10, -0.5, 9.5);
+  TH1F *h_muUpperMinusPixelHits = new TH1F("muUpperMinusPixelHits","muUpperMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_muUpperPlusPixelHits  = new TH1F("muUpperPlusPixelHits", "muUpperPlusPixelHits",  10, -0.5, 9.5);
   TH1F *h_muLowerMinusPixelHits = new TH1F("muLowerMinusPixelHits","muLowerMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_muLowerPlusPixelHits  = new TH1F("muLowerPlusPixelHits", "muLowerPlusPixelHits",  10, -0.5, 9.5);
+
   TH1F *h_muMinusTrackerHits      = new TH1F("muMinusTrackerHits",     "muMinusTrackerHits",      35, -0.5, 34.5);
-  TH1F *h_muUpperMinusTrackerHits = new TH1F("muUpperMinusTrackerHits","muUpperMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_muPlusTrackerHits       = new TH1F("muPlusTrackerHits",      "muPlusTrackerHits",       35, -0.5, 34.5);
+  TH1F *h_muUpperMinusTrackerHits = new TH1F("muUpperMinusTrackerHits","muUpperMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_muUpperPlusTrackerHits  = new TH1F("muUpperPlusTrackerHits", "muUpperPlusTrackerHits",  35, -0.5, 34.5);
   TH1F *h_muLowerMinusTrackerHits = new TH1F("muLowerMinusTrackerHits","muLowerMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_muLowerPlusTrackerHits  = new TH1F("muLowerPlusTrackerHits", "muLowerPlusTrackerHits",  35, -0.5, 34.5);
+
   TH1F *h_muMinusMuonStationHits      = new TH1F("muMinusMuonStationHits",     "muMinusMuonStationHits",      10, -0.5, 9.5);
-  TH1F *h_muUpperMinusMuonStationHits = new TH1F("muUpperMinusMuonStationHits","muUpperMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_muPlusMuonStationHits       = new TH1F("muPlusMuonStationHits",      "muPlusMuonStationHits",       10, -0.5, 9.5);
+  TH1F *h_muUpperMinusMuonStationHits = new TH1F("muUpperMinusMuonStationHits","muUpperMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_muUpperPlusMuonStationHits  = new TH1F("muUpperPlusMuonStationHits", "muUpperPlusMuonStationHits",  10, -0.5, 9.5);
   TH1F *h_muLowerMinusMuonStationHits = new TH1F("muLowerMinusMuonStationHits","muLowerMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_muLowerPlusMuonStationHits  = new TH1F("muLowerPlusMuonStationHits", "muLowerPlusMuonStationHits",  10, -0.5, 9.5);
+
   TH1F *h_muMinusValidHits      = new TH1F("muMinusValidHits",     "muMinusValidHits",      100,-0.5, 99.5);
-  TH1F *h_muUpperMinusValidHits = new TH1F("muUpperMinusValidHits","muUpperMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_muPlusValidHits       = new TH1F("muPlusValidHits",      "muPlusValidHits",       100,-0.5, 99.5);
+  TH1F *h_muUpperMinusValidHits = new TH1F("muUpperMinusValidHits","muUpperMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_muUpperPlusValidHits  = new TH1F("muUpperPlusValidHits", "muUpperPlusValidHits",  100,-0.5, 99.5);
   TH1F *h_muLowerMinusValidHits = new TH1F("muLowerMinusValidHits","muLowerMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_muLowerPlusValidHits  = new TH1F("muLowerPlusValidHits", "muLowerPlusValidHits",  100,-0.5, 99.5);
+
   TH1F *h_muMinusValidMuonHits      = new TH1F("muMinusValidMuonHits",     "muMinusValidMuonHits",      75, -0.5, 74.5);
-  TH1F *h_muUpperMinusValidMuonHits = new TH1F("muUpperMinusValidMuonHits","muUpperMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_muPlusValidMuonHits       = new TH1F("muPlusValidMuonHits",      "muPlusValidMuonHits",       75, -0.5, 74.5);
+  TH1F *h_muUpperMinusValidMuonHits = new TH1F("muUpperMinusValidMuonHits","muUpperMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_muUpperPlusValidMuonHits  = new TH1F("muUpperPlusValidMuonHits", "muUpperPlusValidMuonHits",  75, -0.5, 74.5);
   TH1F *h_muLowerMinusValidMuonHits = new TH1F("muLowerMinusValidMuonHits","muLowerMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_muLowerPlusValidMuonHits  = new TH1F("muLowerPlusValidMuonHits", "muLowerPlusValidMuonHits",  75, -0.5, 74.5);
+
   TH1F *h_muMinusMatchedMuonStations      = new TH1F("muMinusMatchedMuonStations",     "muMinusMatchedMuonStations",      10, -0.5, 9.5);
-  TH1F *h_muUpperMinusMatchedMuonStations = new TH1F("muUpperMinusMatchedMuonStations","muUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_muPlusMatchedMuonStations       = new TH1F("muPlusMatchedMuonStations",      "muPlusMatchedMuonStations",       10, -0.5, 9.5);
+  TH1F *h_muUpperMinusMatchedMuonStations = new TH1F("muUpperMinusMatchedMuonStations","muUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_muUpperPlusMatchedMuonStations  = new TH1F("muUpperPlusMatchedMuonStations", "muUpperPlusMatchedMuonStations",  10, -0.5, 9.5);
   TH1F *h_muLowerMinusMatchedMuonStations = new TH1F("muLowerMinusMatchedMuonStations","muLowerMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_muLowerPlusMatchedMuonStations  = new TH1F("muLowerPlusMatchedMuonStations", "muLowerPlusMatchedMuonStations",  10, -0.5, 9.5);
+
   TH1F *h_muMinusTrackerLayersWithMeasurement      = new TH1F("muMinusTrackerLayersWithMeasurement",     "muMinusTrackerLayersWithMeasurement",      20, -0.5, 19.5);
-  TH1F *h_muUpperMinusTrackerLayersWithMeasurement = new TH1F("muUpperMinusTrackerLayersWithMeasurement","muUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_muPlusTrackerLayersWithMeasurement       = new TH1F("muPlusTrackerLayersWithMeasurement",      "muPlusTrackerLayersWithMeasurement",       20, -0.5, 19.5);
+  TH1F *h_muUpperMinusTrackerLayersWithMeasurement = new TH1F("muUpperMinusTrackerLayersWithMeasurement","muUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_muUpperPlusTrackerLayersWithMeasurement  = new TH1F("muUpperPlusTrackerLayersWithMeasurement", "muUpperPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
   TH1F *h_muLowerMinusTrackerLayersWithMeasurement = new TH1F("muLowerMinusTrackerLayersWithMeasurement","muLowerMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_muLowerPlusTrackerLayersWithMeasurement  = new TH1F("muLowerPlusTrackerLayersWithMeasurement", "muLowerPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
 
   TH1F *h_muMinusCurvePlusBias[      nBiasBins];
   TH1F *h_muMinusCurveMinusBias[     nBiasBins];
-  TH1F *h_muUpperMinusCurvePlusBias[ nBiasBins];
-  TH1F *h_muUpperMinusCurveMinusBias[nBiasBins];
-  TH1F *h_muLowerMinusCurvePlusBias[ nBiasBins];
-  TH1F *h_muLowerMinusCurveMinusBias[nBiasBins];
   TH1F *h_muPlusCurvePlusBias[       nBiasBins];
   TH1F *h_muPlusCurveMinusBias[      nBiasBins];
+  TH1F *h_muUpperMinusCurvePlusBias[ nBiasBins];
+  TH1F *h_muUpperMinusCurveMinusBias[nBiasBins];
   TH1F *h_muUpperPlusCurvePlusBias[  nBiasBins];
   TH1F *h_muUpperPlusCurveMinusBias[ nBiasBins];
+  TH1F *h_muLowerMinusCurvePlusBias[ nBiasBins];
+  TH1F *h_muLowerMinusCurveMinusBias[nBiasBins];
   TH1F *h_muLowerPlusCurvePlusBias[  nBiasBins];
   TH1F *h_muLowerPlusCurveMinusBias[ nBiasBins];
 
@@ -510,29 +529,29 @@ void Plot(std::string const& filelist, std::string const& outFile,
     h_muMinusCurveMinusBias[i]      = new TH1F(TString("muMinusCurveMinusBias"      + name.str()),
 					       TString("muMinusCurveMinusBias"      + mtitle.str()),
 					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
-    h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias"  + name.str()),
-					       TString("muUpperMinusCurvePlusBias"  + ptitle.str()),
-					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),
-					       TString("muUpperMinusCurveMinusBias" + mtitle.str()),
-					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
-    h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias"  + name.str()),
-					       TString("muLowerMinusCurvePlusBias"  + ptitle.str()),
-					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),
-					       TString("muLowerMinusCurveMinusBias" + mtitle.str()),
-					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muPlusCurvePlusBias[i]        = new TH1F(TString("muPlusCurvePlusBias"        + name.str()),
 					       TString("muPlusCurvePlusBias"        + ptitle.str()),
 					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muPlusCurveMinusBias[i]       = new TH1F(TString("muPlusCurveMinusBias"       + name.str()),
 					       TString("muPlusCurveMinusBias"       + mtitle.str()),
 					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
+    h_muUpperMinusCurvePlusBias[i]  = new TH1F(TString("muUpperMinusCurvePlusBias"  + name.str()),
+					       TString("muUpperMinusCurvePlusBias"  + ptitle.str()),
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+    h_muUpperMinusCurveMinusBias[i] = new TH1F(TString("muUpperMinusCurveMinusBias" + name.str()),
+					       TString("muUpperMinusCurveMinusBias" + mtitle.str()),
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muUpperPlusCurvePlusBias[i]   = new TH1F(TString("muUpperPlusCurvePlusBias"   + name.str()),
 					       TString("muUpperPlusCurvePlusBias"   + ptitle.str()),
 					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_muUpperPlusCurveMinusBias[i]  = new TH1F(TString("muUpperPlusCurveMinusBias"  + name.str()),
 					       TString("muUpperPlusCurveMinusBias"  + mtitle.str()),
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
+    h_muLowerMinusCurvePlusBias[i]  = new TH1F(TString("muLowerMinusCurvePlusBias"  + name.str()),
+					       TString("muLowerMinusCurvePlusBias"  + ptitle.str()),
+					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+    h_muLowerMinusCurveMinusBias[i] = new TH1F(TString("muLowerMinusCurveMinusBias" + name.str()),
+					       TString("muLowerMinusCurveMinusBias" + mtitle.str()),
 					       symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_muLowerPlusCurvePlusBias[i]   = new TH1F(TString("muLowerPlusCurvePlusBias"   + name.str()),
 					       TString("muLowerPlusCurvePlusBias"   + ptitle.str()),
@@ -544,47 +563,52 @@ void Plot(std::string const& filelist, std::string const& outFile,
 
   // histograms for loose cuts (not applying the Dxy/Dz cuts)
   TH1F *h_looseMuMinusPt      = new TH1F("looseMuMinusPt",     "looseMuMinusPt",      300, 0., 3000.);
-  TH1F *h_looseMuUpperMinusPt = new TH1F("looseMuUpperMinusPt","looseMuUpperMinusPt", 300, 0., 3000.);
   TH1F *h_looseMuPlusPt       = new TH1F("looseMuPlusPt",      "looseMuPlusPt",       300, 0., 3000.);
+  TH1F *h_looseMuUpperMinusPt = new TH1F("looseMuUpperMinusPt","looseMuUpperMinusPt", 300, 0., 3000.);
   TH1F *h_looseMuUpperPlusPt  = new TH1F("looseMuUpperPlusPt", "looseMuUpperPlusPt",  300, 0., 3000.);
   TH1F *h_looseMuLowerMinusPt = new TH1F("looseMuLowerMinusPt","looseMuLowerMinusPt", 300, 0., 3000.);
   TH1F *h_looseMuLowerPlusPt  = new TH1F("looseMuLowerPlusPt", "looseMuLowerPlusPt",  300, 0., 3000.);
+
   TH1F *h_looseMuMinusEta      = new TH1F("looseMuMinusEta",     "looseMuMinusEta",      40, -2., 2.);
-  TH1F *h_looseMuUpperMinusEta = new TH1F("looseMuUpperMinusEta","looseMuUpperMinusEta", 40, -2., 2.);
   TH1F *h_looseMuPlusEta       = new TH1F("looseMuPlusEta",      "looseMuPlusEta",       40, -2., 2.);
+  TH1F *h_looseMuUpperMinusEta = new TH1F("looseMuUpperMinusEta","looseMuUpperMinusEta", 40, -2., 2.);
   TH1F *h_looseMuUpperPlusEta  = new TH1F("looseMuUpperPlusEta", "looseMuUpperPlusEta",  40, -2., 2.);
   TH1F *h_looseMuLowerMinusEta = new TH1F("looseMuLowerMinusEta","looseMuLowerMinusEta", 40, -2., 2.);
   TH1F *h_looseMuLowerPlusEta  = new TH1F("looseMuLowerPlusEta", "looseMuLowerPlusEta",  40, -2., 2.);
+
   TH1F *h_looseMuMinusPhi      = new TH1F("looseMuMinusPhi",     "looseMuMinusPhi",      40, -4., 4.);
-  TH1F *h_looseMuUpperMinusPhi = new TH1F("looseMuUpperMinusPhi","looseMuUpperMinusPhi", 40, -4., 4.);
   TH1F *h_looseMuPlusPhi       = new TH1F("looseMuPlusPhi",      "looseMuPlusPhi",       40, -4., 4.);
+  TH1F *h_looseMuUpperMinusPhi = new TH1F("looseMuUpperMinusPhi","looseMuUpperMinusPhi", 40, -4., 4.);
   TH1F *h_looseMuUpperPlusPhi  = new TH1F("looseMuUpperPlusPhi", "looseMuUpperPlusPhi",  40, -4., 4.);
   TH1F *h_looseMuLowerMinusPhi = new TH1F("looseMuLowerMinusPhi","looseMuLowerMinusPhi", 40, -4., 4.);
   TH1F *h_looseMuLowerPlusPhi  = new TH1F("looseMuLowerPlusPhi", "looseMuLowerPlusPhi",  40, -4., 4.);
 
   TH1F *h_looseMuMinusChi2      = new TH1F("looseMuMinusChi2",     "looseMuMinusChi2",      50, 0., 150.);
-  TH1F *h_looseMuUpperMinusChi2 = new TH1F("looseMuUpperMinusChi2","looseMuUpperMinusChi2", 50, 0., 150.);
   TH1F *h_looseMuPlusChi2       = new TH1F("looseMuPlusChi2",      "looseMuPlusChi2",       50, 0., 150.);
+  TH1F *h_looseMuUpperMinusChi2 = new TH1F("looseMuUpperMinusChi2","looseMuUpperMinusChi2", 50, 0., 150.);
   TH1F *h_looseMuUpperPlusChi2  = new TH1F("looseMuUpperPlusChi2", "looseMuUpperPlusChi2",  50, 0., 150.);
   TH1F *h_looseMuLowerMinusChi2 = new TH1F("looseMuLowerMinusChi2","looseMuLowerMinusChi2", 50, 0., 150.);
   TH1F *h_looseMuLowerPlusChi2  = new TH1F("looseMuLowerPlusChi2", "looseMuLowerPlusChi2",  50, 0., 150.);
+
   TH1F *h_looseMuMinusNdof      = new TH1F("looseMuMinusNdof",     "looseMuMinusNdof",      100, -0.5, 99.5);
-  TH1F *h_looseMuUpperMinusNdof = new TH1F("looseMuUpperMinusNdof","looseMuUpperMinusNdof", 100, -0.5, 99.5);
   TH1F *h_looseMuPlusNdof       = new TH1F("looseMuPlusNdof",      "looseMuPlusNdof",       100, -0.5, 99.5);
+  TH1F *h_looseMuUpperMinusNdof = new TH1F("looseMuUpperMinusNdof","looseMuUpperMinusNdof", 100, -0.5, 99.5);
   TH1F *h_looseMuUpperPlusNdof  = new TH1F("looseMuUpperPlusNdof", "looseMuUpperPlusNdof",  100, -0.5, 99.5);
   TH1F *h_looseMuLowerMinusNdof = new TH1F("looseMuLowerMinusNdof","looseMuLowerMinusNdof", 100, -0.5, 99.5);
   TH1F *h_looseMuLowerPlusNdof  = new TH1F("looseMuLowerPlusNdof", "looseMuLowerPlusNdof",  100, -0.5, 99.5);
+
   TH1F *h_looseMuMinusCharge      = new TH1F("looseMuMinusCharge",     "looseMuMinusCharge",      3, -1.5, 1.5);
-  TH1F *h_looseMuUpperMinusCharge = new TH1F("looseMuUpperMinusCharge","looseMuUpperMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuPlusCharge       = new TH1F("looseMuPlusCharge",      "looseMuPlusCharge",       3, -1.5, 1.5);
+  TH1F *h_looseMuUpperMinusCharge = new TH1F("looseMuUpperMinusCharge","looseMuUpperMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuUpperPlusCharge  = new TH1F("looseMuUpperPlusCharge", "looseMuUpperPlusCharge",  3, -1.5, 1.5);
   TH1F *h_looseMuLowerMinusCharge = new TH1F("looseMuLowerMinusCharge","looseMuLowerMinusCharge", 3, -1.5, 1.5);
   TH1F *h_looseMuLowerPlusCharge  = new TH1F("looseMuLowerPlusCharge", "looseMuLowerPlusCharge",  3, -1.5, 1.5);
+
   TH1F *h_looseMuMinusCurve      = new TH1F("looseMuMinusCurve",     "looseMuMinusCurve",
 					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-  TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve",
-					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuPlusCurve       = new TH1F("looseMuPlusCurve",      "looseMuPlusCurve",
+					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+  TH1F *h_looseMuUpperMinusCurve = new TH1F("looseMuUpperMinusCurve","looseMuUpperMinusCurve",
 					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuUpperPlusCurve  = new TH1F("looseMuUpperPlusCurve", "looseMuUpperPlusCurve",
 					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
@@ -592,115 +616,129 @@ void Plot(std::string const& filelist, std::string const& outFile,
 					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
   TH1F *h_looseMuLowerPlusCurve  = new TH1F("looseMuLowerPlusCurve", "looseMuLowerPlusCurve",
 					    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+
   TH1F *h_looseMuMinusDxy      = new TH1F("looseMuMinusDxy",     "looseMuMinusDxy",      100, -100., 100.);
-  TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuPlusDxy       = new TH1F("looseMuPlusDxy",      "looseMuPlusDxy",       100, -100., 100.);
+  TH1F *h_looseMuUpperMinusDxy = new TH1F("looseMuUpperMinusDxy","looseMuUpperMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuUpperPlusDxy  = new TH1F("looseMuUpperPlusDxy", "looseMuUpperPlusDxy",  100, -100., 100.);
   TH1F *h_looseMuLowerMinusDxy = new TH1F("looseMuLowerMinusDxy","looseMuLowerMinusDxy", 100, -100., 100.);
   TH1F *h_looseMuLowerPlusDxy  = new TH1F("looseMuLowerPlusDxy", "looseMuLowerPlusDxy",  100, -100., 100.);
+
   TH1F *h_looseMuMinusDz       = new TH1F("looseMuMinusDz",     "looseMuMinusDz",        100, -250., 250.);
-  TH1F *h_looseMuUpperMinusDz  = new TH1F("looseMuUpperMinusDz","looseMuUpperMinusDz",   100, -250., 250.);
   TH1F *h_looseMuPlusDz        = new TH1F("looseMuPlusDz",      "looseMuPlusDz",         100, -250., 250.);
+  TH1F *h_looseMuUpperMinusDz  = new TH1F("looseMuUpperMinusDz","looseMuUpperMinusDz",   100, -250., 250.);
   TH1F *h_looseMuUpperPlusDz   = new TH1F("looseMuUpperPlusDz", "looseMuUpperPlusDz",    100, -250., 250.);
   TH1F *h_looseMuLowerMinusDz  = new TH1F("looseMuLowerMinusDz","looseMuLowerMinusDz",   100, -250., 250.);
   TH1F *h_looseMuLowerPlusDz   = new TH1F("looseMuLowerPlusDz", "looseMuLowerPlusDz",    100, -250., 250.);
+
   TH1F *h_looseMuMinusDxyError      = new TH1F("looseMuMinusDxyError",     "looseMuMinusDxyError",      50, 0., 150.);
-  TH1F *h_looseMuUpperMinusDxyError = new TH1F("looseMuUpperMinusDxyError","looseMuUpperMinusDxyError", 50, 0., 150.);
   TH1F *h_looseMuPlusDxyError       = new TH1F("looseMuPlusDxyError",      "looseMuPlusDxyError",       50, 0., 150.);
+  TH1F *h_looseMuUpperMinusDxyError = new TH1F("looseMuUpperMinusDxyError","looseMuUpperMinusDxyError", 50, 0., 150.);
   TH1F *h_looseMuUpperPlusDxyError  = new TH1F("looseMuUpperPlusDxyError", "looseMuUpperPlusDxyError",  50, 0., 150.);
   TH1F *h_looseMuLowerMinusDxyError = new TH1F("looseMuLowerMinusDxyError","looseMuLowerMinusDxyError", 50, 0., 150.);
   TH1F *h_looseMuLowerPlusDxyError  = new TH1F("looseMuLowerPlusDxyError", "looseMuLowerPlusDxyError",  50, 0., 150.);
+
   TH1F *h_looseMuMinusDzError      = new TH1F("looseMuMinusDzError",     "looseMuMinusDzError",      50, 0., 150.);
-  TH1F *h_looseMuUpperMinusDzError = new TH1F("looseMuUpperMinusDzError","looseMuUpperMinusDzError", 50, 0., 150.);
   TH1F *h_looseMuPlusDzError       = new TH1F("looseMuPlusDzError",      "looseMuPlusDzError",       50, 0., 150.);
+  TH1F *h_looseMuUpperMinusDzError = new TH1F("looseMuUpperMinusDzError","looseMuUpperMinusDzError", 50, 0., 150.);
   TH1F *h_looseMuUpperPlusDzError  = new TH1F("looseMuUpperPlusDzError", "looseMuUpperPlusDzError",  50, 0., 150.);
   TH1F *h_looseMuLowerMinusDzError = new TH1F("looseMuLowerMinusDzError","looseMuLowerMinusDzError", 50, 0., 150.);
   TH1F *h_looseMuLowerPlusDzError  = new TH1F("looseMuLowerPlusDzError", "looseMuLowerPlusDzError",  50, 0., 150.);
 
   TH1F *h_looseMuMinusTrackPt      = new TH1F("looseMuMinusTrackPt",     "looseMuMinusTrackPt",      300, 0., 3000.);
-  TH1F *h_looseMuUpperMinusTrackPt = new TH1F("looseMuUpperMinusTrackPt","looseMuUpperMinusTrackPt", 300, 0., 3000.);
   TH1F *h_looseMuPlusTrackPt       = new TH1F("looseMuPlusTrackPt",      "looseMuPlusTrackPt",       300, 0., 3000.);
+  TH1F *h_looseMuUpperMinusTrackPt = new TH1F("looseMuUpperMinusTrackPt","looseMuUpperMinusTrackPt", 300, 0., 3000.);
   TH1F *h_looseMuUpperPlusTrackPt  = new TH1F("looseMuUpperPlusTrackPt", "looseMuUpperPlusTrackPt",  300, 0., 3000.);
   TH1F *h_looseMuLowerMinusTrackPt = new TH1F("looseMuLowerMinusTrackPt","looseMuLowerMinusTrackPt", 300, 0., 3000.);
   TH1F *h_looseMuLowerPlusTrackPt  = new TH1F("looseMuLowerPlusTrackPt", "looseMuLowerPlusTrackPt",  300, 0., 3000.);
+
   TH1F *h_looseMuMinusTrackEta      = new TH1F("looseMuMinusTrackEta",   "looseMuMinusTrackEta",        40, -2., 2.);
-  TH1F *h_looseMuUpperMinusTrackEta = new TH1F("looseMuUpperMinusTrackEta","looseMuUpperMinusTrackEta", 40, -2., 2.);
   TH1F *h_looseMuPlusTrackEta       = new TH1F("looseMuPlusTrackEta",      "looseMuPlusTrackEta",       40, -2., 2.);
+  TH1F *h_looseMuUpperMinusTrackEta = new TH1F("looseMuUpperMinusTrackEta","looseMuUpperMinusTrackEta", 40, -2., 2.);
   TH1F *h_looseMuUpperPlusTrackEta  = new TH1F("looseMuUpperPlusTrackEta", "looseMuUpperPlusTrackEta",  40, -2., 2.);
   TH1F *h_looseMuLowerMinusTrackEta = new TH1F("looseMuLowerMinusTrackEta","looseMuLowerMinusTrackEta", 40, -2., 2.);
   TH1F *h_looseMuLowerPlusTrackEta  = new TH1F("looseMuLowerPlusTrackEta", "looseMuLowerPlusTrackEta",  40, -2., 2.);
+
   TH1F *h_looseMuMinusTrackPhi      = new TH1F("looseMuMinusTrackPhi",     "looseMuMinusTrackPhi",      40, -4., 4.);
-  TH1F *h_looseMuUpperMinusTrackPhi = new TH1F("looseMuUpperMinusTrackPhi","looseMuUpperMinusTrackPhi", 40, -4., 4.);
   TH1F *h_looseMuPlusTrackPhi       = new TH1F("looseMuPlusTrackPhi",      "looseMuPlusTrackPhi",       40, -4., 4.);
+  TH1F *h_looseMuUpperMinusTrackPhi = new TH1F("looseMuUpperMinusTrackPhi","looseMuUpperMinusTrackPhi", 40, -4., 4.);
   TH1F *h_looseMuUpperPlusTrackPhi  = new TH1F("looseMuUpperPlusTrackPhi", "looseMuUpperPlusTrackPhi",  40, -4., 4.);
   TH1F *h_looseMuLowerMinusTrackPhi = new TH1F("looseMuLowerMinusTrackPhi","looseMuLowerMinusTrackPhi", 40, -4., 4.);
   TH1F *h_looseMuLowerPlusTrackPhi  = new TH1F("looseMuLowerPlusTrackPhi", "looseMuLowerPlusTrackPhi",  40, -4., 4.);
+
   TH1F *h_looseMuMinusPtError      = new TH1F("looseMuMinusPtError",     "looseMuMinusPtError",      100, 0., 600.);
-  TH1F *h_looseMuUpperMinusPtError = new TH1F("looseMuUpperMinusPtError","looseMuUpperMinusPtError", 100, 0., 600.);
   TH1F *h_looseMuPlusPtError       = new TH1F("looseMuPlusPtError",      "looseMuPlusPtError",       100, 0., 600.);
+  TH1F *h_looseMuUpperMinusPtError = new TH1F("looseMuUpperMinusPtError","looseMuUpperMinusPtError", 100, 0., 600.);
   TH1F *h_looseMuUpperPlusPtError  = new TH1F("looseMuUpperPlusPtError", "looseMuUpperPlusPtError",  100, 0., 600.);
   TH1F *h_looseMuLowerMinusPtError = new TH1F("looseMuLowerMinusPtError","looseMuLowerMinusPtError", 100, 0., 600.);
   TH1F *h_looseMuLowerPlusPtError  = new TH1F("looseMuLowerPlusPtError", "looseMuLowerPlusPtError",  100, 0., 600.);
+
   TH1F *h_looseMuMinusPtRelErr      = new TH1F("looseMuMinusPtRelErr",     "looseMuMinusPtRelErr",      100, 0., 1.);
-  TH1F *h_looseMuUpperMinusPtRelErr = new TH1F("looseMuUpperMinusPtRelErr","looseMuUpperMinusPtRelErr", 100, 0., 1.);
   TH1F *h_looseMuPlusPtRelErr       = new TH1F("looseMuPlusPtRelErr",      "looseMuPlusPtRelErr",       100, 0., 1.);
+  TH1F *h_looseMuUpperMinusPtRelErr = new TH1F("looseMuUpperMinusPtRelErr","looseMuUpperMinusPtRelErr", 100, 0., 1.);
   TH1F *h_looseMuUpperPlusPtRelErr  = new TH1F("looseMuUpperPlusPtRelErr", "looseMuUpperPlusPtRelErr",  100, 0., 1.);
   TH1F *h_looseMuLowerMinusPtRelErr = new TH1F("looseMuLowerMinusPtRelErr","looseMuLowerMinusPtRelErr", 100, 0., 1.);
   TH1F *h_looseMuLowerPlusPtRelErr  = new TH1F("looseMuLowerPlusPtRelErr","looseMuLowerPlusPtRelErr",   100, 0., 1.);
 
   TH1F *h_looseMuMinusPixelHits      = new TH1F("looseMuMinusPixelHits",     "looseMuMinusPixelHits",      10, -0.5, 9.5);
-  TH1F *h_looseMuUpperMinusPixelHits = new TH1F("looseMuUpperMinusPixelHits","looseMuUpperMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_looseMuPlusPixelHits       = new TH1F("looseMuPlusPixelHits",      "looseMuPlusPixelHits",       10, -0.5, 9.5);
+  TH1F *h_looseMuUpperMinusPixelHits = new TH1F("looseMuUpperMinusPixelHits","looseMuUpperMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_looseMuUpperPlusPixelHits  = new TH1F("looseMuUpperPlusPixelHits", "looseMuUpperPlusPixelHits",  10, -0.5, 9.5);
   TH1F *h_looseMuLowerMinusPixelHits = new TH1F("looseMuLowerMinusPixelHits","looseMuLowerMinusPixelHits", 10, -0.5, 9.5);
   TH1F *h_looseMuLowerPlusPixelHits  = new TH1F("looseMuLowerPlusPixelHits", "looseMuLowerPlusPixelHits",  10, -0.5, 9.5);
+
   TH1F *h_looseMuMinusTrackerHits      = new TH1F("looseMuMinusTrackerHits",     "looseMuMinusTrackerHits",      35, -0.5, 34.5);
-  TH1F *h_looseMuUpperMinusTrackerHits = new TH1F("looseMuUpperMinusTrackerHits","looseMuUpperMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_looseMuPlusTrackerHits       = new TH1F("looseMuPlusTrackerHits",      "looseMuPlusTrackerHits",       35, -0.5, 34.5);
+  TH1F *h_looseMuUpperMinusTrackerHits = new TH1F("looseMuUpperMinusTrackerHits","looseMuUpperMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_looseMuUpperPlusTrackerHits  = new TH1F("looseMuUpperPlusTrackerHits", "looseMuUpperPlusTrackerHits",  35, -0.5, 34.5);
   TH1F *h_looseMuLowerMinusTrackerHits = new TH1F("looseMuLowerMinusTrackerHits","looseMuLowerMinusTrackerHits", 35, -0.5, 34.5);
   TH1F *h_looseMuLowerPlusTrackerHits  = new TH1F("looseMuLowerPlusTrackerHits", "looseMuLowerPlusTrackerHits",  35, -0.5, 34.5);
+
   TH1F *h_looseMuMinusMuonStationHits      = new TH1F("looseMuMinusMuonStationHits",     "looseMuMinusMuonStationHits",      10, -0.5, 9.5);
-  TH1F *h_looseMuUpperMinusMuonStationHits = new TH1F("looseMuUpperMinusMuonStationHits","looseMuUpperMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_looseMuPlusMuonStationHits       = new TH1F("looseMuPlusMuonStationHits",      "looseMuPlusMuonStationHits",       10, -0.5, 9.5);
+  TH1F *h_looseMuUpperMinusMuonStationHits = new TH1F("looseMuUpperMinusMuonStationHits","looseMuUpperMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_looseMuUpperPlusMuonStationHits  = new TH1F("looseMuUpperPlusMuonStationHits", "looseMuUpperPlusMuonStationHits",  10, -0.5, 9.5);
   TH1F *h_looseMuLowerMinusMuonStationHits = new TH1F("looseMuLowerMinusMuonStationHits","looseMuLowerMinusMuonStationHits", 10, -0.5, 9.5);
   TH1F *h_looseMuLowerPlusMuonStationHits  = new TH1F("looseMuLowerPlusMuonStationHits", "looseMuLowerPlusMuonStationHits",  10, -0.5, 9.5);
+
   TH1F *h_looseMuMinusValidHits      = new TH1F("looseMuMinusValidHits",     "looseMuMinusValidHits",      100,-0.5, 99.5);
-  TH1F *h_looseMuUpperMinusValidHits = new TH1F("looseMuUpperMinusValidHits","looseMuUpperMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_looseMuPlusValidHits       = new TH1F("looseMuPlusValidHits",      "looseMuPlusValidHits",       100,-0.5, 99.5);
+  TH1F *h_looseMuUpperMinusValidHits = new TH1F("looseMuUpperMinusValidHits","looseMuUpperMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_looseMuUpperPlusValidHits  = new TH1F("looseMuUpperPlusValidHits", "looseMuUpperPlusValidHits",  100,-0.5, 99.5);
   TH1F *h_looseMuLowerMinusValidHits = new TH1F("looseMuLowerMinusValidHits","looseMuLowerMinusValidHits", 100,-0.5, 99.5);
   TH1F *h_looseMuLowerPlusValidHits  = new TH1F("looseMuLowerPlusValidHits", "looseMuLowerPlusValidHits",  100,-0.5, 99.5);
+
   TH1F *h_looseMuMinusValidMuonHits      = new TH1F("looseMuMinusValidMuonHits",     "looseMuMinusValidMuonHits",      75, -0.5, 74.5);
-  TH1F *h_looseMuUpperMinusValidMuonHits = new TH1F("looseMuUpperMinusValidMuonHits","looseMuUpperMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_looseMuPlusValidMuonHits       = new TH1F("looseMuPlusValidMuonHits",      "looseMuPlusValidMuonHits",       75, -0.5, 74.5);
+  TH1F *h_looseMuUpperMinusValidMuonHits = new TH1F("looseMuUpperMinusValidMuonHits","looseMuUpperMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_looseMuUpperPlusValidMuonHits  = new TH1F("looseMuUpperPlusValidMuonHits", "looseMuUpperPlusValidMuonHits",  75, -0.5, 74.5);
   TH1F *h_looseMuLowerMinusValidMuonHits = new TH1F("looseMuLowerMinusValidMuonHits","looseMuLowerMinusValidMuonHits", 75, -0.5, 74.5);
   TH1F *h_looseMuLowerPlusValidMuonHits  = new TH1F("looseMuLowerPlusValidMuonHits", "looseMuLowerPlusValidMuonHits",  75, -0.5, 74.5);
+
   TH1F *h_looseMuMinusMatchedMuonStations      = new TH1F("looseMuMinusMatchedMuonStations",     "looseMuMinusMatchedMuonStations",      10, -0.5, 9.5);
-  TH1F *h_looseMuUpperMinusMatchedMuonStations = new TH1F("looseMuUpperMinusMatchedMuonStations","looseMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_looseMuPlusMatchedMuonStations       = new TH1F("looseMuPlusMatchedMuonStations",      "looseMuPlusMatchedMuonStations",       10, -0.5, 9.5);
+  TH1F *h_looseMuUpperMinusMatchedMuonStations = new TH1F("looseMuUpperMinusMatchedMuonStations","looseMuUpperMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_looseMuUpperPlusMatchedMuonStations  = new TH1F("looseMuUpperPlusMatchedMuonStations", "looseMuUpperPlusMatchedMuonStations",  10, -0.5, 9.5);
   TH1F *h_looseMuLowerMinusMatchedMuonStations = new TH1F("looseMuLowerMinusMatchedMuonStations","looseMuLowerMinusMatchedMuonStations", 10, -0.5, 9.5);
   TH1F *h_looseMuLowerPlusMatchedMuonStations  = new TH1F("looseMuLowerPlusMatchedMuonStations", "looseMuLowerPlusMatchedMuonStations",  10, -0.5, 9.5);
+
   TH1F *h_looseMuMinusTrackerLayersWithMeasurement      = new TH1F("looseMuMinusTrackerLayersWithMeasurement",     "looseMuMinusTrackerLayersWithMeasurement",      20, -0.5, 19.5);
-  TH1F *h_looseMuUpperMinusTrackerLayersWithMeasurement = new TH1F("looseMuUpperMinusTrackerLayersWithMeasurement","looseMuUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_looseMuPlusTrackerLayersWithMeasurement       = new TH1F("looseMuPlusTrackerLayersWithMeasurement",      "looseMuPlusTrackerLayersWithMeasurement",       20, -0.5, 19.5);
+  TH1F *h_looseMuUpperMinusTrackerLayersWithMeasurement = new TH1F("looseMuUpperMinusTrackerLayersWithMeasurement","looseMuUpperMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_looseMuUpperPlusTrackerLayersWithMeasurement  = new TH1F("looseMuUpperPlusTrackerLayersWithMeasurement", "looseMuUpperPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
   TH1F *h_looseMuLowerMinusTrackerLayersWithMeasurement = new TH1F("looseMuLowerMinusTrackerLayersWithMeasurement","looseMuLowerMinusTrackerLayersWithMeasurement", 20, -0.5, 19.5);
   TH1F *h_looseMuLowerPlusTrackerLayersWithMeasurement  = new TH1F("looseMuLowerPlusTrackerLayersWithMeasurement", "looseMuLowerPlusTrackerLayersWithMeasurement",  20, -0.5, 19.5);
 
   TH1F *h_looseMuMinusCurvePlusBias[      nBiasBins];
   TH1F *h_looseMuMinusCurveMinusBias[     nBiasBins];
-  TH1F *h_looseMuUpperMinusCurvePlusBias[ nBiasBins];
-  TH1F *h_looseMuUpperMinusCurveMinusBias[nBiasBins];
-  TH1F *h_looseMuLowerMinusCurvePlusBias[ nBiasBins];
-  TH1F *h_looseMuLowerMinusCurveMinusBias[nBiasBins];
   TH1F *h_looseMuPlusCurvePlusBias[       nBiasBins];
   TH1F *h_looseMuPlusCurveMinusBias[      nBiasBins];
+  TH1F *h_looseMuUpperMinusCurvePlusBias[ nBiasBins];
+  TH1F *h_looseMuUpperMinusCurveMinusBias[nBiasBins];
   TH1F *h_looseMuUpperPlusCurvePlusBias[  nBiasBins];
   TH1F *h_looseMuUpperPlusCurveMinusBias[ nBiasBins];
+  TH1F *h_looseMuLowerMinusCurvePlusBias[ nBiasBins];
+  TH1F *h_looseMuLowerMinusCurveMinusBias[nBiasBins];
   TH1F *h_looseMuLowerPlusCurvePlusBias[  nBiasBins];
   TH1F *h_looseMuLowerPlusCurveMinusBias[ nBiasBins];
 
@@ -717,29 +755,29 @@ void Plot(std::string const& filelist, std::string const& outFile,
     h_looseMuMinusCurveMinusBias[i]      = new TH1F(TString("looseMuMinusCurveMinusBias"      + name.str()),
 						    TString("looseMuMinusCurveMinusBias"      + mtitle.str()),
 						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
-    h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
-						    TString("looseMuUpperMinusCurvePlusBias"  + ptitle.str()),
-						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),
-						    TString("looseMuUpperMinusCurveMinusBias" + mtitle.str()),
-						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
-    h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
-						    TString("looseMuLowerMinusCurvePlusBias"  + ptitle.str()),
-						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
-    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),
-						    TString("looseMuLowerMinusCurveMinusBias" + mtitle.str()),
-						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuPlusCurvePlusBias[i]        = new TH1F(TString("looseMuPlusCurvePlusBias"        + name.str()),
 						    TString("looseMuPlusCurvePlusBias"        + ptitle.str()),
 						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuPlusCurveMinusBias[i]       = new TH1F(TString("looseMuPlusCurveMinusBias"       + name.str()),
 						    TString("looseMuPlusCurveMinusBias"       + mtitle.str()),
 						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
+    h_looseMuUpperMinusCurvePlusBias[i]  = new TH1F(TString("looseMuUpperMinusCurvePlusBias"  + name.str()),
+						    TString("looseMuUpperMinusCurvePlusBias"  + ptitle.str()),
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+    h_looseMuUpperMinusCurveMinusBias[i] = new TH1F(TString("looseMuUpperMinusCurveMinusBias" + name.str()),
+						    TString("looseMuUpperMinusCurveMinusBias" + mtitle.str()),
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuUpperPlusCurvePlusBias[i]   = new TH1F(TString("looseMuUpperPlusCurvePlusBias"   + name.str()),
 						    TString("looseMuUpperPlusCurvePlusBias"   + ptitle.str()),
 						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
     h_looseMuUpperPlusCurveMinusBias[i]  = new TH1F(TString("looseMuUpperPlusCurveMinusBias"  + name.str()),
 						    TString("looseMuUpperPlusCurveMinusBias"  + mtitle.str()),
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
+    h_looseMuLowerMinusCurvePlusBias[i]  = new TH1F(TString("looseMuLowerMinusCurvePlusBias"  + name.str()),
+						    TString("looseMuLowerMinusCurvePlusBias"  + ptitle.str()),
+						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);
+    h_looseMuLowerMinusCurveMinusBias[i] = new TH1F(TString("looseMuLowerMinusCurveMinusBias" + name.str()),
+						    TString("looseMuLowerMinusCurveMinusBias" + mtitle.str()),
 						    symmetric_ ? 1600 : 800, symmetric_ ? -0.008*factor_ : 0., 0.008*factor_);  
     h_looseMuLowerPlusCurvePlusBias[i]   = new TH1F(TString("looseMuLowerPlusCurvePlusBias"   + name.str()),
 						    TString("looseMuLowerPlusCurvePlusBias"   + ptitle.str()),
@@ -803,7 +841,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
   
   std::cout << "Made it to Histogramming!" << std::endl;
   int j = 0;
-  double maxDR = 0.15; // what is reasonable here? Aachen did dPhi < 0.1, dTheta (eta?) < 0.05
+  //double maxDR = 0.15; // what is reasonable here? Aachen did dPhi < 0.1, dTheta (eta?) < 0.05
   while (trackReader.Next()) {
     if (debug)
       std::cout << "Made it into the first loop" << std::endl;
@@ -1395,7 +1433,7 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	double lowerRelPtErr = *lowTrackerPtError/(sqrt(lowTrackerTrack->perp2()));
 
 	// make bool's for each cut level?
-	uint32_t lowerCuts; // 1 bit per cut
+	//uint32_t lowerCuts; // 1 bit per cut
       
 	bool low_etabar   = (fabs(lowTrackerMuonP4->eta()) < 0.9) ? 1 : 0;
 	bool low_tightdxy = (*lowTrackerDxy < 0.2) ? 1 : 0;
@@ -1669,8 +1707,9 @@ void Plot(std::string const& filelist, std::string const& outFile,
 	      double negBias = lowerCpT-(i+1)*(factor_*maxBias/nBiasBins);
 	      h_muMinusCurvePlusBias[i]->Fill(     symmetric_?posBias:fabs(posBias));
 	      h_muMinusCurveMinusBias[i]->Fill(    symmetric_?negBias:fabs(negBias));
-	      h_muLowerPlusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
-	      h_muLowerPlusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
+	      // these were changed from LowerPlusCurve to LowerMinusCurve on April 11
+	      h_muLowerMinusCurvePlusBias[i]->Fill( symmetric_?posBias:fabs(posBias));
+	      h_muLowerMinusCurveMinusBias[i]->Fill(symmetric_?negBias:fabs(negBias));
 
 	      if (debug)
 		std::cout << "Made it through the lower bias loop " << i << std::endl; 
