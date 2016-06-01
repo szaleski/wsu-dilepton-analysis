@@ -32,7 +32,7 @@
 
 void plotIt(TH1F *mcHist, TH1F *dataHist, std::string const& plotName, std::string const& oDir, Double_t binWidth, Double_t reBinWidth, double stepSize, int numBin, double chi2, int ndof, double intBefore, double intAfter, double intData);
 
-void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::string const& oDir, int numBin){
+void makeThePlots(std::string const& inFile1, std::string const& oDir, int numBin){
 
   TFile *f = TFile::Open(TString("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/CosmicEndpoint/test/"+inFile1));
   if(f == 0){
@@ -43,17 +43,17 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
   std::cout << "\nSuccessfully openedd file 1!\n";
   
 
-  TFile *g = TFile::Open(TString("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/CosmicEndpoint/test/"+inFile2));
+  /*  TFile *g = TFile::Open(TString("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/CosmicEndpoint/test/"+inFile2));
   if(f == 0){
     std::cout << "Error: cannot open file2!\n";
     return;
   }
 
   std::cout << "\nSuccessfully opened file2!\n";
-
+  */
   Double_t binWidth = 0.0;
   Double_t reBinWidth = 0.0;
-  double stepSize = 0.0005;
+  double stepSize = 0.0025;
   Double_t chi2 = 0.0;
   Int_t ndof =0;
   std::stringstream ss;
@@ -61,8 +61,7 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
   ss.clear();
 
   if(numBin > 0){
-    if(numBin == 1000) ss << std::setw(4) << numBin;
-    else ss << std::setw(3) << std::setfill('0') << numBin;
+    ss << std::setw(3) << std::setfill('0') << numBin;
     
     TH1F* dataHistScaled = (TH1F*)f->Get("TunePCraftBoth");
     std::cout << "\nGot the first histo\n";
@@ -103,12 +102,12 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
     reBinWidth = dataHistRebin->GetBinWidth(3);
     std::cout << "\n\nThe reBinWidth is: " << reBinWidth << std::endl;
 
-    chi2 = chi2Hist->GetBinContent(1000+numBin);
-    ndof = ndofHist->GetBinContent(1000+numBin);
+    chi2 = chi2Hist->GetBinContent(200+numBin);
+    ndof = ndofHist->GetBinContent(200+numBin);
     
-    double intData = dataHistScaled->Integral(251, 1250);
-    double intBefore = mcHistAdded->Integral(251, 1250);
-    double intAfter = mcHistScaled->Integral(251, 1250);
+    double intData = dataHistScaled->Integral(301, 1300);
+    double intBefore = mcHistAdded->Integral(301, 1300);
+    double intAfter = mcHistScaled->Integral(301, 1300);
     
     plotIt(mcHistScaled, dataHistScaled, "Scaled", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
     plotIt(mcHistCut, dataHistCut, "PtCut", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
@@ -161,12 +160,12 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
     std::cout << "\n\nThe reBinWidth is: " << reBinWidth << std::endl;
 
     
-    chi2 = chi2Hist->GetBinContent(1000 + numBin);
-    ndof = ndofHist->GetBinContent(1000 + numBin);
+    chi2 = chi2Hist->GetBinContent(200 + numBin);
+    ndof = ndofHist->GetBinContent(200 + numBin);
 
-    double intData = dataHistScaled->Integral(251, 1250);
-    double intBefore = mcHistAdded->Integral(251, 1250);
-    double intAfter = mcHistScaled->Integral(251, 1250);
+    double intData = dataHistScaled->Integral(301, 1300);
+    double intBefore = mcHistAdded->Integral(301, 1300);
+    double intAfter = mcHistScaled->Integral(301, 1300);
     
     plotIt(mcHistScaled, dataHistScaled, "Scaled", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
     plotIt(mcHistCut, dataHistCut, "PtCut", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
@@ -177,9 +176,8 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
   
   
   else if(numBin < 0){
-    int    numBinMinus =(abs(1000 + numBin));
-    if(numBinMinus == 1000) ss << std::setw(4) << numBinMinus;
-    else ss << std::setw(3) << std::setfill('0') << numBinMinus;
+    int    numBinMinus = abs(numBin);
+    ss << std::setw(3) << std::setfill('0') << numBinMinus;
     
     TH1F* dataHistScaled = (TH1F*)f->Get("TunePCraftBoth");
     std::cout << "\nGot the first histo\n";
@@ -221,12 +219,12 @@ void makeThePlots(std::string const& inFile1, std::string const& inFile2, std::s
     std::cout << "\n\nThe reBinWidth is: " << reBinWidth << std::endl;
 
     
-    chi2 = chi2Hist->GetBinContent(1000 - numBin);
-    ndof = ndofHist->GetBinContent(1000 - numBin);
+    chi2 = chi2Hist->GetBinContent(200 - numBin);
+    ndof = ndofHist->GetBinContent(200 - numBin);
 
-    double intData = dataHistScaled->Integral(251, 1250);
-    double intBefore = mcHistAdded->Integral(251, 1250);
-    double intAfter = mcHistScaled->Integral(251, 1250);
+    double intData = dataHistScaled->Integral(301, 1300);
+    double intBefore = mcHistAdded->Integral(301, 1300);
+    double intAfter = mcHistScaled->Integral(301, 1300);
     
     plotIt(mcHistScaled, dataHistScaled, "Scaled", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
     plotIt(mcHistCut, dataHistCut, "PtCut", "ScalePlots", binWidth, reBinWidth, stepSize, numBin, chi2, ndof, intBefore, intAfter, intData);
@@ -303,7 +301,7 @@ void plotIt(TH1F *mcHist, TH1F *dataHist, std::string const& plotName, std::stri
   dataHist->SetMinimum(0.1);
   dataHist->GetXaxis()->SetTitle("#kappa[c/TeV]");
   dataHist->GetYaxis()->SetTitle(TString("N_#mu/"+rbWidth.str()+"[c/TeV]"));
-  dataHist->SetTitle(TString("#Delta#kappa = "+addedBias.str()) );
+  dataHist->SetTitle(TString("#Delta#kappa = "+addedBias.str() + " [c/TeV]") );
   dataHist->GetXaxis()->SetRangeUser(-5.0, 5.0);
   dataHist->SetStats(0);
   tmpPad->Update();
@@ -339,7 +337,7 @@ void plotIt(TH1F *mcHist, TH1F *dataHist, std::string const& plotName, std::stri
   leg->AddEntry(mcHist, TString(legendText6.str()), "lpe");
   leg->AddEntry(dataHist, TString(legendText8.str()), "lpe");
 
-  leg->SetTextSize(0.020);
+  leg->SetTextSize(0.030);
   leg->Draw();
   tmpPad->Update();
   tmpCanvas->Update();

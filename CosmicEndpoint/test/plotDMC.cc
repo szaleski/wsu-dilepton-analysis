@@ -27,13 +27,13 @@
 #include <math.h>
 #include <cmath>
 
-void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale);
+void getHistos(TFile *file1, TFile *file2, TFile *file3, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale);
 void plotIt(TH1F *dataHist1, TH1F *mcHist1, std::string const& kinVar, std::string const & plotName);
-void plotPtQSep(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale);
+void plotPtQSep(TFile *file1, TFile *file2, TFile file3, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale);
 
-double plotPt(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar);
+double plotPt(TFile *file1, TFile *file2, TFile* file3,  TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar);
 
-void plotDMC(std::string const& file1, std::string const& file2, int rebins, std::string const& histBase){
+void plotDMC(std::string const& file1, std::string const& file2, std::string const& file3, int rebins, std::string const& histBase){
 
   TFile *g;
   g = new TFile("kinPlots.root","RECREATE");
@@ -54,20 +54,29 @@ void plotDMC(std::string const& file1, std::string const& file2, int rebins, std
   }
   std::cout << "\nsuccessfully opened file2!\n";
 
+  TFile *z = TFile::Open(TString("/afs/cern.ch/work/s/szaleski/private/CMSSW_7_6_3_patch2/src/WSUDiLeptons/CosmicEndpoint/test/"+file3));
+
+  if(z == 0){
+    std::cout << "Error: cannot open file3! \n";
+    return;
+  }
+  std::cout << "\nsuccessfully opened file3!\n";
+
+
 
   double scale =  plotPt(f, h, g, rebins, histBase, "TrackPt");
 
-  getHistos(f, h, g, rebins, histBase, "TrackPt", scale);
+  getHistos(f, h, g, z, rebins, histBase, "TrackPt", scale);
 
-  getHistos(f, h, g, rebins, histBase, "TrackEta", scale);
+  getHistos(f, h, g, z, rebins, histBase, "TrackEta", scale);
 
-  getHistos(f, h, g, rebins, histBase, "TrackPhi", scale);
+  getHistos(f, h, g, z, rebins, histBase, "TrackPhi", scale);
   
-  getHistos(f, h, g, rebins, histBase, "PtRelErr", scale);
+  getHistos(f, h, g, z, rebins, histBase, "PtRelErr", scale);
 
-  getHistos(f, h, g, rebins, histBase, "PixelHits", scale);
+  getHistos(f, h, g, z, rebins, histBase, "PixelHits", scale);
   
-  getHistos(f, h, g, rebins, histBase, "MuonStationHits", scale);
+  getHistos(f, h, g, z, rebins, histBase, "MuonStationHits", scale);
 
   int *res = 0;
   std::cout << res << std::endl;
@@ -80,7 +89,7 @@ void plotDMC(std::string const& file1, std::string const& file2, int rebins, std
 
 }
 
-double plotPt(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar){
+double plotPt(TFile *file1, TFile *file2, TFile *file3, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar){
 
 
   Double_t dataInt = 0.0;
@@ -247,26 +256,32 @@ double plotPt(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::strin
 }
 
 
-void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale){
+void getHistos(TFile *file1, TFile *file2, TFile *file3, TFile* outFile, int rebins, std::string const& histBase, std::string const& kinVar, double scale){
 
 
 
   Double_t dataInt = 0.0;
-  Double_t mcInt = 0.0;
+  Double_t mc1Int = 0.0;
+  Double_t mc2Int = 0.0;
   Double_t inScale = 0.0;
   Int_t dataNum = 0;
   Int_t mcNum = 0;
   Double_t numScale = 0.0;
   
-  TH1F *dataHist1 = (TH1F*)file2->Get(TString(histBase+"Minus"+kinVar));
-  TH1F *dataHist2 = (TH1F*)file2->Get(TString(histBase+"Plus"+kinVar));
-  TH1F *mcHist1 = (TH1F*)file1->Get(TString(histBase+"Minus"+kinVar));
-  TH1F *mcHist2 = (TH1F*)file1->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *dataHist1 = (TH1F*)file1->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *dataHist2 = (TH1F*)file1->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *mcHist1 = (TH1F*)file2->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *mcHist2 = (TH1F*)file2->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *mcHist3 = (TH1F*)file3->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *mcHist4 = (TH1F*)file3->Get(TString(histBase+"Plus"+kinVar));
 
-  TH1F *dataHistMinus = (TH1F*)file2->Get(TString(histBase+"Minus"+kinVar));
-  TH1F *dataHistPlus = (TH1F*)file2->Get(TString(histBase+"Plus"+kinVar));
-  TH1F *mcHistMinus = (TH1F*)file1->Get(TString(histBase+"Minus"+kinVar));
-  TH1F *mcHistPlus = (TH1F*)file1->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *dataHistMinus = (TH1F*)file3->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *dataHistPlus = (TH1F*)file3->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *mcHist1Minus = (TH1F*)file1->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *mcHist1Plus = (TH1F*)file1->Get(TString(histBase+"Plus"+kinVar));
+  TH1F *mcHist2Minus = (TH1F*)file2->Get(TString(histBase+"Minus"+kinVar));
+  TH1F *mcHist2Plus = (TH1F*)file2->Get(TString(histBase+"Plus"+kinVar));
+
 
   int  numBins = dataHistMinus->GetNbinsX();
   double binEdges[] = {0, 50, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 3000};
@@ -275,35 +290,50 @@ void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::stri
 
   dataHistMinus->SetName(TString("data"+kinVar+"Minus"));
   dataHistPlus->SetName(TString("data"+kinVar+"Plus"));
-  mcHistMinus->SetName(TString("mc"+kinVar+"Minus"));
-  mcHistPlus->SetName(TString("mc"+kinVar+"Plus"));
+  mcHist1Minus->SetName(TString("mc1"+kinVar+"Minus"));
+  mcHist1Plus->SetName(TString("mc1"+kinVar+"Plus"));
+  mcHist2Minus->SetName(TString("mc2"+kinVar+"Minus"));
+  mcHist2Plus->SetName(TString("mc2"+kinVar+"Plus"));
   dataHistMinus->Sumw2();
   dataHistPlus->Sumw2();
-  mcHistMinus->Sumw2();
-  mcHistPlus->Sumw2();
+  mcHist1Minus->Sumw2();
+  mcHist1Plus->Sumw2();
+  mcHist2Minus->Sumw2();
+  mcHist2Plus->Sumw2();
 
   double dataMinusInt =  dataHistMinus->Integral();
   double dataPlusInt =  dataHistPlus->Integral();
-  double mcMinusInt =  mcHistMinus->Integral();
-  double mcPlusInt =  mcHistPlus->Integral();  
+  double mcMinus1Int =  mcHist1Minus->Integral();
+  double mcPlus1Int =  mcHist1Plus->Integral();  
+  double mcMinus2Int =  mcHist2Minus->Integral();
+  double mcPlus2Int =  mcHist2Plus->Integral();  
 
-  double scaleMinus = dataMinusInt/mcMinusInt;
-  double scalePlus = dataPlusInt/mcPlusInt;
+  double scale1Minus = dataMinusInt/mcMinus1Int;
+  double scale1Plus = dataPlusInt/mcPlus1Int;
+  double scale2Minus = dataMinusInt/mcMinus2Int;
+  double scale2Plus = dataPlusInt/mcPlus2Int;
 
   
-  mcHistMinus->Scale(scaleMinus);
-  mcHistMinus->SetName(TString("mcMinus"+kinVar+"Scaled"));
-  mcHistMinus->Write();
-  mcHistPlus->Scale(scalePlus);
-  mcHistPlus->SetName(TString("mcPlus"+kinVar+"Scaled"));
-  mcHistPlus->Write();
-
+  mcHist1Minus->Scale(scale1Minus);
+  mcHist1Minus->SetName(TString("mc1Minus"+kinVar+"Scaled"));
+  mcHist1Minus->Write();
+  mcHist1Plus->Scale(scale1Plus);
+  mcHist1Plus->SetName(TString("mc1Plus"+kinVar+"Scaled"));
+  mcHist1Plus->Write();
+  mcHist2Minus->Scale(scale2Minus);
+  mcHist2Minus->SetName(TString("mc2Minus"+kinVar+"Scaled"));
+  mcHist2Minus->Write();
+  mcHist2Plus->Scale(scale2Plus);
+  mcHist2Plus->SetName(TString("mc2Plus"+kinVar+"Scaled"));
+  mcHist2Plus->Write();
 
   dataHistMinus->Sumw2();
   dataHistPlus->Sumw2();
-  mcHistMinus->Sumw2();
-  mcHistPlus->Sumw2();
+  mcHist1Minus->Sumw2();
+  mcHist1Plus->Sumw2();
 
+  mcHist2Minus->Sumw2();
+  mcHist2Plus->Sumw2();
 
 
   if(kinVar == "TrackPt"){
@@ -311,15 +341,19 @@ void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::stri
     dataHistMinus->Write();
     dataHistPlus->Rebin(11, TString("dataPlus"+kinVar+"Rebinned"), binEdges);
     dataHistPlus->Write();
-    mcHistMinus->Rebin(11,TString("mcMinus"+kinVar+"Rebinned"), binEdges);
-    mcHistMinus->Write();
-    mcHistPlus->Rebin(11, TString("mcPlus"+kinVar+"Rebinned"), binEdges);
-    mcHistPlus->Write();
-
+    mcHist1Minus->Rebin(11,TString("mc1Minus"+kinVar+"Rebinned"), binEdges);
+    mcHist1Minus->Write();
+    mcHist1Plus->Rebin(11, TString("mc1Plus"+kinVar+"Rebinned"), binEdges);
+    mcHist1Plus->Write();
+    mcHist2Minus->Rebin(11,TString("mc2Minus"+kinVar+"Rebinned"), binEdges);
+    mcHist2Minus->Write();
+    mcHist2Plus->Rebin(11, TString("mc2Plus"+kinVar+"Rebinned"), binEdges);
+    mcHist2Plus->Write();
 
 
     plotIt(dataHistPlus, dataHistMinus, kinVar, "Data_Data");
-    plotIt(mcHistPlus, mcHistMinus, kinVar, "Start_Start");
+    plotIt(mcHist1Plus, mcHist1Minus, kinVar, "Start_Start");
+    plotIt(mcHist2Plus, mcHist2Minus, kinVar, "Start_Start");
 
   }
   else{
@@ -330,12 +364,18 @@ void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::stri
     dataHistPlus->Rebin(rebins);
     dataHistPlus->SetName(TString("dataPlus"+kinVar+"Rebinned"));
     dataHistPlus->Write();
-    mcHistMinus->Rebin(rebins);
-    mcHistMinus->SetName(TString("mcMinus"+kinVar+"Rebinned"));
-    mcHistMinus->Write();
-    mcHistPlus->Rebin(rebins);
-    mcHistPlus->SetName(TString("mcPlus"+kinVar+"Rebinned"));
-    mcHistPlus->Write();
+    mcHist1Minus->Rebin(rebins);
+    mcHist1Minus->SetName(TString("mc1Minus"+kinVar+"Rebinned"));
+    mcHist1Minus->Write();
+    mcHist1Plus->Rebin(rebins);
+    mcHist1Plus->SetName(TString("mc1Plus"+kinVar+"Rebinned"));
+    mcHist1Plus->Write();
+    mcHist2Minus->Rebin(rebins);
+    mcHist2Minus->SetName(TString("mc2Minus"+kinVar+"Rebinned"));
+    mcHist2Minus->Write();
+    mcHist2Plus->Rebin(rebins);
+    mcHist2Plus->SetName(TString("mc2Plus"+kinVar+"Rebinned"));
+    mcHist2Plus->Write();
 
 
   }
@@ -345,10 +385,15 @@ void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::stri
   dataHist1->Write();
   dataHist2->SetName(TString("data"+kinVar+"Plus"));
   dataHist2->Write();
-  mcHist1->SetName(TString("mc"+kinVar+"Minus"));
+  mcHist1->SetName(TString("mc1"+kinVar+"Minus"));
   mcHist1->Write();
-  mcHist2->SetName(TString("mc"+kinVar+"Plus"));
+  mcHist2->SetName(TString("mc1"+kinVar+"Plus"));
   mcHist2->Write();
+  mcHist3->SetName(TString("mc2"+kinVar+"Minus"));
+  mcHist3->Write();
+  mcHist4->SetName(TString("mc2"+kinVar+"Plus"));
+  mcHist4->Write();
+
 
   mcHist1->Sumw2();
   mcHist2->Sumw2();
@@ -388,7 +433,7 @@ void getHistos(TFile *file1, TFile *file2, TFile* outFile, int rebins, std::stri
   std::cout << "\n\nMade it to combined function call! " << std::endl;
   //  std::cout << "\ndataHist1" << std::hex << dataHist1 << std::dec << std::endl;
   //std::cout << "\nmcHist1" << std::hex << mcHist1 << std::dec << std::endl;
-  plotIt(dataHist1, mcHist1, kinVar, "Data_Start");
+  plotIt(dataHist1, mcHist1, kinVar, "Data_Start_Scaled");
 
   return;
 
