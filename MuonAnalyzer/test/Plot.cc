@@ -152,19 +152,19 @@ int trackVal_ = 5;
     //TTreeReader tunePReader("analysisTunePMuons/MuonTree", f);
   }  
   
-    std::string name;
-    std::ifstream file(file1);
-    while(std::getline(file,name)){
-      std::stringstream newString;
-      newString << "root://xrootd.unl.edu//" << name;
+  std::string name;
+  std::ifstream file(file1);
+  while(std::getline(file,name)){
+    std::stringstream newString;
+    newString << "root://xrootd.unl.edu//" << name;
 
-      //Use the following line with line above commented out for running on local files.
-      //newString << name;
-      std::cout << newString.str() << std::endl << std::endl;
-      myChain->Add(TString(newString.str()));
-    }
-    //  myChain->Add(TString());
-    //   newString << "root://xrootd.unl.edu//" << name;
+    //Use the following line with line above commented out for running on local files.
+    //newString << name;
+    std::cout << newString.str() << std::endl << std::endl;
+    myChain->Add(TString(newString.str()));
+  }
+  //  myChain->Add(TString());
+  //   newString << "root://xrootd.unl.edu//" << name;
  
   TTree *myTree = myChain;
   TTreeReader trackReader(myTree);

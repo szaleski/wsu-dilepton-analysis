@@ -2,7 +2,7 @@ from WMCore.Configuration import Configuration
 
 config = Configuration()
 config.section_('General')
-config.General.requestName = 'CosmicMuonAnalysis_MC2_Feb17_2016'
+config.General.requestName = 'CosmicMuonAnalysis_MC_p10Asym_Mar9_2016'
 config.General.workArea = 'crab_projects'
 config.General.transferOutputs = True
 config.General.transferLogs = False
@@ -12,7 +12,7 @@ config.JobType.psetName = 'wsuMuonAnalyzer_MC.py'
 #config.JobType.outputFiles = ['Commisioning2015.root']
 #config.JobType.pyCfgParams = []
 config.section_('Data')
-config.Data.inputDataset = ''
+config.Data.inputDataset = '/SPLooseMuCosmic_38T_p10/CosmicWinter15DR-DECO_76X_mcRun2cosmics_asymptotic_deco_v0-v2/GEN-SIM-RECO'
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'LumiBased'
 config.Data.unitsPerJob = 200
@@ -23,6 +23,6 @@ config.Data.unitsPerJob = 200
 config.Data.allowNonValidInputDataset = True
 #config.Data.outLFNDirBase = '/store/user/%s/' %(getUserNameFromSiteDB())
 config.Data.publication = True
-config.Data.outputDatasetTag = 'MuonAnalysis_data_Feb_2016'
+config.Data.outputDatasetTag = 'MuonAnalysis_data_Mar_2016'
 config.section_('Site')
 config.Site.storageSite = 'T3_US_FNALLPC'

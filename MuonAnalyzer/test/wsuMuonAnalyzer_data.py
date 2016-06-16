@@ -5,15 +5,29 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(True))
 
+
+
 from WSUDiLeptons.MuonAnalyzer.inputfiles import *
+
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        datafiles
+        #datafiles
+        '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/80000/A667FE36-94D2-E511-B204-0025905938A8.root',
+         '/store/data/Commissioning2015/Cosmics/RAW-RECO/CosmicSP-20Jan2016-v1/10000/CE61D454-F9D9-E511-B742-00266CFADE34.root'
     )
 )
+process.source.inputCommands = cms.untracked.vstring(
+    "keep *",
+   "drop FEDRawDataCollection_rawDataCollector_*_*"
+)
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5000) )
+process.source.dropDescendantsOfDroppedBranches=cms.untracked.bool(False)
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+
+process.load("WSUDiLeptons.MuonAnalyzer.wsuFakeL1SingleMuFilter_cfi")
+process.singleMuFilter.filterEvent = cms.bool(False)
+
 
 process.load("WSUDiLeptons.MuonAnalyzer.wsuMuonCollections_cfi")
 process.COSMICoutput.fileName = cms.untracked.string('Cosmics_CRAFT15_CosmicSP_76X_generic.root')
@@ -32,7 +46,7 @@ process.analysisGlobalMuons = muonAnalysis.clone(
     tagLegSrc   = cms.InputTag("globalMuons"),
     probeLegSrc = cms.InputTag("globalMuons"),
     algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
+    debug       = cms.int32(1)
 )
 process.analysisSPMuons = muonAnalysis.clone(
     muonSrc     = cms.InputTag("betterSPMuons"),
@@ -47,78 +61,6 @@ process.analysisGlobalSPMuons = muonAnalysis.clone(
     probeLegSrc = cms.InputTag("lowerGlobalMuons"),
     algoType    = cms.int32(5),
     debug       = cms.int32(2)
-)
-process.analysisLowerTagTrackerMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperMuons"),
-    algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
-)
-process.analysisLowerTagTPFMSMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperMuons"),
-    algoType    = cms.int32(2),
-    debug       = cms.int32(-1)
-)
-process.analysisLowerTagDYTMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperMuons"),
-    algoType    = cms.int32(3),
-    debug       = cms.int32(-1)
-)
-process.analysisLowerTagPickyMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperMuons"),
-    algoType    = cms.int32(4),
-    debug       = cms.int32(-1)
-)
-process.analysisLowerTagTunePMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("globalSPMuons"),
-    tagLegSrc   = cms.InputTag("lowerGlobalMuons"),
-    probeLegSrc = cms.InputTag("upperGlobalMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(-1)
-)
-
-process.analysisUpperTagTrackerMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(1),
-    debug       = cms.int32(-1)
-)
-process.analysisUpperTagTPFMSMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(2),
-    debug       = cms.int32(-1)
-)
-process.analysisUpperTagDYTMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(3),
-    debug       = cms.int32(-1)
-)
-process.analysisUpperTagPickyMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("betterMuons"),
-    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerMuons"),
-    algoType    = cms.int32(4),
-    debug       = cms.int32(-1)
-)
-
-process.analysisUpperTagTunePMuons = muonAnalysis.clone(
-    muonSrc     = cms.InputTag("globalSPMuons"),
-    tagLegSrc   = cms.InputTag("upperGlobalMuons"),
-    probeLegSrc = cms.InputTag("lowerGlobalMuons"),
-    algoType    = cms.int32(5),
-    debug       = cms.int32(-1)
 )
 
 process.analysisTrackerMuons = muonAnalysis.clone(
@@ -155,7 +97,7 @@ process.analysisTunePMuons = muonAnalysis.clone(
     tagLegSrc   = cms.InputTag("upperGlobalMuons"),
     probeLegSrc = cms.InputTag("lowerGlobalMuons"),
     algoType    = cms.int32(5),
-    debug       = cms.int32(2)
+    debug       = cms.int32(1)
 )
 
 process.TFileService = cms.Service("TFileService",
@@ -163,8 +105,9 @@ process.TFileService = cms.Service("TFileService",
 )
 
 process.muonanalysis = cms.Path(
+    process.singleMuFilter
     #process.reconstructionCosmics
-    process.betterMuons
+    +process.betterMuons
     +process.globalMuons
     +process.betterSPMuons
     +process.globalSPMuons
@@ -178,21 +121,11 @@ process.muonanalysis = cms.Path(
     #+process.analysisGlobalMuons
     +process.analysisSPMuons
     +process.analysisGlobalSPMuons
-    #+process.analysisLowerTagTrackerMuons
-    #+process.analysisLowerTagTPFMSMuons
-    #+process.analysisLowerTagDYTMuons
-    #+process.analysisLowerTagPickyMuons
-    #+process.analysisLowerTagTunePMuons
-    #+process.analysisUpperTagTrackerMuons
-    #+process.analysisUpperTagTPFMSMuons
-    #+process.analysisUpperTagDYTMuons
-    #+process.analysisUpperTagPickyMuons
-    #+process.analysisUpperTagTunePMuons
-    #+process.analysisTrackerMuons
-    #+process.analysisTPFMSMuons
-    #+process.analysisDYTMuons
-    #+process.analysisPickyMuons
-    #+process.analysisTunePMuons
+    +process.analysisTrackerMuons
+    +process.analysisTPFMSMuons
+    +process.analysisDYTMuons
+    +process.analysisPickyMuons
+    +process.analysisTunePMuons
     )
 
 # generate EDM output

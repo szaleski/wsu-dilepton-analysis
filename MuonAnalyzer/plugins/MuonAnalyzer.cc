@@ -255,6 +255,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
   std::cout.flush();
   if (debug_ > 0)
     if (muon == muend)
+
       std::cout << "muon iterator is at the end of the collection" << std::endl;
   
   if (muon->pt() < minPt_) {
@@ -286,7 +287,7 @@ void MuonAnalyzer::analyze(const edm::Event& ev, const edm::EventSetup& es)
     //return;
   }
 
-  if (debug_ > -1)
+  if (debug_ > 2)
     std::cout << "have passed the matching portion, now filling variables " << std::endl;
 
   if (debug_ > -1)

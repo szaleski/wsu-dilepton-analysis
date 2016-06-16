@@ -29,7 +29,7 @@
 #include <math.h>
 #include <cmath>
 
-void Plot(std::string const& filelist, std::string const& outFile,
+void PlotNew(std::string const& filelist, std::string const& outFile,
 	  int trackVal_, double minPt_, double maxBias_, int nBiasBins_,
 	  double factor_=1.0, double lowpT_=-1.0, double highpT_=-1.0,
 	  bool symmetric_=false, bool applyTrigger_=false, bool mcFlag_=false,

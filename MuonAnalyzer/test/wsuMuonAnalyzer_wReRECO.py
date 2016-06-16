@@ -99,7 +99,7 @@ process.analysisNoRPC = muonAnalysis.clone(
 
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('CosmicMuonAnalysis_2015_no-reRECO.root')
+    fileName = cms.string('CosmicMuonAnalysis_2015_reRECO.root')
 )
 
 # fix: remove some L1 modules (useless here)

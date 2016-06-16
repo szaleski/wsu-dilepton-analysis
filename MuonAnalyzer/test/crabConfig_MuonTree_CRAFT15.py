@@ -10,7 +10,7 @@ config.General.transferLogs = False
 
 config.section_('JobType')
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = 'wsuMuonTree_data.py'
+config.JobType.psetName = 'wsuMuonAnalyzer_data.py'
 
 config.section_('Data')
 config.Data.inputDataset = '/Cosmics/Commissioning2015-CosmicSP-20Jan2016-v1/RAW-RECO'
