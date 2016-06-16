@@ -85,7 +85,7 @@ def setMinPT(hist, nbins, minPt, symmetric=True, debug=False):
         if debug:
             print thebin, hist.GetXaxis().GetBinLowEdge(thebin), hist.GetXaxis().GetBinUpEdge(thebin)
     if debug:
-        print "upper cut off %2.2f, bin %d, integral (first,bin) %d"%(1./minPt,
+        print "upper cut off %2.2f, bin %d, integral (bin,last) %d"%(1./minPt,
                                                                       hist.FindBin(1./minPt),
                                                                       hist.Integral(thebin,
                                                                                     hist.GetXaxis().GetLast()))
@@ -102,3 +102,6 @@ def setMinPT(hist, nbins, minPt, symmetric=True, debug=False):
         print "nbins+2 content %d"%(hist.GetBinContent(nbins+2))
 
     return hist
+
+def makeComparisonPlot(refHist, compHist, rebins, minpt, debug=False):
+    pass
