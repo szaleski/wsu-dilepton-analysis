@@ -1,4 +1,5 @@
-*makeGIF_sym.py
+#### makeGIF_sym.py
+This script will run the endpoint study, creating outputs of the chi^2 vs bias, KS test statistic vs bias, and comparisons of the curvature distributions for each bias value
 ```
 Usage: makeGIF_sym.py -i inputfile.root --p100infile p100inputfile.root --p500infile p500inputfile.root -o outputfile.root [-d]
 
@@ -43,6 +44,8 @@ Example usage:
   ./makeGIF_sym.py -i /afs/cern.ch/work/s/szaleski/public/forJared/CRAFT15_May/CosmicHistOut_TuneP.root --p100infile /afs/cern.ch/work/s/szaleski/public/forJared/StartupP100_May/CosmicHistOut_TuneP.root --p500infile /afs/cern.ch/work/s/szaleski/public/forJared/StartupP500_May/CosmicHistOut_TuneP.root -b 80 -n 200 --minpt 150 -t 1600 -s10 -m 0.8 --residuals --mcclosure --mcbias -0.1
 ```
 
+#### bsubEfficiency.py
+This script will submit jobs for efficiency studies
 ```
 Usage: bsubEfficiency.py [options]
 
@@ -60,6 +63,8 @@ Options:
 
 ```
 
+#### bsubGenScaling.py
+This script will perform some scaling tests
 ```
 Usage: bsubGenScaling.py [options]
 
@@ -78,6 +83,9 @@ Options:
 
 ```
 
+#### bsubSubmit.py
+This script will help you submit jobs to the lxbatch (or any other bsub system)
+It depends on ```macrotools.py```
 ```
 Usage: bsubSubmit.py [options]
 
@@ -114,6 +122,8 @@ Options:
 
 ```
 
+#### runEndpoint.py
+This script will run the endpoint study
 ```
 Usage: runEndpoint.py [options]
 
@@ -151,6 +161,10 @@ Options:
                         as the reference value)
 
 ```
+
+#### quickHistogramPlotter.py
+This script will create a set of canvasses with the basic distributions for quick consumption.
+It enables one to quickly check that sanity checks have passed
 
 ```
 Usage: quickHistogramPlotter.py -i inputfile.root -o outputfile.root [-d]
