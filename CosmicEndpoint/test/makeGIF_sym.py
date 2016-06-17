@@ -51,6 +51,9 @@ if __name__ == "__main__":
     parser.add_option("--etaphi", type="string", dest="etaphi",
                       metavar="etaphi", default="",
                       help="[OPTIONAL] Eta/Phi bin to use")
+    parser.add_option("--pm", action="store_true", dest="pm",
+                      metavar="mcclosure",
+                      help="[OPTIONAL] Scale plus and minus separately")
     parser.add_option("--mcclosure", action="store_true", dest="mcclosure",
                       metavar="mcclosure",
                       help="[OPTIONAL] Do an MC closure test (requires 'mcbias')")
@@ -65,7 +68,7 @@ if __name__ == "__main__":
 
     ## binning options
     # - bin in eta (positive/negative)
-    # - bin in phi [-pi, -pi/3, pi/3, pi]
+    # - bin in phi [-pi, -pi/3, pi/3, pi], maybe choose a more appropriate binning for cosmics which will have negative phi only
     # - bin in eta/and phi
     # - inclusive
 
@@ -73,13 +76,14 @@ if __name__ == "__main__":
     # want to do several studies
     # 1) compare plus to minus (in data or MC, separately, scaling minus to plus)
     # 2) compare data to MC (varying the bias in MC)
-    #   requires two input files
+    #   requires two (or more) input files
     #   scaling will be done as follows
     #   a) scaling MC to data (integral before cutting on pT) at each bias step
     #   b) scaling MC to data (integral before cutting on pT) for the unbiased histograms
     #   c) scaling MC to data (integral after cutting on pT) at each bias step
     #   d) scaling MC to data (integral after cutting on pT) for the unbiased histograms
     #   e-h) perform the scaling on the plus and minus separately, but follow the steps from above
+    # 3) do an MC closure test, scaling similar to previous mode
     # may want to manually move the entries that migrate from plus to minus?
 
     (options, args) = parser.parse_args()
@@ -87,7 +91,7 @@ if __name__ == "__main__":
     print args
 
     checkRequiredArguments(options, parser)
-    
+
     if options.study not in ["pm","dmca","dmcb","dmcc","dmcd","dmce","dmcf","dmcg","dmch"]:
         print "Invalid study specified: %s. Valid options are \"pm\" or \"dmc[a-h]\""%(options.study)
         exit(1)
@@ -102,6 +106,7 @@ if __name__ == "__main__":
                   "EtaPlusPhiMinus","EtaPlusPhiZero","EtaPlusPhiPlus",
                   "EtaMinusPhiMinus","EtaMinusPhiZero","EtaMinusPhiPlus"
                   ]
+
     if options.etaphi not in etaphibins:
         print "Invalid eta/phi bin specified: %s"%(options.etaphi)
         print "Allowed options are:"
@@ -110,6 +115,7 @@ if __name__ == "__main__":
 
     r.gROOT.SetBatch(False)
     r.gErrorIgnoreLevel = r.kFatal
+
     if not options.debug:
         print "setting batch mode True"
         r.gROOT.SetBatch(True)
@@ -117,55 +123,67 @@ if __name__ == "__main__":
         print "setting batch mode False"
         r.gROOT.SetBatch(False)
         r.gErrorIgnoreLevel = r.kInfo
-    
+
+    ### Get the input ROOT files
     myInFileName = options.infile
     myInFile = r.TFile(myInFileName,"READ")
 
     p100InFileName = options.p100infile
     p100InFile = r.TFile(p100InFileName,"READ")
-    
+
     p500InFileName = options.p500infile
     p500InFile = r.TFile(p500InFileName,"READ")
-    
+
+    ### Set the output directory
     gifDir = "sampleGif"
+
     histName = options.histbase
 
+    ### Get a reference to make all histograms have the same Y-range
     testHist = myInFile.Get("%s%s%s"%(histName,"PlusCurve",options.etaphi)).Clone("test")
 
     if options.mcclosure:
         mcBiasSign = "Plus"
         if options.mcbias < 0:
             mcBiasSign = "Minus"
+            pass
 
         mcBiasBin = options.biasbins/options.maxbias*abs(options.mcbias)
         mcBiasSuffix = ""
         if options.mcbias > 0 or options.mcbias < 0:
             mcBiasSuffix = "%sBias%03d"%(mcBiasSign,mcBiasBin)
+            pass
 
-        plusClosureHistp100  = p100InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("clonep100")
+        plusClosureHistp100 = p100InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("clonep100")
         plusClosureHistp100.Scale(p100top500ScaleFactor)
-        plusClosureHistp500  = p500InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("clonep500")
-        
+        plusClosureHistp500 = p500InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("clonep500")
+
         plusClosureHist  = plusClosureHistp500.Clone("%s%s%s%s_scaling"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix))
         plusClosureHist.Add(plusClosureHistp100)
         testHist = plusClosureHist.Clone("testHistogram")
+        pass
 
     testHist = setMinPT(testHist,options.totalbins,options.minpt/1000.,True,options.debug)
     testHist.Rebin(options.rebins)
     refmax = testHist.GetMaximum()
 
-    #need two arrays, length = (2*nBiasBins)+1
+    ### Create arrays to store the graph points, length = (2*nBiasBins)+1
     xVals = np.zeros(2*options.biasbins/options.stepsize+1,np.dtype('float64'))
-    
+
+    ### Need three Y-arrays, store them as a map
     yVals = {}
+
     for test in ["KS","Chi2","Chi2NDF"]:
         yVals[test] = np.zeros(2*options.biasbins/options.stepsize+1,np.dtype('float64'))
         pass
 
     if options.debug:
         r.gROOT.SetBatch(False)
+        pass
+
     gifcanvas = r.TCanvas("gifcanvas","gifcanvas",750,750)
 
+    ### set up the different pads, depending on plot mode
     pad    = None
     resPad = None
     if options.residuals:
@@ -179,35 +197,39 @@ if __name__ == "__main__":
     r.gStyle.SetOptStat(0)
     print histName
 
-    ## use data histogram as reference
+    ### Set up the reference histogram(s)
     plusRefHist  = None
     minusRefHist = None
 
     if options.mcclosure:
+        ## use fixed MC bias histogram as reference
         mcBiasSign = "Plus"
         if options.mcbias < 0:
             mcBiasSign = "Minus"
+            pass
 
+        ### Probably check that this is an actual bin
         mcBiasBin = options.biasbins/options.maxbias*abs(options.mcbias)
 
         mcBiasSuffix = ""
         if options.mcbias > 0 or options.mcbias < 0:
             mcBiasSuffix = "%sBias%03d"%(mcBiasSign,mcBiasBin)
+            pass
 
         print "Using %s%s%s%s as reference histograms"%(histName,"Plus[Minus]Curve",options.etaphi,mcBiasSuffix)
 
-        plusClosureHistp100  = p100InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("plusClosureHistp100")
+        plusClosureHistp100 = p100InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("plusClosureHistp100")
         plusClosureHistp100.Scale(p100top500ScaleFactor)
 
         minusClosureHistp100 = p100InFile.Get("%s%s%s%s"%(histName,"MinusCurve",options.etaphi,mcBiasSuffix)).Clone("minusClosureHistp100")
         minusClosureHistp100.Scale(p100top500ScaleFactor)
 
-        plusClosureHistp500  = p500InFile.Get("%s%s%s%s"%(histName,"PlusCurve",options.etaphi,mcBiasSuffix)).Clone("plusClosureHistp500")
+        plusClosureHistp500  = p500InFile.Get("%s%s%s%s"%(histName,"PlusCurve", options.etaphi,mcBiasSuffix)).Clone("plusClosureHistp500")
         minusClosureHistp500 = p500InFile.Get("%s%s%s%s"%(histName,"MinusCurve",options.etaphi,mcBiasSuffix)).Clone("minusClosureHistp500")
-        
+
         plusClosureHist  = plusClosureHistp500.Clone("%s%s%s_scaling"%(histName,"PlusCurve",mcBiasSuffix))
         plusClosureHist.Add(plusClosureHistp100)
-        
+
         minusClosureHist = minusClosureHistp500.Clone("%s%s%s_scaling"%(histName,"MinusCurve",mcBiasSuffix))
         minusClosureHist.Add(minusClosureHistp100)
 
@@ -215,37 +237,52 @@ if __name__ == "__main__":
         minusRefHist = minusClosureHist
     else:
         ## use data histogram as reference
-        plusRefHist  = myInFile.Get("%s%s%s"%(histName,"MinusCurve",options.etaphi))
-        minusRefHist = myInFile.Get("%s%s%s"%(histName,"PlusCurve", options.etaphi))
+        plusRefHist  = myInFile.Get("%s%s%s"%(histName,"PlusCurve", options.etaphi))
+        minusRefHist = myInFile.Get("%s%s%s"%(histName,"MinusCurve",options.etaphi))
+        pass
 
     if options.debug:
         print "Minus integral %d, Plus integral %d"%(minusRefHist.Integral(),plusRefHist.Integral())
+        pass
+
     refHist = plusRefHist.Clone("%s_refHist"%(histName))
+
     if options.debug:
         print "before adding minus histogram integral: %d"%(refHist.Integral())
+        pass
+
     refHist.Add(minusRefHist)
+
     if options.debug:
         print "after adding minus histogram integral: %d"%(refHist.Integral())
-        plusRefHist  = setMinPT(plusRefHist,options.totalbins,options.minpt/1000.,True,options.debug)
-        minusRefHist = setMinPT(minusRefHist,options.totalbins,options.minpt/1000.,True,options.debug)
+        pass
 
     # un-cut integral
-    refinto = refHist.Integral()
+    refinto  = refHist.Integral()
+    refpinto = plusRefHist.Integral()
+    refminto = minusRefHist.Integral()
+
     if options.debug:
-        print "Rebinning reference histogram"
-    refHist = setMinPT(refHist,options.totalbins,options.minpt/1000.,True,options.debug)
-    refHist.Rebin(options.rebins)
+        print "Rebinning reference histograms"
+        pass
+
+    refHist      = setMinPT(refHist,     options.totalbins,options.minpt/1000.,True,options.debug)
+    plusRefHist  = setMinPT(plusRefHist, options.totalbins,options.minpt/1000.,True,options.debug)
+    minusRefHist = setMinPT(minusRefHist,options.totalbins,options.minpt/1000.,True,options.debug)
+
+    refHist.Rebin(     options.rebins)
+    plusRefHist.Rebin( options.rebins)
+    minusRefHist.Rebin(options.rebins)
 
     # integral after applying a pT cut
     refinta = refHist.Integral()
-
-    if options.debug:
-        print "Reference histogram integral: before %d, after %d"%(refinto,refinta)
+    refpinta = plusRefHist.Integral()
+    refminta = minusRefHist.Integral()
 
     refHist.SetLineColor(r.kBlue)
     refHist.SetLineWidth(2)
 
-    # calculating a scale factor from the un-biased MC
+    ### calculating a scale factor from the un-biased MC
     plusScaleHistp100 = p100InFile.Get("%s%s%s"%(histName,"PlusCurve",options.etaphi)).Clone("plusScaleHistp100")
     plusScaleHistp100.Scale(p100top500ScaleFactor)
 
@@ -254,7 +291,7 @@ if __name__ == "__main__":
 
     plusScaleHistp500  = p500InFile.Get("%s%s%s"%(histName,"PlusCurve",options.etaphi)).Clone("plusScaleHistp500")
     minusScaleHistp500 = p500InFile.Get("%s%s%s"%(histName,"MinusCurve",options.etaphi)).Clone("minusScaleHistp500")
-    
+
     plusScaleHist = plusScaleHistp500.Clone("%s%s_scaling"%(histName,"PlusCurve"))
     plusScaleHist.Add(plusScaleHistp100)
 
@@ -265,20 +302,56 @@ if __name__ == "__main__":
     compScaleHist.Add(minusScaleHist)
 
     if options.debug:
-        print "Rebinning compScale histogram"
-    compscaleinto = compScaleHist.Integral()
-    compScaleHist = setMinPT(compScaleHist,options.totalbins,options.minpt/1000.,True,options.debug)
-    compscaleinta = compScaleHist.Integral()
-    compScaleHist.Rebin(options.rebins)
+        print "Rebinning comparison scale histograms"
+    compscaleinto  = compScaleHist.Integral()
+    compscalepinto = plusScaleHist.Integral()
+    compscaleminto = minusScaleHist.Integral()
 
-    if options.debug:
-        print "compScale histogram integral: before %d, after %d"%(compscaleinto,compscaleinta)
+    compScaleHist  = setMinPT(compScaleHist, options.totalbins,options.minpt/1000.,True,options.debug)
+    plusScaleHist  = setMinPT(plusScaleHist, options.totalbins,options.minpt/1000.,True,options.debug)
+    minusScaleHist = setMinPT(minusScaleHist,options.totalbins,options.minpt/1000.,True,options.debug)
 
-    print "Pre-Scaling factor is: %2.4f = %2.4f/%2.4f"%(refinto/compscaleinto,refinto,compscaleinto)
-    print "Post-Scaling factor is: %2.4f = %2.4f/%2.4f"%(refinta/compscaleinta,refinta,compscaleinta)
+    compScaleHist.Rebin( options.rebins)
+    plusScaleHist.Rebin( options.rebins)
+    minusScaleHist.Rebin(options.rebins)
 
-    # doing the "pm" study (comparing plus to minus in data or MC separately)
-    #if options.study == "pm":
+    compscaleinta  = compScaleHist.Integral()
+    compscalepinta = plusScaleHist.Integral()
+    compscaleminta = minusScaleHist.Integral()
+
+    print "Reference histogram integral: inclusive, pT > %2.2f"%(options.minpt)
+    print "                    combined: %9d, %10d"%(refinto, refinta)
+    print "                    mu plus : %9d, %10d"%(refpinto,refpinta)
+    print "                    mu minus: %9d, %10d"%(refminto,refminta)
+    print "  plus/minus asymmetry: %2.4f, %2.4f"%(refpinto/refminto,
+                                                  refpinta/refminta)
+    print
+    print "Scaling histogram integral  :"
+    print "                    combined: %9d, %10d"%(compscaleinto, compscaleinta)
+    print "                    mu plus : %9d, %10d"%(compscalepinto,compscalepinta)
+    print "                    mu minus: %9d, %10d"%(compscaleminto,compscaleminta)
+    print "  plus/minus asymmetry: %2.4f, %2.4f"%(compscalepinto/compscaleminto,
+                                                  compscalepinta/compscaleminta)
+    print
+    print "Pre-Scaling ref/comp factor is:"
+    print "  combined: %2.4f = %8.2f/%8.2f"%(refinto/compscaleinto,  refinto, compscaleinto)
+    print "  mu plus : %2.4f = %8.2f/%8.2f"%(refpinto/compscalepinto,refpinto,compscalepinto)
+    print "  mu minus: %2.4f = %8.2f/%8.2f"%(refminto/compscaleminto,refminto,compscaleminto)
+    print
+    print "Post-Scaling factor is:"
+    print "  combined: %2.4f = %8.2f/%8.2f"%(refinta/compscaleinta,  refinta, compscaleinta)
+    print "  mu plus : %2.4f = %8.2f/%8.2f"%(refpinta/compscalepinta,refpinta,compscalepinta)
+    print "  mu minus: %2.4f = %8.2f/%8.2f"%(refminta/compscaleminta,refminta,compscaleminta)
+
+    ### scope some variables for later use
+    comppinto = 0
+    compminto = 0
+    compinto  = 0
+    comppinta = 0
+    compminta = 0
+    compinta  = 0
+
+    ### now start doing the actual study, loop over negative bias
     for step in range(0,options.biasbins/options.stepsize):
         gifcanvas.cd()
 
@@ -286,14 +359,14 @@ if __name__ == "__main__":
                                                               options.biasbins-step*options.stepsize))
         minusHistp100 = p100InFile.Get("%s%s%sMinusBias%03d"%(histName,"MinusCurve",options.etaphi,
                                                               options.biasbins-step*options.stepsize))
-        plusHistp100.Scale(p100top500ScaleFactor)
+        plusHistp100.Scale( p100top500ScaleFactor)
         minusHistp100.Scale(p100top500ScaleFactor)
-        
+
         plusHistp500  = p500InFile.Get("%s%s%sMinusBias%03d"%(histName,"PlusCurve", options.etaphi,
                                                             options.biasbins-step*options.stepsize))
         minusHistp500 = p500InFile.Get("%s%s%sMinusBias%03d"%(histName,"MinusCurve",options.etaphi,
                                                             options.biasbins-step*options.stepsize))
-        
+
         plusHist  = plusHistp500.Clone("%s%s_combined_MinusBias%03d"%(histName,"PlusCurve",
                                                                       options.biasbins-step*options.stepsize))
         plusHist.Add(plusHistp100)
@@ -301,29 +374,95 @@ if __name__ == "__main__":
         minusHist = minusHistp500.Clone("%s%s_combined_MinusBias%03d"%(histName,"MinusCurve",
                                                                        options.biasbins-step*options.stepsize))
         minusHist.Add(minusHistp100)
-        
+
+        if options.pm:
+            if options.debug:
+                print "before: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+                print "before: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+                pass
+    
+            plusHist  = setMinPT(plusHist, options.totalbins,options.minpt/1000.,True,options.debug)
+            minusHist = setMinPT(minusHist,options.totalbins,options.minpt/1000.,True,options.debug)
+    
+            plusHist.Rebin( options.rebins)
+            minusHist.Rebin(options.rebins)
+    
+            if options.debug:
+                print "after: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+                print "after: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+                pass
+    
+            ### integral before scaling
+            comppinto = plusHist.Integral()
+            compminto = minusHist.Integral()
+            compinto  = comppinto+compminto
+    
+            if (plusScaleHist.Integral() > 0):
+                # scale to this histogram
+                #plusHist.Scale(refHist.Integral()/plusHist.Integral())
+                # scale to scale histogram
+                plusHist.Scale(refpinta/compscalepinta)
+            else:
+                print "unable to scale plus histogram, integral is 0"
+                pass
+    
+            if (minusScaleHist.Integral() > 0):
+                # scale to this histogram
+                #minusHist.Scale(refHist.Integral()/minusHist.Integral())
+                # scale to scale histogram
+                minusHist.Scale(refminta/compscaleminta)
+            else:
+                print "unable to scale minus histogram, integral is 0"
+                pass
+    
+            ### if we scale plus to plus and minus to minus, have to add them here rather than before
+            ## need to make this programatic though
+    
+            comppinta = plusHist.Integral()
+            compminta = minusHist.Integral()
+            compinta  = comppinta+compminta
+            pass
+    
+        ## Add plus and minus histograms for the comparison histogram
         compHist = plusHist.Clone("%s_compHist_MinusBias%03d"%(histName,options.biasbins-step*options.stepsize))
         compHist.Add(minusHist)
 
-        if options.debug:
-            print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-        compHist = setMinPT(compHist,options.totalbins,options.minpt/1000.,True,options.debug)
-        compHist.Rebin(options.rebins)
-        if options.debug:
-            print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-        compinto = compHist.Integral()
-        if (compScaleHist.Integral() > 0):
-            #compHist.Scale(refHist.Integral()/compHist.Integral())
-            compHist.Scale(refinta/compscaleinta)
-        else:
-            print "unable to scale comp histogram, integral is 0"
+        ### have to scale the combined histogram if the plus/minus histograms weren't scaled previously
+        if not options.pm:
+            if options.debug:
+                print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+                pass
+            
+            compHist  = setMinPT(compHist, options.totalbins,options.minpt/1000.,True,options.debug)
+            compHist.Rebin(options.rebins)
+            
+            if options.debug:
+                print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+                pass
+            
+            ### integral before scaling
+            compinto  = compHist.Integral()
+            
+            if (compScaleHist.Integral() > 0):
+                # scale to this histogram
+                #compHist.Scale(refHist.Integral()/compHist.Integral())
+                # scale to scale histogram
+                compHist.Scale(refinta/compscaleinta)
+            else:
+                print "unable to scale comp histogram, integral is 0"
+                pass
+            
+            compinta  = compHist.Integral()
             pass
-        compinta = compHist.Integral()
+
         compHist.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%(-(options.maxbias/options.biasbins)*(options.biasbins-step*options.stepsize)))
         compHist.SetLineColor(r.kRed)
         compHist.SetLineWidth(2)
+
         if options.residuals:
             pad.cd()
+            pass
+
         compHist.Draw()
         compHist.GetXaxis().SetTitle("#kappa [c/TeV]")
         compHist.SetMaximum(1.2*refmax)
@@ -358,6 +497,7 @@ if __name__ == "__main__":
                     pass
                 resHist.SetBinContent(i+1, res)
                 pass
+
             resPad.cd()
             resHist.SetLineColor(r.kBlack)
             resHist.SetLineWidth(2)
@@ -370,6 +510,7 @@ if __name__ == "__main__":
             resHist.SetMinimum(-15.)
             pass
 
+        ### now set up the points in the graph
         xVals[step] = -(options.maxbias/options.biasbins)*(options.biasbins-step*options.stepsize)
         yVals["Chi2"][step] = chi2Val
         yVals["Chi2NDF"][step] = chi2Val/chi2ndf
@@ -389,8 +530,11 @@ if __name__ == "__main__":
         thelegend.AddEntry(compHist,"MC (%d,%d)"%(compinto,compinta))
 
         gifcanvas.cd()
+
         if options.residuals:
             pad.cd()
+            pass
+
         thetext.Draw("nb")
         thelegend.Draw()
         r.gPad.Update()
@@ -399,10 +543,13 @@ if __name__ == "__main__":
         if options.debug:
             raw_input("Press enter to continue")
         pass
-    
+
+    ### end block for negative injected bias
     if options.debug:
-        raw_input("press enter to exit")
+        raw_input("press enter to continue to no bias")
         pass
+
+    ### No injected bias
     gifcanvas.cd()
 
     plusHistp100  = p100InFile.Get("%s%s%s"%(histName,"PlusCurve",options.etaphi))
@@ -412,35 +559,101 @@ if __name__ == "__main__":
 
     plusHistp500  = p500InFile.Get("%s%s%s"%(histName,"PlusCurve",options.etaphi))
     minusHistp500 = p500InFile.Get("%s%s%s"%(histName,"MinusCurve",options.etaphi))
-    
+
     plusHist  = plusHistp500.Clone("%s%s_combined"%(histName,"PlusCurve"))
     plusHist.Add(plusHistp100)
 
     minusHist = minusHistp500.Clone("%s%s_combined"%(histName,"MinusCurve"))
     minusHist.Add(minusHistp100)
 
+    if options.pm:
+        if options.debug:
+            print "before: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+            print "before: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+            pass
+
+        plusHist  = setMinPT(plusHist, options.totalbins,options.minpt/1000.,True,options.debug)
+        minusHist = setMinPT(minusHist,options.totalbins,options.minpt/1000.,True,options.debug)
+
+        plusHist.Rebin( options.rebins)
+        minusHist.Rebin(options.rebins)
+
+        if options.debug:
+            print "after: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+            print "after: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+            pass
+
+        ### integral before scaling
+        comppinto = plusHist.Integral()
+        compminto = minusHist.Integral()
+        compinto  = comppinto+compminto
+
+        if (plusScaleHist.Integral() > 0):
+            # scale to this histogram
+            #plusHist.Scale(refHist.Integral()/plusHist.Integral())
+            # scale to scale histogram
+            plusHist.Scale(refpinta/compscalepinta)
+        else:
+            print "unable to scale plus histogram, integral is 0"
+            pass
+
+        if (minusScaleHist.Integral() > 0):
+            # scale to this histogram
+            #minusHist.Scale(refHist.Integral()/minusHist.Integral())
+            # scale to scale histogram
+            minusHist.Scale(refminta/compscaleminta)
+        else:
+            print "unable to scale minus histogram, integral is 0"
+            pass
+
+        ### if we scale plus to plus and minus to minus, have to add them here rather than before
+        ## need to make this programatic though
+
+        comppinta = plusHist.Integral()
+        compminta = minusHist.Integral()
+        compinta  = comppinta+compminta
+        pass
+
+    ## Add plus and minus histograms for the comparison histogram
     compHist = plusHist.Clone("%s_compHist"%(histName))
     compHist.Add(minusHist)
 
-    if options.debug:
-        print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-    compHist = setMinPT(compHist,options.totalbins,options.minpt/1000.,True,options.debug)
-    compHist.Rebin(options.rebins)
-    if options.debug:
-        print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-    compinto = compHist.Integral()
-    if (compScaleHist.Integral() > 0):
-        #compHist.Scale(refHist.Integral()/compHist.Integral())
-        compHist.Scale(refinta/compscaleinta)
-    else:
-        print "unable to scale comp histogram, integral is 0"
+    ### have to scale the combined histogram if the plus/minus histograms weren't scaled previously
+    if not options.pm:
+        if options.debug:
+            print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+            pass
+        
+        compHist = setMinPT(compHist,options.totalbins,options.minpt/1000.,True,options.debug)
+        compHist.Rebin(options.rebins)
+
+        if options.debug:
+            print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+            pass
+        
+        ### integral before scaling
+        compinto = compHist.Integral()
+
+        if (compScaleHist.Integral() > 0):
+            # scale to this histogram
+            #compHist.Scale(refHist.Integral()/compHist.Integral())
+            # scale to scale histogram
+            compHist.Scale(refinta/compscaleinta)
+        else:
+            print "unable to scale comp histogram, integral is 0"
+            pass
+        
+        compinta  = compHist.Integral()
         pass
-    compinta = compHist.Integral()
+
     compHist.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%(0))
     compHist.SetLineColor(r.kRed)
     compHist.SetLineWidth(2)
+
     if options.residuals:
         pad.cd()
+        pass
+
     compHist.Draw()
     compHist.GetXaxis().SetTitle("#kappa [c/TeV]")
     compHist.SetMaximum(1.2*refmax)
@@ -461,7 +674,7 @@ if __name__ == "__main__":
     ## if doing pm study, use flipHist
     #prob   = refHist.Chi2TestX(flipHist(compHist),chi2Val,chi2ndf,igood,histopts,resids)
     #ksprob = refHist.KolmogorovTest(flipHist(compHist),"")#)
-    
+
     # else add plus to minus
     prob   = refHist.Chi2TestX(compHist,chi2Val,chi2ndf,igood,histopts,resids)
     ksprob = refHist.KolmogorovTest(compHist,"")#)
@@ -491,7 +704,7 @@ if __name__ == "__main__":
     yVals["Chi2NDF"][options.biasbins/options.stepsize] = chi2Val/chi2ndf
 
     yVals["KS"][options.biasbins/options.stepsize]   = ksprob
-    
+
     thetext = r.TPaveText(0.4,0.8,0.6,0.9,"ndc")
     thetext.SetFillColor(0)
     thetext.SetFillStyle(3000)
@@ -516,45 +729,118 @@ if __name__ == "__main__":
         raw_input("press enter to exit")
         pass
 
+    ### loop over positive bias
     for step in range(0,options.biasbins/options.stepsize):
         gifcanvas.cd()
 
-        plusHistp100  = p100InFile.Get("%s%s%sPlusBias%03d"%(histName,"PlusCurve", options.etaphi,(1+step)*options.stepsize))
-        minusHistp100 = p100InFile.Get("%s%s%sPlusBias%03d"%(histName,"MinusCurve",options.etaphi,(1+step)*options.stepsize))
+        plusHistp100  = p100InFile.Get("%s%s%sPlusBias%03d"%(histName,"PlusCurve", options.etaphi,
+                                                             (1+step)*options.stepsize))
+        minusHistp100 = p100InFile.Get("%s%s%sPlusBias%03d"%(histName,"MinusCurve",options.etaphi,
+                                                             (1+step)*options.stepsize))
         plusHistp100.Scale(p100top500ScaleFactor)
         minusHistp100.Scale(p100top500ScaleFactor)
-        
-        plusHistp500  = p500InFile.Get("%s%s%sPlusBias%03d"%(histName,"PlusCurve", options.etaphi,(1+step)*options.stepsize))
-        minusHistp500 = p500InFile.Get("%s%s%sPlusBias%03d"%(histName,"MinusCurve",options.etaphi,(1+step)*options.stepsize))
-        
-        plusHist  = plusHistp500.Clone("%s%s_combined_PlusBias%03d"%(histName,"PlusCurve",(1+step)*options.stepsize))
+
+        plusHistp500  = p500InFile.Get("%s%s%sPlusBias%03d"%(histName,"PlusCurve", options.etaphi,
+                                                             (1+step)*options.stepsize))
+        minusHistp500 = p500InFile.Get("%s%s%sPlusBias%03d"%(histName,"MinusCurve",options.etaphi,
+                                                             (1+step)*options.stepsize))
+
+        plusHist  = plusHistp500.Clone("%s%s_combined_PlusBias%03d"%(histName,"PlusCurve",
+                                                                     (1+step)*options.stepsize))
         plusHist.Add(plusHistp100)
 
-        minusHist = minusHistp500.Clone("%s%s_combined_PlusBias%03d"%(histName,"MinusCurve",(1+step)*options.stepsize))
+        minusHist = minusHistp500.Clone("%s%s_combined_PlusBias%03d"%(histName,"MinusCurve",
+                                                                      (1+step)*options.stepsize))
         minusHist.Add(minusHistp100)
-        
+
+        if options.pm:
+            if options.debug:
+                print "before: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+                print "before: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+                pass
+    
+            plusHist  = setMinPT(plusHist, options.totalbins,options.minpt/1000.,True,options.debug)
+            minusHist = setMinPT(minusHist,options.totalbins,options.minpt/1000.,True,options.debug)
+    
+            plusHist.Rebin( options.rebins)
+            minusHist.Rebin(options.rebins)
+    
+            if options.debug:
+                print "after: plusRefNBins %d, plusNBins %d"%(  plusRefHist.GetNbinsX(), plusHist.GetNbinsX())
+                print "after: minusRefNBins %d, minusNBins %d"%(minusRefHist.GetNbinsX(),minusHist.GetNbinsX())
+                pass
+    
+            ### integral before scaling
+            comppinto = plusHist.Integral()
+            compminto = minusHist.Integral()
+            compinto  = comppinto+compminto
+    
+            if (plusScaleHist.Integral() > 0):
+                # scale to this histogram
+                #plusHist.Scale(refHist.Integral()/plusHist.Integral())
+                # scale to scale histogram
+                plusHist.Scale(refpinta/compscalepinta)
+            else:
+                print "unable to scale plus histogram, integral is 0"
+                pass
+    
+            if (minusScaleHist.Integral() > 0):
+                # scale to this histogram
+                #minusHist.Scale(refHist.Integral()/minusHist.Integral())
+                # scale to scale histogram
+                minusHist.Scale(refminta/compscaleminta)
+            else:
+                print "unable to scale minus histogram, integral is 0"
+                pass
+    
+            ### if we scale plus to plus and minus to minus, have to add them here rather than before
+            ## need to make this programatic though
+    
+            comppinta = plusHist.Integral()
+            compminta = minusHist.Integral()
+            compinta  = comppinta+compminta
+            pass
+    
+        ## Add plus and minus histograms for the comparison histogram
         compHist = plusHist.Clone("%s_compHist_PlusBias%03d"%(histName,(1+step)*options.stepsize))
         compHist.Add(minusHist)
 
-        if options.debug:
-            print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-        compHist = setMinPT(compHist,options.totalbins,options.minpt/1000.,True,options.debug)
-        compHist.Rebin(options.rebins)
-        if options.debug:
-            print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
-        compinto = compHist.Integral()
-        if (compScaleHist.Integral() > 0):
-            #compHist.Scale(refHist.Integral()/compHist.Integral())
-            compHist.Scale(refinta/compscaleinta)
-        else:
-            print "unable to scale comp histogram, integral is 0"
+        ### have to scale the combined histogram if the plus/minus histograms weren't scaled previously
+        if not options.pm:
+            if options.debug:
+                print "before: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+                pass
+            
+            compHist = setMinPT(compHist,options.totalbins,options.minpt/1000.,True,options.debug)
+            compHist.Rebin(options.rebins)
+
+            if options.debug:
+                print "after: refNBins %d, compNBins %d"%(refHist.GetNbinsX(),compHist.GetNbinsX())
+                pass
+            
+            ### integral before scaling
+            compinto = compHist.Integral()
+
+            if (compScaleHist.Integral() > 0):
+                # scale to this histogram
+                #compHist.Scale(refHist.Integral()/compHist.Integral())
+                # scale to scale histogram
+                compHist.Scale(refinta/compscaleinta)
+            else:
+                print "unable to scale comp histogram, integral is 0"
+                pass
+            
+            compinta  = compHist.Integral()
             pass
-        compinta = compHist.Integral()
+
         compHist.SetTitle("#Delta#kappa = %2.4f [c/TeV]"%((options.maxbias/options.biasbins)*((step+1)*options.stepsize)))
         compHist.SetLineColor(r.kRed)
         compHist.SetLineWidth(2)
+
         if options.residuals:
             pad.cd()
+            pass
+
         compHist.Draw()
         compHist.GetXaxis().SetTitle("#kappa [c/TeV]")
         compHist.SetMaximum(1.2*refmax)
@@ -589,17 +875,20 @@ if __name__ == "__main__":
                     pass
                 resHist.SetBinContent(i+1, res)
                 pass
+
             resPad.cd()
             resHist.SetLineColor(r.kBlack)
             resHist.SetLineWidth(2)
             resHist.SetMarkerColor(r.kBlack)
             resHist.SetMarkerStyle(r.kFullDiamond)
             resHist.SetMarkerSize(1)
+            resHist.GetYaxis().SetTitle("#chi^{2} residuals")
             resHist.Draw("ep0")
             resHist.SetMaximum(15.)
             resHist.SetMinimum(-15.)
             pass
 
+        ### now set up the points in the graph
         xVals[options.biasbins/options.stepsize+1+step] = (options.maxbias/options.biasbins)*((step+1)*options.stepsize)
         yVals["Chi2"][options.biasbins/options.stepsize+1+step] = chi2Val
         yVals["Chi2NDF"][options.biasbins/options.stepsize+1+step] = chi2Val/chi2ndf
@@ -619,8 +908,11 @@ if __name__ == "__main__":
         thelegend.AddEntry(compHist,"MC (%d,%d)"%(compinto,compinta))
 
         gifcanvas.cd()
+
         if options.residuals:
             pad.cd()
+            pass
+        
         thetext.Draw("nb")
         thelegend.Draw()
         r.gPad.Update()
@@ -629,7 +921,8 @@ if __name__ == "__main__":
         if options.debug:
             raw_input("Press enter to continue")
         pass
-    
+
+    ### end block for negative injected bias
     if options.debug:
         raw_input("press enter to exit")
         pass
@@ -645,7 +938,7 @@ if __name__ == "__main__":
     graphInfo["Chi2"] = {"color":r.kBlue, "marker":r.kFullCircle,
                          "title":"ROOT #chi^{2}/ndf",
                          "yaxis":""}
-    
+
     chi2ndfgraph = prettifyGraph(r.TGraph(xVals.size,xVals,yVals["Chi2NDF"]),graphInfo["Chi2"])
     chi2graph    = prettifyGraph(r.TGraph(xVals.size,xVals,yVals["Chi2"]),graphInfo["Chi2"])
     ksgraph      = prettifyGraph(r.TGraph(xVals.size,xVals,yVals["KS"])  ,graphInfo["KS"]  )
@@ -672,5 +965,5 @@ if __name__ == "__main__":
     if options.debug:
         raw_input("press enter to exit")
         pass
-    
+
 
