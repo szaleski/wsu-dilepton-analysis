@@ -1,0 +1,4 @@
+/store/user/szaleski/Cosmics/MuonAnalysis_data_Apr_2016/160407_192518/0000/CosmicMuonAnalysis_2015_76X_reRECO_1.root
+/store/user/szaleski/Cosmics/MuonAnalysis_data_Apr_2016/160407_192518/0000/CosmicMuonAnalysis_2015_76X_reRECO_2.root
+/store/user/szaleski/Cosmics/MuonAnalysis_data_Apr_2016/160407_192518/0000/CosmicMuonAnalysis_2015_76X_reRECO_3.root
+/store/user/szaleski/Cosmics/MuonAnalysis_data_Apr_2016/160407_192518/0000/CosmicMuonAnalysis_2015_76X_reRECO_4.root
